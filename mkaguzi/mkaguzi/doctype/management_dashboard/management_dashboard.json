@@ -1,0 +1,603 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "dashboard_id",
+  "dashboard_title",
+  "dashboard_type",
+  "column_break_4",
+  "description",
+  "is_default",
+  "is_active",
+  "section_break_8",
+  "time_period",
+  "start_date",
+  "end_date",
+  "column_break_12",
+  "auto_refresh",
+  "refresh_interval",
+  "last_updated",
+  "section_break_17",
+  "kpi_section",
+  "total_engagements",
+  "completed_engagements",
+  "in_progress_engagements",
+  "overdue_engagements",
+  "column_break_23",
+  "total_findings",
+  "critical_findings",
+  "high_findings",
+  "medium_findings",
+  "low_findings",
+  "section_break_30",
+  "compliance_section",
+  "compliance_score",
+  "compliant_items",
+  "non_compliant_items",
+  "pending_reviews",
+  "column_break_36",
+  "overdue_actions",
+  "completed_actions",
+  "in_progress_actions",
+  "section_break_41",
+  "chart_configuration",
+  "chart_1_type",
+  "chart_1_title",
+  "chart_1_data_source",
+  "column_break_46",
+  "chart_2_type",
+  "chart_2_title",
+  "chart_2_data_source",
+  "section_break_50",
+  "chart_3_type",
+  "chart_3_title",
+  "chart_3_data_source",
+  "column_break_55",
+  "chart_4_type",
+  "chart_4_title",
+  "chart_4_data_source",
+  "section_break_60",
+  "filters_section",
+  "department_filter",
+  "risk_level_filter",
+  "status_filter",
+  "column_break_65",
+  "audit_type_filter",
+  "period_filter",
+  "custom_filters",
+  "section_break_70",
+  "dashboard_permissions",
+  "allowed_roles",
+  "allowed_users",
+  "column_break_74",
+  "public_access",
+  "password_protected",
+  "section_break_78",
+  "audit_trail",
+  "created_by",
+  "creation_date",
+  "column_break_82",
+  "modified_by",
+  "last_modified"
+ ],
+ "fields": [
+  {
+   "fieldname": "dashboard_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Dashboard ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "dashboard_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Dashboard Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dashboard_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Dashboard Type",
+   "options": "Management Overview\nCompliance Dashboard\nRisk Dashboard\nOperational Dashboard\nExecutive Summary",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Is Default Dashboard"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Time Period Configuration"
+  },
+  {
+   "fieldname": "time_period",
+   "fieldtype": "Select",
+   "default": "Current Month",
+   "label": "Time Period",
+   "options": "Current Month\nLast Month\nCurrent Quarter\nLast Quarter\nCurrent Year\nLast Year\nCustom Range\nAll Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "depends_on": "eval:doc.time_period == 'Custom Range'"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "depends_on": "eval:doc.time_period == 'Custom Range'"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "auto_refresh",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Auto Refresh"
+  },
+  {
+   "fieldname": "refresh_interval",
+   "fieldtype": "Select",
+   "default": "30 minutes",
+   "label": "Refresh Interval",
+   "options": "5 minutes\n15 minutes\n30 minutes\n1 hour\n4 hours\nDaily",
+   "depends_on": "eval:doc.auto_refresh == 1"
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Key Performance Indicators (KPIs)"
+  },
+  {
+   "fieldname": "kpi_section",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable KPI Section"
+  },
+  {
+   "fieldname": "total_engagements",
+   "fieldtype": "Int",
+   "label": "Total Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_engagements",
+   "fieldtype": "Int",
+   "label": "Completed Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "in_progress_engagements",
+   "fieldtype": "Int",
+   "label": "In Progress Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overdue_engagements",
+   "fieldtype": "Int",
+   "label": "Overdue Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_findings",
+   "fieldtype": "Int",
+   "label": "Total Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "critical_findings",
+   "fieldtype": "Int",
+   "label": "Critical Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "high_findings",
+   "fieldtype": "Int",
+   "label": "High Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "medium_findings",
+   "fieldtype": "Int",
+   "label": "Medium Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "low_findings",
+   "fieldtype": "Int",
+   "label": "Low Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_30",
+   "fieldtype": "Section Break",
+   "label": "Compliance Metrics"
+  },
+  {
+   "fieldname": "compliance_section",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable Compliance Section"
+  },
+  {
+   "fieldname": "compliance_score",
+   "fieldtype": "Percent",
+   "label": "Overall Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "compliant_items",
+   "fieldtype": "Int",
+   "label": "Compliant Items",
+   "read_only": 1
+  },
+  {
+   "fieldname": "non_compliant_items",
+   "fieldtype": "Int",
+   "label": "Non-Compliant Items",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pending_reviews",
+   "fieldtype": "Int",
+   "label": "Pending Reviews",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_36",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overdue_actions",
+   "fieldtype": "Int",
+   "label": "Overdue Actions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_actions",
+   "fieldtype": "Int",
+   "label": "Completed Actions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "in_progress_actions",
+   "fieldtype": "Int",
+   "label": "In Progress Actions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_41",
+   "fieldtype": "Section Break",
+   "label": "Chart Configuration"
+  },
+  {
+   "fieldname": "chart_configuration",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable Charts"
+  },
+  {
+   "fieldname": "chart_1_type",
+   "fieldtype": "Select",
+   "default": "Bar Chart",
+   "label": "Chart 1 Type",
+   "options": "Bar Chart\nLine Chart\nPie Chart\nDoughnut Chart\nArea Chart\nScatter Plot",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_1_title",
+   "fieldtype": "Data",
+   "default": "Engagement Status Overview",
+   "label": "Chart 1 Title",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_1_data_source",
+   "fieldtype": "Select",
+   "default": "Engagement Status",
+   "label": "Chart 1 Data Source",
+   "options": "Engagement Status\nFindings by Risk\nCompliance Status\nActions Status\nDepartment Performance",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "column_break_46",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chart_2_type",
+   "fieldtype": "Select",
+   "default": "Pie Chart",
+   "label": "Chart 2 Type",
+   "options": "Bar Chart\nLine Chart\nPie Chart\nDoughnut Chart\nArea Chart\nScatter Plot",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_2_title",
+   "fieldtype": "Data",
+   "default": "Findings Distribution",
+   "label": "Chart 2 Title",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_2_data_source",
+   "fieldtype": "Select",
+   "default": "Findings by Risk",
+   "label": "Chart 2 Data Source",
+   "options": "Engagement Status\nFindings by Risk\nCompliance Status\nActions Status\nDepartment Performance",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "section_break_50",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "chart_3_type",
+   "fieldtype": "Select",
+   "default": "Line Chart",
+   "label": "Chart 3 Type",
+   "options": "Bar Chart\nLine Chart\nPie Chart\nDoughnut Chart\nArea Chart\nScatter Plot",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_3_title",
+   "fieldtype": "Data",
+   "default": "Compliance Trend",
+   "label": "Chart 3 Title",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_3_data_source",
+   "fieldtype": "Select",
+   "default": "Compliance Status",
+   "label": "Chart 3 Data Source",
+   "options": "Engagement Status\nFindings by Risk\nCompliance Status\nActions Status\nDepartment Performance",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "column_break_55",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chart_4_type",
+   "fieldtype": "Select",
+   "default": "Bar Chart",
+   "label": "Chart 4 Type",
+   "options": "Bar Chart\nLine Chart\nPie Chart\nDoughnut Chart\nArea Chart\nScatter Plot",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_4_title",
+   "fieldtype": "Data",
+   "default": "Action Items Status",
+   "label": "Chart 4 Title",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "chart_4_data_source",
+   "fieldtype": "Select",
+   "default": "Actions Status",
+   "label": "Chart 4 Data Source",
+   "options": "Engagement Status\nFindings by Risk\nCompliance Status\nActions Status\nDepartment Performance",
+   "depends_on": "eval:doc.chart_configuration == 1"
+  },
+  {
+   "fieldname": "section_break_60",
+   "fieldtype": "Section Break",
+   "label": "Dashboard Filters"
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable Filters"
+  },
+  {
+   "fieldname": "department_filter",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Department Filter",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "risk_level_filter",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Risk Level Filter",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "status_filter",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Status Filter",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "column_break_65",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit_type_filter",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Audit Type Filter",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "period_filter",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Period Filter",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "custom_filters",
+   "fieldtype": "Small Text",
+   "label": "Custom Filters",
+   "depends_on": "eval:doc.filters_section == 1"
+  },
+  {
+   "fieldname": "section_break_70",
+   "fieldtype": "Section Break",
+   "label": "Permissions & Access"
+  },
+  {
+   "fieldname": "dashboard_permissions",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable Permissions"
+  },
+  {
+   "fieldname": "allowed_roles",
+   "fieldtype": "Small Text",
+   "default": "System Manager, Internal Auditor, Audit Manager",
+   "label": "Allowed Roles",
+   "depends_on": "eval:doc.dashboard_permissions == 1"
+  },
+  {
+   "fieldname": "allowed_users",
+   "fieldtype": "Small Text",
+   "label": "Allowed Users",
+   "depends_on": "eval:doc.dashboard_permissions == 1"
+  },
+  {
+   "fieldname": "column_break_74",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "public_access",
+   "fieldtype": "Check",
+   "label": "Public Access",
+   "depends_on": "eval:doc.dashboard_permissions == 1"
+  },
+  {
+   "fieldname": "password_protected",
+   "fieldtype": "Check",
+   "label": "Password Protected",
+   "depends_on": "eval:doc.dashboard_permissions == 1"
+  },
+  {
+   "fieldname": "section_break_78",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "audit_trail",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Enable Audit Trail"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Date",
+   "label": "Creation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_82",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "modified_by",
+   "fieldtype": "Data",
+   "label": "Modified By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_modified",
+   "fieldtype": "Datetime",
+   "label": "Last Modified",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Management Dashboard",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "dashboard_title"
+}

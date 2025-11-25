@@ -1,0 +1,79 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "data_source_name",
+  "data_source_type",
+  "connection_string",
+  "query",
+  "column_break_4",
+  "refresh_interval",
+  "is_active",
+  "last_refresh",
+  "cache_enabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "data_source_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Data Source Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "data_source_type",
+   "fieldtype": "Select",
+   "label": "Data Source Type",
+   "options": "Database\nAPI\nFile\nTest Execution\nAudit Test Library",
+   "reqd": 1
+  },
+  {
+   "fieldname": "connection_string",
+   "fieldtype": "Data",
+   "label": "Connection String"
+  },
+  {
+   "fieldname": "query",
+   "fieldtype": "Code",
+   "label": "Query",
+   "options": "SQL"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "refresh_interval",
+   "fieldtype": "Int",
+   "label": "Refresh Interval (seconds)"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "last_refresh",
+   "fieldtype": "Datetime",
+   "label": "Last Refresh",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cache_enabled",
+   "fieldtype": "Check",
+   "label": "Cache Enabled"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Dashboard Data Source",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

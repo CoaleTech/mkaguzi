@@ -1,0 +1,136 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "chart_name",
+  "chart_type",
+  "data_source",
+  "x_axis_field",
+  "y_axis_field",
+  "column_break_5",
+  "chart_title",
+  "chart_description",
+  "width",
+  "height",
+  "position_x",
+  "position_y",
+  "column_break_12",
+  "color_scheme",
+  "show_legend",
+  "show_grid",
+  "is_active",
+  "refresh_interval"
+ ],
+ "fields": [
+  {
+   "fieldname": "chart_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Chart Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "chart_type",
+   "fieldtype": "Select",
+   "label": "Chart Type",
+   "options": "Line Chart\nBar Chart\nPie Chart\nDoughnut Chart\nArea Chart\nScatter Plot\nHeat Map\nGauge\nTable\nKPI Card",
+   "reqd": 1
+  },
+  {
+   "fieldname": "data_source",
+   "fieldtype": "Data",
+   "label": "Data Source",
+   "reqd": 1
+  },
+  {
+   "fieldname": "x_axis_field",
+   "fieldtype": "Data",
+   "label": "X-Axis Field"
+  },
+  {
+   "fieldname": "y_axis_field",
+   "fieldtype": "Data",
+   "label": "Y-Axis Field"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chart_title",
+   "fieldtype": "Data",
+   "label": "Chart Title"
+  },
+  {
+   "fieldname": "chart_description",
+   "fieldtype": "Text",
+   "label": "Chart Description"
+  },
+  {
+   "fieldname": "width",
+   "fieldtype": "Int",
+   "default": "6",
+   "label": "Width (columns)"
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Int",
+   "default": "4",
+   "label": "Height (rows)"
+  },
+  {
+   "fieldname": "position_x",
+   "fieldtype": "Int",
+   "label": "Position X"
+  },
+  {
+   "fieldname": "position_y",
+   "fieldtype": "Int",
+   "label": "Position Y"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "color_scheme",
+   "fieldtype": "Select",
+   "label": "Color Scheme",
+   "options": "Default\nBlue\nGreen\nRed\nPurple\nOrange\nGray"
+  },
+  {
+   "fieldname": "show_legend",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Show Legend"
+  },
+  {
+   "fieldname": "show_grid",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Show Grid"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "refresh_interval",
+   "fieldtype": "Int",
+   "label": "Refresh Interval (seconds)"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Dashboard Chart",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

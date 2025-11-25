@@ -1,0 +1,494 @@
+{
+ "actions": [],
+ "autoname": "field:engagement_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "engagement_id",
+  "engagement_title",
+  "audit_type",
+  "status",
+  "column_break_4",
+  "planned_audit_reference",
+  "audit_universe",
+  "risk_assessment_reference",
+  "section_break_9",
+  "audit_objectives",
+  "audit_scope",
+  "scope_exclusions",
+  "section_break_13",
+  "audit_approach",
+  "materiality_threshold",
+  "sampling_methodology",
+  "section_break_17",
+  "period_start",
+  "period_end",
+  "data_periods",
+  "section_break_21",
+  "planning_start",
+  "planning_end",
+  "fieldwork_start",
+  "fieldwork_end",
+  "reporting_start",
+  "reporting_end",
+  "actual_completion_date",
+  "section_break_29",
+  "lead_auditor",
+  "audit_team",
+  "section_break_32",
+  "process_owner",
+  "key_contacts",
+  "section_break_35",
+  "bc_data_requirements",
+  "section_break_37",
+  "audit_program_reference",
+  "working_papers_folder",
+  "section_break_40",
+  "findings_count",
+  "high_risk_findings_count",
+  "section_break_43",
+  "budgeted_hours",
+  "actual_hours",
+  "budget_variance",
+  "budget_variance_percent",
+  "section_break_48",
+  "overall_audit_opinion",
+  "opinion_rationale",
+  "section_break_51",
+  "report_reference",
+  "report_issue_date",
+  "section_break_54",
+  "follow_up_required",
+  "follow_up_date",
+  "section_break_57",
+  "quality_reviewer",
+  "review_date",
+  "review_status",
+  "review_comments",
+  "quality_score",
+  "section_break_63",
+  "amendments",
+  "section_break_65",
+  "notes",
+  "attachments"
+ ],
+ "fields": [
+  {
+   "fieldname": "engagement_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Engagement ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "engagement_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Engagement Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Audit Type",
+   "options": "Financial\nOperational\nCompliance\nIT\nIntegrated\nSpecial Investigation\nFollow-up\nAdvisory",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Planning\nFieldwork\nReporting\nManagement Review\nQuality Review\nFinalized\nIssued",
+   "default": "Planning",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "planned_audit_reference",
+   "fieldtype": "Link",
+   "label": "Planned Audit Reference",
+   "options": "Annual Audit Plan Item"
+  },
+  {
+   "fieldname": "audit_universe",
+   "fieldtype": "Link",
+   "label": "Audit Universe",
+   "options": "Audit Universe",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_assessment_reference",
+   "fieldtype": "Link",
+   "label": "Risk Assessment Reference",
+   "options": "Risk Assessment"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Audit Scope & Objectives"
+  },
+  {
+   "fieldname": "audit_objectives",
+   "fieldtype": "Text Editor",
+   "label": "Audit Objectives",
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_scope",
+   "fieldtype": "Text Editor",
+   "label": "Audit Scope",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scope_exclusions",
+   "fieldtype": "Text",
+   "label": "Scope Exclusions"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Audit Methodology"
+  },
+  {
+   "fieldname": "audit_approach",
+   "fieldtype": "Select",
+   "label": "Audit Approach",
+   "options": "Risk-Based\nControls-Based\nSubstantive\nCompliance\nCombined",
+   "reqd": 1
+  },
+  {
+   "fieldname": "materiality_threshold",
+   "fieldtype": "Currency",
+   "label": "Materiality Threshold"
+  },
+  {
+   "fieldname": "sampling_methodology",
+   "fieldtype": "Select",
+   "label": "Sampling Methodology",
+   "options": "Random\nSystematic\nStratified\nJudgmental\nStatistical\n100% Testing"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Audit Period"
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End",
+   "reqd": 1
+  },
+  {
+   "fieldname": "data_periods",
+   "fieldtype": "Table",
+   "label": "Data Periods",
+   "options": "Audit Engagement Data Period"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break",
+   "label": "Engagement Timeline"
+  },
+  {
+   "fieldname": "planning_start",
+   "fieldtype": "Date",
+   "label": "Planning Start"
+  },
+  {
+   "fieldname": "planning_end",
+   "fieldtype": "Date",
+   "label": "Planning End"
+  },
+  {
+   "fieldname": "fieldwork_start",
+   "fieldtype": "Date",
+   "label": "Fieldwork Start"
+  },
+  {
+   "fieldname": "fieldwork_end",
+   "fieldtype": "Date",
+   "label": "Fieldwork End"
+  },
+  {
+   "fieldname": "reporting_start",
+   "fieldtype": "Date",
+   "label": "Reporting Start"
+  },
+  {
+   "fieldname": "reporting_end",
+   "fieldtype": "Date",
+   "label": "Reporting End"
+  },
+  {
+   "fieldname": "actual_completion_date",
+   "fieldtype": "Date",
+   "label": "Actual Completion Date"
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break",
+   "label": "Audit Team"
+  },
+  {
+   "fieldname": "lead_auditor",
+   "fieldtype": "Link",
+   "label": "Lead Auditor",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_team",
+   "fieldtype": "Table",
+   "label": "Audit Team",
+   "options": "Audit Team Member",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_32",
+   "fieldtype": "Section Break",
+   "label": "Auditee Information"
+  },
+  {
+   "fieldname": "process_owner",
+   "fieldtype": "Link",
+   "label": "Process Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "key_contacts",
+   "fieldtype": "Table",
+   "label": "Key Contacts",
+   "options": "Audit Contact"
+  },
+  {
+   "fieldname": "section_break_35",
+   "fieldtype": "Section Break",
+   "label": "Data Requirements"
+  },
+  {
+   "fieldname": "bc_data_requirements",
+   "fieldtype": "Table",
+   "label": "BC Data Requirements",
+   "options": "Audit Data Requirement"
+  },
+  {
+   "fieldname": "section_break_37",
+   "fieldtype": "Section Break",
+   "label": "Documentation"
+  },
+  {
+   "fieldname": "audit_program_reference",
+   "fieldtype": "Link",
+   "label": "Audit Program Reference",
+   "options": "Audit Program"
+  },
+  {
+   "fieldname": "working_papers_folder",
+   "fieldtype": "Data",
+   "label": "Working Papers Folder"
+  },
+  {
+   "fieldname": "section_break_40",
+   "fieldtype": "Section Break",
+   "label": "Findings Summary"
+  },
+  {
+   "fieldname": "findings_count",
+   "fieldtype": "Int",
+   "label": "Findings Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "high_risk_findings_count",
+   "fieldtype": "Int",
+   "label": "High Risk Findings Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_43",
+   "fieldtype": "Section Break",
+   "label": "Budget & Resources"
+  },
+  {
+   "fieldname": "budgeted_hours",
+   "fieldtype": "Float",
+   "label": "Budgeted Hours"
+  },
+  {
+   "fieldname": "actual_hours",
+   "fieldtype": "Float",
+   "label": "Actual Hours",
+   "read_only": 1
+  },
+  {
+   "fieldname": "budget_variance",
+   "fieldtype": "Float",
+   "label": "Budget Variance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "budget_variance_percent",
+   "fieldtype": "Percent",
+   "label": "Budget Variance %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_48",
+   "fieldtype": "Section Break",
+   "label": "Audit Opinion"
+  },
+  {
+   "fieldname": "overall_audit_opinion",
+   "fieldtype": "Select",
+   "label": "Overall Audit Opinion",
+   "options": "Satisfactory\nSatisfactory with Minor Issues\nNeeds Improvement\nUnsatisfactory"
+  },
+  {
+   "fieldname": "opinion_rationale",
+   "fieldtype": "Text Editor",
+   "label": "Opinion Rationale"
+  },
+  {
+   "fieldname": "section_break_51",
+   "fieldtype": "Section Break",
+   "label": "Reporting"
+  },
+  {
+   "fieldname": "report_reference",
+   "fieldtype": "Link",
+   "label": "Report Reference",
+   "options": "Audit Report"
+  },
+  {
+   "fieldname": "report_issue_date",
+   "fieldtype": "Date",
+   "label": "Report Issue Date"
+  },
+  {
+   "fieldname": "section_break_54",
+   "fieldtype": "Section Break",
+   "label": "Follow-up"
+  },
+  {
+   "fieldname": "follow_up_required",
+   "fieldtype": "Check",
+   "label": "Follow-up Required",
+   "default": "1"
+  },
+  {
+   "fieldname": "follow_up_date",
+   "fieldtype": "Date",
+   "label": "Follow-up Date"
+  },
+  {
+   "fieldname": "section_break_57",
+   "fieldtype": "Section Break",
+   "label": "Quality Review"
+  },
+  {
+   "fieldname": "quality_reviewer",
+   "fieldtype": "Link",
+   "label": "Quality Reviewer",
+   "options": "User"
+  },
+  {
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "label": "Review Date"
+  },
+  {
+   "fieldname": "review_status",
+   "fieldtype": "Select",
+   "label": "Review Status",
+   "options": "Not Started\nIn Progress\nCompleted"
+  },
+  {
+   "fieldname": "review_comments",
+   "fieldtype": "Text Editor",
+   "label": "Review Comments"
+  },
+  {
+   "fieldname": "quality_score",
+   "fieldtype": "Int",
+   "label": "Quality Score"
+  },
+  {
+   "fieldname": "section_break_63",
+   "fieldtype": "Section Break",
+   "label": "Amendments"
+  },
+  {
+   "fieldname": "amendments",
+   "fieldtype": "Table",
+   "label": "Amendments",
+   "options": "Engagement Amendment"
+  },
+  {
+   "fieldname": "section_break_65",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Engagement",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "engagement_title"
+}

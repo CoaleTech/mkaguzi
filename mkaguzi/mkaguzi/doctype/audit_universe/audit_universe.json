@@ -1,0 +1,264 @@
+{
+ "actions": [],
+ "autoname": "field:universe_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "universe_id",
+  "auditable_entity",
+  "entity_type",
+  "department",
+  "location",
+  "column_break_6",
+  "description",
+  "process_owner",
+  "section_break_9",
+  "inherent_risk_rating",
+  "inherent_risk_score",
+  "control_environment_rating",
+  "control_effectiveness_score",
+  "residual_risk_rating",
+  "residual_risk_score",
+  "section_break_16",
+  "risk_factors",
+  "section_break_18",
+  "key_controls",
+  "section_break_20",
+  "audit_frequency",
+  "last_audit_date",
+  "last_audit_reference",
+  "last_audit_opinion",
+  "next_scheduled_audit",
+  "mandatory_audit",
+  "regulatory_reference",
+  "section_break_29",
+  "bc_data_sources",
+  "section_break_31",
+  "notes",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "universe_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Universe ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "auditable_entity",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Auditable Entity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "entity_type",
+   "fieldtype": "Select",
+   "label": "Entity Type",
+   "options": "Process\nFunction\nDepartment\nLocation\nSystem\nCompliance Area",
+   "reqd": 1
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Select",
+   "label": "Location",
+   "options": "Head Office\nBranch 1\nBranch 2\nWarehouse\nAll"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "process_owner",
+   "fieldtype": "Link",
+   "label": "Process Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Risk Assessment"
+  },
+  {
+   "fieldname": "inherent_risk_rating",
+   "fieldtype": "Select",
+   "label": "Inherent Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow"
+  },
+  {
+   "fieldname": "inherent_risk_score",
+   "fieldtype": "Int",
+   "label": "Inherent Risk Score"
+  },
+  {
+   "fieldname": "control_environment_rating",
+   "fieldtype": "Select",
+   "label": "Control Environment Rating",
+   "options": "Strong\nAdequate\nWeak\nNot Assessed"
+  },
+  {
+   "fieldname": "control_effectiveness_score",
+   "fieldtype": "Int",
+   "label": "Control Effectiveness Score"
+  },
+  {
+   "fieldname": "residual_risk_rating",
+   "fieldtype": "Select",
+   "label": "Residual Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow",
+   "read_only": 1
+  },
+  {
+   "fieldname": "residual_risk_score",
+   "fieldtype": "Int",
+   "label": "Residual Risk Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break",
+   "label": "Risk Factors"
+  },
+  {
+   "fieldname": "risk_factors",
+   "fieldtype": "Table",
+   "label": "Risk Factors",
+   "options": "Audit Universe Risk Factor"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Key Controls"
+  },
+  {
+   "fieldname": "key_controls",
+   "fieldtype": "Table",
+   "label": "Key Controls",
+   "options": "Audit Universe Key Control"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Audit Planning"
+  },
+  {
+   "fieldname": "audit_frequency",
+   "fieldtype": "Select",
+   "label": "Audit Frequency",
+   "options": "Quarterly\nSemi-Annual\nAnnual\nBi-Annual\nTri-Annual\nAs Needed"
+  },
+  {
+   "fieldname": "last_audit_date",
+   "fieldtype": "Date",
+   "label": "Last Audit Date"
+  },
+  {
+   "fieldname": "last_audit_reference",
+   "fieldtype": "Link",
+   "label": "Last Audit Reference",
+   "options": "Audit Engagement"
+  },
+  {
+   "fieldname": "last_audit_opinion",
+   "fieldtype": "Select",
+   "label": "Last Audit Opinion",
+   "options": "Satisfactory\nNeeds Improvement\nUnsatisfactory"
+  },
+  {
+   "fieldname": "next_scheduled_audit",
+   "fieldtype": "Date",
+   "label": "Next Scheduled Audit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "mandatory_audit",
+   "fieldtype": "Check",
+   "label": "Mandatory Audit"
+  },
+  {
+   "fieldname": "regulatory_reference",
+   "fieldtype": "Data",
+   "label": "Regulatory Reference"
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break",
+   "label": "Business Central Data Sources"
+  },
+  {
+   "fieldname": "bc_data_sources",
+   "fieldtype": "Table",
+   "label": "BC Data Sources",
+   "options": "Audit Universe BC Data Source"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Universe",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "auditable_entity"
+}

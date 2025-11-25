@@ -137,34 +137,30 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "Audit Finding": {
+        "after_insert": "mkaguzi.utils.notifications.on_audit_finding_insert",
+        "on_update": "mkaguzi.utils.notifications.on_audit_finding_update",
+    },
+    "Compliance Check": {
+        "on_update": "mkaguzi.utils.notifications.on_compliance_check_update",
+    },
+    "Audit Execution": {
+        "on_update": "mkaguzi.utils.notifications.on_audit_execution_update",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"mkaguzi.tasks.all"
-# 	],
-# 	"daily": [
-# 		"mkaguzi.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"mkaguzi.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"mkaguzi.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"mkaguzi.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    "daily": [
+        "mkaguzi.utils.notifications.schedule_notifications"
+    ],
+    "weekly": [
+        "mkaguzi.utils.notifications.send_weekly_digest"
+    ]
+}
 
 # Testing
 # -------
@@ -207,26 +203,20 @@ app_license = "mit"
 # User Data Protection
 # --------------------
 
-# user_data_fields = [
-# 	{
-# 		"doctype": "{doctype_1}",
-# 		"filter_by": "{filter_by}",
-# 		"redact_fields": ["{field_1}", "{field_2}"],
-# 		"partial": 1,
-# 	},
-# 	{
-# 		"doctype": "{doctype_2}",
-# 		"filter_by": "{filter_by}",
-# 		"partial": 1,
-# 	},
-# 	{
-# 		"doctype": "{doctype_3}",
-# 		"strict": False,
-# 	},
-# 	{
-# 		"doctype": "{doctype_4}"
-# 	}
-# ]
+user_data_fields = [
+    {
+        "doctype": "Audit Finding",
+        "filter_by": "responsible_party",
+        "redact_fields": ["description", "recommendation"],
+        "partial": 1,
+    },
+    {
+        "doctype": "Audit Notification",
+        "filter_by": "recipients",
+        "redact_fields": ["message"],
+        "partial": 1,
+    },
+]
 
 # Authentication and authorization
 # --------------------------------
@@ -242,3 +232,5 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+
+website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'},]

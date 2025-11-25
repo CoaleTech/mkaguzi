@@ -1,0 +1,60 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "finding_reference",
+  "finding_title",
+  "risk_rating",
+  "summary",
+  "page_reference"
+ ],
+ "fields": [
+  {
+   "fieldname": "finding_reference",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Finding Reference",
+   "options": "Audit Finding",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finding_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Finding Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_rating",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow",
+   "read_only": 1
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Text",
+   "label": "Summary",
+   "reqd": 1
+  },
+  {
+   "fieldname": "page_reference",
+   "fieldtype": "Data",
+   "label": "Page Reference"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Key Finding Summary",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,61 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "previous_status",
+  "new_status",
+  "changed_on",
+  "changed_by",
+  "reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "previous_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Previous Status",
+   "options": "Open\nAction in Progress\nPending Verification\nClosed\nAccepted as Risk\nManagement Override"
+  },
+  {
+   "fieldname": "new_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "New Status",
+   "options": "Open\nAction in Progress\nPending Verification\nClosed\nAccepted as Risk\nManagement Override",
+   "reqd": 1
+  },
+  {
+   "fieldname": "changed_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Changed On",
+   "reqd": 1
+  },
+  {
+   "fieldname": "changed_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Changed By",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Text",
+   "label": "Reason"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Finding Status Change",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

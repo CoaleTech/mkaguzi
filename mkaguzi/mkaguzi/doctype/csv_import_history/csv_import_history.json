@@ -1,0 +1,174 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "import_type",
+  "import_type_name",
+  "column_break_3",
+  "file_name",
+  "status",
+  "section_break_7",
+  "started_at",
+  "completed_at",
+  "column_break_10",
+  "duration",
+  "section_break_13",
+  "total_records",
+  "records_processed",
+  "column_break_16",
+  "records_failed",
+  "success_rate",
+  "section_break_20",
+  "error_message",
+  "execution_logs"
+ ],
+ "fields": [
+  {
+   "fieldname": "import_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Import Type",
+   "options": "CSV Import Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "import_type_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Import Type Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "file_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "File Name"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nProcessing\nSuccess\nFailed\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Timing Information"
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Started At",
+   "reqd": 1
+  },
+  {
+   "fieldname": "completed_at",
+   "fieldtype": "Datetime",
+   "label": "Completed At"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "label": "Duration"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Processing Statistics"
+  },
+  {
+   "fieldname": "total_records",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Records"
+  },
+  {
+   "fieldname": "records_processed",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Records Processed"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "records_failed",
+   "fieldtype": "Int",
+   "label": "Records Failed"
+  },
+  {
+   "fieldname": "success_rate",
+   "fieldtype": "Percent",
+   "label": "Success Rate"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Error Details"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Text",
+   "label": "Error Message"
+  },
+  {
+   "fieldname": "execution_logs",
+   "fieldtype": "Table",
+   "label": "Execution Logs",
+   "options": "Execution Log"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "CSV Import History",
+ "naming_rule": "By \"naming_series:\"",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "started_at",
+ "sort_order": "DESC",
+ "title_field": "import_type_name"
+}

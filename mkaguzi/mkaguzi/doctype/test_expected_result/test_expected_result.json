@@ -1,0 +1,60 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "result_type",
+  "expected_value",
+  "value_range_min",
+  "value_range_max",
+  "condition",
+  "severity"
+ ],
+ "fields": [
+  {
+   "fieldname": "result_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Result Type",
+   "options": "Count\nPercentage\nAmount\nRatio\nBoolean\nText\nList",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expected_value",
+   "fieldtype": "Data",
+   "label": "Expected Value"
+  },
+  {
+   "fieldname": "value_range_min",
+   "fieldtype": "Float",
+   "label": "Value Range Min"
+  },
+  {
+   "fieldname": "value_range_max",
+   "fieldtype": "Float",
+   "label": "Value Range Max"
+  },
+  {
+   "fieldname": "condition",
+   "fieldtype": "Select",
+   "label": "Condition",
+   "options": "Equal to\nNot equal to\nGreater than\nLess than\nBetween\nContains\nNot contains"
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Test Expected Result",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -1,0 +1,176 @@
+[
+  {
+    "doctype": "CSV Import Type",
+    "import_type_id": "GL_ENTRIES",
+    "import_name": "General Ledger Entries",
+    "description": "Import GL entries from Business Central",
+    "bc_source_table": "G/L Entry",
+    "target_doctype": "GL Entry",
+    "is_active": 1,
+    "import_frequency": "Monthly",
+    "field_mappings": [
+      {
+        "csv_column_name": "Entry No.",
+        "target_field": "entry_no",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Posting Date",
+        "target_field": "posting_date",
+        "data_type": "Date",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Document Type",
+        "target_field": "document_type",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Document No.",
+        "target_field": "document_no",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "G/L Account No.",
+        "target_field": "account_no",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "G/L Account Name",
+        "target_field": "account_name",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Description",
+        "target_field": "description",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Amount",
+        "target_field": "amount",
+        "data_type": "Currency",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Debit Amount",
+        "target_field": "debit_amount",
+        "data_type": "Currency",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Credit Amount",
+        "target_field": "credit_amount",
+        "data_type": "Currency",
+        "is_required": 0
+      }
+    ]
+  },
+  {
+    "doctype": "CSV Import Type",
+    "import_type_id": "ITEM_MASTER",
+    "import_name": "Item Master Data",
+    "description": "Import item master data from Business Central",
+    "bc_source_table": "Item",
+    "target_doctype": "Item Master",
+    "is_active": 1,
+    "import_frequency": "Weekly",
+    "field_mappings": [
+      {
+        "csv_column_name": "No.",
+        "target_field": "item_no",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Description",
+        "target_field": "description",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Description 2",
+        "target_field": "description_2",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Item Category Code",
+        "target_field": "item_category_code",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Base Unit of Measure",
+        "target_field": "base_unit_of_measure",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Unit Price",
+        "target_field": "unit_price",
+        "data_type": "Currency",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Unit Cost",
+        "target_field": "unit_cost",
+        "data_type": "Currency",
+        "is_required": 0
+      }
+    ]
+  },
+  {
+    "doctype": "CSV Import Type",
+    "import_type_id": "ITEM_LEDGER",
+    "import_name": "Item Ledger Entries",
+    "description": "Import item ledger entries (stock movements) from Business Central",
+    "bc_source_table": "Item Ledger Entry",
+    "target_doctype": "Item Ledger Entry",
+    "is_active": 1,
+    "import_frequency": "Daily",
+    "field_mappings": [
+      {
+        "csv_column_name": "Entry No.",
+        "target_field": "entry_no",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Item No.",
+        "target_field": "item_no",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Posting Date",
+        "target_field": "posting_date",
+        "data_type": "Date",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Entry Type",
+        "target_field": "entry_type",
+        "data_type": "Text",
+        "is_required": 1
+      },
+      {
+        "csv_column_name": "Document No.",
+        "target_field": "document_no",
+        "data_type": "Text",
+        "is_required": 0
+      },
+      {
+        "csv_column_name": "Quantity",
+        "target_field": "quantity",
+        "data_type": "Number",
+        "is_required": 1
+      }
+    ]
+  }
+]

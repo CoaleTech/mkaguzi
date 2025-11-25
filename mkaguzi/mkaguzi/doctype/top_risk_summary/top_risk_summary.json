@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rank",
+  "risk_title",
+  "residual_risk_score",
+  "risk_rating"
+ ],
+ "fields": [
+  {
+   "fieldname": "rank",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Rank",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Risk Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "residual_risk_score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Residual Risk Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_rating",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Risk Rating",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Top Risk Summary",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "rank",
+ "sort_order": "ASC",
+ "states": []
+}

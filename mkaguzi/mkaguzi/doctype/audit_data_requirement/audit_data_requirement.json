@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-27 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "data_type",
+  "description",
+  "source_system",
+  "required_fields",
+  "date_range_required",
+  "period_start",
+  "period_end",
+  "priority",
+  "status",
+  "requested_date",
+  "received_date",
+  "data_quality_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "data_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Data Type",
+   "options": "General Ledger\nAccounts Payable\nAccounts Receivable\nInventory\nFixed Assets\nPayroll\nSales Transactions\nPurchase Transactions\nBank Statements\nReconciliations\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_system",
+   "fieldtype": "Data",
+   "label": "Source System"
+  },
+  {
+   "fieldname": "required_fields",
+   "fieldtype": "Small Text",
+   "label": "Required Fields"
+  },
+  {
+   "fieldname": "date_range_required",
+   "fieldtype": "Check",
+   "label": "Date Range Required"
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start"
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "default": "Medium",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "default": "Requested",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Requested\nReceived\nUnder Review\nApproved\nRejected"
+  },
+  {
+   "fieldname": "requested_date",
+   "fieldtype": "Date",
+   "label": "Requested Date"
+  },
+  {
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date"
+  },
+  {
+   "fieldname": "data_quality_notes",
+   "fieldtype": "Small Text",
+   "label": "Data Quality Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Data Requirement",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
