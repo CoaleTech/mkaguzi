@@ -282,6 +282,17 @@ const routes = [
 				props: { defaultTab: "bc-explorer" },
 			},
 			{
+				path: "data-management/import-history",
+				name: "ImportHistory",
+				component: ImportData,
+				meta: {
+					title: "Import History",
+					icon: "History",
+					breadcrumb: "Import History",
+				},
+				props: { defaultTab: "history" },
+			},
+			{
 				path: "data-management/periods",
 				name: "DataPeriods",
 				component: DataPeriods,
@@ -356,13 +367,13 @@ const routes = [
 				},
 			},
 			{
-				path: "reports/builder",
-				name: "ReportBuilder",
-				component: ReportBuilder,
+				path: "reports/standard",
+				name: "StandardReports",
+				component: BoardReports,
 				meta: {
-					title: "Report Builder",
-					icon: "Wrench",
-					breadcrumb: "Report Builder",
+					title: "Standard Reports",
+					icon: "Presentation",
+					breadcrumb: "Standard Reports",
 				},
 			},
 			{

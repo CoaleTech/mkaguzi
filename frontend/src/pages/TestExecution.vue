@@ -10,122 +10,24 @@
           Execute and monitor audit tests with real-time results and detailed reporting
         </p>
       </div>
-      <div class="header-actions">
-        <Button
-          variant="solid"
-          @click="showExecuteDialog = true"
-          :disabled="!selectedTests.length"
-        >
-          <Play />
-          Execute Selected Tests
-        </Button>
-        <Button variant="outline" @click="refreshExecutions">
-          <RefreshCw />
-          Refresh
-        </Button>
-      </div>
     </div>
 
-    <!-- Filters and Search -->
-    <div class="filters-section">
-      <div class="filters-grid">
-        <div class="filter-group">
-          <label class="filter-label">Status</label>
-          <FormControl
-            v-model="filters.status"
-            :options="statusOptions"
-            type="select"
-            placeholder="All Status"
-          />
-        </div>
+    <!-- Filters Component -->
+    <ExecutionFilters
+      :filters="filters"
+      @update:filters="handleFilterUpdate"
+      @refresh="refreshExecutions"
+      @create="showFormDialog = true"
+    />
 
-        <div class="filter-group">
-          <label class="filter-label">Test Category</label>
-          <FormControl
-            v-model="filters.category"
-            :options="categoryOptions"
-            type="select"
-            placeholder="All Categories"
-          />
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Date Range</label>
-          <div class="date-range">
-            <Input
-              type="date"
-              v-model="filters.startDate"
-              placeholder="Start Date"
-              @change="applyFilters"
-            />
-            <span class="date-separator">to</span>
-            <Input
-              type="date"
-              v-model="filters.endDate"
-              placeholder="End Date"
-              @change="applyFilters"
-            />
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Search</label>
-          <Input
-            v-model="filters.search"
-            placeholder="Search executions..."
-            @input="debouncedSearch"
-          >
-            <template #prefix>
-              <Search />
-            </template>
-          </Input>
-        </div>
-      </div>
-    </div>
-
-    <!-- Execution Statistics -->
-    <div class="stats-section">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon running">
-            <PlayCircle />
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.running }}</div>
-            <div class="stat-label">Running</div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon completed">
-            <CheckCircle />
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.completed }}</div>
-            <div class="stat-label">Completed</div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon failed">
-            <XCircle />
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.failed }}</div>
-            <div class="stat-label">Failed</div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon total">
-            <BarChart3 />
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.total }}</div>
-            <div class="stat-label">Total Executions</div>
-          </div>
-        </div>
-      </div>
+    <!-- Stats Component -->
+    <div class="my-6">
+      <ExecutionStats
+        :executions="executions"
+        :activeFilter="filters.status"
+        @filter="handleStatsFilter"
+        @select="viewExecutionDetails"
+      />
     </div>
 
     <!-- Executions Table -->
@@ -163,10 +65,10 @@
                 />
               </td>
               <td class="execution-id">{{ execution.execution_id }}</td>
-              <td class="test-name">{{ execution.test_name }}</td>
+              <td class="test-name">{{ execution.execution_name }}</td>
               <td class="category">
-                <Badge :variant="getCategoryVariant(execution.test_category)">
-                  {{ execution.test_category }}
+                <Badge :variant="getCategoryVariant(execution.execution_type)">
+                  {{ execution.execution_type }}
                 </Badge>
               </td>
               <td class="status">
@@ -258,81 +160,6 @@
       </div>
     </div>
 
-    <!-- Execute Tests Dialog -->
-    <Dialog v-model="showExecuteDialog">
-      <template #title>
-        <Play />
-        Execute Tests
-      </template>
-
-      <div class="execute-dialog-content">
-        <div class="test-selection">
-          <h4>Select Tests to Execute</h4>
-          <div class="test-list">
-            <div
-              v-for="test in availableTests"
-              :key="test.name"
-              class="test-item"
-              :class="{ selected: selectedTests.includes(test.name) }"
-              @click="toggleTestSelection(test.name)"
-            >
-              <Checkbox
-                :model-value="selectedTests.includes(test.name)"
-                @change="toggleTestSelection(test.name)"
-              />
-              <div class="test-info">
-                <div class="test-name">{{ test.test_name }}</div>
-                <div class="test-category">{{ test.test_category }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="execution-options">
-          <div class="option-group">
-            <label class="option-label">Execution Type</label>
-            <FormControl
-              v-model="executionOptions.type"
-              :options="executionTypeOptions"
-              type="select"
-            />
-          </div>
-
-          <div v-if="executionOptions.type === 'Scheduled'" class="option-group">
-            <label class="option-label">Schedule Date & Time</label>
-            <Input
-              type="datetime-local"
-              v-model="executionOptions.scheduleTime"
-            />
-          </div>
-
-          <div class="option-group">
-            <label class="option-label">Priority</label>
-            <FormControl
-              v-model="executionOptions.priority"
-              :options="priorityOptions"
-              type="select"
-            />
-          </div>
-        </div>
-      </div>
-
-      <template #actions>
-        <Button variant="outline" @click="showExecuteDialog = false">
-          Cancel
-        </Button>
-        <Button
-          variant="solid"
-          @click="executeSelectedTests"
-          :disabled="!selectedTests.length || executing"
-        >
-          <Loader2 v-if="executing" class="spinning" />
-          <Play v-else />
-          {{ executing ? 'Executing...' : 'Execute Tests' }}
-        </Button>
-      </template>
-    </Dialog>
-
     <!-- Execution Details Dialog -->
     <Dialog v-model="showDetailsDialog" size="large">
       <template #title>
@@ -347,11 +174,11 @@
             <div class="detail-rows">
               <div class="detail-row">
                 <span class="detail-label">Test Name:</span>
-                <span class="detail-value">{{ selectedExecution.test_name }}</span>
+                <span class="detail-value">{{ selectedExecution.execution_name }}</span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Category:</span>
-                <span class="detail-value">{{ selectedExecution.test_category }}</span>
+                <span class="detail-value">{{ selectedExecution.execution_type }}</span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Status:</span>
@@ -419,10 +246,23 @@
         </Button>
       </template>
     </Dialog>
+
+    <!-- Test Execution Form Dialog -->
+    <TestExecutionForm
+      :show="showFormDialog"
+      :execution="selectedExecutionForEdit"
+      @update:show="showFormDialog = $event"
+      @saved="handleExecutionSaved"
+    />
   </div>
 </template>
 
 <script setup>
+import ExecutionFilters from "@/components/execution/ExecutionFilters.vue"
+import ExecutionStats from "@/components/execution/ExecutionStats.vue"
+import TestExecutionForm from "@/components/execution/TestExecutionForm.vue"
+import { useAuditStore } from "@/stores/audit"
+import { useTestExecutionStore } from "@/stores/testExecution"
 import { Badge, Button, Checkbox, Dialog, FormControl, Input } from "frappe-ui"
 import { createResource } from "frappe-ui"
 import {
@@ -483,26 +323,31 @@ const priorityOptions = [
 	{ label: "Critical", value: "Critical" },
 ]
 
+// Initialize stores
+const testExecutionStore = useTestExecutionStore()
+const auditStore = useAuditStore()
+
 // Reactive data
-const executions = ref([])
-const availableTests = ref([])
 const selectedExecutions = ref([])
 const selectedTests = ref([])
 const selectAll = ref(false)
-const loading = ref(false)
 const executing = ref(false)
 const showExecuteDialog = ref(false)
 const showDetailsDialog = ref(false)
+const showFormDialog = ref(false)
 const selectedExecution = ref(null)
+const selectedExecutionForEdit = ref(null)
 const executionResults = ref([])
 
 // Filters
 const filters = ref({
 	status: "",
-	category: "",
-	startDate: "",
-	endDate: "",
 	search: "",
+	testLibrary: "",
+	executionType: "",
+	priority: "",
+	dateFrom: "",
+	dateTo: "",
 })
 
 // Execution options
@@ -518,82 +363,79 @@ const pageSize = ref(20)
 const totalCount = ref(0)
 const totalPages = ref(0)
 
-// Statistics
-const stats = ref({
-	running: 0,
-	completed: 0,
-	failed: 0,
-	total: 0,
-})
+// Statistics computed from store
+const stats = computed(() => ({
+	running: testExecutionStore.executionStatuses.running,
+	completed: testExecutionStore.executionStatuses.completed,
+	failed: testExecutionStore.executionStatuses.failed,
+	total: testExecutionStore.testExecutions.length,
+}))
 
-// API Resources
-const getExecutionsResource = createResource({
-	url: "mkaguzi.api.test_library.get_test_history",
-	makeParams: () => ({
-		test_name: "", // Get all executions
-		page: currentPage.value,
-		page_size: pageSize.value,
-		filters: JSON.stringify(filters.value),
-	}),
-})
-
-const getTestsResource = createResource({
-	url: "mkaguzi.api.test_library.get_tests",
-})
-
-const executeTestResource = createResource({
-	url: "mkaguzi.api.test_library.execute_test",
-	onSuccess: () => {
-		executing.value = false
-		showExecuteDialog.value = false
-		selectedTests.value = []
-		refreshExecutions()
-	},
-	onError: (error) => {
-		executing.value = false
-		console.error("Execution failed:", error)
-	},
-})
+// Remove old API resources - now using store methods
 
 // Computed properties
+const executions = computed(() => {
+	let filteredExecutions = testExecutionStore.testExecutions
+
+	// Apply filters
+	if (filters.value.status) {
+		filteredExecutions = filteredExecutions.filter(
+			(e) => e.status === filters.value.status,
+		)
+	}
+
+	if (filters.value.category) {
+		filteredExecutions = filteredExecutions.filter(
+			(e) => e.execution_type === filters.value.category,
+		)
+	}
+
+	if (filters.value.search) {
+		const search = filters.value.search.toLowerCase()
+		filteredExecutions = filteredExecutions.filter(
+			(e) =>
+				e.execution_name?.toLowerCase().includes(search) ||
+				e.execution_id?.toLowerCase().includes(search)
+		)
+	}
+
+	return filteredExecutions
+})
+
+const availableTests = computed(() => {
+	return testExecutionStore.testLibraryTests
+})
+
 const selectedTestsData = computed(() => {
 	return availableTests.value.filter((test) =>
 		selectedTests.value.includes(test.name),
 	)
 })
 
+const loading = computed(() => testExecutionStore.loading)
+
 // Methods
 const loadExecutions = async () => {
-	loading.value = true
-	try {
-		const response = await getExecutionsResource.fetch()
-		executions.value = response || []
-		updateStats()
-	} catch (error) {
-		console.error("Failed to load executions:", error)
-		executions.value = []
-	} finally {
-		loading.value = false
-	}
+	await testExecutionStore.fetchTestExecutions()
 }
 
 const loadAvailableTests = async () => {
-	try {
-		const response = await getTestsResource.fetch()
-		availableTests.value = response || []
-	} catch (error) {
-		console.error("Failed to load tests:", error)
-		availableTests.value = []
-	}
+	// This would be implemented when test library store is available
+	console.log("Loading available tests...")
 }
 
-const updateStats = () => {
-	const execs = executions.value
-	stats.value = {
-		running: execs.filter((e) => e.status === "Running").length,
-		completed: execs.filter((e) => e.status === "Completed").length,
-		failed: execs.filter((e) => e.status === "Failed").length,
-		total: execs.length,
+// Filter handling methods
+const handleFilterUpdate = (newFilters) => {
+	Object.assign(filters.value, newFilters)
+	currentPage.value = 1
+	loadExecutions()
+}
+
+const handleStatsFilter = (filterKey, filterValue) => {
+	if (filterKey && filterValue) {
+		filters.value[filterKey] = filterValue
+		currentPage.value = 1
+		loadExecutions()
 	}
 }
 
@@ -603,6 +445,30 @@ const applyFilters = () => {
 }
 
 const debouncedSearch = debounce(applyFilters, 300)
+
+// Execution form handlers
+const handleExecutionSaved = async (executionData) => {
+	try {
+		if (selectedExecutionForEdit.value?.name) {
+			await testExecutionStore.updateTestExecution(
+				selectedExecutionForEdit.value.name,
+				executionData
+			)
+		} else {
+			await testExecutionStore.createTestExecution(executionData)
+		}
+		showFormDialog.value = false
+		selectedExecutionForEdit.value = null
+		await loadExecutions()
+	} catch (error) {
+		console.error("Failed to save execution:", error)
+	}
+}
+
+const editExecution = (execution) => {
+	selectedExecutionForEdit.value = execution
+	showFormDialog.value = true
+}
 
 const toggleSelectAll = () => {
 	if (selectAll.value) {
@@ -627,15 +493,23 @@ const executeSelectedTests = async () => {
 	executing.value = true
 
 	try {
-		// Execute tests sequentially for now
+		// Create execution records for selected tests
 		for (const testName of selectedTests.value) {
-			await executeTestResource.fetch({
-				test_name: testName,
-				parameters: executionOptions.value,
-			})
+			const executionData = {
+				execution_name: `${testName} - ${new Date().toLocaleDateString()}`,
+				test_library_reference: testName,
+				priority: executionOptions.value.priority,
+				execution_type: executionOptions.value.type,
+				status: "Pending",
+			}
+			await testExecutionStore.createTestExecution(executionData)
 		}
+		showExecuteDialog.value = false
+		selectedTests.value = []
 	} catch (error) {
 		console.error("Failed to execute tests:", error)
+	} finally {
+		executing.value = false
 	}
 }
 
@@ -645,15 +519,11 @@ const viewExecutionDetails = async (execution) => {
 
 	// Load execution results
 	try {
-		// This would typically fetch detailed results from the API
-		executionResults.value = [
-			{
-				name: "result1",
-				status: "Passed",
-				description: "Test completed successfully",
-				error_message: null,
-			},
-		]
+		const results = await testExecutionStore.fetchTestResults(execution.name)
+		executionResults.value = results
+
+		// Also load execution logs
+		await testExecutionStore.fetchExecutionLogs(execution.name)
 	} catch (error) {
 		console.error("Failed to load execution results:", error)
 		executionResults.value = []
@@ -661,13 +531,26 @@ const viewExecutionDetails = async (execution) => {
 }
 
 const cancelExecution = async (execution) => {
-	// Implementation for canceling execution
-	console.log("Cancel execution:", execution.name)
+	try {
+		await testExecutionStore.stopTestExecution(execution.name)
+	} catch (error) {
+		console.error("Failed to cancel execution:", error)
+	}
 }
 
-const downloadResults = (execution) => {
-	// Implementation for downloading results
-	console.log("Download results for:", execution.name)
+const downloadResults = async (execution) => {
+	try {
+		const result = await testExecutionStore.exportTestResults(
+			execution.name,
+			"excel",
+		)
+		// Handle download result
+		if (result.download_url) {
+			window.open(result.download_url, "_blank")
+		}
+	} catch (error) {
+		console.error("Failed to download results:", error)
+	}
 }
 
 const downloadDetailedResults = () => {
@@ -675,8 +558,8 @@ const downloadDetailedResults = () => {
 	console.log("Download detailed results")
 }
 
-const refreshExecutions = () => {
-	loadExecutions()
+const refreshExecutions = async () => {
+	await loadExecutions()
 }
 
 const changePage = (page) => {
@@ -687,12 +570,13 @@ const changePage = (page) => {
 // Utility methods
 const getStatusVariant = (status) => {
 	const variants = {
-		Running: "blue",
-		Completed: "green",
-		Failed: "red",
-		Cancelled: "gray",
+		Pending: "secondary",
+		Running: "info",
+		Completed: "success",
+		Failed: "danger",
+		Cancelled: "secondary",
 	}
-	return variants[status] || "gray"
+	return variants[status] || "secondary"
 }
 
 const getCategoryVariant = (category) => {
@@ -747,9 +631,8 @@ watch(selectedExecutions, () => {
 })
 
 // Lifecycle
-onMounted(() => {
-	loadExecutions()
-	loadAvailableTests()
+onMounted(async () => {
+	await Promise.all([loadExecutions(), loadAvailableTests()])
 })
 </script>
 

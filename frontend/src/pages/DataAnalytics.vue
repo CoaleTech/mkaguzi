@@ -125,38 +125,14 @@
             </Button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
-              v-for="chart in dataStore.dashboardCharts"
-              :key="chart.name"
-              class="bg-white border border-gray-200 rounded-lg p-6"
-            >
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex-1">
-                  <h3 class="text-lg font-medium text-gray-900 mb-1">
-                    {{ chart.chart_name }}
-                  </h3>
-                  <p class="text-sm text-gray-600 mb-2">
-                    {{ chart.chart_title || 'No title' }}
-                  </p>
-                  <div class="flex items-center space-x-2">
-                    <Badge :variant="getChartTypeVariant(chart.chart_type)">
-                      {{ chart.chart_type }}
-                    </Badge>
-                    <Badge :variant="chart.is_active ? 'success' : 'secondary'">
-                      {{ chart.is_active ? 'Active' : 'Inactive' }}
-                    </Badge>
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm" @click="editChart(chart)">
-                  <EditIcon class="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div class="text-sm text-gray-500">
-                Data Source: {{ chart.data_source || 'Not set' }}
-              </div>
-            </div>
+          <!-- Permission Restricted Message -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <BarChart3Icon class="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 class="text-lg font-medium text-yellow-800 mb-2">Charts Feature Restricted</h3>
+            <p class="text-yellow-700">
+              The chart library is currently not available due to permission restrictions.
+              Please contact your administrator for access to advanced analytics features.
+            </p>
           </div>
         </div>
 
@@ -170,93 +146,25 @@
             </Button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
-              v-for="source in dataStore.dashboardDataSources"
-              :key="source.name"
-              class="bg-white border border-gray-200 rounded-lg p-6"
-            >
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex-1">
-                  <h3 class="text-lg font-medium text-gray-900 mb-1">
-                    {{ source.data_source_name }}
-                  </h3>
-                  <p class="text-sm text-gray-600 mb-2">
-                    Type: {{ source.data_source_type }}
-                  </p>
-                  <div class="flex items-center space-x-2">
-                    <Badge :variant="source.is_active ? 'success' : 'secondary'">
-                      {{ source.is_active ? 'Active' : 'Inactive' }}
-                    </Badge>
-                    <Badge :variant="source.cache_enabled ? 'info' : 'secondary'">
-                      {{ source.cache_enabled ? 'Cached' : 'No Cache' }}
-                    </Badge>
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm" @click="editDataSource(source)">
-                  <EditIcon class="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div class="text-sm text-gray-500">
-                Last Refresh: {{ source.last_refresh ? formatDate(source.last_refresh) : 'Never' }}
-              </div>
-            </div>
+          <!-- Permission Restricted Message -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <DatabaseIcon class="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 class="text-lg font-medium text-yellow-800 mb-2">Data Sources Feature Restricted</h3>
+            <p class="text-yellow-700">
+              The data sources management is currently not available due to permission restrictions.
+              Please contact your administrator for access to advanced data management features.
+            </p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-blue-100 rounded-lg">
-            <BarChart3Icon class="h-6 w-6 text-blue-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Total Dashboards</p>
-            <p class="text-2xl font-bold text-gray-900">{{ dataStore.dashboards.length }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-green-100 rounded-lg">
-            <CheckCircleIcon class="h-6 w-6 text-green-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Active Dashboards</p>
-            <p class="text-2xl font-bold text-gray-900">{{ dataStore.activeDashboards.length }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <PieChartIcon class="h-6 w-6 text-purple-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Total Charts</p>
-            <p class="text-2xl font-bold text-gray-900">{{ dataStore.dashboardCharts.length }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-orange-100 rounded-lg">
-            <DatabaseIcon class="h-6 w-6 text-orange-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Data Sources</p>
-            <p class="text-2xl font-bold text-gray-900">{{ dataStore.dashboardDataSources.length }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <DataAnalyticsStats
+      :dashboards="dataStore.dashboards"
+      :dashboard-charts="[]"
+      :dashboard-data-sources="[]"
+    />
   </div>
 </template>
 
@@ -274,6 +182,7 @@ import {
 } from "lucide-vue-next"
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import DataAnalyticsStats from "@/components/data/DataAnalyticsStats.vue"
 
 const router = useRouter()
 const dataStore = useDataStore()
@@ -288,8 +197,9 @@ const fetchData = async () => {
 	try {
 		await Promise.all([
 			dataStore.fetchDashboards(),
-			dataStore.fetchDashboardCharts(),
-			dataStore.fetchDashboardDataSources(),
+			// Note: Dashboard Charts and Data Sources are restricted doctypes
+			// dataStore.fetchDashboardCharts(),
+			// dataStore.fetchDashboardDataSources(),
 		])
 	} catch (error) {
 		console.error("Error loading data analytics:", error)

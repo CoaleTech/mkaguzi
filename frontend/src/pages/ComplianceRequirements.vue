@@ -18,74 +18,15 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Requirements</p>
-            <p class="text-2xl font-bold">{{ complianceRequirements.length }}</p>
-          </div>
-          <FileText class="w-8 h-8 text-blue-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Requirements</p>
-            <p class="text-2xl font-bold text-green-600">{{ activeRequirements.length }}</p>
-          </div>
-          <CheckCircle class="w-8 h-8 text-green-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Regulatory Bodies</p>
-            <p class="text-2xl font-bold">{{ Object.keys(requirementsByRegulatoryBody).length }}</p>
-          </div>
-          <Building class="w-8 h-8 text-purple-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Categories</p>
-            <p class="text-2xl font-bold">{{ Object.keys(requirementsByCategory).length }}</p>
-          </div>
-          <Tag class="w-8 h-8 text-orange-500" />
-        </div>
-      </div>
-    </div>
+    <ComplianceStats
+      :total-requirements="complianceRequirements.length"
+      :active-requirements-count="activeRequirements.length"
+      :regulatory-bodies-count="Object.keys(requirementsByRegulatoryBody).length"
+      :categories-count="Object.keys(requirementsByCategory).length"
+    />
 
     <!-- Filters -->
-    <div class="bg-white p-4 rounded-lg border shadow-sm mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <FormControl
-          label="Regulatory Body"
-          v-model="filters.regulatory_body"
-          type="select"
-          :options="regulatoryBodyOptions"
-          placeholder="All Bodies"
-        />
-        <FormControl
-          label="Category"
-          v-model="filters.compliance_category"
-          type="select"
-          :options="categoryOptions"
-          placeholder="All Categories"
-        />
-        <FormControl
-          label="Status"
-          v-model="filters.is_active"
-          type="select"
-          :options="statusOptions"
-          placeholder="All Status"
-        />
-        <div class="flex items-end">
-          <Button @click="clearFilters" variant="outline">Clear Filters</Button>
-        </div>
-      </div>
-    </div>
+    <ComplianceFilters :filters="filters" @clear-filters="clearFilters" />
 
     <!-- Requirements Table -->
     <div class="bg-white rounded-lg border shadow-sm">
@@ -192,21 +133,7 @@
     <!-- Create Requirement Dialog -->
     <Dialog v-model="showCreateRequirementDialog" :options="{ title: 'Add Compliance Requirement', size: '2xl' }">
       <template #body-content>
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <FormControl label="Requirement ID" v-model="newRequirement.requirement_id" required />
-            <FormControl label="Requirement Name" v-model="newRequirement.requirement_name" required />
-          </div>
-          <FormControl label="Regulatory Body" v-model="newRequirement.regulatory_body" type="select" :options="regulatoryBodyOptions" required />
-          <FormControl label="Category" v-model="newRequirement.compliance_category" type="select" :options="categoryOptions" required />
-          <FormControl label="Description" v-model="newRequirement.description" type="textarea" required />
-          <FormControl label="Frequency" v-model="newRequirement.frequency" type="select" :options="frequencyOptions" required />
-          <div class="grid grid-cols-2 gap-4">
-            <FormControl label="Responsible Person" v-model="newRequirement.responsible_person" type="link" doctype="User" />
-            <FormControl label="Responsible Department" v-model="newRequirement.responsible_department" type="link" doctype="Department" />
-          </div>
-          <FormControl label="Is Active" v-model="newRequirement.is_active" type="checkbox" />
-        </div>
+        <ComplianceRequirementForm v-model:form-data="newRequirement" />
       </template>
       <template #actions>
         <Button variant="outline" @click="showCreateRequirementDialog = false">Cancel</Button>
@@ -312,6 +239,9 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useComplianceStore } from "../stores/compliance"
+import ComplianceStats from "../components/compliance/ComplianceStats.vue"
+import ComplianceFilters from "../components/compliance/ComplianceFilters.vue"
+import ComplianceRequirementForm from "../components/compliance/ComplianceRequirementForm.vue"
 
 // Store
 const complianceStore = useComplianceStore()
@@ -373,48 +303,6 @@ const filteredRequirements = computed(() => {
 
 	return filtered
 })
-
-// Options
-const regulatoryBodyOptions = [
-	{ label: "KRA", value: "KRA" },
-	{ label: "NSSF", value: "NSSF" },
-	{ label: "NHIF", value: "NHIF" },
-	{ label: "NEMA", value: "NEMA" },
-	{ label: "County Government", value: "County Government" },
-	{ label: "KEBS", value: "KEBS" },
-	{ label: "Central Bank of Kenya", value: "Central Bank of Kenya" },
-	{ label: "CMA", value: "CMA" },
-	{ label: "IRA", value: "IRA" },
-	{ label: "Other", value: "Other" },
-]
-
-const categoryOptions = [
-	{ label: "Tax", value: "Tax" },
-	{ label: "Social Security", value: "Social Security" },
-	{ label: "Environmental", value: "Environmental" },
-	{ label: "Licensing", value: "Licensing" },
-	{ label: "Health & Safety", value: "Health & Safety" },
-	{ label: "Industry-Specific", value: "Industry-Specific" },
-	{ label: "Employment", value: "Employment" },
-	{ label: "Data Protection", value: "Data Protection" },
-]
-
-const frequencyOptions = [
-	{ label: "Daily", value: "Daily" },
-	{ label: "Weekly", value: "Weekly" },
-	{ label: "Monthly", value: "Monthly" },
-	{ label: "Quarterly", value: "Quarterly" },
-	{ label: "Semi-Annual", value: "Semi-Annual" },
-	{ label: "Annual", value: "Annual" },
-	{ label: "One-time", value: "One-time" },
-	{ label: "Event-Based", value: "Event-Based" },
-]
-
-const statusOptions = [
-	{ label: "All", value: "" },
-	{ label: "Active", value: "true" },
-	{ label: "Inactive", value: "false" },
-]
 
 // Methods
 const fetchComplianceRequirements = async () => {

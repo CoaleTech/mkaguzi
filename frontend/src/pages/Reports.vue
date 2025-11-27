@@ -18,46 +18,12 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Audit Reports</p>
-            <p class="text-2xl font-bold">{{ activeAuditReports.length }}</p>
-          </div>
-          <FileText class="w-8 h-8 text-blue-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Board Reports</p>
-            <p class="text-2xl font-bold">{{ activeBoardReports.length }}</p>
-          </div>
-          <Users class="w-8 h-8 text-green-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Active Dashboards</p>
-            <p class="text-2xl font-bold">{{ activeDashboards.length }}</p>
-          </div>
-          <BarChart3 class="w-8 h-8 text-purple-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Avg Compliance Score</p>
-            <p class="text-2xl font-bold" :class="getScoreColor(dashboardKPIs.complianceScore)">
-              {{ Math.round(dashboardKPIs.complianceScore) }}%
-            </p>
-          </div>
-          <TrendingUp class="w-8 h-8 text-orange-500" />
-        </div>
-      </div>
-    </div>
+    <ReportsStats
+      :active-audit-reports="activeAuditReports"
+      :active-board-reports="activeBoardReports"
+      :active-dashboards="activeDashboards"
+      :compliance-score="dashboardKPIs.complianceScore"
+    />
 
     <!-- Report Categories -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -272,6 +238,7 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useReportsStore } from "../stores/reports"
+import ReportsStats from "@/components/reports/ReportsStats.vue"
 
 // Store
 const reportsStore = useReportsStore()

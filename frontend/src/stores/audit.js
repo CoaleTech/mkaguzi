@@ -316,7 +316,6 @@ export const useAuditStore = defineStore("audit", () => {
 						"total_procedures",
 						"completed_procedures",
 						"completion_percent",
-						"status",
 						"creation",
 						"modified",
 					],
@@ -1015,6 +1014,24 @@ export const useAuditStore = defineStore("audit", () => {
 		fetchAuditProgramDetails,
 		createAuditProgram,
 		updateAuditProgram,
+		createEngagement: async (engagementData) => {
+			try {
+				const response = await createResource({
+					url: "frappe.client.insert",
+					params: {
+						doc: {
+							doctype: "Audit Engagement",
+							...engagementData,
+						},
+					},
+				}).fetch()
+				await fetchEngagements() // Refresh the list
+				return response
+			} catch (error) {
+				console.error("Error creating engagement:", error)
+				throw error
+			}
+		},
 		fetchAuditCalendar,
 		fetchAuditCalendarDetails,
 		createAuditCalendarEntry,

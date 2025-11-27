@@ -1,11 +1,14 @@
 <template>
-  <div class="p-6">
-    <div class="flex justify-between items-center mb-6">
+  <div class="p-6 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
       <div>
-        <h1 class="text-2xl font-bold">Report Builder</h1>
-        <p class="text-gray-600">Create custom reports with drag-and-drop functionality</p>
+        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <Columns class="w-8 h-8 text-blue-600" />
+          Report Builder
+        </h1>
+        <p class="text-gray-600 mt-2 text-lg">Create custom reports with drag-and-drop functionality</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-3">
         <Button @click="saveReport" :loading="saving" variant="outline" class="flex items-center gap-2">
           <Save class="w-4 h-4" />
           Save Report
@@ -25,31 +28,45 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
       <!-- Data Source Selection -->
       <div class="lg:col-span-1">
-        <div class="bg-white rounded-lg border shadow-sm p-4">
-          <h3 class="font-semibold mb-4">Data Source</h3>
-          <FormControl
-            label="Select DocType"
-            v-model="reportConfig.doctype"
-            type="select"
-            :options="doctypeOptions"
-            @change="loadFields"
-            required
-          />
-          <div v-if="reportConfig.doctype" class="mt-4">
-            <h4 class="font-medium mb-2">Available Fields</h4>
-            <div class="space-y-2 max-h-64 overflow-y-auto">
-              <div
-                v-for="field in availableFields"
-                :key="field.fieldname"
-                class="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-gray-50"
-                @dragstart="onDragStart($event, field)"
-                draggable="true"
-              >
-                <Database class="w-4 h-4 text-gray-500" />
-                <span class="text-sm">{{ field.label }}</span>
-                <Badge v-if="field.fieldtype === 'Data'" variant="secondary" size="sm">{{ field.fieldtype }}</Badge>
-                <Badge v-if="field.fieldtype === 'Date'" variant="info" size="sm">{{ field.fieldtype }}</Badge>
-                <Badge v-if="field.fieldtype === 'Int'" variant="warning" size="sm">{{ field.fieldtype }}</Badge>
+        <div class="bg-white rounded-lg border shadow-sm p-4 h-fit">
+          <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <Database class="w-5 h-5 text-blue-600" />
+            Data Source
+          </h3>
+          <div class="space-y-4">
+            <FormControl
+              label="Select DocType"
+              v-model="reportConfig.doctype"
+              type="select"
+              :options="doctypeOptions"
+              @change="loadFields"
+              required
+            />
+            <div v-if="reportConfig.doctype" class="space-y-3">
+              <h4 class="font-medium text-sm text-gray-700 flex items-center justify-between">
+                Available Fields
+                <Badge variant="secondary" size="sm">{{ availableFields.length }}</Badge>
+              </h4>
+              <div class="space-y-2 max-h-80 overflow-y-auto border rounded-md p-2 bg-gray-50">
+                <div
+                  v-for="field in availableFields"
+                  :key="field.fieldname"
+                  class="flex items-center justify-between gap-2 p-2 border rounded cursor-pointer hover:bg-white hover:shadow-sm transition-all duration-200"
+                  @dragstart="onDragStart($event, field)"
+                  draggable="true"
+                >
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <Database class="w-4 h-4 text-gray-500 flex-shrink-0" />
+                    <span class="text-sm truncate">{{ field.label }}</span>
+                  </div>
+                  <Badge
+                    :variant="getFieldTypeVariant(field.fieldtype)"
+                    size="sm"
+                    class="flex-shrink-0"
+                  >
+                    {{ field.fieldtype }}
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>
@@ -58,84 +75,100 @@
 
       <!-- Report Builder Canvas -->
       <div class="lg:col-span-3">
-        <div class="bg-white rounded-lg border shadow-sm p-4">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-semibold">Report Canvas</h3>
+        <div class="bg-white rounded-lg border shadow-sm p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-semibold flex items-center gap-2">
+              <Columns class="w-5 h-5 text-green-600" />
+              Report Canvas
+            </h3>
             <div class="flex gap-2">
-              <Button @click="clearCanvas" variant="outline" size="sm">
+              <Button @click="clearCanvas" variant="outline" size="sm" class="flex items-center gap-2">
                 <Trash2 class="w-4 h-4" />
+                Clear
               </Button>
             </div>
           </div>
 
           <!-- Drop Zones -->
-          <div class="space-y-4">
+          <div class="space-y-6">
             <!-- Columns Section -->
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-24"
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-32 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
                  @dragover.prevent
                  @drop="onDrop($event, 'columns')">
-              <h4 class="font-medium mb-2 flex items-center gap-2">
-                <Columns class="w-4 h-4" />
-                Columns
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-medium flex items-center gap-2 text-gray-700">
+                  <Columns class="w-4 h-4 text-blue-600" />
+                  Columns
+                </h4>
                 <Badge variant="secondary" size="sm">{{ selectedColumns.length }}</Badge>
-              </h4>
-              <div class="flex flex-wrap gap-2">
+              </div>
+              <div class="flex flex-wrap gap-2 min-h-16">
                 <div
                   v-for="(field, index) in selectedColumns"
                   :key="field.fieldname"
-                  class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded px-3 py-1"
+                  class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 hover:bg-blue-100 transition-colors duration-200"
                 >
-                  <Database class="w-3 h-3 text-blue-600" />
-                  <span class="text-sm">{{ field.label }}</span>
-                  <Button @click="removeField('columns', index)" variant="ghost" size="sm" class="p-0 h-4 w-4">
+                  <Database class="w-3 h-3 text-blue-600 flex-shrink-0" />
+                  <span class="text-sm font-medium">{{ field.label }}</span>
+                  <Button @click="removeField('columns', index)" variant="ghost" size="sm" class="p-0 h-5 w-5 hover:bg-blue-200">
                     <X class="w-3 h-3" />
                   </Button>
                 </div>
+                <div v-if="selectedColumns.length === 0" class="flex items-center justify-center w-full min-h-16 text-gray-500 text-sm">
+                  <div class="text-center">
+                    <Columns class="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    Drag fields here to add columns to your report
+                  </div>
+                </div>
               </div>
-              <p v-if="selectedColumns.length === 0" class="text-gray-500 text-sm mt-2">
-                Drag fields here to add columns to your report
-              </p>
             </div>
 
             <!-- Filters Section -->
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-24"
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-32 transition-all duration-200 hover:border-green-400 hover:bg-green-50/50"
                  @dragover.prevent
                  @drop="onDrop($event, 'filters')">
-              <h4 class="font-medium mb-2 flex items-center gap-2">
-                <Filter class="w-4 h-4" />
-                Filters
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-medium flex items-center gap-2 text-gray-700">
+                  <Filter class="w-4 h-4 text-green-600" />
+                  Filters
+                </h4>
                 <Badge variant="secondary" size="sm">{{ selectedFilters.length }}</Badge>
-              </h4>
-              <div class="space-y-2">
+              </div>
+              <div class="space-y-3 min-h-16">
                 <div
                   v-for="(filter, index) in selectedFilters"
                   :key="filter.field.fieldname"
-                  class="flex items-center gap-2 bg-green-50 border border-green-200 rounded p-2"
+                  class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg p-3 hover:bg-green-100 transition-colors duration-200"
                 >
-                  <Filter class="w-3 h-3 text-green-600" />
-                  <span class="text-sm">{{ filter.field.label }}</span>
+                  <Filter class="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <div class="flex-1 min-w-0">
+                    <span class="text-sm font-medium block">{{ filter.field.label }}</span>
+                  </div>
                   <FormControl
                     v-model="filter.operator"
                     type="select"
                     :options="filterOperators"
-                    class="w-24"
+                    class="w-20 flex-shrink-0"
                     size="sm"
                   />
                   <FormControl
                     v-model="filter.value"
                     :type="getFilterInputType(filter.field)"
                     placeholder="Value"
-                    class="flex-1"
+                    class="flex-1 min-w-32"
                     size="sm"
                   />
-                  <Button @click="removeField('filters', index)" variant="ghost" size="sm" class="p-0 h-6 w-6">
-                    <X class="w-3 h-3" />
+                  <Button @click="removeField('filters', index)" variant="ghost" size="sm" class="p-0 h-6 w-6 hover:bg-green-200 flex-shrink-0">
+                    <X class="w-4 h-4" />
                   </Button>
                 </div>
+                <div v-if="selectedFilters.length === 0" class="flex items-center justify-center w-full min-h-16 text-gray-500 text-sm">
+                  <div class="text-center">
+                    <Filter class="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    Drag fields here to add filters to your report
+                  </div>
+                </div>
               </div>
-              <p v-if="selectedFilters.length === 0" class="text-gray-500 text-sm mt-2">
-                Drag fields here to add filters to your report
-              </p>
             </div>
           </div>
         </div>
@@ -143,9 +176,12 @@
     </div>
 
     <!-- Report Settings -->
-    <div class="bg-white rounded-lg border shadow-sm p-4 mb-6">
-      <h3 class="font-semibold mb-4">Report Settings</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-lg border shadow-sm p-6 mb-6">
+      <h3 class="font-semibold mb-6 flex items-center gap-2">
+        <Save class="w-5 h-5 text-purple-600" />
+        Report Settings
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FormControl
           label="Report Title"
           v-model="reportConfig.title"
@@ -166,22 +202,27 @@
           :options="chartTypeOptions"
         />
       </div>
-      <div class="mt-4">
+      <div class="mt-6">
         <FormControl
           label="Description"
           v-model="reportConfig.description"
           type="textarea"
           placeholder="Optional description"
+          rows="3"
         />
       </div>
     </div>
 
     <!-- Report Preview -->
-    <div v-if="reportData.length > 0" class="bg-white rounded-lg border shadow-sm p-4">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="font-semibold">Report Preview</h3>
+    <div v-if="reportData.length > 0" class="bg-white rounded-lg border shadow-sm p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="font-semibold flex items-center gap-2">
+          <Eye class="w-5 h-5 text-indigo-600" />
+          Report Preview
+          <Badge variant="secondary" size="sm">{{ reportData.length }} rows</Badge>
+        </h3>
         <div class="flex gap-2">
-          <Button @click="refreshPreview" :loading="generating" variant="outline" size="sm">
+          <Button @click="refreshPreview" :loading="generating" variant="outline" size="sm" class="flex items-center gap-2">
             <RefreshCw class="w-4 h-4" />
             Refresh
           </Button>
@@ -189,21 +230,28 @@
       </div>
 
       <!-- Data Table -->
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto border rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
               <th
                 v-for="column in selectedColumns"
                 :key="column.fieldname"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b"
               >
-                {{ column.label }}
+                <div class="flex items-center gap-2">
+                  <Database class="w-4 h-4 text-gray-500" />
+                  {{ column.label }}
+                </div>
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="row in reportData.slice(0, 10)" :key="row.name || row.id">
+            <tr
+              v-for="(row, rowIndex) in reportData.slice(0, 10)"
+              :key="row.name || row.id || rowIndex"
+              class="hover:bg-gray-50 transition-colors duration-150"
+            >
               <td
                 v-for="column in selectedColumns"
                 :key="column.fieldname"
@@ -214,8 +262,11 @@
             </tr>
           </tbody>
         </table>
-        <div v-if="reportData.length > 10" class="text-center py-4 text-gray-500">
-          Showing first 10 rows of {{ reportData.length }} total rows
+        <div v-if="reportData.length > 10" class="text-center py-4 text-gray-500 bg-gray-50 border-t">
+          <div class="flex items-center justify-center gap-2">
+            <Eye class="w-4 h-4" />
+            Showing first 10 rows of {{ reportData.length }} total rows
+          </div>
         </div>
       </div>
     </div>
@@ -480,10 +531,18 @@ const generateCSV = () => {
 	return [headers, ...rows].join("\n")
 }
 
-const getFilterInputType = (field) => {
-	if (field.fieldtype === "Date") return "date"
-	if (field.fieldtype === "Int") return "number"
-	return "text"
+const getFieldTypeVariant = (fieldtype) => {
+	const variants = {
+		Data: "secondary",
+		Date: "info",
+		Int: "warning",
+		Select: "success",
+		Link: "primary",
+		Text: "secondary",
+		"Text Editor": "secondary",
+		Check: "success",
+	}
+	return variants[fieldtype] || "secondary"
 }
 
 const formatCellValue = (value, field) => {
@@ -503,6 +562,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Enhanced drop zone styles */
 .drop-zone {
   transition: all 0.2s ease;
 }
@@ -510,5 +570,184 @@ onMounted(() => {
 .drop-zone:hover {
   border-color: #3b82f6;
   background-color: #eff6ff;
+}
+
+/* Field item hover effects */
+.field-item {
+  transition: all 0.2s ease;
+}
+
+.field-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Column and filter item animations */
+.column-item, .filter-item {
+  transition: all 0.2s ease;
+}
+
+.column-item:hover, .filter-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table improvements */
+.report-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.report-table th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  z-index: 10;
+}
+
+.report-table td {
+  vertical-align: middle;
+}
+
+/* Responsive improvements */
+@media (max-width: 1024px) {
+  .report-builder-container {
+    padding: 1rem;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .report-builder-container {
+    padding: 0.5rem;
+  }
+
+  .report-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .data-source-panel {
+    order: 2;
+  }
+
+  .canvas-panel {
+    order: 1;
+  }
+
+  .drop-zones {
+    gap: 1rem;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .table-container {
+    font-size: 0.875rem;
+  }
+
+  .table-container th,
+  .table-container td {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-description {
+    font-size: 0.875rem;
+  }
+
+  .drop-zone {
+    padding: 1rem;
+  }
+
+  .field-list {
+    max-height: 200px;
+  }
+
+  .table-container {
+    font-size: 0.75rem;
+  }
+}
+
+/* Loading states */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Empty states */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-state-icon {
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state p {
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Badge improvements */
+.field-count-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+}
+
+/* Button improvements */
+.action-button {
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Form control improvements */
+.form-grid {
+  gap: 1.5rem;
+}
+
+.form-grid .form-control {
+  margin-bottom: 0;
 }
 </style>

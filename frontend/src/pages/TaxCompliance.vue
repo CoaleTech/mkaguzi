@@ -5,53 +5,23 @@
         <h1 class="text-2xl font-bold">Tax Compliance</h1>
         <p class="text-gray-600">Track tax compliance, filings, and payments across all tax types.</p>
       </div>
-      <Button @click="showCreateTrackerDialog = true" class="flex items-center gap-2">
+      <Button @click="createTracker" class="flex items-center gap-2">
         <Plus class="w-4 h-4" />
         Create Tracker
       </Button>
     </div>
 
-    <!-- Summary Cards -->
-    <div v-if="taxComplianceSummary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Trackers</p>
-            <p class="text-2xl font-bold">{{ taxComplianceSummary.totalTrackers }}</p>
-          </div>
-          <FileText class="w-8 h-8 text-blue-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Avg Compliance Score</p>
-            <p class="text-2xl font-bold" :class="getScoreColor(taxComplianceSummary.averageScore)">
-              {{ taxComplianceSummary.averageScore }}%
-            </p>
-          </div>
-          <TrendingUp class="w-8 h-8 text-green-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">VAT Returns Filed</p>
-            <p class="text-2xl font-bold">{{ taxComplianceSummary.filings.vat }}</p>
-          </div>
-          <Receipt class="w-8 h-8 text-purple-500" />
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-lg border shadow-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">PAYE Returns Filed</p>
-            <p class="text-2xl font-bold">{{ taxComplianceSummary.filings.paye }}</p>
-          </div>
-          <Users class="w-8 h-8 text-orange-500" />
-        </div>
-      </div>
-    </div>
+    <!-- Summary Stats -->
+    <TaxStats :stats="stats" />
+
+    <!-- Filters -->
+    <TaxFilters
+      v-model:searchQuery="searchQuery"
+      v-model:selectedTaxPeriod="selectedTaxPeriod"
+      v-model:selectedComplianceScore="selectedComplianceScore"
+      v-model:selectedVatStatus="selectedVatStatus"
+      v-model:selectedPayeStatus="selectedPayeStatus"
+    />
 
     <!-- Tax Compliance Trackers Table -->
     <div class="bg-white rounded-lg border shadow-sm">
@@ -161,240 +131,112 @@
       <div v-if="taxComplianceTrackers.length === 0 && !loading" class="p-8 text-center text-gray-500">
         <Receipt class="w-12 h-12 mx-auto mb-4 text-gray-300" />
         <p>No tax compliance trackers found.</p>
-        <Button @click="showCreateTrackerDialog = true" class="mt-4">
+        <Button @click="createTracker" class="mt-4">
           Create Your First Tracker
         </Button>
       </div>
     </div>
 
-    <!-- Create Tracker Dialog -->
-    <Dialog v-model="showCreateTrackerDialog" :options="{ title: 'Create Tax Compliance Tracker' }">
-      <template #body-content>
-        <div class="space-y-4">
-          <FormControl label="Tax Period" v-model="newTracker.tax_period" type="link" doctype="Data Period" required />
-        </div>
-      </template>
-      <template #actions>
-        <Button variant="outline" @click="showCreateTrackerDialog = false">Cancel</Button>
-        <Button @click="createTracker" :loading="creating">Create Tracker</Button>
-      </template>
-    </Dialog>
-
-    <!-- Tracker Detail Dialog -->
-    <Dialog v-model="showTrackerDetailDialog" :options="{ title: 'Tax Compliance Details', size: '5xl' }">
-      <template #body-content>
-        <div v-if="selectedTracker" class="space-y-6">
-          <!-- Header -->
-          <div class="grid grid-cols-3 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg">
-              <h3 class="font-semibold text-blue-800">Tracker Information</h3>
-              <div class="mt-2 space-y-1 text-sm">
-                <p><span class="font-medium">ID:</span> {{ selectedTracker.tracker_id }}</p>
-                <p><span class="font-medium">Period:</span> {{ selectedTracker.tax_period }}</p>
-                <p><span class="font-medium">Score:</span>
-                  <Badge :variant="getScoreVariant(selectedTracker.compliance_score)" class="ml-2">
-                    {{ selectedTracker.compliance_score || 0 }}%
-                  </Badge>
-                </p>
-              </div>
-            </div>
-            <div class="bg-green-50 p-4 rounded-lg">
-              <h3 class="font-semibold text-green-800">VAT Compliance</h3>
-              <div class="mt-2 space-y-1 text-sm">
-                <p><span class="font-medium">Net Payable:</span> {{ formatCurrency(selectedTracker.net_vat_payable) }}</p>
-                <p><span class="font-medium">Return Filed:</span>
-                  <CheckCircle v-if="selectedTracker.vat_return_filed" class="w-4 h-4 text-green-500 inline ml-1" />
-                  <X v-else class="w-4 h-4 text-red-500 inline ml-1" />
-                </p>
-                <p v-if="selectedTracker.vat_filing_date"><span class="font-medium">Filed:</span> {{ formatDate(selectedTracker.vat_filing_date) }}</p>
-              </div>
-            </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
-              <h3 class="font-semibold text-purple-800">PAYE Compliance</h3>
-              <div class="mt-2 space-y-1 text-sm">
-                <p><span class="font-medium">Total PAYE:</span> {{ formatCurrency(selectedTracker.total_paye) }}</p>
-                <p><span class="font-medium">Return Filed:</span>
-                  <CheckCircle v-if="selectedTracker.paye_return_filed" class="w-4 h-4 text-green-500 inline ml-1" />
-                  <X v-else class="w-4 h-4 text-red-500 inline ml-1" />
-                </p>
-                <p v-if="selectedTracker.paye_filing_date"><span class="font-medium">Filed:</span> {{ formatDate(selectedTracker.paye_filing_date) }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tax Sections -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- WHT Section -->
-            <div class="border rounded-lg p-4">
-              <h3 class="font-semibold mb-3">Withholding Tax (WHT)</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span>Services:</span>
-                  <span>{{ formatCurrency(selectedTracker.wht_on_services) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Rent:</span>
-                  <span>{{ formatCurrency(selectedTracker.wht_on_rent) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Professional Fees:</span>
-                  <span>{{ formatCurrency(selectedTracker.wht_on_professional_fees) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Other:</span>
-                  <span>{{ formatCurrency(selectedTracker.other_wht) }}</span>
-                </div>
-                <hr class="my-2">
-                <div class="flex justify-between font-medium">
-                  <span>Total WHT:</span>
-                  <span>{{ formatCurrency(selectedTracker.total_wht) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Return Filed:</span>
-                  <CheckCircle v-if="selectedTracker.wht_return_filed" class="w-4 h-4 text-green-500" />
-                  <X v-else class="w-4 h-4 text-red-500" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Social Security Section -->
-            <div class="border rounded-lg p-4">
-              <h3 class="font-semibold mb-3">Social Security</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span>NSSF Employee:</span>
-                  <span>{{ formatCurrency(selectedTracker.employee_contributions) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>NSSF Employer:</span>
-                  <span>{{ formatCurrency(selectedTracker.employer_contributions) }}</span>
-                </div>
-                <div class="flex justify-between font-medium">
-                  <span>Total NSSF:</span>
-                  <span>{{ formatCurrency(selectedTracker.total_nssf) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>NSSF Filed:</span>
-                  <CheckCircle v-if="selectedTracker.nssf_return_filed" class="w-4 h-4 text-green-500" />
-                  <X v-else class="w-4 h-4 text-red-500" />
-                </div>
-                <hr class="my-2">
-                <div class="flex justify-between">
-                  <span>NHIF Amount:</span>
-                  <span>{{ formatCurrency(selectedTracker.total_nhif) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>NHIF Filed:</span>
-                  <CheckCircle v-if="selectedTracker.nhif_return_filed" class="w-4 h-4 text-green-500" />
-                  <X v-else class="w-4 h-4 text-red-500" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Issues -->
-          <div v-if="selectedTracker.issues_identified && selectedTracker.issues_identified.length > 0">
-            <h3 class="font-semibold text-red-600 mb-3">Issues Identified</h3>
-            <div class="space-y-2">
-              <div v-for="issue in selectedTracker.issues_identified" :key="issue.name" class="p-3 bg-red-50 border border-red-200 rounded">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                      <Badge :variant="getIssueTypeVariant(issue.issue_type)">
-                        {{ issue.issue_type }}
-                      </Badge>
-                      <Badge :variant="issue.resolution_status === 'Resolved' ? 'green' : 'red'">
-                        {{ issue.resolution_status }}
-                      </Badge>
-                    </div>
-                    <p class="text-sm">{{ issue.description }}</p>
-                    <p v-if="issue.financial_impact" class="text-sm font-medium text-red-600">
-                      Impact: {{ formatCurrency(issue.financial_impact) }}
-                    </p>
-                    <p v-if="issue.resolution_notes" class="text-sm text-gray-600 mt-1">
-                      {{ issue.resolution_notes }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </Dialog>
+    <!-- Tax Compliance Form Dialog -->
+    <TaxComplianceForm
+      v-model:show="showFormDialog"
+      :tracker-data="selectedTracker"
+      :is-edit-mode="isEditMode"
+      @saved="handleTrackerSaved"
+    />
   </div>
 </template>
 
 <script setup>
-import { Badge, Button, Dialog, FormControl } from "frappe-ui"
+import TaxComplianceForm from "@/components/taxcompliance/TaxComplianceForm.vue"
+import TaxFilters from "@/components/taxcompliance/TaxFilters.vue"
+import TaxStats from "@/components/taxcompliance/TaxStats.vue"
+import { useComplianceStore } from "@/stores/compliance"
+import { Badge, Button } from "frappe-ui"
 import {
 	CheckCircle,
 	Edit,
 	Eye,
-	FileText,
 	Plus,
 	Receipt,
 	RefreshCw,
-	TrendingUp,
-	Users,
 	X,
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
-import { useComplianceStore } from "../stores/compliance"
 
 // Store
 const complianceStore = useComplianceStore()
 
 // Reactive data
-const showCreateTrackerDialog = ref(false)
-const showTrackerDetailDialog = ref(false)
+const showFormDialog = ref(false)
+const isEditMode = ref(false)
 const selectedTracker = ref(null)
-const creating = ref(false)
-const newTracker = ref({
-	tax_period: "",
-})
 
-// Computed
-const taxComplianceTrackers = computed(
-	() => complianceStore.taxComplianceTrackers,
-)
-const taxComplianceSummary = computed(
-	() => complianceStore.taxComplianceSummary,
-)
+// Store bindings
 const loading = computed(() => complianceStore.loading)
+const taxComplianceTrackers = computed(() => complianceStore.taxComplianceTrackers)
+
+// Filter bindings
+const searchQuery = ref("")
+const selectedTaxPeriod = ref("")
+const selectedComplianceScore = ref("")
+const selectedVatStatus = ref("")
+const selectedPayeStatus = ref("")
+
+// Stats computed from store data
+const stats = computed(() => {
+	const trackers = taxComplianceTrackers.value
+	const totalTrackers = trackers.length
+	const avgScore = totalTrackers > 0
+		? Math.round(trackers.reduce((sum, t) => sum + (t.compliance_score || 0), 0) / totalTrackers)
+		: 0
+	const vatFiled = trackers.filter(t => t.vat_return_filed).length
+	const payeFiled = trackers.filter(t => t.paye_return_filed).length
+	const compliant = trackers.filter(t => (t.compliance_score || 0) >= 80).length
+
+	return {
+		total: totalTrackers,
+		avgScore,
+		vatFiled,
+		payeFiled,
+		compliant
+	}
+})
 
 // Methods
 const fetchTaxComplianceTrackers = async () => {
 	await complianceStore.fetchTaxComplianceTrackers()
 }
 
-const createTracker = async () => {
-	try {
-		creating.value = true
-		await complianceStore.createTaxComplianceTracker(newTracker.value)
-		showCreateTrackerDialog.value = false
-		newTracker.value = { tax_period: "" }
-	} catch (error) {
-		console.error("Error creating tracker:", error)
-	} finally {
-		creating.value = false
-	}
+const createTracker = () => {
+	selectedTracker.value = null
+	isEditMode.value = false
+	showFormDialog.value = true
 }
 
 const viewTracker = async (tracker) => {
 	try {
-		selectedTracker.value = await complianceStore.getTaxTrackerDetails(
-			tracker.name,
-		)
-		showTrackerDetailDialog.value = true
+		selectedTracker.value = await complianceStore.getTaxTrackerDetails(tracker.name)
+		isEditMode.value = true
+		showFormDialog.value = true
 	} catch (error) {
 		console.error("Error fetching tracker details:", error)
 	}
 }
 
-const editTracker = (tracker) => {
-	// TODO: Implement edit functionality
-	console.log("Edit tracker:", tracker)
+const editTracker = async (tracker) => {
+	try {
+		selectedTracker.value = await complianceStore.getTaxTrackerDetails(tracker.name)
+		isEditMode.value = true
+		showFormDialog.value = true
+	} catch (error) {
+		console.error("Error fetching tracker details:", error)
+	}
+}
+
+const handleTrackerSaved = async () => {
+	showFormDialog.value = false
+	await fetchTaxComplianceTrackers()
 }
 
 const getScoreColor = (score) => {
@@ -407,30 +249,6 @@ const getScoreVariant = (score) => {
 	if (score >= 80) return "green"
 	if (score >= 60) return "yellow"
 	return "red"
-}
-
-const getIssueTypeVariant = (type) => {
-	const variants = {
-		"Late Filing": "red",
-		"Late Payment": "red",
-		Underpayment: "orange",
-		Documentation: "yellow",
-		Other: "gray",
-	}
-	return variants[type] || "gray"
-}
-
-const formatCurrency = (amount) => {
-	if (amount === null || amount === undefined) return "KES 0.00"
-	return new Intl.NumberFormat("en-KE", {
-		style: "currency",
-		currency: "KES",
-	}).format(amount)
-}
-
-const formatDate = (dateString) => {
-	if (!dateString) return ""
-	return new Date(dateString).toLocaleDateString()
 }
 
 // Lifecycle

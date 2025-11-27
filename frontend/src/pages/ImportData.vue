@@ -732,27 +732,30 @@ const filteredImportHistory = computed(() => {
 	// Apply search filter
 	if (searchQuery.value) {
 		const search = searchQuery.value.toLowerCase()
-		history = history.filter(item =>
-			item.import_type_name?.toLowerCase().includes(search) ||
-			item.file_name?.toLowerCase().includes(search) ||
-			item.status?.toLowerCase().includes(search)
+		history = history.filter(
+			(item) =>
+				item.import_type_name?.toLowerCase().includes(search) ||
+				item.file_name?.toLowerCase().includes(search) ||
+				item.status?.toLowerCase().includes(search),
 		)
 	}
 
 	// Apply status filter
 	if (statusFilter.value) {
-		history = history.filter(item => item.status === statusFilter.value)
+		history = history.filter((item) => item.status === statusFilter.value)
 	}
 
 	return history
 })
 
 const successfulImports = computed(() => {
-	return dataStore.csvImportHistory.filter(item => item.status === 'Success').length
+	return dataStore.csvImportHistory.filter((item) => item.status === "Success")
+		.length
 })
 
 const failedImports = computed(() => {
-	return dataStore.csvImportHistory.filter(item => item.status === 'Failed').length
+	return dataStore.csvImportHistory.filter((item) => item.status === "Failed")
+		.length
 })
 
 // BC Explorer computed properties
@@ -877,20 +880,19 @@ const currentMode = computed(() => {
 })
 
 // Methods
-const fetchData = async () => {
-	loading.value = true
-	try {
-		await Promise.all([
-			dataStore.fetchCsvImportTypes(),
-			dataStore.fetchCsvImportFieldMappings(),
-			dataStore.fetchCsvImportHistory(),
-		])
-	} catch (error) {
-		console.error("Error loading import data:", error)
-	} finally {
-		loading.value = false
+	const fetchData = async () => {
+		loading.value = true
+		try {
+			await Promise.all([
+				dataStore.fetchCsvImportTypes(), // This now also fetches field mappings
+				dataStore.fetchCsvImportHistory(),
+			])
+		} catch (error) {
+			console.error("Error loading import data:", error)
+		} finally {
+			loading.value = false
+		}
 	}
-}
 
 const getImportTypeVariant = (type) => {
 	const variants = {

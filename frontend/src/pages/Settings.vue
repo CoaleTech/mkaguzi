@@ -866,8 +866,8 @@ import { ref } from "vue"
 const props = defineProps({
 	defaultTab: {
 		type: String,
-		default: "general"
-	}
+		default: "general",
+	},
 })
 
 // Reactive state

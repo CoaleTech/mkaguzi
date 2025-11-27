@@ -9,7 +9,7 @@
         </p>
       </div>
       <div class="flex items-center space-x-3">
-        <Button variant="outline">
+        <Button variant="outline" @click="exportPeriods">
           <DownloadIcon class="h-4 w-4 mr-2" />
           Export Periods
         </Button>
@@ -21,59 +21,16 @@
     </div>
 
     <!-- Period Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-blue-100 rounded-lg">
-            <CalendarIcon class="h-6 w-6 text-blue-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Active Periods</p>
-            <p class="text-2xl font-bold text-gray-900">{{ activePeriods }}</p>
-            <p class="text-xs text-blue-600 mt-1">Current fiscal year</p>
-          </div>
-        </div>
-      </div>
+    <PeriodStats :stats="stats" />
 
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-green-100 rounded-lg">
-            <CheckCircleIcon class="h-6 w-6 text-green-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Closed Periods</p>
-            <p class="text-2xl font-bold text-gray-900">{{ closedPeriods }}</p>
-            <p class="text-xs text-green-600 mt-1">Ready for audit</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-yellow-100 rounded-lg">
-            <ClockIcon class="h-6 w-6 text-yellow-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Upcoming Periods</p>
-            <p class="text-2xl font-bold text-gray-900">{{ upcomingPeriods }}</p>
-            <p class="text-xs text-yellow-600 mt-1">Next 3 months</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <SettingsIcon class="h-6 w-6 text-purple-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Period Types</p>
-            <p class="text-2xl font-bold text-gray-900">{{ periodTypes.length }}</p>
-            <p class="text-xs text-purple-600 mt-1">Configured types</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Filters -->
+    <PeriodFilters
+      v-model:searchQuery="searchQuery"
+      v-model:selectedStatus="selectedStatus"
+      v-model:selectedPeriodType="selectedPeriodType"
+      v-model:selectedFiscalYear="selectedFiscalYear"
+      v-model:selectedReconciliationStatus="selectedReconciliationStatus"
+    />
 
     <!-- Period Tabs -->
     <div class="bg-white rounded-lg border border-gray-200">
@@ -448,16 +405,24 @@
         </div>
       </div>
     </div>
+
+    <!-- Data Period Form Dialog -->
+    <DataPeriodForm
+      v-model:show="showFormDialog"
+      :period-data="selectedPeriod"
+      :is-edit-mode="isEditMode"
+      @saved="handlePeriodSaved"
+    />
   </div>
 </template>
 
 <script setup>
-import { useDataStore } from "@/stores/data"
+import DataPeriodForm from "@/components/dataperiods/DataPeriodForm.vue"
+import PeriodFilters from "@/components/dataperiods/PeriodFilters.vue"
+import PeriodStats from "@/components/dataperiods/PeriodStats.vue"
+import { useDataPeriodsStore } from "@/stores/dataPeriods"
 import { Badge, Button, Input, Select } from "frappe-ui"
 import {
-	CalendarIcon,
-	CheckCircleIcon,
-	ClockIcon,
 	DownloadIcon,
 	EditIcon,
 	FileTextIcon,
@@ -465,60 +430,49 @@ import {
 	SettingsIcon,
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
-import { useRouter } from "vue-router"
 
-const router = useRouter()
-const dataStore = useDataStore()
+const dataPeriodsStore = useDataPeriodsStore()
 
 // Reactive state
 const activeTab = ref("periods")
 const periodFilter = ref("")
 const fiscalYearFilter = ref("")
-const loading = ref(false)
+const showFormDialog = ref(false)
+const isEditMode = ref(false)
+const selectedPeriod = ref(null)
 
-// Mock data for demonstration
-const activePeriods = ref(12)
-const closedPeriods = ref(24)
-const upcomingPeriods = ref(3)
+// Store bindings
+const loading = computed(() => dataPeriodsStore.loading)
+const filteredPeriods = computed(() => dataPeriodsStore.filteredPeriods)
+const stats = computed(() => dataPeriodsStore.stats)
 
-const periods = ref([
-	{
-		name: "period_1",
-		period_name: "Q1 2024",
-		description: "First quarter of fiscal year 2024",
-		status: "Open",
-		period_type: "Quarterly",
-		start_date: "2024-01-01",
-		end_date: "2024-03-31",
-		fiscal_year: "2024",
-		company: "Main Company",
-		modified: new Date().toISOString(),
-	},
-	{
-		name: "period_2",
-		period_name: "Q2 2024",
-		description: "Second quarter of fiscal year 2024",
-		status: "Open",
-		period_type: "Quarterly",
-		start_date: "2024-04-01",
-		end_date: "2024-06-30",
-		fiscal_year: "2024",
-		company: "Main Company",
-		modified: new Date(Date.now() - 86400000).toISOString(),
-	},
-	{
-		name: "period_3",
-		period_name: "Q4 2023",
-		description: "Fourth quarter of fiscal year 2023",
-		status: "Closed",
-		period_type: "Quarterly",
-		start_date: "2023-10-01",
-		end_date: "2023-12-31",
-		fiscal_year: "2023",
-		company: "Main Company",
-		modified: new Date(Date.now() - 172800000).toISOString(),
-	},
-])
+const searchQuery = computed({
+	get: () => dataPeriodsStore.searchQuery,
+	set: (value) => (dataPeriodsStore.searchQuery = value),
+})
+
+const selectedStatus = computed({
+	get: () => dataPeriodsStore.filters.status,
+	set: (value) => (dataPeriodsStore.filters.status = value),
+})
+
+const selectedPeriodType = computed({
+	get: () => dataPeriodsStore.filters.periodType,
+	set: (value) => (dataPeriodsStore.filters.periodType = value),
+})
+
+const selectedFiscalYear = computed({
+	get: () => dataPeriodsStore.filters.fiscalYear,
+	set: (value) => (dataPeriodsStore.filters.fiscalYear = value),
+})
+
+const selectedReconciliationStatus = computed({
+	get: () => dataPeriodsStore.filters.reconciliationStatus,
+	set: (value) => (dataPeriodsStore.filters.reconciliationStatus = value),
+})
+
+// Local data for tabs
+const periods = computed(() => dataPeriodsStore.periods)
 
 const periodTypes = ref([
 	{
@@ -601,35 +555,9 @@ const fiscalYearOptions = [
 	{ label: "2022", value: "2022" },
 ]
 
-const filteredPeriods = computed(() => {
-	let filtered = periods.value
-
-	if (periodFilter.value) {
-		filtered = filtered.filter((period) => period.status === periodFilter.value)
-	}
-
-	if (fiscalYearFilter.value) {
-		filtered = filtered.filter(
-			(period) => period.fiscal_year === fiscalYearFilter.value,
-		)
-	}
-
-	return filtered
-})
-
 // Methods
 const fetchData = async () => {
-	loading.value = true
-	try {
-		// Fetch period-related data from store
-		await Promise.all([
-			// Add data store methods for periods when implemented
-		])
-	} catch (error) {
-		console.error("Error loading period data:", error)
-	} finally {
-		loading.value = false
-	}
+	await dataPeriodsStore.fetchPeriods()
 }
 
 const getPeriodStatusVariant = (status) => {
@@ -657,38 +585,65 @@ const formatDate = (date) => {
 }
 
 const createNewPeriod = () => {
-	router.push("/data-periods/period/new")
+	selectedPeriod.value = null
+	isEditMode.value = false
+	showFormDialog.value = true
 }
 
-const editPeriod = (period) => {
-	router.push(`/data-periods/period/${period.name}/edit`)
+const editPeriod = async (period) => {
+	try {
+		selectedPeriod.value = await dataPeriodsStore.getPeriodDetails(period.name)
+		isEditMode.value = true
+		showFormDialog.value = true
+	} catch (error) {
+		console.error("Error fetching period details:", error)
+	}
 }
 
-const closePeriod = (period) => {
-	period.status = "Closed"
-	// Implement close period logic
+const handlePeriodSaved = async () => {
+	showFormDialog.value = false
+	await fetchData()
 }
 
-const reopenPeriod = (period) => {
-	period.status = "Open"
-	// Implement reopen period logic
+const closePeriod = async (period) => {
+	try {
+		await dataPeriodsStore.closePeriod(period.name)
+	} catch (error) {
+		console.error("Error closing period:", error)
+	}
+}
+
+const reopenPeriod = async (period) => {
+	try {
+		await dataPeriodsStore.reopenPeriod(period.name)
+	} catch (error) {
+		console.error("Error reopening period:", error)
+	}
 }
 
 const createFiscalYear = () => {
-	router.push("/data-periods/fiscal-year/new")
+	// TODO: Implement fiscal year creation
+	console.log("Create fiscal year")
 }
 
 const createNewPeriodType = () => {
-	router.push("/data-periods/period-type/new")
+	// TODO: Implement period type creation
+	console.log("Create period type")
 }
 
 const editPeriodType = (type) => {
-	router.push(`/data-periods/period-type/${type.name}/edit`)
+	// TODO: Implement period type editing
+	console.log("Edit period type:", type.name)
 }
 
 const saveSettings = () => {
-	// Implement save settings logic
+	// TODO: Implement save settings logic
 	console.log("Saving settings:", settings.value)
+}
+
+const exportPeriods = () => {
+	// TODO: Implement export functionality
+	console.log("Export periods")
 }
 
 // Lifecycle

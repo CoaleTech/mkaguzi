@@ -168,13 +168,13 @@ export const useDataStore = defineStore("data", () => {
 			dashboardCharts.value = response || []
 			return response
 		} catch (error) {
-			console.error("Error fetching dashboard charts:", error)
-			// If permission error, set empty array instead of throwing
+			// If permission error, handle silently since it's expected for restricted doctypes
 			if (error.message && error.message.includes("PermissionError")) {
 				console.warn("No permission to access Dashboard Chart doctype")
 				dashboardCharts.value = []
 				return []
 			} else {
+				console.error("Error fetching dashboard charts:", error)
 				dashboardCharts.value = []
 				return []
 			}
@@ -208,13 +208,13 @@ export const useDataStore = defineStore("data", () => {
 			dashboardDataSources.value = response || []
 			return response
 		} catch (error) {
-			console.error("Error fetching dashboard data sources:", error)
-			// If permission error, set empty array instead of throwing
+			// If permission error, handle silently since it's expected for restricted doctypes
 			if (error.message && error.message.includes("PermissionError")) {
 				console.warn("No permission to access Dashboard Data Source doctype")
 				dashboardDataSources.value = []
 				return []
 			} else {
+				console.error("Error fetching dashboard data sources:", error)
 				dashboardDataSources.value = []
 				return []
 			}
@@ -242,20 +242,36 @@ export const useDataStore = defineStore("data", () => {
 						"failed_imports",
 						"creation",
 						"modified",
+						"field_mappings", // Include child table field mappings
 					],
 					limit_page_length: 1000,
 					order_by: "modified desc",
 				},
 			}).fetch()
 			csvImportTypes.value = response || []
+			// Extract field mappings from all import types and flatten them
+			const allFieldMappings = []
+			csvImportTypes.value.forEach(importType => {
+				if (importType.field_mappings && Array.isArray(importType.field_mappings)) {
+					importType.field_mappings.forEach(mapping => {
+						allFieldMappings.push({
+							...mapping,
+							import_type_name: importType.import_name || importType.name,
+						})
+					})
+				}
+			})
+			csvImportFieldMappings.value = allFieldMappings
 		} catch (error) {
 			console.error("Error fetching CSV import types:", error)
 			// If permission error, set empty array instead of throwing
 			if (error.message && error.message.includes("PermissionError")) {
 				console.warn("No permission to access CSV Import Type doctype")
 				csvImportTypes.value = []
+				csvImportFieldMappings.value = []
 			} else {
 				csvImportTypes.value = []
+				csvImportFieldMappings.value = []
 			}
 		}
 	}
@@ -331,37 +347,15 @@ export const useDataStore = defineStore("data", () => {
 
 	const fetchCsvImportFieldMappings = async () => {
 		try {
-			const response = await createResource({
-				url: "frappe.client.get_list",
-				params: {
-					doctype: "CSV Import Field Mapping",
-					fields: [
-						"name",
-						"import_type_name",
-						"csv_column_name",
-						"target_field_name",
-						"data_type",
-						"is_required",
-						"default_value",
-						"description",
-						"is_active",
-						"creation",
-						"modified",
-					],
-					limit_page_length: 1000,
-					order_by: "creation desc",
-				},
-			}).fetch()
-			csvImportFieldMappings.value = response || []
+			// CSV Import Field Mapping is a child table and cannot be queried directly
+			// Field mappings should be accessed through their parent CSV Import Type records
+			console.warn(
+				"Skipping direct field mappings fetch - CSV Import Field Mapping is a child table",
+			)
+			csvImportFieldMappings.value = []
 		} catch (error) {
 			console.error("Error fetching CSV import field mappings:", error)
-			// If permission error, set empty array instead of throwing
-			if (error.message && error.message.includes("PermissionError")) {
-				console.warn("No permission to access CSV Import Field Mapping doctype")
-				csvImportFieldMappings.value = []
-			} else {
-				csvImportFieldMappings.value = []
-			}
+			csvImportFieldMappings.value = []
 		}
 	}
 

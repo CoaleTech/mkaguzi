@@ -94,19 +94,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Badge, Dialog } from 'frappe-ui'
+import { Badge, Dialog } from "frappe-ui"
+import { computed, ref } from "vue"
 
 // Props
 const props = defineProps({
 	risks: {
 		type: Array,
-		default: () => []
+		default: () => [],
 	},
 	heatMapData: {
 		type: Object,
-		default: () => ({})
-	}
+		default: () => ({}),
+	},
 })
 
 // Reactive data
@@ -117,9 +117,10 @@ const selectedCell = ref({ likelihood: 0, impact: 0 })
 const cellRisks = computed(() => {
 	if (!selectedCell.value.likelihood || !selectedCell.value.impact) return []
 
-	return props.risks.filter(risk =>
-		risk.likelihood_score === selectedCell.value.likelihood &&
-		risk.impact_score === selectedCell.value.impact
+	return props.risks.filter(
+		(risk) =>
+			risk.likelihood_score === selectedCell.value.likelihood &&
+			risk.impact_score === selectedCell.value.impact,
 	)
 })
 
@@ -128,22 +129,22 @@ const getCellClass = (likelihood, impact) => {
 	const riskScore = likelihood * impact
 	const count = getCellCount(likelihood, impact)
 
-	let baseClass = 'border-gray-200'
+	let baseClass = "border-gray-200"
 
 	// Risk level colors
 	if (riskScore >= 19) {
-		baseClass = 'bg-red-100 border-red-300 text-red-800'
+		baseClass = "bg-red-100 border-red-300 text-red-800"
 	} else if (riskScore >= 13) {
-		baseClass = 'bg-orange-100 border-orange-300 text-orange-800'
+		baseClass = "bg-orange-100 border-orange-300 text-orange-800"
 	} else if (riskScore >= 7) {
-		baseClass = 'bg-yellow-100 border-yellow-300 text-yellow-800'
+		baseClass = "bg-yellow-100 border-yellow-300 text-yellow-800"
 	} else {
-		baseClass = 'bg-green-100 border-green-300 text-green-800'
+		baseClass = "bg-green-100 border-green-300 text-green-800"
 	}
 
 	// Add hover effect and count indicator
 	if (count > 0) {
-		baseClass += ' font-bold'
+		baseClass += " font-bold"
 	}
 
 	return baseClass
@@ -160,10 +161,10 @@ const onCellClick = (likelihood, impact) => {
 }
 
 const getRiskVariant = (score) => {
-	if (score >= 20) return 'destructive'
-	if (score >= 15) return 'warning'
-	if (score >= 10) return 'secondary'
-	return 'success'
+	if (score >= 20) return "destructive"
+	if (score >= 15) return "warning"
+	if (score >= 10) return "secondary"
+	return "success"
 }
 </script>
 

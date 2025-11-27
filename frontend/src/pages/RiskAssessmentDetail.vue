@@ -556,25 +556,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import RiskHeatMap from "@/components/RiskHeatMap.vue"
+import { Badge, Button, Card, Dialog, FormControl, Select } from "frappe-ui"
 import {
 	ArrowLeftIcon,
-	EditIcon,
 	CheckCircleIcon,
+	EditIcon,
 	PlusIcon,
+	SaveIcon,
 	TrashIcon,
-	SaveIcon
-} from 'lucide-vue-next'
-import {
-	Card,
-	FormControl,
-	Select,
-	Badge,
-	Button,
-	Dialog
-} from 'frappe-ui'
-import RiskHeatMap from '@/components/RiskHeatMap.vue'
+} from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 // Route and router
 const route = useRoute()
@@ -584,84 +577,84 @@ const router = useRouter()
 const props = defineProps({
 	assessmentId: {
 		type: String,
-		default: null
+		default: null,
 	},
 	mode: {
 		type: String,
-		default: 'view' // 'view', 'edit', 'new'
-	}
+		default: "view", // 'view', 'edit', 'new'
+	},
 })
 
 // Reactive data
 const assessment = ref(null)
 const loading = ref(true)
 const saving = ref(false)
-const isEditMode = ref(props.mode === 'edit' || props.mode === 'new')
+const isEditMode = ref(props.mode === "edit" || props.mode === "new")
 const showRiskModal = ref(false)
 const editingRiskIndex = ref(null)
 
 // Form data
 const riskForm = ref({
-	risk_id: '',
-	risk_title: '',
-	risk_description: '',
-	risk_category: '',
-	risk_subcategory: '',
-	auditable_entity: '',
-	threat_source: '',
-	vulnerability: '',
+	risk_id: "",
+	risk_title: "",
+	risk_description: "",
+	risk_category: "",
+	risk_subcategory: "",
+	auditable_entity: "",
+	threat_source: "",
+	vulnerability: "",
 	likelihood_score: 1,
 	impact_score: 1,
-	control_effectiveness: '',
-	existing_controls: '',
-	risk_owner: '',
-	risk_response: '',
+	control_effectiveness: "",
+	existing_controls: "",
+	risk_owner: "",
+	risk_response: "",
 	target_risk_score: 0,
-	likelihood_rationale: '',
-	impact_rationale: ''
+	likelihood_rationale: "",
+	impact_rationale: "",
 })
 
 // Options
 const periodOptions = [
-	{ label: 'Annual', value: 'Annual' },
-	{ label: 'Mid-Year', value: 'Mid-Year' },
-	{ label: 'Quarterly', value: 'Quarterly' },
-	{ label: 'Ad-hoc', value: 'Ad-hoc' }
+	{ label: "Annual", value: "Annual" },
+	{ label: "Mid-Year", value: "Mid-Year" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Ad-hoc", value: "Ad-hoc" },
 ]
 
 const statusOptions = [
-	{ label: 'Planning', value: 'Planning' },
-	{ label: 'In Progress', value: 'In Progress' },
-	{ label: 'Review', value: 'Review' },
-	{ label: 'Finalized', value: 'Finalized' },
-	{ label: 'Approved', value: 'Approved' }
+	{ label: "Planning", value: "Planning" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Review", value: "Review" },
+	{ label: "Finalized", value: "Finalized" },
+	{ label: "Approved", value: "Approved" },
 ]
 
 const methodologyOptions = [
-	{ label: 'Interview', value: 'interview' },
-	{ label: 'Workshop', value: 'workshop' },
-	{ label: 'Survey', value: 'survey' },
-	{ label: 'Document Review', value: 'document_review' },
-	{ label: 'Data Analysis', value: 'data_analysis' }
+	{ label: "Interview", value: "interview" },
+	{ label: "Workshop", value: "workshop" },
+	{ label: "Survey", value: "survey" },
+	{ label: "Document Review", value: "document_review" },
+	{ label: "Data Analysis", value: "data_analysis" },
 ]
 
 const actionStatusOptions = [
-	{ label: 'Planned', value: 'Planned' },
-	{ label: 'In Progress', value: 'In Progress' },
-	{ label: 'Completed', value: 'Completed' },
-	{ label: 'Overdue', value: 'Overdue' }
+	{ label: "Planned", value: "Planned" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Overdue", value: "Overdue" },
 ]
 
 const priorityOptions = [
-	{ label: 'Low', value: 'Low' },
-	{ label: 'Medium', value: 'Medium' },
-	{ label: 'High', value: 'High' },
-	{ label: 'Critical', value: 'Critical' }
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 // Computed properties
 const canEdit = computed(() => {
-	return assessment.value?.status !== 'Approved'
+	return assessment.value?.status !== "Approved"
 })
 
 const canApprove = computed(() => {
@@ -673,111 +666,116 @@ const canApprove = computed(() => {
 const loadAssessment = async () => {
 	try {
 		loading.value = true
-		
-		if (props.mode === 'new') {
+
+		if (props.mode === "new") {
 			// Create new assessment
 			assessment.value = {
-				assessment_id: '',
-				assessment_name: '',
-				assessment_date: new Date().toISOString().split('T')[0],
+				assessment_id: "",
+				assessment_name: "",
+				assessment_date: new Date().toISOString().split("T")[0],
 				fiscal_year: new Date().getFullYear().toString(),
-				assessment_period: 'Annual',
+				assessment_period: "Annual",
 				assessment_team: [],
-				assessment_scope: '',
+				assessment_scope: "",
 				methodology: [],
-				status: 'Planning',
+				status: "Planning",
 				risk_register: [],
 				action_plan: [],
 				risk_heat_map_data: {},
 				top_risks: [],
-				assessment_summary: '',
-				recommendations: '',
-				prepared_by: '',
-				reviewed_by: '',
-				approved_by: '',
-				approval_date: ''
+				assessment_summary: "",
+				recommendations: "",
+				prepared_by: "",
+				reviewed_by: "",
+				approved_by: "",
+				approval_date: "",
 			}
 		} else {
 			// Load existing assessment
 			const assessmentId = props.assessmentId || route.params.id
 			if (!assessmentId) {
-				throw new Error('Assessment ID is required')
+				throw new Error("Assessment ID is required")
 			}
-			
+
 			// TODO: Replace with actual Frappe API call
-			const response = await fetch(`/api/resource/Risk Assessment/${assessmentId}`)
+			const response = await fetch(
+				`/api/resource/Risk Assessment/${assessmentId}`,
+			)
 			if (response.ok) {
 				assessment.value = await response.json()
 			} else {
-				throw new Error('Failed to load assessment')
+				throw new Error("Failed to load assessment")
 			}
 		}
 	} catch (error) {
-		console.error('Error loading assessment:', error)
-		
+		console.error("Error loading assessment:", error)
+
 		// For now, create mock data for existing assessments
-		if (props.mode !== 'new') {
+		if (props.mode !== "new") {
 			const assessmentId = props.assessmentId || route.params.id
 			assessment.value = {
 				name: assessmentId,
-				assessment_id: `RA-2024-${String(assessmentId).padStart(4, '0')}`,
-				assessment_name: 'Annual Risk Assessment 2024',
-				assessment_date: '2024-01-15',
-				fiscal_year: '2024',
-				assessment_period: 'Annual',
+				assessment_id: `RA-2024-${String(assessmentId).padStart(4, "0")}`,
+				assessment_name: "Annual Risk Assessment 2024",
+				assessment_date: "2024-01-15",
+				fiscal_year: "2024",
+				assessment_period: "Annual",
 				assessment_team: [
-					{ team_member: 'John Doe', role: 'Lead' },
-					{ team_member: 'Jane Smith', role: 'Member' }
+					{ team_member: "John Doe", role: "Lead" },
+					{ team_member: "Jane Smith", role: "Member" },
 				],
-				assessment_scope: 'Comprehensive risk assessment covering all business units and processes.',
-				methodology: ['interview', 'workshop', 'document_review'],
-				status: 'In Progress',
+				assessment_scope:
+					"Comprehensive risk assessment covering all business units and processes.",
+				methodology: ["interview", "workshop", "document_review"],
+				status: "In Progress",
 				risk_register: [
 					{
-						risk_id: 'R001',
-						risk_title: 'Financial reporting errors',
-						risk_description: 'Financial reporting errors due to manual processes',
-						risk_category: 'Operational',
-						risk_subcategory: 'Financial Reporting',
-						auditable_entity: 'Finance Department',
-						threat_source: 'Human error',
-						vulnerability: 'Manual data entry',
+						risk_id: "R001",
+						risk_title: "Financial reporting errors",
+						risk_description:
+							"Financial reporting errors due to manual processes",
+						risk_category: "Operational",
+						risk_subcategory: "Financial Reporting",
+						auditable_entity: "Finance Department",
+						threat_source: "Human error",
+						vulnerability: "Manual data entry",
 						likelihood_score: 4,
 						impact_score: 5,
 						inherent_risk_score: 20,
-						control_effectiveness: 'Adequate',
-						existing_controls: 'Basic review process',
-						risk_owner: 'Finance Manager',
-						risk_response: 'Mitigate',
+						control_effectiveness: "Adequate",
+						existing_controls: "Basic review process",
+						risk_owner: "Finance Manager",
+						risk_response: "Mitigate",
 						target_risk_score: 10,
-						likelihood_rationale: 'High volume of manual entries',
-						impact_rationale: 'Material impact on financial statements'
-					}
+						likelihood_rationale: "High volume of manual entries",
+						impact_rationale: "Material impact on financial statements",
+					},
 				],
 				action_plan: [
 					{
-						action_id: 'A001',
-						action_description: 'Implement automated financial reporting system',
-						action_type: 'System Enhancement',
-						priority: 'High',
-						responsible_party: 'IT Department',
-						target_completion_date: '2024-06-30',
+						action_id: "A001",
+						action_description:
+							"Implement automated financial reporting system",
+						action_type: "System Enhancement",
+						priority: "High",
+						responsible_party: "IT Department",
+						target_completion_date: "2024-06-30",
 						estimated_cost: 50000,
-						resource_required: 'IT team and software licenses',
-						status: 'In Progress',
-						actual_completion_date: '',
-						effectiveness_review_date: '',
-						review_notes: ''
-					}
+						resource_required: "IT team and software licenses",
+						status: "In Progress",
+						actual_completion_date: "",
+						effectiveness_review_date: "",
+						review_notes: "",
+					},
 				],
 				risk_heat_map_data: {},
 				top_risks: [],
-				assessment_summary: 'The assessment identified several key risks...',
-				recommendations: 'Implement automated systems and enhance training...',
-				prepared_by: 'John Doe',
-				reviewed_by: '',
-				approved_by: '',
-				approval_date: ''
+				assessment_summary: "The assessment identified several key risks...",
+				recommendations: "Implement automated systems and enhance training...",
+				prepared_by: "John Doe",
+				reviewed_by: "",
+				approved_by: "",
+				approval_date: "",
 			}
 		}
 	} finally {
@@ -786,9 +784,11 @@ const loadAssessment = async () => {
 }
 
 const toggleEditMode = () => {
-	if (props.mode === 'view') {
+	if (props.mode === "view") {
 		// Navigate to edit route
-		router.push(`/audit-planning/risk-assessment/${props.assessmentId || route.params.id}/edit`)
+		router.push(
+			`/audit-planning/risk-assessment/${props.assessmentId || route.params.id}/edit`,
+		)
 	} else {
 		// Cancel edit mode
 		cancelChanges()
@@ -798,46 +798,46 @@ const toggleEditMode = () => {
 const saveChanges = async () => {
 	try {
 		saving.value = true
-		
+
 		// Calculate inherent risk scores
-		assessment.value.risk_register.forEach(risk => {
+		assessment.value.risk_register.forEach((risk) => {
 			risk.inherent_risk_score = risk.likelihood_score * risk.impact_score
 		})
-		
+
 		// Generate assessment ID if creating new
-		if (props.mode === 'new' && !assessment.value.assessment_id) {
+		if (props.mode === "new" && !assessment.value.assessment_id) {
 			const year = assessment.value.fiscal_year.slice(-2)
 			// TODO: Get next number from API
 			const nextNumber = Math.floor(Math.random() * 1000) + 1
-			assessment.value.assessment_id = `RA-${assessment.value.fiscal_year}-${String(nextNumber).padStart(4, '0')}`
+			assessment.value.assessment_id = `RA-${assessment.value.fiscal_year}-${String(nextNumber).padStart(4, "0")}`
 		}
-		
+
 		let response
-		if (props.mode === 'new') {
+		if (props.mode === "new") {
 			// TODO: Replace with actual Frappe API call for creating
-			response = await fetch('/api/resource/Risk Assessment', {
-				method: 'POST',
+			response = await fetch("/api/resource/Risk Assessment", {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json'
+					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(assessment.value)
+				body: JSON.stringify(assessment.value),
 			})
 		} else {
 			// TODO: Replace with actual Frappe API call for updating
 			const assessmentId = props.assessmentId || route.params.id
 			response = await fetch(`/api/resource/Risk Assessment/${assessmentId}`, {
-				method: 'PUT',
+				method: "PUT",
 				headers: {
-					'Content-Type': 'application/json'
+					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(assessment.value)
+				body: JSON.stringify(assessment.value),
 			})
 		}
 
 		if (response.ok) {
 			const savedAssessment = await response.json()
-			
-			if (props.mode === 'new') {
+
+			if (props.mode === "new") {
 				// Redirect to detail view after creating
 				router.push(`/audit-planning/risk-assessment/${savedAssessment.name}`)
 			} else {
@@ -846,22 +846,24 @@ const saveChanges = async () => {
 				await loadAssessment()
 			}
 		} else {
-			throw new Error('Failed to save changes')
+			throw new Error("Failed to save changes")
 		}
 	} catch (error) {
-		console.error('Error saving changes:', error)
+		console.error("Error saving changes:", error)
 	} finally {
 		saving.value = false
 	}
 }
 
 const cancelChanges = () => {
-	if (props.mode === 'new') {
+	if (props.mode === "new") {
 		// Go back to list for new assessments
-		router.push('/audit-planning/risk-assessment')
-	} else if (props.mode === 'edit') {
+		router.push("/audit-planning/risk-assessment")
+	} else if (props.mode === "edit") {
 		// Go back to view mode for existing assessments
-		router.push(`/audit-planning/risk-assessment/${props.assessmentId || route.params.id}`)
+		router.push(
+			`/audit-planning/risk-assessment/${props.assessmentId || route.params.id}`,
+		)
 	} else {
 		// Just exit edit mode
 		isEditMode.value = false
@@ -871,19 +873,19 @@ const cancelChanges = () => {
 
 const approveAssessment = async () => {
 	try {
-		assessment.value.status = 'Approved'
-		assessment.value.approved_by = 'Current User' // TODO: Get from session
-		assessment.value.approval_date = new Date().toISOString().split('T')[0]
+		assessment.value.status = "Approved"
+		assessment.value.approved_by = "Current User" // TODO: Get from session
+		assessment.value.approval_date = new Date().toISOString().split("T")[0]
 		await saveChanges()
 	} catch (error) {
-		console.error('Error approving assessment:', error)
+		console.error("Error approving assessment:", error)
 	}
 }
 
 const addTeamMember = () => {
 	assessment.value.assessment_team.push({
-		team_member: '',
-		role: ''
+		team_member: "",
+		role: "",
 	})
 }
 
@@ -894,23 +896,23 @@ const removeTeamMember = (index) => {
 const addRiskEntry = () => {
 	editingRiskIndex.value = null
 	riskForm.value = {
-		risk_id: `R${String(assessment.value.risk_register.length + 1).padStart(3, '0')}`,
-		risk_title: '',
-		risk_description: '',
-		risk_category: '',
-		risk_subcategory: '',
-		auditable_entity: '',
-		threat_source: '',
-		vulnerability: '',
+		risk_id: `R${String(assessment.value.risk_register.length + 1).padStart(3, "0")}`,
+		risk_title: "",
+		risk_description: "",
+		risk_category: "",
+		risk_subcategory: "",
+		auditable_entity: "",
+		threat_source: "",
+		vulnerability: "",
 		likelihood_score: 1,
 		impact_score: 1,
-		control_effectiveness: '',
-		existing_controls: '',
-		risk_owner: '',
-		risk_response: '',
+		control_effectiveness: "",
+		existing_controls: "",
+		risk_owner: "",
+		risk_response: "",
 		target_risk_score: 0,
-		likelihood_rationale: '',
-		impact_rationale: ''
+		likelihood_rationale: "",
+		impact_rationale: "",
 	}
 	showRiskModal.value = true
 }
@@ -928,7 +930,8 @@ const removeRiskEntry = (index) => {
 const saveRiskEntry = () => {
 	const riskData = {
 		...riskForm.value,
-		inherent_risk_score: riskForm.value.likelihood_score * riskForm.value.impact_score
+		inherent_risk_score:
+			riskForm.value.likelihood_score * riskForm.value.impact_score,
 	}
 
 	if (editingRiskIndex.value !== null) {
@@ -944,40 +947,40 @@ const closeRiskModal = () => {
 	showRiskModal.value = false
 	editingRiskIndex.value = null
 	riskForm.value = {
-		risk_id: '',
-		risk_title: '',
-		risk_description: '',
-		risk_category: '',
-		risk_subcategory: '',
-		auditable_entity: '',
-		threat_source: '',
-		vulnerability: '',
+		risk_id: "",
+		risk_title: "",
+		risk_description: "",
+		risk_category: "",
+		risk_subcategory: "",
+		auditable_entity: "",
+		threat_source: "",
+		vulnerability: "",
 		likelihood_score: 1,
 		impact_score: 1,
-		control_effectiveness: '',
-		existing_controls: '',
-		risk_owner: '',
-		risk_response: '',
+		control_effectiveness: "",
+		existing_controls: "",
+		risk_owner: "",
+		risk_response: "",
 		target_risk_score: 0,
-		likelihood_rationale: '',
-		impact_rationale: ''
+		likelihood_rationale: "",
+		impact_rationale: "",
 	}
 }
 
 const addAction = () => {
 	assessment.value.action_plan.push({
-		action_id: `A${String(assessment.value.action_plan.length + 1).padStart(3, '0')}`,
-		action_description: '',
-		action_type: '',
-		priority: 'Medium',
-		responsible_party: '',
-		target_completion_date: '',
+		action_id: `A${String(assessment.value.action_plan.length + 1).padStart(3, "0")}`,
+		action_description: "",
+		action_type: "",
+		priority: "Medium",
+		responsible_party: "",
+		target_completion_date: "",
 		estimated_cost: 0,
-		resource_required: '',
-		status: 'Not Started',
-		actual_completion_date: '',
-		effectiveness_review_date: '',
-		review_notes: ''
+		resource_required: "",
+		status: "Not Started",
+		actual_completion_date: "",
+		effectiveness_review_date: "",
+		review_notes: "",
 	})
 }
 
@@ -987,41 +990,45 @@ const removeAction = (index) => {
 
 const getStatusVariant = (status) => {
 	const variants = {
-		'Planning': 'secondary',
-		'In Progress': 'warning',
-		'Review': 'info',
-		'Finalized': 'success',
-		'Approved': 'success'
+		Planning: "secondary",
+		"In Progress": "warning",
+		Review: "info",
+		Finalized: "success",
+		Approved: "success",
 	}
-	return variants[status] || 'secondary'
+	return variants[status] || "secondary"
 }
 
 const getRiskVariant = (score) => {
-	if (score >= 20) return 'destructive'
-	if (score >= 15) return 'warning'
-	if (score >= 10) return 'secondary'
-	return 'success'
+	if (score >= 20) return "destructive"
+	if (score >= 15) return "warning"
+	if (score >= 10) return "secondary"
+	return "success"
 }
 
 const getRiskLevel = (score) => {
-	if (score >= 20) return 'Critical'
-	if (score >= 15) return 'High'
-	if (score >= 10) return 'Medium'
-	return 'Low'
+	if (score >= 20) return "Critical"
+	if (score >= 15) return "High"
+	if (score >= 10) return "Medium"
+	return "Low"
 }
 
 // Watch for risk register changes to update heat map
-watch(() => assessment.value?.risk_register, (newRisks) => {
-	if (newRisks) {
-		updateHeatMapData()
-	}
-}, { deep: true })
+watch(
+	() => assessment.value?.risk_register,
+	(newRisks) => {
+		if (newRisks) {
+			updateHeatMapData()
+		}
+	},
+	{ deep: true },
+)
 
 const updateHeatMapData = () => {
 	if (!assessment.value) return
 
 	const heatMap = {}
-	assessment.value.risk_register.forEach(risk => {
+	assessment.value.risk_register.forEach((risk) => {
 		const key = `${risk.likelihood_score}-${risk.impact_score}`
 		heatMap[key] = (heatMap[key] || 0) + 1
 	})

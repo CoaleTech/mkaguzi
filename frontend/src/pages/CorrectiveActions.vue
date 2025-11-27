@@ -13,74 +13,37 @@
           <DownloadIcon class="h-4 w-4 mr-2" />
           Export
         </Button>
-        <Button @click="createNewAction">
+        <Button @click="showCreateForm = true" :loading="saving">
           <PlusIcon class="h-4 w-4 mr-2" />
           New Corrective Action
         </Button>
       </div>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-blue-100 rounded-lg">
-            <ClipboardListIcon class="h-6 w-6 text-blue-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Total Actions</p>
-            <p class="text-2xl font-bold text-gray-900">{{ totalActions }}</p>
-          </div>
-        </div>
-      </div>
+    <!-- Action Stats -->
+    <ActionStats
+      :stats="stats"
+      :loading="loading"
+      :show-details="true"
+    />
 
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-yellow-100 rounded-lg">
-            <ClockIcon class="h-6 w-6 text-yellow-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">In Progress</p>
-            <p class="text-2xl font-bold text-gray-900">{{ inProgressActions }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-green-100 rounded-lg">
-            <CheckCircleIcon class="h-6 w-6 text-green-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Completed</p>
-            <p class="text-2xl font-bold text-gray-900">{{ completedActions }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center">
-          <div class="p-2 bg-red-100 rounded-lg">
-            <AlertTriangleIcon class="h-6 w-6 text-red-600" />
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Overdue</p>
-            <p class="text-2xl font-bold text-gray-900">{{ overdueActions }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Action Filters -->
+    <ActionFilters
+      v-model="filters"
+      @refresh="fetchActions"
+      @export="exportActions"
+      @create="showCreateForm = true"
+    />
 
     <!-- Corrective Actions Table -->
     <div class="bg-white rounded-lg border border-gray-200">
       <div class="p-6">
         <DataTable
           :columns="columns"
-          :data="correctiveActions"
+          :data="filteredActions"
           :loading="loading"
           :pagination="true"
           :sortable="true"
-          :filterable="true"
           @row-click="onActionClick"
         >
           <!-- Priority Column -->
@@ -93,7 +56,7 @@
           <!-- Status Column -->
           <template #column-status="{ row }">
             <Badge :variant="getStatusVariant(row.status)">
-              {{ row.status || 'Open' }}
+              {{ row.status || 'Draft' }}
             </Badge>
           </template>
 
@@ -132,14 +95,22 @@
         </DataTable>
       </div>
     </div>
+
+    <!-- Corrective Action Form Modal -->
+    <CorrectiveActionForm
+      v-model:show="showCreateForm"
+      :action="selectedAction"
+      :mode="formMode"
+      @saved="onActionSaved"
+      @close="onFormClose"
+    />
   </div>
 </template>
 
 <script setup>
 import { DataTable } from "@/components/Common"
-import { useAuditStore } from "@/stores/audit"
+import { useCorrectiveActionsStore } from "@/stores/correctiveActions"
 import { Badge, Button } from "frappe-ui"
-import { createResource } from "frappe-ui"
 import {
 	AlertTriangleIcon,
 	CheckCircleIcon,
@@ -153,38 +124,40 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import ActionStats from "@/components/actions/ActionStats.vue"
+import ActionFilters from "@/components/actions/ActionFilters.vue"
+import CorrectiveActionForm from "@/components/actions/CorrectiveActionForm.vue"
 
 const router = useRouter()
-const auditStore = useAuditStore()
+const store = useCorrectiveActionsStore()
 
 // Reactive state
-const loading = ref(false)
+const showCreateForm = ref(false)
+const selectedAction = ref(null)
+const formMode = ref('create')
 
 // Computed properties
-const correctiveActions = computed(() => auditStore.correctiveActionPlans)
-
-const totalActions = computed(() => correctiveActions.value.length)
-
-const inProgressActions = computed(
-	() =>
-		correctiveActions.value.filter((action) => action.status === "In Progress")
-			.length,
-)
-
-const completedActions = computed(
-	() =>
-		correctiveActions.value.filter((action) => action.status === "Completed")
-			.length,
-)
-
-const overdueActions = computed(() => {
-	const now = new Date()
-	return correctiveActions.value.filter((action) => {
-		if (!action.target_completion_date || action.status === "Completed")
-			return false
-		return new Date(action.target_completion_date) < now
-	}).length
+const actions = computed(() => store.actions)
+const filteredActions = computed(() => store.filteredActions)
+const stats = computed(() => store.stats)
+const loading = computed(() => store.loading)
+const saving = computed(() => store.saving)
+const filters = computed({
+  get: () => ({
+    search: store.searchQuery,
+    ...store.filters
+  }),
+  set: (value) => {
+    store.searchQuery = value.search || ''
+    store.setFilters(value)
+  }
 })
+
+// Legacy computed properties for backward compatibility
+const totalActions = computed(() => stats.value.total)
+const inProgressActions = computed(() => stats.value.inProgress)
+const completedActions = computed(() => stats.value.completed)
+const overdueActions = computed(() => stats.value.overdue)
 
 const columns = [
 	{ key: "plan_id", label: "Action ID", sortable: true, width: "120px" },
@@ -226,15 +199,8 @@ const columns = [
 ]
 
 // Methods
-const fetchCorrectiveActions = async () => {
-	loading.value = true
-	try {
-		await auditStore.fetchCorrectiveActionPlans()
-	} catch (error) {
-		console.error("Error loading corrective actions:", error)
-	} finally {
-		loading.value = false
-	}
+const fetchActions = async () => {
+	await store.fetchActions()
 }
 
 const getPriorityVariant = (priority) => {
@@ -249,9 +215,10 @@ const getPriorityVariant = (priority) => {
 
 const getStatusVariant = (status) => {
 	const variants = {
-		Open: "danger",
+		Draft: "secondary",
+		Approved: "info",
 		"In Progress": "warning",
-		"Pending Review": "info",
+		"On Hold": "secondary",
 		Completed: "success",
 		Cancelled: "secondary",
 	}
@@ -267,22 +234,40 @@ const viewAction = (action) => {
 }
 
 const editAction = (action) => {
-	router.push(`/corrective-actions/${action.name}/edit`)
+	selectedAction.value = action
+	formMode.value = 'edit'
+	showCreateForm.value = true
 }
 
-const deleteAction = (action) => {
+const deleteAction = async (action) => {
 	if (confirm("Are you sure you want to delete this corrective action?")) {
-		// Delete logic will be implemented
-		console.log("Deleting action:", action.name)
+		try {
+			await store.deleteAction(action.name)
+		} catch (error) {
+			console.error("Error deleting action:", error)
+		}
 	}
 }
 
-const createNewAction = () => {
-	router.push("/corrective-actions/new")
+const exportActions = () => {
+	// Export logic will be implemented
+	console.log("Exporting actions...")
+}
+
+const onActionSaved = () => {
+	showCreateForm.value = false
+	selectedAction.value = null
+	formMode.value = 'create'
+}
+
+const onFormClose = () => {
+	showCreateForm.value = false
+	selectedAction.value = null
+	formMode.value = 'create'
 }
 
 // Lifecycle
 onMounted(async () => {
-	await fetchCorrectiveActions()
+	await fetchActions()
 })
 </script>

@@ -1,0 +1,2271 @@
+	<!-- New Engagement Modal -->
+	<Dialog v-model="showNewEngagementModal" :options="{ title: 'Create New Audit Engagement', size: 'full', width: '95vw', height: '90vh' }">
+		<template #body-content>
+			<div class="h-[75vh] flex">
+				<!-- Progress Sidebar -->
+				<div class="w-72 bg-gray-50 border-r border-gray-200 flex-shrink-0">
+					<div class="p-6">
+						<h4 class="text-sm font-semibold text-gray-900 mb-4">Progress</h4>
+						<div class="space-y-3">
+							<div 
+								v-for="(tab, index) in tabs" 
+								:key="tab.name"
+								class="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all"
+								:class="tabIndex === index ? 'bg-green-100 border border-green-300' : 'hover:bg-gray-100'"
+								@click="tabIndex = index"
+							>
+								<div 
+									class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+									:class="getTabStatus(tab) === 'complete' ? 'bg-green-500 text-white' : 
+												 getTabStatus(tab) === 'partial' ? 'bg-amber-500 text-white' : 
+												 'bg-gray-300 text-gray-600'"
+								>
+									<CheckIcon v-if="getTabStatus(tab) === 'complete'" class="h-3 w-3" />
+									<span v-else>{{ index + 1 }}</span>
+								</div>
+								<div class="flex-1">
+									<div class="text-sm font-medium text-gray-900">{{ tab.label }}</div>
+									<div class="text-xs text-gray-500">{{ tab.description }}</div>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Overall Progress -->
+						<div class="mt-6 p-4 bg-white rounded-lg border border-gray-200">
+							<div class="flex items-center justify-between mb-2">
+								<span class="text-sm font-medium text-gray-700">Overall Progress</span>
+								<span class="text-sm font-semibold text-green-600">{{ overallProgress }}%</span>
+							</div>
+							<div class="w-full bg-gray-200 rounded-full h-2">
+								<div 
+									class="bg-green-600 h-2 rounded-full transition-all duration-500"
+									:style="{ width: `${overallProgress}%` }"
+								></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Main Form Content -->
+				<div class="flex-1 overflow-y-auto">
+					<div class="p-8">
+						<!-- Basic Information Tab -->
+						<div v-if="tabIndex === 0" class="space-y-8">
+							<!-- Basic Information Section -->
+							<div class="space-y-6">
+								<div class="flex items-center space-x-3">
+									<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+										<span class="text-white text-sm font-semibold">1</span>
+									</div>
+									<div>
+										<h3 class="text-xl font-bold text-gray-900">Basic Information</h3>
+										<p class="text-sm text-gray-500">Essential engagement details and identification</p>
+									</div>
+								</div>
+								
+								<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+									<div class="grid grid-cols-3 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Engagement ID *</label>
+											<input
+												v-model="newEngagementForm.engagement_id"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="ENG-2025-001"
+												required
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+											<select
+												v-model="newEngagementForm.status"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option value="Planning">Planning</option>
+												<option value="Fieldwork">Fieldwork</option>
+												<option value="Reporting">Reporting</option>
+												<option value="Management Review">Management Review</option>
+												<option value="Quality Review">Quality Review</option>
+												<option value="Finalized">Finalized</option>
+												<option value="Issued">Issued</option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="mt-4">
+										<label class="block text-sm font-medium text-gray-700 mb-2">Engagement Title *</label>
+										<input
+											v-model="newEngagementForm.engagement_title"
+											type="text"
+											class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											placeholder="Enter engagement title"
+											required
+										/>
+									</div>
+									
+									<div class="grid grid-cols-3 gap-4 mt-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Audit Type *</label>
+											<select
+												v-model="newEngagementForm.audit_type"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												required
+											>
+												<option v-for="type in auditTypeOptions" :key="type.value" :value="type.value">
+													{{ type.label }}
+												</option>
+											</select>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Planned Audit Reference</label>
+											<input
+												v-model="newEngagementForm.planned_audit_reference"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Link to annual plan item"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+											<select
+												v-model="newEngagementForm.priority"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option value="High">High</option>
+												<option value="Medium">Medium</option>
+												<option value="Low">Low</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								</div>
+							</div>
+							
+							<!-- Audit Details Section -->
+							<div class="space-y-6">
+								<div class="flex items-center space-x-3">
+									<div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+										<span class="text-white text-sm font-semibold">2</span>
+									</div>
+									<div>
+										<h3 class="text-xl font-bold text-gray-900">Audit Details</h3>
+										<p class="text-sm text-gray-500">Detailed audit specifications and scope</p>
+									</div>
+								</div>
+								
+								<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+									<div class="grid grid-cols-3 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Audit Universe *</label>
+											<input
+												v-model="newEngagementForm.audit_universe"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Select audit universe"
+												required
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Risk Assessment Reference</label>
+											<input
+												v-model="newEngagementForm.risk_assessment_reference"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Link to risk assessment"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+											<input
+												v-model="newEngagementForm.department"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Primary department/unit"
+											/>
+										</div>
+									</div>
+								</div>
+
+								<!-- Scope & Objectives -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Scope & Objectives</h3>
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Audit Objectives *</label>
+											<textarea
+												v-model="newEngagementForm.audit_objectives"
+												rows="3"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Enter audit objectives..."
+												required
+											></textarea>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Audit Scope *</label>
+											<textarea
+												v-model="newEngagementForm.audit_scope"
+												rows="3"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Enter audit scope..."
+												required
+											></textarea>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Scope Exclusions</label>
+											<textarea
+												v-model="newEngagementForm.scope_exclusions"
+												rows="2"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Enter any scope exclusions..."
+											></textarea>
+										</div>
+									</div>
+								</div>
+
+								<!-- Methodology -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Methodology</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Audit Approach</label>
+											<select
+												v-model="newEngagementForm.audit_approach"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option v-for="approach in auditApproachOptions" :key="approach.value" :value="approach.value">
+													{{ approach.label }}
+												</option>
+											</select>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Sampling Methodology</label>
+											<select
+												v-model="newEngagementForm.sampling_methodology"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option v-for="method in samplingMethodologyOptions" :key="method.value" :value="method.value">
+													{{ method.label }}
+												</option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="mt-4">
+										<label class="block text-sm font-medium text-gray-700 mb-2">Materiality Threshold</label>
+										<input
+											v-model="newEngagementForm.materiality_threshold"
+											type="number"
+											min="0"
+											step="0.01"
+											class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											placeholder="0.00"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="tab.label === 'Timeline & Period'">
+							<div class="space-y-6">
+								<!-- Audit Period -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Audit Period</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Period Start *</label>
+											<input
+												v-model="newEngagementForm.period_start"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												required
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Period End *</label>
+											<input
+												v-model="newEngagementForm.period_end"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												required
+											/>
+										</div>
+									</div>
+								</div>
+
+								<!-- Engagement Timeline -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Engagement Timeline</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Planning Start</label>
+											<input
+												v-model="newEngagementForm.planning_start"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Planning End</label>
+											<input
+												v-model="newEngagementForm.planning_end"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+									
+									<div class="grid grid-cols-2 gap-4 mt-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Fieldwork Start</label>
+											<input
+												v-model="newEngagementForm.fieldwork_start"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Fieldwork End</label>
+											<input
+												v-model="newEngagementForm.fieldwork_end"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+									
+									<div class="grid grid-cols-2 gap-4 mt-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Reporting Start</label>
+											<input
+												v-model="newEngagementForm.reporting_start"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Reporting End</label>
+											<input
+												v-model="newEngagementForm.reporting_end"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="tab.label === 'Team & Contacts'">
+							<div class="space-y-6">
+								<!-- Team & Contacts -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Team & Contacts</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Lead Auditor *</label>
+											<input
+												v-model="newEngagementForm.lead_auditor"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Select lead auditor"
+												required
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Process Owner</label>
+											<input
+												v-model="newEngagementForm.process_owner"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Select process owner"
+											/>
+										</div>
+									</div>
+								</div>
+
+								<!-- Audit Team Table *-->
+								<ChildTable
+									v-model="newEngagementForm.audit_team"
+									title="Audit Team"
+									modal-title="Team Member"
+									:columns="auditTeamColumns"
+									:form-fields="auditTeamFormFields"
+									:validate="validateTeamMember"
+									:required="true"
+								/>
+
+								<!-- Key Contacts Table -->
+								<ChildTable
+									v-model="newEngagementForm.key_contacts"
+									title="Key Contacts"
+									modal-title="Contact"
+									:columns="contactsColumns"
+									:form-fields="contactsFormFields"
+									:validate="validateContact"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+
+		<template #footer>
+			<div class="bg-gray-50 px-8 py-6 border-t border-gray-200">
+				<div class="flex items-center justify-between">
+					<!-- Left side - Progress and Validation Status -->
+					<div class="flex items-center space-x-6">
+						<!-- Progress Indicator -->
+						<div class="flex items-center space-x-3">
+							<div class="w-12 h-12 rounded-full bg-white border-4 flex items-center justify-center relative"
+								 :class="overallProgress === 100 ? 'border-green-500' : 'border-green-500'">
+								<div class="absolute inset-0 rounded-full" 
+									 :style="`conic-gradient(${overallProgress === 100 ? '#10b981' : '#10b981'} ${overallProgress * 3.6}deg, #e5e7eb 0deg)`"></div>
+								<span class="relative text-sm font-bold" :class="overallProgress === 100 ? 'text-green-600' : 'text-green-600'">
+									{{ overallProgress }}%
+								</span>
+							</div>
+							<div>
+								<div class="text-sm font-semibold text-gray-900">Form Progress</div>
+								<div class="text-xs text-gray-500">{{ Math.round((overallProgress / 100) * tabs.length) }} of {{ Array.isArray(tabs) ? tabs.length : 6 }} sections completed</div>
+							</div>
+						</div>
+						
+						<!-- Validation Status -->
+						<div class="flex items-center space-x-2">
+							<div 
+								class="w-3 h-3 rounded-full flex-shrink-0"
+								:class="newEngagementForm.engagement_id && newEngagementForm.engagement_title && newEngagementForm.audit_type ? 'bg-green-500' : 'bg-amber-500'"
+							></div>
+							<span class="text-sm font-medium" :class="newEngagementForm.engagement_id && newEngagementForm.engagement_title && newEngagementForm.audit_type ? 'text-green-700' : 'text-amber-700'">
+								{{ newEngagementForm.engagement_id && newEngagementForm.engagement_title && newEngagementForm.audit_type ? 'Ready to create' : 'Complete required fields' }}
+							</span>
+						</div>
+					</div>
+					
+					<!-- Right side - Action Buttons -->
+					<div class="flex items-center space-x-3">
+						<!-- Cancel Button -->
+						<Button
+							variant="outline"
+							theme="gray"
+							@click="showNewEngagementModal = false"
+							class="border-gray-300 hover:border-gray-400"
+							:disabled="isCreatingEngagement"
+						>
+							Cancel
+						</Button>
+						
+						<!-- Create Button -->
+						<Button
+							variant="solid"
+							theme="green"
+							@click="createEngagement"
+							:loading="isCreatingEngagement"
+							class="shadow-sm hover:shadow-md transition-all"
+						>
+							<template #prefix v-if="!isCreatingEngagement">
+								<PlusIcon class="h-4 w-4" />
+							</template>
+							{{ isCreatingEngagement ? 'Creating...' : 'Create Engagement' }}
+						</Button>
+					</div>
+				</div>
+			</div>
+		</template>
+	</Dialog>
+</div>
+							<div class="space-y-6">
+								<!-- Findings Summary -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Findings Summary</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Findings Count</label>
+											<input
+												v-model="newEngagementForm.findings_count"
+												type="number"
+												min="0"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+												readonly
+											/>
+											<p class="text-xs text-gray-500 mt-1">Auto-calculated from audit findings</p>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">High Risk Findings Count</label>
+											<input
+												v-model="newEngagementForm.high_risk_findings_count"
+												type="number"
+												min="0"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+												readonly
+											/>
+											<p class="text-xs text-gray-500 mt-1">Auto-calculated from high-risk findings</p>
+										</div>
+									</div>
+								</div>
+
+								<!-- Budget & Resources -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Budget & Resources</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Budgeted Hours</label>
+											<input
+												v-model="newEngagementForm.budgeted_hours"
+												type="number"
+												min="0"
+												step="0.5"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="0"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Actual Hours</label>
+											<input
+												v-model="newEngagementForm.actual_hours"
+												type="number"
+												min="0"
+												step="0.5"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+												readonly
+											/>
+											<p class="text-xs text-gray-500 mt-1">Auto-calculated from team member hours</p>
+										</div>
+									</div>
+									
+									<div class="grid grid-cols-2 gap-4 mt-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Budget Variance</label>
+											<input
+												v-model="newEngagementForm.budget_variance"
+												type="number"
+												step="0.01"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+												readonly
+											/>
+											<p class="text-xs text-gray-500 mt-1">Auto-calculated (Actual - Budgeted)</p>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Budget Variance %</label>
+											<input
+												v-model="newEngagementForm.budget_variance_percent"
+												type="number"
+												step="0.01"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+												readonly
+											/>
+											<p class="text-xs text-gray-500 mt-1">Auto-calculated percentage</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="tab.label === 'Opinion & Reporting'">
+							<div class="space-y-6">
+								<!-- Audit Opinion -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Audit Opinion</h3>
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Overall Audit Opinion</label>
+											<select
+												v-model="newEngagementForm.overall_audit_opinion"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option value="">Select opinion...</option>
+												<option value="Satisfactory">Satisfactory</option>
+												<option value="Satisfactory with Minor Issues">Satisfactory with Minor Issues</option>
+												<option value="Needs Improvement">Needs Improvement</option>
+												<option value="Unsatisfactory">Unsatisfactory</option>
+											</select>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Opinion Rationale</label>
+											<textarea
+												v-model="newEngagementForm.opinion_rationale"
+												rows="4"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Provide detailed rationale for the audit opinion..."
+											></textarea>
+										</div>
+									</div>
+								</div>
+
+								<!-- Reporting -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Reporting</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Report Reference</label>
+											<input
+												v-model="newEngagementForm.report_reference"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Link to audit report"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Report Issue Date</label>
+											<input
+												v-model="newEngagementForm.report_issue_date"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="tab.label === 'Follow-up & Quality'">
+							<div class="space-y-6">
+								<!-- Follow-up -->
+								<div class="border-b border-gray-200 pb-4">
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Follow-up</h3>
+									<div class="space-y-4">
+										<div class="flex items-center space-x-4">
+											<label class="flex items-center space-x-2">
+												<Checkbox v-model="newEngagementForm.follow_up_required" />
+												<span class="text-sm text-gray-700">Follow-up Required</span>
+											</label>
+										</div>
+										<div v-if="newEngagementForm.follow_up_required">
+											<label class="block text-sm font-medium text-gray-700 mb-2">Follow-up Date</label>
+											<input
+												v-model="newEngagementForm.follow_up_date"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+								</div>
+
+								<!-- Quality Review -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Quality Review</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Quality Reviewer</label>
+											<input
+												v-model="newEngagementForm.quality_reviewer"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Select quality reviewer"
+											/>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Review Date</label>
+											<input
+												v-model="newEngagementForm.review_date"
+												type="date"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											/>
+										</div>
+									</div>
+									
+									<div class="grid grid-cols-2 gap-4 mt-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Review Status</label>
+											<select
+												v-model="newEngagementForm.review_status"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											>
+												<option value="">Select status...</option>
+												<option value="Not Started">Not Started</option>
+												<option value="In Progress">In Progress</option>
+												<option value="Completed">Completed</option>
+											</select>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Quality Score</label>
+											<input
+												v-model="newEngagementForm.quality_score"
+												type="number"
+												min="0"
+												max="100"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="0-100"
+											/>
+										</div>
+									</div>
+									
+									<div class="mt-4">
+										<label class="block text-sm font-medium text-gray-700 mb-2">Review Comments</label>
+										<textarea
+											v-model="newEngagementForm.review_comments"
+											rows="4"
+											class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+											placeholder="Quality review comments and recommendations..."
+										></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="tab.label === 'Amendments & Notes'">
+							<div class="space-y-6">
+								<!-- Amendments Table -->
+								<ChildTable
+									v-model="newEngagementForm.amendments"
+									title="Amendments"
+									modal-title="Amendment"
+									:columns="amendmentsColumns"
+									:form-fields="amendmentsFormFields"
+									:validate="validateAmendment"
+								/>
+
+								<!-- Additional Information -->
+								<div>
+									<h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+											<textarea
+												v-model="newEngagementForm.notes"
+												rows="4"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="Additional notes and observations..."
+											></textarea>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-2">Attachments</label>
+											<input
+												v-model="newEngagementForm.attachments"
+												type="text"
+												class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+												placeholder="File attachments or references"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</template>
+			</Tabs>
+		</template>
+		<template #actions>
+			<Button variant="ghost" @click="showNewEngagementModal = false" :disabled="isCreatingEngagement">
+				Cancel
+			</Button>
+			<Button variant="solid" @click="createEngagement" :loading="isCreatingEngagement" class="bg-green-600 hover:bg-green-700">
+				Create Engagement
+			</Button>
+		</template>
+	</Dialog>
+
+
+	<!-- Data Period Modal -->
+	<Dialog v-model="showDataPeriodsModal" :options="{ title: editingDataPeriod !== null ? 'Edit Data Period' : 'Add Data Period' }">
+		<template #body-content>
+			<div class="space-y-4">
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Period Name *</label>
+					<input
+						v-model="dataPeriodForm.period_name"
+						type="text"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+						placeholder="e.g., Q1 2025, January 2025"
+						required
+					/>
+				</div>
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
+						<input
+							v-model="dataPeriodForm.start_date"
+							type="date"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							required
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">End Date *</label>
+						<input
+							v-model="dataPeriodForm.end_date"
+							type="date"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							required
+						/>
+					</div>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Data Completeness</label>
+					<select
+						v-model="dataPeriodForm.data_completeness"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+					>
+						<option v-for="option in dataCompletenessOptions" :key="option.value" :value="option.value">
+							{{ option.label }}
+						</option>
+					</select>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+					<textarea
+						v-model="dataPeriodForm.notes"
+						rows="3"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+						placeholder="Additional notes about this period..."
+					></textarea>
+				</div>
+			</div>
+		</template>
+		<template #actions>
+			<Button variant="ghost" @click="showDataPeriodsModal = false">
+				Cancel
+			</Button>
+			<Button variant="solid" @click="saveDataPeriod" class="bg-green-600 hover:bg-green-700">
+				Save Period
+			</Button>
+		</template>
+	</Dialog>
+
+	<!-- Amendment Modal -->
+	<Dialog v-model="showAmendmentModal" :options="{ title: editingAmendment !== null ? 'Edit Amendment' : 'Add Amendment' }">
+		<template #body-content>
+			<div class="space-y-4">
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Amendment Date *</label>
+						<input
+							v-model="amendmentForm.amendment_date"
+							type="date"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							required
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Amendment Type *</label>
+						<select
+							v-model="amendmentForm.amendment_type"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							required
+						>
+							<option v-for="type in amendmentTypeOptions" :key="type.value" :value="type.value">
+								{{ type.label }}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+					<textarea
+						v-model="amendmentForm.description"
+						rows="2"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+						placeholder="Describe the amendment..."
+						required
+					></textarea>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Reason *</label>
+					<textarea
+						v-model="amendmentForm.reason"
+						rows="2"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+						placeholder="Reason for the amendment..."
+						required
+					></textarea>
+				</div>
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Approved By</label>
+						<input
+							v-model="amendmentForm.approved_by"
+							type="text"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							placeholder="Select approver"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+						<select
+							v-model="amendmentForm.status"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+						>
+							<option v-for="status in amendmentStatusOptions" :key="status.value" :value="status.value">
+								{{ status.label }}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Impact on Timeline</label>
+						<textarea
+							v-model="amendmentForm.impact_on_timeline"
+							rows="2"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							placeholder="Describe timeline impact..."
+						></textarea>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Impact on Budget</label>
+						<textarea
+							v-model="amendmentForm.impact_on_budget"
+							rows="2"
+							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							placeholder="Describe budget impact..."
+						></textarea>
+					</div>
+				</div>
+			</div>
+		</template>
+		<template #actions>
+			<Button variant="ghost" @click="showAmendmentModal = false">
+				Cancel
+			</Button>
+			<Button variant="solid" @click="saveAmendment" class="bg-green-600 hover:bg-green-700">
+				Save Amendment
+			</Button>
+		</template>
+	</Dialog>
+</div>
+</template>
+
+<script setup>
+import { useAuditStore } from "@/stores/audit"
+import {
+	Badge,
+	Button,
+	Checkbox,
+	Dialog,
+	FeatherIcon,
+	Select,
+	Tabs,
+} from "frappe-ui"
+import {
+	ArrowUpDownIcon,
+	BarChart3Icon,
+	BarChartIcon,
+	CheckCircleIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	DownloadIcon,
+	EditIcon,
+	EyeIcon,
+	FileTextIcon,
+	GridIcon,
+	LayersIcon,
+	PlayIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	TableIcon,
+	TrashIcon,
+} from "lucide-vue-next"
+import { CheckIcon } from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+
+// Import new child table components
+import ChildTable from "@/components/Common/ChildTable.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import SelectField from "@/components/Common/fields/SelectField.vue"
+import DateField from "@/components/Common/fields/DateField.vue"
+import TextAreaField from "@/components/Common/fields/TextAreaField.vue"
+import CheckboxField from "@/components/Common/fields/CheckboxField.vue"
+
+const router = useRouter()
+const auditStore = useAuditStore()
+
+// Reactive state
+const loading = ref(false)
+const filters = ref({
+	search: "",
+	status: "",
+	type: "",
+	auditor: "",
+	approach: "",
+	opinion: "",
+})
+
+// New reactive variables for enhanced functionality
+const selectedEngagements = ref([])
+const sortBy = ref("period_start")
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const viewMode = ref("table")
+const showBulkModal = ref(false)
+const showCapacityModal = ref(false)
+const showTemplateModal = ref(false)
+const exporting = ref(false)
+
+// Modal reactive variables
+const showTemplatesModal = ref(false)
+const showBulkActionsModal = ref(false)
+const showNewEngagementModal = ref(false)
+const tabIndex = ref(0)
+const selectedTemplate = ref("")
+const bulkStatusUpdate = ref("")
+const bulkAuditorUpdate = ref("")
+const bulkDeleteConfirm = ref(false)
+
+// New Engagement Form Data
+const newEngagementForm = ref({
+	engagement_id: "",
+	engagement_title: "",
+	audit_type: "Financial",
+	status: "Planning",
+	planned_audit_reference: "",
+	audit_universe: "",
+	risk_assessment_reference: "",
+	audit_objectives: "",
+	audit_scope: "",
+	scope_exclusions: "",
+	audit_approach: "Risk-Based",
+	materiality_threshold: 0,
+	sampling_methodology: "Random",
+	period_start: "",
+	period_end: "",
+	planning_start: "",
+	planning_end: "",
+	fieldwork_start: "",
+	fieldwork_end: "",
+	reporting_start: "",
+	reporting_end: "",
+	actual_completion_date: "",
+	lead_auditor: "",
+	process_owner: "",
+	audit_program_reference: "",
+	working_papers_folder: "",
+	findings_count: 0,
+	high_risk_findings_count: 0,
+	budgeted_hours: 0,
+	actual_hours: 0,
+	budget_variance: 0,
+	budget_variance_percent: 0,
+	overall_audit_opinion: "",
+	opinion_rationale: "",
+	report_reference: "",
+	report_issue_date: "",
+	follow_up_required: true,
+	follow_up_date: "",
+	quality_reviewer: "",
+	review_date: "",
+	review_status: "",
+	review_comments: "",
+	quality_score: 0,
+	notes: "",
+	attachments: "",
+	// Child table arrays
+	data_periods: [],
+	audit_team: [],
+	key_contacts: [],
+	bc_data_requirements: [],
+	amendments: [],
+})
+const isCreatingEngagement = ref(false)
+
+// Form progress computed properties
+const getTabStatus = (tab) => {
+	switch (tab.name || tab.label) {
+		case 'basic':
+		case 'Basic Information':
+			return (newEngagementForm.value.engagement_id && 
+					newEngagementForm.value.engagement_title && 
+					newEngagementForm.value.audit_type) ? 'complete' : 
+				   (newEngagementForm.value.engagement_id || 
+					newEngagementForm.value.engagement_title) ? 'partial' : 'incomplete'
+		case 'team':
+		case 'Audit Team':
+			return newEngagementForm.value.team_members?.length > 0 ? 'complete' : 'incomplete'
+		case 'contacts':
+		case 'Key Contacts':
+			return newEngagementForm.value.key_contacts?.length > 0 ? 'complete' : 'incomplete'
+		case 'data':
+		case 'Data Requirements':
+			return (newEngagementForm.value.data_periods?.length > 0 || 
+					newEngagementForm.value.bc_data_requirements?.length > 0) ? 'complete' : 'incomplete'
+		case 'review':
+		case 'Quality Review':
+			return newEngagementForm.value.status ? 'partial' : 'incomplete'
+		case 'amendments':
+		case 'Amendments & Notes':
+			return 'complete' // This tab is optional
+		default:
+			return 'incomplete'
+	}
+}
+
+const overallProgress = computed(() => {
+	if (!Array.isArray(tabs)) return 0
+	const tabsArray = Array.isArray(tabs) ? tabs : tabs.value || []
+	const completedTabs = tabsArray.filter(tab => getTabStatus(tab) === 'complete').length
+	return Math.round((completedTabs / tabsArray.length) * 100)
+})
+
+// Computed properties
+const engagements = computed(() => auditStore.engagements)
+
+const filteredEngagements = computed(() => {
+	let filtered = engagements.value
+
+	if (filters.value.search) {
+		filtered = filtered.filter(
+			(engagement) =>
+				engagement.engagement_title
+					?.toLowerCase()
+					.includes(filters.value.search.toLowerCase()) ||
+				engagement.engagement_id
+					?.toLowerCase()
+					.includes(filters.value.search.toLowerCase()),
+		)
+	}
+
+	if (filters.value.status) {
+		filtered = filtered.filter(
+			(engagement) => engagement.status === filters.value.status,
+		)
+	}
+
+	if (filters.value.type) {
+		filtered = filtered.filter(
+			(engagement) => engagement.audit_type === filters.value.type,
+		)
+	}
+
+	if (filters.value.approach) {
+		filtered = filtered.filter(
+			(engagement) => engagement.audit_approach === filters.value.approach,
+		)
+	}
+
+	if (filters.value.opinion) {
+		filtered = filtered.filter(
+			(engagement) =>
+				engagement.overall_audit_opinion === filters.value.opinion,
+		)
+	}
+
+	return filtered
+})
+
+const columns = [
+	{ key: "engagement_id", label: "Engagement ID", sortable: true },
+	{ key: "engagement_title", label: "Engagement Title", sortable: true },
+	{ key: "audit_type", label: "Type", sortable: true },
+	{ key: "status", label: "Status", sortable: true },
+	{ key: "lead_auditor", label: "Lead Auditor", sortable: true },
+	{ key: "audit_universe", label: "Audit Universe", sortable: true },
+	{ key: "audit_approach", label: "Approach", sortable: true },
+	{ key: "period_start", label: "Period", sortable: true },
+	{ key: "budgeted_hours", label: "Budget Hours", sortable: true },
+	{ key: "overall_audit_opinion", label: "Opinion", sortable: true },
+	{ key: "findings_count", label: "Findings", sortable: true },
+	{ key: "actions", label: "Actions", width: "120px" },
+]
+
+const statusOptions = [
+	{ label: "All Status", value: "" },
+	{ label: "Planning", value: "Planning" },
+	{ label: "Fieldwork", value: "Fieldwork" },
+	{ label: "Reporting", value: "Reporting" },
+	{ label: "Management Review", value: "Management Review" },
+	{ label: "Quality Review", value: "Quality Review" },
+	{ label: "Finalized", value: "Finalized" },
+	{ label: "Issued", value: "Issued" },
+]
+
+const typeOptions = [
+	{ label: "All Types", value: "" },
+	{ label: "Financial", value: "Financial" },
+	{ label: "Operational", value: "Operational" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "IT", value: "IT" },
+	{ label: "Integrated", value: "Integrated" },
+	{ label: "Special Investigation", value: "Special Investigation" },
+	{ label: "Follow-up", value: "Follow-up" },
+	{ label: "Advisory", value: "Advisory" },
+]
+
+const auditorOptions = computed(() => {
+	const auditors = new Set()
+	engagements.value.forEach((engagement) => {
+		if (engagement.lead_auditor) {
+			auditors.add(engagement.lead_auditor)
+		}
+	})
+
+	return [
+		{ label: "All Auditors", value: "" },
+		...Array.from(auditors).map((auditor) => ({
+			label: auditor,
+			value: auditor,
+		})),
+	]
+})
+
+// New computed properties for enhanced functionality
+const selectAll = computed({
+	get: () =>
+		filteredEngagements.value.length > 0 &&
+		selectedEngagements.value.length === filteredEngagements.value.length,
+	set: (value) => {
+		if (value) {
+			selectedEngagements.value = filteredEngagements.value.map(
+				(engagement) => engagement.name,
+			)
+		} else {
+			selectedEngagements.value = []
+		}
+	},
+})
+
+const paginatedEngagements = computed(() => {
+	const start = (currentPage.value - 1) * itemsPerPage.value
+	const end = start + itemsPerPage.value
+	return filteredEngagements.value.slice(start, end)
+})
+
+const totalPages = computed(() =>
+	Math.ceil(filteredEngagements.value.length / itemsPerPage.value),
+)
+
+// Enhanced stats computed properties
+const totalEngagements = computed(() => engagements.value.length)
+
+const inProgressCount = computed(
+	() => engagements.value.filter((item) => item.status === "Fieldwork").length,
+)
+
+const reportingCount = computed(
+	() => engagements.value.filter((item) => item.status === "Reporting").length,
+)
+
+const completedCount = computed(
+	() =>
+		engagements.value.filter(
+			(item) => item.status === "Issued" || item.status === "Finalized",
+		).length,
+)
+
+const averageProgress = computed(() => {
+	if (engagements.value.length === 0) return 0
+	const totalProgress = engagements.value.reduce(
+		(sum, engagement) => sum + calculateProgress(engagement),
+		0,
+	)
+	return Math.round(totalProgress / engagements.value.length)
+})
+
+const qualityReviewCount = computed(
+	() =>
+		engagements.value.filter((item) => item.status === "Quality Review").length,
+)
+
+const averageQualityScore = computed(() => {
+	const scoredEngagements = engagements.value.filter(
+		(item) => item.quality_score,
+	)
+	if (scoredEngagements.length === 0) return 0
+	const totalScore = scoredEngagements.reduce(
+		(sum, engagement) => sum + (engagement.quality_score || 0),
+		0,
+	)
+	return Math.round(totalScore / scoredEngagements.length)
+})
+
+// Capacity planning computed properties
+const currentCapacity = computed(
+	() => inProgressCount.value + reportingCount.value,
+)
+const availableCapacity = computed(() =>
+	Math.max(0, 20 - currentCapacity.value),
+) // Assuming max capacity of 20
+
+const auditorWorkload = computed(() => {
+	const workload = {}
+	engagements.value.forEach((engagement) => {
+		if (engagement.lead_auditor) {
+			if (!workload[engagement.lead_auditor]) {
+				workload[engagement.lead_auditor] = {
+					name: engagement.lead_auditor,
+					count: 0,
+				}
+			}
+			workload[engagement.lead_auditor].count++
+		}
+	})
+
+	return Object.values(workload).map((auditor) => ({
+		...auditor,
+		load: Math.min(100, Math.round((auditor.count / 5) * 100)), // Assuming max 5 engagements per auditor
+	}))
+})
+
+// Form options
+const auditTypeOptions = [
+	{ label: "Financial", value: "Financial" },
+	{ label: "Operational", value: "Operational" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "IT", value: "IT" },
+	{ label: "Integrated", value: "Integrated" },
+	{ label: "Special Investigation", value: "Special Investigation" },
+	{ label: "Follow-up", value: "Follow-up" },
+	{ label: "Advisory", value: "Advisory" },
+]
+
+const auditApproachOptions = [
+	{ label: "Risk-Based", value: "Risk-Based" },
+	{ label: "Controls-Based", value: "Controls-Based" },
+	{ label: "Substantive", value: "Substantive" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "Combined", value: "Combined" },
+]
+
+const samplingMethodologyOptions = [
+	{ label: "Random", value: "Random" },
+	{ label: "Systematic", value: "Systematic" },
+	{ label: "Stratified", value: "Stratified" },
+	{ label: "Judgmental", value: "Judgmental" },
+	{ label: "Statistical", value: "Statistical" },
+	{ label: "100% Testing", value: "100% Testing" },
+]
+
+// Child table options
+const teamRoleOptions = [
+	{ label: "Audit Lead", value: "Audit Lead" },
+	{ label: "Senior Auditor", value: "Senior Auditor" },
+	{ label: "Auditor", value: "Auditor" },
+	{ label: "Trainee Auditor", value: "Trainee Auditor" },
+	{ label: "IT Specialist", value: "IT Specialist" },
+	{ label: "Subject Matter Expert", value: "Subject Matter Expert" },
+]
+
+const contactTypeOptions = [
+	{ label: "Management", value: "Management" },
+	{ label: "Process Owner", value: "Process Owner" },
+	{ label: "Subject Matter Expert", value: "Subject Matter Expert" },
+	{ label: "IT Contact", value: "IT Contact" },
+	{ label: "External Auditor", value: "External Auditor" },
+	{ label: "Other", value: "Other" },
+]
+
+const dataCompletenessOptions = [
+	{ label: "Complete", value: "Complete" },
+	{ label: "Partial", value: "Partial" },
+	{ label: "Missing", value: "Missing" },
+]
+
+const amendmentTypeOptions = [
+	{ label: "Scope Change", value: "Scope Change" },
+	{ label: "Timeline Extension", value: "Timeline Extension" },
+	{ label: "Budget Adjustment", value: "Budget Adjustment" },
+	{ label: "Resource Change", value: "Resource Change" },
+	{ label: "Methodology Change", value: "Methodology Change" },
+	{ label: "Other", value: "Other" },
+]
+
+const amendmentStatusOptions = [
+	{ label: "Draft", value: "Draft" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Rejected", value: "Rejected" },
+	{ label: "Implemented", value: "Implemented" },
+]
+
+const communicationPreferenceOptions = [
+	{ label: "Email", value: "Email" },
+	{ label: "Phone", value: "Phone" },
+	{ label: "SMS", value: "SMS" },
+	{ label: "In-person", value: "In-person" },
+]
+
+const dataRequirementTypeOptions = [
+	{ label: "Financial Data", value: "Financial Data" },
+	{ label: "Operational Data", value: "Operational Data" },
+	{ label: "Compliance Data", value: "Compliance Data" },
+	{ label: "System Data", value: "System Data" },
+	{ label: "Process Data", value: "Process Data" },
+	{ label: "Other", value: "Other" },
+]
+
+const dataFormatOptions = [
+	{ label: "Excel", value: "Excel" },
+	{ label: "CSV", value: "CSV" },
+	{ label: "PDF", value: "PDF" },
+	{ label: "Database Export", value: "Database Export" },
+	{ label: "API", value: "API" },
+	{ label: "Other", value: "Other" },
+]
+
+const dataFrequencyOptions = [
+	{ label: "Daily", value: "Daily" },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Annually", value: "Annually" },
+	{ label: "One-time", value: "One-time" },
+]
+
+const dataRequirementStatusOptions = [
+	{ label: "Pending", value: "Pending" },
+	{ label: "Requested", value: "Requested" },
+	{ label: "Received", value: "Received" },
+	{ label: "In Review", value: "In Review" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Rejected", value: "Rejected" },
+]
+
+// Audit Team Configuration
+const auditTeamColumns = [
+	{ key: 'team_member_name', label: 'Team Member', width: '200px' },
+	{ key: 'role', label: 'Role', width: '150px' },
+	{ key: 'budgeted_hours', label: 'Hours', width: '100px', format: (v) => v ? `${v}h` : '-' },
+	{ key: 'status', label: 'Status', width: '120px', component: 'Badge' },
+]
+
+const auditTeamFormFields = [
+	{
+		name: 'team_member',
+		label: 'Team Member',
+		component: LinkField,
+		props: {
+			doctype: 'User',
+			filters: { enabled: 1 },
+			required: true,
+			fetchFields: ['full_name']
+		},
+		autoPopulate: {
+			full_name: 'team_member_name'
+		}
+	},
+	{
+		name: 'team_member_name',
+		label: 'Team Member Name',
+		component: 'input',
+		props: {
+			type: 'hidden'
+		}
+	},
+	{
+		name: 'role',
+		label: 'Role',
+		component: SelectField,
+		props: {
+			options: teamRoleOptions,
+			required: true
+		},
+		defaultValue: 'Auditor'
+	},
+	{
+		name: 'responsibility',
+		label: 'Responsibility',
+		component: TextAreaField,
+		props: {
+			rows: 2,
+			placeholder: 'Describe responsibilities...'
+		}
+	},
+	{
+		name: 'budgeted_hours',
+		label: 'Budgeted Hours',
+		component: 'input',
+		props: {
+			type: 'number',
+			min: 0,
+			step: 0.5,
+			placeholder: '0'
+		},
+		defaultValue: 0
+	},
+	{
+		name: 'start_date',
+		label: 'Start Date',
+		component: DateField,
+		props: {}
+	},
+	{
+		name: 'end_date',
+		label: 'End Date',
+		component: DateField,
+		props: {}
+	},
+	{
+		name: 'is_lead',
+		label: 'Is Team Lead',
+		component: CheckboxField,
+		props: {},
+		defaultValue: false
+	},
+	{
+		name: 'status',
+		label: 'Status',
+		component: 'input',
+		props: {
+			type: 'hidden'
+		},
+		defaultValue: 'Assigned'
+	}
+]
+
+// Validation function for audit team
+const validateTeamMember = (data) => {
+	const errors = {}
+
+	if (!data.team_member) {
+		errors.team_member = 'Team member is required'
+	}
+
+	if (!data.role) {
+		errors.role = 'Role is required'
+	}
+
+	if (data.budgeted_hours && data.budgeted_hours < 0) {
+		errors.budgeted_hours = 'Hours must be positive'
+	}
+
+	if (data.start_date && data.end_date) {
+		if (new Date(data.start_date) > new Date(data.end_date)) {
+			errors.end_date = 'End date must be after start date'
+		}
+	}
+
+	return Object.keys(errors).length === 0 ? null : errors
+}
+
+// Key Contacts Configuration
+const contactsColumns = [
+	{ key: "contact_name", label: "Name", width: "200px" },
+	{ key: "contact_type", label: "Type", width: "150px", formatter: (value) => value },
+	{ key: "designation", label: "Designation", width: "150px" },
+	{ key: "email", label: "Email", width: "200px" },
+	{ key: "is_primary", label: "Primary", width: "80px", formatter: (value) => value ? "Yes" : "No" },
+]
+
+const contactsFormFields = [
+	{ name: "contact_name", label: "Contact Name", type: "text", required: true },
+	{ name: "contact_type", label: "Contact Type", type: "select", options: contactTypeOptions, required: true },
+	{ name: "designation", label: "Designation", type: "text" },
+	{ name: "department", label: "Department", type: "text" },
+	{ name: "email", label: "Email", type: "email" },
+	{ name: "phone", label: "Phone", type: "text" },
+	{ name: "communication_preference", label: "Communication Preference", type: "select", options: communicationPreferenceOptions },
+	{ name: "is_primary", label: "Primary Contact", type: "checkbox" },
+	{ name: "notes", label: "Notes", type: "textarea" },
+]
+
+const validateContact = (data) => {
+	const errors = {}
+
+	if (!data.contact_name) {
+		errors.contact_name = 'Contact name is required'
+	}
+
+	if (!data.contact_type) {
+		errors.contact_type = 'Contact type is required'
+	}
+
+	return Object.keys(errors).length === 0 ? null : errors
+}
+
+// Data Periods Configuration
+const dataPeriodsColumns = [
+	{ key: "period_name", label: "Period Name", width: "200px" },
+	{ key: "start_date", label: "Start Date", width: "120px", formatter: (value) => value ? new Date(value).toLocaleDateString() : "" },
+	{ key: "end_date", label: "End Date", width: "120px", formatter: (value) => value ? new Date(value).toLocaleDateString() : "" },
+	{ key: "data_completeness", label: "Completeness", width: "120px", formatter: (value) => value },
+]
+
+const dataPeriodsFormFields = [
+	{ name: "period_name", label: "Period Name", type: "text", required: true },
+	{ name: "start_date", label: "Start Date", type: "date", required: true },
+	{ name: "end_date", label: "End Date", type: "date", required: true },
+	{ name: "data_completeness", label: "Data Completeness", type: "select", options: dataCompletenessOptions, required: true },
+	{ name: "notes", label: "Notes", type: "textarea" },
+]
+
+const validateDataPeriod = (data) => {
+	const errors = {}
+
+	if (!data.period_name) {
+		errors.period_name = 'Period name is required'
+	}
+
+	if (!data.start_date) {
+		errors.start_date = 'Start date is required'
+	}
+
+	if (!data.end_date) {
+		errors.end_date = 'End date is required'
+	}
+
+	if (data.start_date && data.end_date && new Date(data.end_date) <= new Date(data.start_date)) {
+		errors.end_date = 'End date must be after start date'
+	}
+
+	return Object.keys(errors).length === 0 ? null : errors
+}
+
+// BC Data Requirements Configuration
+const bcDataRequirementsColumns = [
+	{ key: "requirement_type", label: "Type", width: "150px" },
+	{ key: "description", label: "Description", width: "250px" },
+	{ key: "source_system", label: "Source System", width: "150px" },
+	{ key: "data_format", label: "Format", width: "100px" },
+	{ key: "frequency", label: "Frequency", width: "100px" },
+	{ key: "status", label: "Status", width: "100px", formatter: (value) => value },
+]
+
+const bcDataRequirementsFormFields = [
+	{ name: "requirement_type", label: "Requirement Type", type: "select", options: dataRequirementTypeOptions, required: true },
+	{ name: "description", label: "Description", type: "textarea", required: true },
+	{ name: "source_system", label: "Source System", type: "text", required: true },
+	{ name: "data_format", label: "Data Format", type: "select", options: dataFormatOptions },
+	{ name: "frequency", label: "Frequency", type: "select", options: dataFrequencyOptions },
+	{ name: "deadline", label: "Deadline", type: "date" },
+	{ name: "status", label: "Status", type: "select", options: dataRequirementStatusOptions },
+	{ name: "notes", label: "Notes", type: "textarea" },
+]
+
+const validateBCDataRequirement = (data) => {
+	const errors = {}
+
+	if (!data.requirement_type) {
+		errors.requirement_type = 'Requirement type is required'
+	}
+
+	if (!data.description) {
+		errors.description = 'Description is required'
+	}
+
+	if (!data.source_system) {
+		errors.source_system = 'Source system is required'
+	}
+
+	return Object.keys(errors).length === 0 ? null : errors
+}
+
+// Amendments Configuration
+const amendmentsColumns = [
+	{ key: "amendment_date", label: "Date", width: "120px", formatter: (value) => value ? new Date(value).toLocaleDateString() : "" },
+	{ key: "amendment_type", label: "Type", width: "150px" },
+	{ key: "description", label: "Description", width: "250px" },
+	{ key: "approved_by", label: "Approved By", width: "150px" },
+	{ key: "status", label: "Status", width: "100px", formatter: (value) => value },
+]
+
+const amendmentsFormFields = [
+	{ name: "amendment_date", label: "Amendment Date", type: "date", required: true },
+	{ name: "amendment_type", label: "Amendment Type", type: "select", options: amendmentTypeOptions, required: true },
+	{ name: "description", label: "Description", type: "textarea", required: true },
+	{ name: "reason", label: "Reason", type: "textarea", required: true },
+	{ name: "approved_by", label: "Approved By", type: "link", doctype: "User" },
+	{ name: "impact_on_timeline", label: "Impact on Timeline", type: "textarea" },
+	{ name: "impact_on_budget", label: "Impact on Budget", type: "textarea" },
+	{ name: "status", label: "Status", type: "select", options: amendmentStatusOptions, required: true },
+]
+
+const validateAmendment = (data) => {
+	const errors = {}
+
+	if (!data.amendment_date) {
+		errors.amendment_date = 'Amendment date is required'
+	}
+
+	if (!data.amendment_type) {
+		errors.amendment_type = 'Amendment type is required'
+	}
+
+	if (!data.description) {
+		errors.description = 'Description is required'
+	}
+
+	if (!data.reason) {
+		errors.reason = 'Reason is required'
+	}
+
+	return Object.keys(errors).length === 0 ? null : errors
+}
+
+// Tabs configuration
+const tabs = [
+	{
+		label: "Basic Information",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "file-text", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Timeline & Period",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "calendar", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Team & Contacts",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "users", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Data & Resources",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "database", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Findings & Budget",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "bar-chart-3", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Opinion & Reporting",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "file-check", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Follow-up & Quality",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "check-circle", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+	{
+		label: "Amendments & Notes",
+		icon: {
+			__v_isVNode: true,
+			__v_skip: true,
+			type: FeatherIcon,
+			props: { name: "edit", class: "w-4 h-4" },
+			key: null,
+			ref: null,
+			scopeId: null,
+			slotScopeIds: null,
+			children: null,
+			component: null,
+			suspense: null,
+			ssContent: null,
+			ssFallback: null,
+			dirs: null,
+			transition: null,
+			el: null,
+			anchor: null,
+			target: null,
+			targetStart: null,
+			targetAnchor: null,
+			staticCount: 0,
+			shapeFlag: 4,
+			patchFlag: 0,
+			dynamicProps: null,
+			dynamicChildren: null,
+			appContext: null,
+			ctx: null,
+		},
+	},
+]
+
+// Methods
+const getStatusVariant = (status) => {
+	const variants = {
+		Planning: "secondary",
+		Fieldwork: "warning",
+		Reporting: "primary",
+		"Management Review": "info",
+		"Quality Review": "info",
+		Finalized: "success",
+		Issued: "success",
+	}
+	return variants[status] || "secondary"
+}
+
+const getStatusLabel = (status) => {
+	return status || "Planning"
+}
+
+const calculateProgress = (engagement) => {
+	// Calculate progress based on engagement timeline
+	const now = new Date()
+	const start = engagement.planning_start
+		? new Date(engagement.planning_start)
+		: null
+	const end = engagement.actual_completion_date
+		? new Date(engagement.actual_completion_date)
+		: engagement.reporting_end
+			? new Date(engagement.reporting_end)
+			: engagement.fieldwork_end
+				? new Date(engagement.fieldwork_end)
+				: null
+
+	if (!start || !end) return 0
+
+	if (now < start) return 0
+	if (now > end) return 100
+
+	const total = end - start
+	const elapsed = now - start
+	return Math.round((elapsed / total) * 100)
+}
+
+const onEngagementClick = (engagement) => {
+	router.push(`/engagements/${engagement.name}`)
+}
+
+const viewEngagement = (engagement) => {
+	router.push(`/engagements/${engagement.name}`)
+}
+
+const editEngagement = (engagement) => {
+	router.push(`/engagements/${engagement.name}/edit`)
+}
+
+const deleteEngagement = (engagement) => {
+	if (confirm("Are you sure you want to delete this engagement?")) {
+		// Delete logic will be implemented
+	}
+}
+
+const createNewEngagement = () => {
+	// Reset form
+	newEngagementForm.value = {
+		engagement_id: "",
+		engagement_title: "",
+		audit_type: "Financial",
+		status: "Planning",
+		planned_audit_reference: "",
+		audit_universe: "",
+		risk_assessment_reference: "",
+		audit_objectives: "",
+		audit_scope: "",
+		scope_exclusions: "",
+		audit_approach: "Risk-Based",
+		materiality_threshold: 0,
+		sampling_methodology: "Random",
+		period_start: "",
+		period_end: "",
+		planning_start: "",
+		planning_end: "",
+		fieldwork_start: "",
+		fieldwork_end: "",
+		reporting_start: "",
+		reporting_end: "",
+		actual_completion_date: "",
+		lead_auditor: "",
+		process_owner: "",
+		audit_program_reference: "",
+		working_papers_folder: "",
+		findings_count: 0,
+		high_risk_findings_count: 0,
+		budgeted_hours: 0,
+		actual_hours: 0,
+		budget_variance: 0,
+		budget_variance_percent: 0,
+		overall_audit_opinion: "",
+		opinion_rationale: "",
+		report_reference: "",
+		report_issue_date: "",
+		follow_up_required: true,
+		follow_up_date: "",
+		quality_reviewer: "",
+		review_date: "",
+		review_status: "",
+		review_comments: "",
+		quality_score: 0,
+		notes: "",
+		attachments: "",
+		// Child table arrays
+		data_periods: [],
+		audit_team: [],
+		key_contacts: [],
+		bc_data_requirements: [],
+		amendments: [],
+	}
+	showNewEngagementModal.value = true
+}
+
+// New methods for enhanced functionality
+const toggleSelectAll = (value) => {
+	if (value) {
+		selectedEngagements.value = filteredEngagements.value.map(
+			(engagement) => engagement.name,
+		)
+	} else {
+		selectedEngagements.value = []
+	}
+}
+
+const toggleEngagementSelection = (engagementName) => {
+	const index = selectedEngagements.value.indexOf(engagementName)
+	if (index > -1) {
+		selectedEngagements.value.splice(index, 1)
+	} else {
+		selectedEngagements.value.push(engagementName)
+	}
+}
+
+const getAuditTypeTheme = (type) => {
+	const themes = {
+		Financial: "blue",
+		Operational: "green",
+		Compliance: "purple",
+		IT: "orange",
+		Integrated: "red",
+		"Special Investigation": "gray",
+		"Follow-up": "yellow",
+		Advisory: "indigo",
+	}
+	return themes[type] || "gray"
+}
+
+const getStatusTheme = (status) => {
+	const themes = {
+		Planning: "gray",
+		Fieldwork: "blue",
+		Reporting: "yellow",
+		"Management Review": "orange",
+		"Quality Review": "purple",
+		Finalized: "green",
+		Issued: "emerald",
+	}
+	return themes[status] || "gray"
+}
+
+const getOpinionTheme = (opinion) => {
+	const themes = {
+		Satisfactory: "green",
+		"Satisfactory with Minor Issues": "yellow",
+		"Needs Improvement": "orange",
+		Unsatisfactory: "red",
+	}
+	return themes[opinion] || "gray"
+}
+
+const refreshData = async () => {
+	loading.value = true
+	try {
+		await auditStore.fetchEngagements()
+	} catch (error) {
+		console.error("Error loading engagements:", error)
+	} finally {
+		loading.value = false
+	}
+}
+
+const exportEngagements = async () => {
+	exporting.value = true
+	try {
+		// Implement export functionality
+		console.log("Exporting engagements data...")
+		// This would typically call an API to export the data
+	} finally {
+		exporting.value = false
+	}
+}
+
+const formatDate = (dateString) => {
+	if (!dateString) return ""
+	return new Date(dateString).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
+}
+
+// Modal methods
+const applyTemplate = async () => {
+	if (!selectedTemplate.value) return
+
+	try {
+		// Implement template application logic
+		console.log(
+			"Applying template:",
+			selectedTemplate.value,
+			"to engagements:",
+			selectedEngagements.value,
+		)
+		// This would typically call an API to apply the template
+		showTemplatesModal.value = false
+		selectedTemplate.value = ""
+		selectedEngagements.value = []
+		await refreshData()
+	} catch (error) {
+		console.error("Error applying template:", error)
+	}
+}
+
+const applyBulkActions = async () => {
+	try {
+		if (bulkStatusUpdate.value) {
+			console.log(
+				"Updating status to:",
+				bulkStatusUpdate.value,
+				"for engagements:",
+				selectedEngagements.value,
+			)
+			// Implement bulk status update
+		}
+
+		if (bulkAuditorUpdate.value) {
+			console.log(
+				"Assigning auditor:",
+				bulkAuditorUpdate.value,
+				"to engagements:",
+				selectedEngagements.value,
+			)
+			// Implement bulk auditor assignment
+		}
+
+		if (bulkDeleteConfirm.value) {
+			if (
+				confirm(
+					`Are you sure you want to delete ${selectedEngagements.value.length} engagements? This action cannot be undone.`,
+				)
+			) {
+				console.log("Deleting engagements:", selectedEngagements.value)
+				// Implement bulk delete
+			}
+		}
+
+		showBulkActionsModal.value = false
+		bulkStatusUpdate.value = ""
+		bulkAuditorUpdate.value = ""
+		bulkDeleteConfirm.value = false
+		selectedEngagements.value = []
+		await refreshData()
+	} catch (error) {
+		console.error("Error applying bulk actions:", error)
+	}
+}
+
+const createEngagement = async () => {
+	isCreatingEngagement.value = true
+	try {
+		// Validate required fields
+		if (
+			!newEngagementForm.value.engagement_id ||
+			!newEngagementForm.value.engagement_title ||
+			!newEngagementForm.value.audit_universe ||
+			!newEngagementForm.value.period_start ||
+			!newEngagementForm.value.period_end ||
+			!newEngagementForm.value.lead_auditor ||
+			!newEngagementForm.value.audit_objectives ||
+			!newEngagementForm.value.audit_scope
+		) {
+			alert("Please fill in all required fields")
+			return
+		}
+
+		// Validate audit team is required
+		if (newEngagementForm.value.audit_team.length === 0) {
+			alert("Please add at least one team member")
+			return
+		}
+
+		// Create engagement using Frappe API
+		const response = await auditStore.createEngagement({
+			doctype: "Audit Engagement",
+			...newEngagementForm.value,
+		})
+
+		if (response) {
+			showNewEngagementModal.value = false
+			await refreshData()
+			// Navigate to the new engagement detail page
+			router.push(`/engagements/${response.name}`)
+		}
+	} catch (error) {
+		console.error("Error creating engagement:", error)
+		alert("Error creating engagement. Please try again.")
+	} finally {
+		isCreatingEngagement.value = false
+	}
+}
+
+// Lifecycle
+onMounted(async () => {
+	loading.value = true
+	try {
+		await auditStore.fetchEngagements()
+	} catch (error) {
+		console.error("Error loading engagements:", error)
+	} finally {
+		loading.value = false
+	}
+})
+</script>

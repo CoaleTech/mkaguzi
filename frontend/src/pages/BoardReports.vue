@@ -27,62 +27,8 @@
     </div>
 
     <!-- Executive Summary Dashboard -->
-    <div class="executive-dashboard">
-      <div class="dashboard-grid">
-        <!-- Key Metrics -->
-        <div class="metric-card">
-          <div class="metric-header">
-            <h3>Audit Coverage</h3>
-            <Target class="metric-icon" />
-          </div>
-          <div class="metric-value">{{ Math.round(boardMetrics.auditCoverage) }}%</div>
-          <div class="metric-trend" :class="getTrendClass(boardMetrics.auditCoverageTrend)">
-            <TrendingUp v-if="boardMetrics.auditCoverageTrend > 0" />
-            <TrendingDown v-else />
-            {{ Math.abs(boardMetrics.auditCoverageTrend) }}% from last period
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-header">
-            <h3>Open Findings</h3>
-            <AlertTriangle class="metric-icon" />
-          </div>
-          <div class="metric-value">{{ boardMetrics.openFindings }}</div>
-          <div class="metric-trend" :class="getTrendClass(-boardMetrics.findingsTrend)">
-            <TrendingDown v-if="boardMetrics.findingsTrend > 0" />
-            <TrendingUp v-else />
-            {{ Math.abs(boardMetrics.findingsTrend) }} from last period
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-header">
-            <h3>Compliance Score</h3>
-            <ShieldCheck class="metric-icon" />
-          </div>
-          <div class="metric-value">{{ Math.round(boardMetrics.complianceScore) }}%</div>
-          <div class="metric-trend" :class="getTrendClass(boardMetrics.complianceTrend)">
-            <TrendingUp v-if="boardMetrics.complianceTrend > 0" />
-            <TrendingDown v-else />
-            {{ Math.abs(boardMetrics.complianceTrend) }}% from last period
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-header">
-            <h3>Risk Level</h3>
-            <AlertCircle class="metric-icon" />
-          </div>
-          <div class="metric-value risk-level" :class="getRiskLevelClass(boardMetrics.overallRisk)">
-            {{ boardMetrics.overallRisk }}
-          </div>
-          <div class="metric-trend">
-            Based on current assessments
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Executive Dashboard -->
+    <BoardStats :board-metrics="boardMetrics" />
 
     <!-- Main Content Grid -->
     <div class="content-grid">
@@ -361,46 +307,7 @@
     <!-- Create Board Report Dialog -->
     <Dialog v-model="showCreateReportDialog" :options="{ title: 'Create New Board Report' }">
       <template #body-content>
-        <div class="space-y-4">
-          <FormControl
-            label="Report Title"
-            v-model="newReport.title"
-            type="text"
-            placeholder="e.g., Q4 2025 Board Report"
-            required
-          />
-          <FormControl
-            label="Reporting Period"
-            v-model="newReport.period"
-            type="select"
-            :options="periodOptions"
-            required
-          />
-          <FormControl
-            label="Report Type"
-            v-model="newReport.type"
-            type="select"
-            :options="reportTypeOptions"
-            required
-          />
-          <FormControl
-            label="Presentation Date"
-            v-model="newReport.presentationDate"
-            type="date"
-          />
-          <FormControl
-            label="Key Focus Areas"
-            v-model="newReport.focusAreas"
-            type="textarea"
-            placeholder="Enter key areas to focus on in this report"
-          />
-          <FormControl
-            label="Additional Notes"
-            v-model="newReport.notes"
-            type="textarea"
-            placeholder="Any additional context or notes"
-          />
-        </div>
+        <BoardReportForm v-model:form-data="newReport" />
       </template>
       <template #actions>
         <Button variant="outline" @click="showCreateReportDialog = false">Cancel</Button>
@@ -429,6 +336,8 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useReportsStore } from "../stores/reports"
+import BoardStats from "../components/board/BoardStats.vue"
+import BoardReportForm from "../components/board/BoardReportForm.vue"
 
 // Store
 const reportsStore = useReportsStore()
@@ -563,23 +472,6 @@ const upcomingMeetings = ref([
 	},
 ])
 
-// Options
-const periodOptions = [
-	{ label: "Q1 2025", value: "Q1 2025" },
-	{ label: "Q2 2025", value: "Q2 2025" },
-	{ label: "Q3 2025", value: "Q3 2025" },
-	{ label: "Q4 2025", value: "Q4 2025" },
-	{ label: "Annual 2025", value: "Annual 2025" },
-	{ label: "Q1 2026", value: "Q1 2026" },
-]
-
-const reportTypeOptions = [
-	{ label: "Comprehensive", value: "Comprehensive" },
-	{ label: "Financial Focus", value: "Financial Focus" },
-	{ label: "Risk & Compliance", value: "Risk & Compliance" },
-	{ label: "Operational Review", value: "Operational Review" },
-]
-
 // Methods
 const createNewReport = () => {
 	showCreateReportDialog.value = true
@@ -616,70 +508,50 @@ const createReport = async () => {
 }
 
 const viewReport = (report) => {
-	// Navigate to report detail view
-	console.log("View report:", report)
+	router.push(`/reports/board-reports/${report.name}`)
 }
 
 const viewAllReports = () => {
-	// Navigate to full reports list
-	console.log("View all reports")
+	router.push('/reports/board-reports')
 }
 
 const exportBoardReport = () => {
-	// Export functionality
+	// TODO: Implement export functionality
 	console.log("Export board report")
 }
 
 const scheduleReport = () => {
-	// Schedule report functionality
+	// TODO: Implement schedule functionality
 	console.log("Schedule report")
 }
 
 const viewRiskDashboard = () => {
-	// Navigate to risk dashboard
-	console.log("View risk dashboard")
+	router.push('/audit-planning/risk-assessment')
 }
 
 const viewFindings = () => {
-	// Navigate to findings page
-	console.log("View findings")
+	router.push('/findings/list')
 }
 
 const viewCompliance = () => {
-	// Navigate to compliance page
-	console.log("View compliance")
+	router.push('/compliance/requirements')
 }
 
 const viewRecommendations = () => {
-	// Navigate to recommendations page
-	console.log("View recommendations")
+	router.push('/findings/corrective-actions')
 }
 
 const scheduleMeeting = () => {
-	// Schedule meeting functionality
+	// TODO: Implement meeting scheduling
 	console.log("Schedule meeting")
 }
 
 const prepareMaterials = (meeting) => {
-	// Prepare meeting materials
+	// TODO: Implement material preparation
 	console.log("Prepare materials for:", meeting)
 }
 
 // Utility methods
-const getTrendClass = (trend) => {
-	return trend > 0 ? "positive" : trend < 0 ? "negative" : "neutral"
-}
-
-const getRiskLevelClass = (level) => {
-	const classes = {
-		Low: "low-risk",
-		Medium: "medium-risk",
-		High: "high-risk",
-		Critical: "critical-risk",
-	}
-	return classes[level] || "medium-risk"
-}
-
 const getReportStatusVariant = (status) => {
 	const variants = {
 		Draft: "secondary",
@@ -732,6 +604,12 @@ const getPriorityVariant = (priority) => {
 	return variants[priority] || "warning"
 }
 
+const getTrendClass = (trend) => {
+	if (trend > 0) return "positive"
+	if (trend < 0) return "negative"
+	return "neutral"
+}
+
 const formatDate = (dateString, format = "medium") => {
 	if (!dateString) return ""
 	const date = new Date(dateString)
@@ -742,8 +620,23 @@ const formatDate = (dateString, format = "medium") => {
 	if (format === "MMM") {
 		return date.toLocaleDateString("en-US", { month: "short" })
 	}
+	if (format === "short") {
+		return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+	}
+	if (format === "long") {
+		return date.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric"
+		})
+	}
 
-	return date.toLocaleDateString()
+	// Default medium format
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric"
+	})
 }
 
 // Lifecycle
@@ -791,91 +684,6 @@ onMounted(async () => {
 .header-actions {
   display: flex;
   gap: 0.75rem;
-}
-
-.executive-dashboard {
-  margin-bottom: 2rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.metric-card {
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-}
-
-.metric-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.metric-header h3 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.metric-icon {
-  color: var(--primary-color);
-  font-size: 1.25rem;
-}
-
-.metric-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-color);
-  margin-bottom: 0.5rem;
-}
-
-.metric-value.risk-level {
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.metric-value.low-risk {
-  color: #10b981;
-}
-
-.metric-value.medium-risk {
-  color: #f59e0b;
-}
-
-.metric-value.high-risk {
-  color: #ef4444;
-}
-
-.metric-value.critical-risk {
-  color: #dc2626;
-}
-
-.metric-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.metric-trend.positive {
-  color: #10b981;
-}
-
-.metric-trend.negative {
-  color: #ef4444;
-}
-
-.metric-trend.neutral {
-  color: var(--text-muted);
 }
 
 .content-grid {
@@ -1074,6 +882,10 @@ onMounted(async () => {
 
 .indicator-trend .negative {
   color: #ef4444;
+}
+
+.indicator-trend .neutral {
+  color: #6b7280;
 }
 
 .findings-chart {
