@@ -1,0 +1,64 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "threshold_name",
+  "threshold_type",
+  "threshold_value",
+  "comparison_operator",
+  "action_on_exceed",
+  "notification_level"
+ ],
+ "fields": [
+  {
+   "fieldname": "threshold_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Threshold Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "threshold_type",
+   "fieldtype": "Select",
+   "label": "Threshold Type",
+   "options": "Count\nPercentage\nAmount\nRatio\nScore",
+   "reqd": 1
+  },
+  {
+   "fieldname": "threshold_value",
+   "fieldtype": "Float",
+   "label": "Threshold Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "comparison_operator",
+   "fieldtype": "Select",
+   "label": "Comparison Operator",
+   "options": ">\n<\n>=\n<=\n==",
+   "reqd": 1
+  },
+  {
+   "fieldname": "action_on_exceed",
+   "fieldtype": "Select",
+   "label": "Action on Exceed",
+   "options": "Warning\nAlert\nStop Test\nCreate Finding\nEscalate"
+  },
+  {
+   "fieldname": "notification_level",
+   "fieldtype": "Select",
+   "label": "Notification Level",
+   "options": "Info\nWarning\nError\nCritical"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit Execution",
+ "name": "Test Threshold",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

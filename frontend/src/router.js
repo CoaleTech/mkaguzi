@@ -31,6 +31,29 @@ import TestLibrary from "@/pages/TestLibrary.vue"
 import UserManagement from "@/pages/UserManagement.vue"
 import WorkingPapers from "@/pages/WorkingPapers.vue"
 
+// Inventory Audit Pages
+import InventoryAuditDashboard from "@/pages/inventory/InventoryAuditDashboard.vue"
+import InventoryItemMaster from "@/pages/inventory/InventoryItemMaster.vue"
+import InventoryAuditSettings from "@/pages/inventory/InventoryAuditSettings.vue"
+import AuditPlanList from "@/pages/inventory/AuditPlanList.vue"
+import AuditPlanDetail from "@/pages/inventory/AuditPlanDetail.vue"
+import AuditPlanForm from "@/pages/inventory/AuditPlanForm.vue"
+import StockTakeSessionList from "@/pages/inventory/StockTakeSessionList.vue"
+import StockTakeSessionDetail from "@/pages/inventory/StockTakeSessionDetail.vue"
+import StockTakeSessionForm from "@/pages/inventory/StockTakeSessionForm.vue"
+import VarianceCaseList from "@/pages/inventory/VarianceCaseList.vue"
+import VarianceCaseDetail from "@/pages/inventory/VarianceCaseDetail.vue"
+import VarianceCaseForm from "@/pages/inventory/VarianceCaseForm.vue"
+import StockTakeList from "@/pages/inventory/StockTakeList.vue"
+import StockTakeDetail from "@/pages/inventory/StockTakeDetail.vue"
+import StockTakeForm from "@/pages/inventory/StockTakeForm.vue"
+import IssueLogList from "@/pages/inventory/IssueLogList.vue"
+import IssueLogDetail from "@/pages/inventory/IssueLogDetail.vue"
+import IssueLogForm from "@/pages/inventory/IssueLogForm.vue"
+import ComplianceScorecardList from "@/pages/inventory/ComplianceScorecardList.vue"
+import ComplianceScorecardDetail from "@/pages/inventory/ComplianceScorecardDetail.vue"
+import ComplianceScorecardForm from "@/pages/inventory/ComplianceScorecardForm.vue"
+
 // Error pages
 import NotFound from "@/pages/NotFound.vue"
 import Unauthorized from "@/pages/Unauthorized.vue"
@@ -518,6 +541,292 @@ const routes = [
 					mode: "edit-mapping",
 					mappingId: route.params.id,
 				}),
+			},
+
+			// Inventory Audit Module
+			{
+				path: "inventory-audit",
+				name: "InventoryAuditDashboard",
+				component: InventoryAuditDashboard,
+				meta: {
+					title: "Inventory Audit Dashboard",
+					icon: "Package",
+					breadcrumb: "Inventory Audit",
+				},
+			},
+			{
+				path: "inventory-audit/settings",
+				name: "InventoryAuditSettings",
+				component: InventoryAuditSettings,
+				meta: {
+					title: "Inventory Audit Settings",
+					icon: "Settings",
+					breadcrumb: "Settings",
+				},
+			},
+			{
+				path: "inventory-audit/items",
+				name: "InventoryItemMaster",
+				component: InventoryItemMaster,
+				meta: {
+					title: "Inventory Item Master",
+					icon: "Package",
+					breadcrumb: "Item Master",
+				},
+			},
+			{
+				path: "inventory-audit/items/new",
+				name: "NewInventoryItem",
+				component: InventoryItemMaster,
+				meta: {
+					title: "New Inventory Item",
+					breadcrumb: "New Item",
+				},
+				props: { mode: "new" },
+			},
+			{
+				path: "inventory-audit/items/:id",
+				name: "InventoryItemDetail",
+				component: InventoryItemMaster,
+				meta: {
+					title: "Item Details",
+					breadcrumb: "Item Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/plans",
+				name: "AuditPlanList",
+				component: AuditPlanList,
+				meta: {
+					title: "Audit Plans",
+					icon: "ClipboardList",
+					breadcrumb: "Audit Plans",
+				},
+			},
+			{
+				path: "inventory-audit/plans/new",
+				name: "NewAuditPlan",
+				component: AuditPlanForm,
+				meta: {
+					title: "New Audit Plan",
+					breadcrumb: "New Plan",
+				},
+			},
+			{
+				path: "inventory-audit/plans/:id",
+				name: "AuditPlanDetail",
+				component: AuditPlanDetail,
+				meta: {
+					title: "Audit Plan Details",
+					breadcrumb: "Plan Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/plans/:id/edit",
+				name: "EditAuditPlan",
+				component: AuditPlanForm,
+				meta: {
+					title: "Edit Audit Plan",
+					breadcrumb: "Edit Plan",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/sessions",
+				name: "StockTakeSessionList",
+				component: StockTakeSessionList,
+				meta: {
+					title: "Stock Take Sessions",
+					icon: "Clipboard",
+					breadcrumb: "Stock Take Sessions",
+				},
+			},
+			{
+				path: "inventory-audit/sessions/new",
+				name: "NewStockTakeSession",
+				component: StockTakeSessionForm,
+				meta: {
+					title: "New Stock Take Session",
+					breadcrumb: "New Session",
+				},
+			},
+			{
+				path: "inventory-audit/sessions/:id",
+				name: "StockTakeSessionDetail",
+				component: StockTakeSessionDetail,
+				meta: {
+					title: "Session Details",
+					breadcrumb: "Session Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/sessions/:id/edit",
+				name: "EditStockTakeSession",
+				component: StockTakeSessionForm,
+				meta: {
+					title: "Edit Session",
+					breadcrumb: "Edit Session",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/variance-cases",
+				name: "VarianceCaseList",
+				component: VarianceCaseList,
+				meta: {
+					title: "Variance Cases",
+					icon: "AlertTriangle",
+					breadcrumb: "Variance Cases",
+				},
+			},
+			{
+				path: "inventory-audit/variance-cases/new",
+				name: "NewVarianceCase",
+				component: VarianceCaseForm,
+				meta: {
+					title: "New Variance Case",
+					breadcrumb: "New Case",
+				},
+			},
+			{
+				path: "inventory-audit/variance-cases/:id",
+				name: "VarianceCaseDetail",
+				component: VarianceCaseDetail,
+				meta: {
+					title: "Variance Case Details",
+					breadcrumb: "Case Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/variance-cases/:id/edit",
+				name: "EditVarianceCase",
+				component: VarianceCaseForm,
+				meta: {
+					title: "Edit Variance Case",
+					breadcrumb: "Edit Case",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/stock-take",
+				name: "StockTakeList",
+				component: StockTakeList,
+				meta: {
+					title: "Stock Take Audits",
+					icon: "Package",
+					breadcrumb: "Stock Take",
+				},
+			},
+			{
+				path: "inventory-audit/stock-take/new",
+				name: "NewStockTake",
+				component: StockTakeForm,
+				meta: {
+					title: "New Stock Take",
+					breadcrumb: "New Stock Take",
+				},
+			},
+			{
+				path: "inventory-audit/stock-take/:id",
+				name: "StockTakeDetail",
+				component: StockTakeDetail,
+				meta: {
+					title: "Stock Take Details",
+					breadcrumb: "Stock Take Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/stock-take/:id/edit",
+				name: "EditStockTake",
+				component: StockTakeForm,
+				meta: {
+					title: "Edit Stock Take",
+					breadcrumb: "Edit Stock Take",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/issues",
+				name: "IssueLogList",
+				component: IssueLogList,
+				meta: {
+					title: "Stock Take Issues",
+					icon: "AlertCircle",
+					breadcrumb: "Issues",
+				},
+			},
+			{
+				path: "inventory-audit/issues/new",
+				name: "NewIssueLog",
+				component: IssueLogForm,
+				meta: {
+					title: "Log Issue",
+					breadcrumb: "Log Issue",
+				},
+			},
+			{
+				path: "inventory-audit/issues/:id",
+				name: "IssueLogDetail",
+				component: IssueLogDetail,
+				meta: {
+					title: "Issue Details",
+					breadcrumb: "Issue Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/issues/:id/edit",
+				name: "EditIssueLog",
+				component: IssueLogForm,
+				meta: {
+					title: "Edit Issue",
+					breadcrumb: "Edit Issue",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/scorecards",
+				name: "ComplianceScorecardList",
+				component: ComplianceScorecardList,
+				meta: {
+					title: "Compliance Scorecards",
+					icon: "BarChart2",
+					breadcrumb: "Scorecards",
+				},
+			},
+			{
+				path: "inventory-audit/scorecards/new",
+				name: "NewComplianceScorecard",
+				component: ComplianceScorecardForm,
+				meta: {
+					title: "New Compliance Scorecard",
+					breadcrumb: "New Scorecard",
+				},
+			},
+			{
+				path: "inventory-audit/scorecards/:id",
+				name: "ComplianceScorecardDetail",
+				component: ComplianceScorecardDetail,
+				meta: {
+					title: "Scorecard Details",
+					breadcrumb: "Scorecard Details",
+				},
+				props: true,
+			},
+			{
+				path: "inventory-audit/scorecards/:id/edit",
+				name: "EditComplianceScorecard",
+				component: ComplianceScorecardForm,
+				meta: {
+					title: "Edit Compliance Scorecard",
+					breadcrumb: "Edit Scorecard",
+				},
+				props: true,
 			},
 		],
 	},

@@ -1,0 +1,164 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_id",
+  "compliance_period",
+  "period_type",
+  "period_month",
+  "fiscal_year",
+  "column_break_5",
+  "checklist_items",
+  "summary",
+  "total_requirements",
+  "completed_requirements",
+  "overdue_requirements",
+  "completion_percent",
+  "alerts_section",
+  "alerts",
+  "approval_section",
+  "prepared_by",
+  "reviewed_by",
+  "approved_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Checklist ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "compliance_period",
+   "fieldtype": "Link",
+   "label": "Compliance Period",
+   "options": "Data Period"
+  },
+  {
+   "fieldname": "period_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Period Type",
+   "options": "Monthly\nQuarterly\nAnnual",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_month",
+   "fieldtype": "Data",
+   "label": "Period Month"
+  },
+  {
+   "fieldname": "fiscal_year",
+   "fieldtype": "Link",
+   "label": "Fiscal Year",
+   "options": "Fiscal Year"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "checklist_items",
+   "fieldtype": "Table",
+   "label": "Checklist Items",
+   "options": "Checklist Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Section Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "total_requirements",
+   "fieldtype": "Int",
+   "label": "Total Requirements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_requirements",
+   "fieldtype": "Int",
+   "label": "Completed Requirements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overdue_requirements",
+   "fieldtype": "Int",
+   "label": "Overdue Requirements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completion_percent",
+   "fieldtype": "Percent",
+   "label": "Completion Percent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "alerts_section",
+   "fieldtype": "Section Break",
+   "label": "Alerts"
+  },
+  {
+   "fieldname": "alerts",
+   "fieldtype": "Table",
+   "label": "Alerts",
+   "options": "Compliance Alert"
+  },
+  {
+   "fieldname": "approval_section",
+   "fieldtype": "Section Break",
+   "label": "Approval"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "label": "Prepared By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "Compliance Checklist",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "checklist_id",
+ "track_changes": 1
+}

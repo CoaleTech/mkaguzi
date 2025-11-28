@@ -1,0 +1,319 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "dashboard_id",
+  "dashboard_name",
+  "dashboard_type",
+  "description",
+  "column_break_4",
+  "is_active",
+  "is_default",
+  "created_by",
+  "creation_date",
+  "section_break_9",
+  "layout_configuration",
+  "section_break_11",
+  "data_sources",
+  "section_break_13",
+  "dashboard_charts",
+  "section_break_15",
+  "dashboard_filters",
+  "section_break_17",
+  "refresh_settings",
+  "auto_refresh_interval",
+  "last_refresh_date",
+  "column_break_21",
+  "manual_refresh_enabled",
+  "export_enabled",
+  "sharing_enabled",
+  "section_break_25",
+  "user_permissions",
+  "section_break_27",
+  "alerts_configuration",
+  "section_break_29",
+  "performance_metrics",
+  "total_views",
+  "average_load_time",
+  "last_viewed_by",
+  "column_break_34",
+  "last_viewed_date",
+  "section_break_37",
+  "notes",
+  "attachments"
+ ],
+ "fields": [
+  {
+   "fieldname": "dashboard_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Dashboard ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "dashboard_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Dashboard Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dashboard_type",
+   "fieldtype": "Select",
+   "default": "Private",
+   "label": "Dashboard Type",
+   "options": "Private\nPublic\nShared",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Is Default"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Datetime",
+   "label": "Creation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Layout Configuration"
+  },
+  {
+   "fieldname": "layout_configuration",
+   "fieldtype": "Code",
+   "label": "Layout Configuration",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break",
+   "label": "Data Sources"
+  },
+  {
+   "fieldname": "data_sources",
+   "fieldtype": "Table",
+   "label": "Data Sources",
+   "options": "Dashboard Data Source"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Charts & Visualizations"
+  },
+  {
+   "fieldname": "dashboard_charts",
+   "fieldtype": "Table",
+   "label": "Dashboard Charts",
+   "options": "Dashboard Chart"
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break",
+   "label": "Filters & Parameters"
+  },
+  {
+   "fieldname": "dashboard_filters",
+   "fieldtype": "Table",
+   "label": "Dashboard Filters",
+   "options": "Dashboard Filter"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Refresh Settings"
+  },
+  {
+   "fieldname": "refresh_settings",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Refresh Settings"
+  },
+  {
+   "fieldname": "auto_refresh_interval",
+   "fieldtype": "Int",
+   "label": "Auto Refresh Interval (seconds)",
+   "description": "Set to 0 to disable auto-refresh"
+  },
+  {
+   "fieldname": "last_refresh_date",
+   "fieldtype": "Datetime",
+   "label": "Last Refresh Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "manual_refresh_enabled",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Manual Refresh Enabled"
+  },
+  {
+   "fieldname": "export_enabled",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Export Enabled"
+  },
+  {
+   "fieldname": "sharing_enabled",
+   "fieldtype": "Check",
+   "label": "Sharing Enabled"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break",
+   "label": "User Permissions"
+  },
+  {
+   "fieldname": "user_permissions",
+   "fieldtype": "Table",
+   "label": "User Permissions",
+   "options": "Dashboard User Permission"
+  },
+  {
+   "fieldname": "section_break_27",
+   "fieldtype": "Section Break",
+   "label": "Alerts Configuration"
+  },
+  {
+   "fieldname": "alerts_configuration",
+   "fieldtype": "Table",
+   "label": "Alerts Configuration",
+   "options": "Dashboard Alert"
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "performance_metrics",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "total_views",
+   "fieldtype": "Int",
+   "label": "Total Views",
+   "read_only": 1
+  },
+  {
+   "fieldname": "average_load_time",
+   "fieldtype": "Float",
+   "label": "Average Load Time (seconds)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_viewed_by",
+   "fieldtype": "Link",
+   "label": "Last Viewed By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_34",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_viewed_date",
+   "fieldtype": "Datetime",
+   "label": "Last Viewed Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_37",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach Multiple",
+   "label": "Attachments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dashboard Analytics",
+ "name": "Data Analytics Dashboard",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "dashboard_name"
+}

@@ -1,0 +1,422 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2025-11-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "status",
+  "column_break_header",
+  "audit_date",
+  "resolution_deadline",
+  "section_break_warehouse",
+  "warehouse",
+  "branch",
+  "column_break_import",
+  "import_date",
+  "import_file",
+  "import_batch_id",
+  "section_break_items",
+  "return_items",
+  "section_break_summary",
+  "total_items",
+  "total_system_qty",
+  "column_break_summary",
+  "total_physical_qty",
+  "total_variance_value",
+  "section_break_resolution_summary",
+  "items_pending",
+  "items_verified_match",
+  "column_break_resolution",
+  "items_verified_discrepancy",
+  "items_resolved",
+  "section_break_workflow",
+  "workflow_status",
+  "investigation_deadline",
+  "section_break_analyst",
+  "stock_analyst",
+  "analyst_verified",
+  "analyst_date",
+  "column_break_taker",
+  "stock_taker",
+  "taker_verified",
+  "taker_date",
+  "section_break_manager",
+  "store_manager",
+  "manager_confirmed",
+  "manager_date",
+  "column_break_hod",
+  "hod_approver",
+  "hod_approved",
+  "hod_approval_date",
+  "section_break_notes",
+  "notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "SRA-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nPending Physical Count\nPending Verification\nPending Manager Confirmation\nPending HOD Approval\nResolved\nPartially Resolved\nUnder Investigation\nClosed"
+  },
+  {
+   "fieldname": "column_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "audit_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Audit Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "resolution_deadline",
+   "fieldtype": "Date",
+   "label": "Resolution Deadline",
+   "description": "Same day resolution required",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_warehouse",
+   "fieldtype": "Section Break",
+   "label": "Location & Import"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Warehouse",
+   "options": "Warehouse Master",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Branch",
+   "fetch_from": "warehouse.branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_import",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "import_date",
+   "fieldtype": "Date",
+   "label": "Import Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "import_file",
+   "fieldtype": "Data",
+   "label": "Import File",
+   "read_only": 1
+  },
+  {
+   "fieldname": "import_batch_id",
+   "fieldtype": "Data",
+   "label": "Import Batch ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Return Items"
+  },
+  {
+   "fieldname": "return_items",
+   "fieldtype": "Table",
+   "label": "Return Items",
+   "options": "Sales Return Audit Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_summary",
+   "fieldtype": "Section Break",
+   "label": "Summary Totals"
+  },
+  {
+   "fieldname": "total_items",
+   "fieldtype": "Int",
+   "label": "Total Items",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_system_qty",
+   "fieldtype": "Float",
+   "label": "Total System Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_summary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_physical_qty",
+   "fieldtype": "Float",
+   "label": "Total Physical Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_variance_value",
+   "fieldtype": "Currency",
+   "label": "Total Variance Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_resolution_summary",
+   "fieldtype": "Section Break",
+   "label": "Resolution Summary"
+  },
+  {
+   "fieldname": "items_pending",
+   "fieldtype": "Int",
+   "label": "Items Pending",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_verified_match",
+   "fieldtype": "Int",
+   "label": "Items Verified (Match)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_resolution",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "items_verified_discrepancy",
+   "fieldtype": "Int",
+   "label": "Items with Discrepancy",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_resolved",
+   "fieldtype": "Int",
+   "label": "Items Resolved",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_workflow",
+   "fieldtype": "Section Break",
+   "label": "Workflow & Deadlines"
+  },
+  {
+   "fieldname": "workflow_status",
+   "fieldtype": "Select",
+   "label": "Workflow Status",
+   "options": "\nAwaiting Physical Count\nAwaiting Stock Taker Review\nAwaiting Manager Confirmation\nAwaiting HOD Approval\nCompleted\nEscalated"
+  },
+  {
+   "fieldname": "investigation_deadline",
+   "fieldtype": "Date",
+   "label": "Investigation Deadline",
+   "description": "For items under investigation (3 days from audit date)"
+  },
+  {
+   "fieldname": "section_break_analyst",
+   "fieldtype": "Section Break",
+   "label": "Level 1: Stock Analyst"
+  },
+  {
+   "fieldname": "stock_analyst",
+   "fieldtype": "Link",
+   "label": "Stock Analyst",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "analyst_verified",
+   "fieldtype": "Check",
+   "label": "Analyst Verified"
+  },
+  {
+   "fieldname": "analyst_date",
+   "fieldtype": "Datetime",
+   "label": "Analyst Verification Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_taker",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_taker",
+   "fieldtype": "Link",
+   "label": "Stock Taker",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "taker_verified",
+   "fieldtype": "Check",
+   "label": "Stock Taker Verified"
+  },
+  {
+   "fieldname": "taker_date",
+   "fieldtype": "Datetime",
+   "label": "Stock Taker Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_manager",
+   "fieldtype": "Section Break",
+   "label": "Level 3: Store Manager / Level 4: HOD"
+  },
+  {
+   "fieldname": "store_manager",
+   "fieldtype": "Link",
+   "label": "Store Manager",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "manager_confirmed",
+   "fieldtype": "Check",
+   "label": "Manager Confirmed"
+  },
+  {
+   "fieldname": "manager_date",
+   "fieldtype": "Datetime",
+   "label": "Manager Confirmation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hod_approver",
+   "fieldtype": "Link",
+   "label": "HOD Approver",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "hod_approved",
+   "fieldtype": "Check",
+   "label": "HOD Approved"
+  },
+  {
+   "fieldname": "hod_approval_date",
+   "fieldtype": "Datetime",
+   "label": "HOD Approval Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sales Return Audit",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-27 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Sales Return Audit",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Analyst",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Taker",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Store Manager",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HOD Inventory",
+   "write": 1
+  }
+ ],
+ "search_fields": "warehouse,branch,status,audit_date",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

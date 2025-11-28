@@ -1,0 +1,48 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "filter_field",
+  "operator",
+  "filter_value",
+  "logical_operator"
+ ],
+ "fields": [
+  {
+   "fieldname": "filter_field",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Filter Field",
+   "reqd": 1
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Select",
+   "label": "Operator",
+   "options": "=\n!=\n>\n<\n>=\n<=\nLIKE\nNOT LIKE\nIN\nNOT IN\nIS NULL\nIS NOT NULL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "filter_value",
+   "fieldtype": "Data",
+   "label": "Filter Value"
+  },
+  {
+   "fieldname": "logical_operator",
+   "fieldtype": "Select",
+   "label": "Logical Operator",
+   "options": "AND\nOR"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit Execution",
+ "name": "Test Data Filter",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

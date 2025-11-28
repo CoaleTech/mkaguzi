@@ -5,6 +5,14 @@ app_description = "Internal Audit Management System"
 app_email = "info@coale.tech"
 app_license = "mit"
 
+# Fixtures
+# --------
+fixtures = [
+    {"dt": "Role", "filters": [["role_name", "in", [
+        "Stock Analyst", "Stock Taker", "Store Manager", "HOD Inventory", "Internal Auditor"
+    ]]]},
+]
+
 # Apps
 # ------------------
 
@@ -155,7 +163,9 @@ doc_events = {
 
 scheduler_events = {
     "daily": [
-        "mkaguzi.utils.notifications.schedule_notifications"
+        "mkaguzi.utils.notifications.schedule_notifications",
+        "mkaguzi.inventory_audit.tasks.recalculate_all_scorecards",
+        "mkaguzi.inventory_audit.tasks.update_sla_statuses"
     ],
     "weekly": [
         "mkaguzi.utils.notifications.send_weekly_digest"

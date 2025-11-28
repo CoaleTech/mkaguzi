@@ -1,0 +1,56 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "issue_type",
+  "description",
+  "financial_impact",
+  "resolution_status",
+  "resolution_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "issue_type",
+   "fieldtype": "Select",
+   "label": "Issue Type",
+   "options": "Late Filing\nLate Payment\nUnderpayment\nDocumentation\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "financial_impact",
+   "fieldtype": "Currency",
+   "label": "Financial Impact"
+  },
+  {
+   "fieldname": "resolution_status",
+   "fieldtype": "Select",
+   "label": "Resolution Status",
+   "options": "Open\nResolved",
+   "reqd": 1
+  },
+  {
+   "fieldname": "resolution_notes",
+   "fieldtype": "Text",
+   "label": "Resolution Notes"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "Tax Issue",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

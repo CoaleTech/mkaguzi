@@ -1,0 +1,327 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-11-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "status",
+  "column_break_1",
+  "stock_take_session",
+  "created_date",
+  "section_break_item",
+  "item_code",
+  "item_description",
+  "column_break_2",
+  "system_qty",
+  "counted_qty",
+  "section_break_variance",
+  "variance_qty",
+  "variance_percent",
+  "column_break_3",
+  "variance_value",
+  "materiality_level",
+  "section_break_investigation",
+  "root_cause",
+  "root_cause_details",
+  "column_break_4",
+  "investigator",
+  "investigation_notes",
+  "section_break_evidence",
+  "evidence_attachments",
+  "section_break_resolution",
+  "resolution_action",
+  "resolution_notes",
+  "column_break_5",
+  "resolved_by",
+  "resolved_date",
+  "section_break_sla",
+  "sla_start_date",
+  "sla_due_date",
+  "column_break_6",
+  "is_sla_breached",
+  "section_break_approval",
+  "approved_by",
+  "approval_date",
+  "column_break_7",
+  "approval_notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "VRC-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "New\nUnder Investigation\nResolved\nApproved\nClosed"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_take_session",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Take Session",
+   "options": "Stock Take Session"
+  },
+  {
+   "default": "Today",
+   "fieldname": "created_date",
+   "fieldtype": "Date",
+   "label": "Created Date"
+  },
+  {
+   "fieldname": "section_break_item",
+   "fieldtype": "Section Break",
+   "label": "Item Details"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Item Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Data",
+   "label": "Item Description"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "system_qty",
+   "fieldtype": "Float",
+   "label": "System Qty"
+  },
+  {
+   "fieldname": "counted_qty",
+   "fieldtype": "Float",
+   "label": "Counted Qty"
+  },
+  {
+   "fieldname": "section_break_variance",
+   "fieldtype": "Section Break",
+   "label": "Variance Details"
+  },
+  {
+   "fieldname": "variance_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Variance (Qty)"
+  },
+  {
+   "fieldname": "variance_percent",
+   "fieldtype": "Percent",
+   "label": "Variance (%)"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "variance_value",
+   "fieldtype": "Currency",
+   "label": "Variance (Value)"
+  },
+  {
+   "fieldname": "materiality_level",
+   "fieldtype": "Select",
+   "label": "Materiality Level",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "section_break_investigation",
+   "fieldtype": "Section Break",
+   "label": "Investigation"
+  },
+  {
+   "fieldname": "root_cause",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Root Cause",
+   "options": "\nMiscount\nTheft\nMisplacement\nWrong UOM\nUnrecorded Sales\nUnrecorded Receiving\nWrong Posting\nExpired/Damaged Stock\nSystem Error\nOther"
+  },
+  {
+   "fieldname": "root_cause_details",
+   "fieldtype": "Small Text",
+   "label": "Root Cause Details"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "investigator",
+   "fieldtype": "Link",
+   "label": "Investigator",
+   "options": "User"
+  },
+  {
+   "fieldname": "investigation_notes",
+   "fieldtype": "Text Editor",
+   "label": "Investigation Notes"
+  },
+  {
+   "fieldname": "section_break_evidence",
+   "fieldtype": "Section Break",
+   "label": "Evidence"
+  },
+  {
+   "fieldname": "evidence_attachments",
+   "fieldtype": "Table",
+   "label": "Evidence Attachments",
+   "options": "Variance Evidence"
+  },
+  {
+   "fieldname": "section_break_resolution",
+   "fieldtype": "Section Break",
+   "label": "Resolution"
+  },
+  {
+   "fieldname": "resolution_action",
+   "fieldtype": "Select",
+   "label": "Resolution Action",
+   "options": "\nStock Adjustment\nWrite-off\nRecovery\nNo Action Required\nRecount\nSystem Correction\nOther"
+  },
+  {
+   "fieldname": "resolution_notes",
+   "fieldtype": "Text Editor",
+   "label": "Resolution Notes"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "resolved_by",
+   "fieldtype": "Link",
+   "label": "Resolved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "resolved_date",
+   "fieldtype": "Date",
+   "label": "Resolved Date"
+  },
+  {
+   "fieldname": "section_break_sla",
+   "fieldtype": "Section Break",
+   "label": "SLA"
+  },
+  {
+   "fieldname": "sla_start_date",
+   "fieldtype": "Date",
+   "label": "SLA Start Date"
+  },
+  {
+   "fieldname": "sla_due_date",
+   "fieldtype": "Date",
+   "label": "SLA Due Date"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sla_breached",
+   "fieldtype": "Check",
+   "label": "SLA Breached",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_approval",
+   "fieldtype": "Section Break",
+   "label": "Approval"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approval_notes",
+   "fieldtype": "Small Text",
+   "label": "Approval Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Variance Reconciliation Case",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Variance Reconciliation Case",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "item_code,status,root_cause",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,660 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "report_id",
+  "report_title",
+  "reporting_period",
+  "column_break_4",
+  "report_type",
+  "report_status",
+  "is_active",
+  "section_break_8",
+  "executive_summary",
+  "key_highlights",
+  "key_risks",
+  "key_recommendations",
+  "column_break_13",
+  "overall_assurance_opinion",
+  "confidence_level",
+  "next_period_focus",
+  "section_break_18",
+  "audit_coverage",
+  "total_engagements_completed",
+  "total_high_risk_findings",
+  "total_critical_findings",
+  "total_open_recommendations",
+  "column_break_24",
+  "compliance_score",
+  "material_weaknesses_identified",
+  "significant_improvements",
+  "budget_vs_actual",
+  "section_break_30",
+  "quarterly_metrics",
+  "q1_engagements",
+  "q1_findings",
+  "q1_compliance_score",
+  "q1_budget_utilization",
+  "column_break_36",
+  "q2_engagements",
+  "q2_findings",
+  "q2_compliance_score",
+  "q2_budget_utilization",
+  "section_break_42",
+  "q3_engagements",
+  "q3_findings",
+  "q3_compliance_score",
+  "q3_budget_utilization",
+  "column_break_48",
+  "q4_engagements",
+  "q4_findings",
+  "q4_compliance_score",
+  "q4_budget_utilization",
+  "section_break_54",
+  "key_findings_summary",
+  "critical_findings",
+  "high_priority_issues",
+  "emerging_risks",
+  "column_break_60",
+  "progress_on_prior_recommendations",
+  "new_initiatives",
+  "resource_requirements",
+  "section_break_65",
+  "financial_impact",
+  "potential_savings_identified",
+  "actual_savings_achieved",
+  "cost_of_non_compliance",
+  "column_break_71",
+  "roi_on_audit_investments",
+  "budget_variance_explanation",
+  "forecast_for_next_period",
+  "section_break_76",
+  "board_action_items",
+  "immediate_actions_required",
+  "strategic_decisions_needed",
+  "follow_up_required",
+  "column_break_82",
+  "board_meeting_date",
+  "presentation_required",
+  "additional_information",
+  "section_break_87",
+  "report_metadata",
+  "prepared_by",
+  "prepared_date",
+  "reviewed_by",
+  "review_date",
+  "column_break_93",
+  "approved_by",
+  "approval_date",
+  "distribution_list",
+  "section_break_98",
+  "attachments",
+  "supporting_documents",
+  "presentation_slides",
+  "column_break_102",
+  "detailed_reports",
+  "data_analytics",
+  "external_references"
+ ],
+ "fields": [
+  {
+   "fieldname": "report_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Report ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "report_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Report Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reporting_period",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reporting Period",
+   "options": "Q1\nQ2\nQ3\nQ4\nAnnual\nCustom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_type",
+   "fieldtype": "Select",
+   "default": "Board Report",
+   "label": "Report Type",
+   "options": "Board Report\nExecutive Summary\nAnnual Report\nSpecial Report",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_status",
+   "fieldtype": "Select",
+   "default": "Draft",
+   "in_list_view": 1,
+   "label": "Report Status",
+   "options": "Draft\nUnder Review\nApproved\nPresented\nArchived",
+   "reqd": 1
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Executive Summary"
+  },
+  {
+   "fieldname": "executive_summary",
+   "fieldtype": "Text Editor",
+   "label": "Executive Summary",
+   "reqd": 1
+  },
+  {
+   "fieldname": "key_highlights",
+   "fieldtype": "Small Text",
+   "label": "Key Highlights"
+  },
+  {
+   "fieldname": "key_risks",
+   "fieldtype": "Small Text",
+   "label": "Key Risks Identified"
+  },
+  {
+   "fieldname": "key_recommendations",
+   "fieldtype": "Small Text",
+   "label": "Key Recommendations"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overall_assurance_opinion",
+   "fieldtype": "Select",
+   "label": "Overall Assurance Opinion",
+   "options": "High Assurance\nModerate Assurance\nLimited Assurance\nQualified Opinion\nAdverse Opinion"
+  },
+  {
+   "fieldname": "confidence_level",
+   "fieldtype": "Percent",
+   "label": "Confidence Level (%)"
+  },
+  {
+   "fieldname": "next_period_focus",
+   "fieldtype": "Small Text",
+   "label": "Next Period Focus Areas"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Audit Coverage & Performance"
+  },
+  {
+   "fieldname": "audit_coverage",
+   "fieldtype": "Text",
+   "label": "Audit Coverage Summary"
+  },
+  {
+   "fieldname": "total_engagements_completed",
+   "fieldtype": "Int",
+   "label": "Total Engagements Completed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_high_risk_findings",
+   "fieldtype": "Int",
+   "label": "Total High Risk Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_critical_findings",
+   "fieldtype": "Int",
+   "label": "Total Critical Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_open_recommendations",
+   "fieldtype": "Int",
+   "label": "Total Open Recommendations",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "compliance_score",
+   "fieldtype": "Percent",
+   "label": "Overall Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "material_weaknesses_identified",
+   "fieldtype": "Int",
+   "label": "Material Weaknesses Identified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "significant_improvements",
+   "fieldtype": "Small Text",
+   "label": "Significant Improvements Noted"
+  },
+  {
+   "fieldname": "budget_vs_actual",
+   "fieldtype": "Data",
+   "label": "Budget vs Actual Performance"
+  },
+  {
+   "fieldname": "section_break_30",
+   "fieldtype": "Section Break",
+   "label": "Quarterly Performance Metrics"
+  },
+  {
+   "fieldname": "quarterly_metrics",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include Quarterly Metrics"
+  },
+  {
+   "fieldname": "q1_engagements",
+   "fieldtype": "Int",
+   "label": "Q1 Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q1_findings",
+   "fieldtype": "Int",
+   "label": "Q1 Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q1_compliance_score",
+   "fieldtype": "Percent",
+   "label": "Q1 Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q1_budget_utilization",
+   "fieldtype": "Percent",
+   "label": "Q1 Budget Utilization",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_36",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "q2_engagements",
+   "fieldtype": "Int",
+   "label": "Q2 Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q2_findings",
+   "fieldtype": "Int",
+   "label": "Q2 Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q2_compliance_score",
+   "fieldtype": "Percent",
+   "label": "Q2 Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q2_budget_utilization",
+   "fieldtype": "Percent",
+   "label": "Q2 Budget Utilization",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_42",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "q3_engagements",
+   "fieldtype": "Int",
+   "label": "Q3 Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q3_findings",
+   "fieldtype": "Int",
+   "label": "Q3 Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q3_compliance_score",
+   "fieldtype": "Percent",
+   "label": "Q3 Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q3_budget_utilization",
+   "fieldtype": "Percent",
+   "label": "Q3 Budget Utilization",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_48",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "q4_engagements",
+   "fieldtype": "Int",
+   "label": "Q4 Engagements",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q4_findings",
+   "fieldtype": "Int",
+   "label": "Q4 Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q4_compliance_score",
+   "fieldtype": "Percent",
+   "label": "Q4 Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "q4_budget_utilization",
+   "fieldtype": "Percent",
+   "label": "Q4 Budget Utilization",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_54",
+   "fieldtype": "Section Break",
+   "label": "Key Findings & Issues"
+  },
+  {
+   "fieldname": "key_findings_summary",
+   "fieldtype": "Text",
+   "label": "Key Findings Summary"
+  },
+  {
+   "fieldname": "critical_findings",
+   "fieldtype": "Text",
+   "label": "Critical Findings Details"
+  },
+  {
+   "fieldname": "high_priority_issues",
+   "fieldtype": "Text",
+   "label": "High Priority Issues"
+  },
+  {
+   "fieldname": "emerging_risks",
+   "fieldtype": "Text",
+   "label": "Emerging Risks"
+  },
+  {
+   "fieldname": "column_break_60",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "progress_on_prior_recommendations",
+   "fieldtype": "Text",
+   "label": "Progress on Prior Recommendations"
+  },
+  {
+   "fieldname": "new_initiatives",
+   "fieldtype": "Text",
+   "label": "New Initiatives & Projects"
+  },
+  {
+   "fieldname": "resource_requirements",
+   "fieldtype": "Text",
+   "label": "Resource Requirements"
+  },
+  {
+   "fieldname": "section_break_65",
+   "fieldtype": "Section Break",
+   "label": "Financial Impact & ROI"
+  },
+  {
+   "fieldname": "financial_impact",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include Financial Impact"
+  },
+  {
+   "fieldname": "potential_savings_identified",
+   "fieldtype": "Currency",
+   "label": "Potential Savings Identified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_savings_achieved",
+   "fieldtype": "Currency",
+   "label": "Actual Savings Achieved",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_of_non_compliance",
+   "fieldtype": "Currency",
+   "label": "Cost of Non-Compliance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_71",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "roi_on_audit_investments",
+   "fieldtype": "Percent",
+   "label": "ROI on Audit Investments",
+   "read_only": 1
+  },
+  {
+   "fieldname": "budget_variance_explanation",
+   "fieldtype": "Small Text",
+   "label": "Budget Variance Explanation"
+  },
+  {
+   "fieldname": "forecast_for_next_period",
+   "fieldtype": "Text",
+   "label": "Forecast for Next Period"
+  },
+  {
+   "fieldname": "section_break_76",
+   "fieldtype": "Section Break",
+   "label": "Board Action Items"
+  },
+  {
+   "fieldname": "board_action_items",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include Board Action Items"
+  },
+  {
+   "fieldname": "immediate_actions_required",
+   "fieldtype": "Text",
+   "label": "Immediate Actions Required"
+  },
+  {
+   "fieldname": "strategic_decisions_needed",
+   "fieldtype": "Text",
+   "label": "Strategic Decisions Needed"
+  },
+  {
+   "fieldname": "follow_up_required",
+   "fieldtype": "Text",
+   "label": "Follow-up Required"
+  },
+  {
+   "fieldname": "column_break_82",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "board_meeting_date",
+   "fieldtype": "Date",
+   "label": "Board Meeting Date"
+  },
+  {
+   "fieldname": "presentation_required",
+   "fieldtype": "Check",
+   "label": "Presentation Required"
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Text",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "section_break_87",
+   "fieldtype": "Section Break",
+   "label": "Report Metadata"
+  },
+  {
+   "fieldname": "report_metadata",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include Report Metadata"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Data",
+   "label": "Prepared By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "prepared_date",
+   "fieldtype": "Date",
+   "label": "Prepared Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Data",
+   "label": "Reviewed By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "label": "Review Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_93",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Data",
+   "label": "Approved By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "distribution_list",
+   "fieldtype": "Small Text",
+   "label": "Distribution List"
+  },
+  {
+   "fieldname": "section_break_98",
+   "fieldtype": "Section Break",
+   "label": "Attachments & Supporting Documents"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include Attachments"
+  },
+  {
+   "fieldname": "supporting_documents",
+   "fieldtype": "Text",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "presentation_slides",
+   "fieldtype": "Attach",
+   "label": "Presentation Slides"
+  },
+  {
+   "fieldname": "column_break_102",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "detailed_reports",
+   "fieldtype": "Text",
+   "label": "Detailed Reports Reference"
+  },
+  {
+   "fieldname": "data_analytics",
+   "fieldtype": "Text",
+   "label": "Data Analytics Summary"
+  },
+  {
+   "fieldname": "external_references",
+   "fieldtype": "Text",
+   "label": "External References"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Reporting",
+ "name": "Board Report",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "report_title"
+}

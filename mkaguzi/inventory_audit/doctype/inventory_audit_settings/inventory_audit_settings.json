@@ -1,0 +1,261 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2025-11-27 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_general",
+  "enable_auto_warehouse_creation",
+  "default_warehouse_type",
+  "column_break_1",
+  "auto_generate_warehouse_code",
+  "warehouse_code_prefix",
+  "section_break_notifications",
+  "notify_on_variance_threshold",
+  "variance_notification_threshold",
+  "column_break_2",
+  "notify_store_manager",
+  "notify_hod_inventory",
+  "section_break_approval",
+  "require_hod_approval",
+  "auto_approve_below_threshold",
+  "approval_threshold_amount",
+  "column_break_3",
+  "approval_workflow",
+  "section_break_inventory",
+  "default_counting_method",
+  "allow_negative_variance",
+  "column_break_4",
+  "enable_batch_processing",
+  "max_batch_size",
+  "section_break_audit",
+  "audit_retention_days",
+  "enable_audit_trail",
+  "column_break_5",
+  "auto_archive_completed_audits",
+  "archive_after_days"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_general",
+   "fieldtype": "Section Break",
+   "label": "General Settings"
+  },
+  {
+   "default": "0",
+   "description": "Automatically create warehouse records when importing stock data",
+   "fieldname": "enable_auto_warehouse_creation",
+   "fieldtype": "Check",
+   "label": "Enable Auto Warehouse Creation"
+  },
+  {
+   "depends_on": "enable_auto_warehouse_creation",
+   "fieldname": "default_warehouse_type",
+   "fieldtype": "Select",
+   "label": "Default Warehouse Type",
+   "options": "Store\nWarehouse\nDistribution Center\nReturns Center"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Automatically generate warehouse codes using prefix",
+   "fieldname": "auto_generate_warehouse_code",
+   "fieldtype": "Check",
+   "label": "Auto Generate Warehouse Code"
+  },
+  {
+   "depends_on": "auto_generate_warehouse_code",
+   "description": "Prefix for auto-generated warehouse codes (e.g., WH-, ST-)",
+   "fieldname": "warehouse_code_prefix",
+   "fieldtype": "Data",
+   "label": "Warehouse Code Prefix"
+  },
+  {
+   "fieldname": "section_break_notifications",
+   "fieldtype": "Section Break",
+   "label": "Notification Settings"
+  },
+  {
+   "default": "1",
+   "description": "Send notifications when variance exceeds threshold",
+   "fieldname": "notify_on_variance_threshold",
+   "fieldtype": "Check",
+   "label": "Notify on Variance Threshold"
+  },
+  {
+   "depends_on": "notify_on_variance_threshold",
+   "description": "Percentage threshold for variance notifications (e.g., 5 for 5%)",
+   "fieldname": "variance_notification_threshold",
+   "fieldtype": "Percent",
+   "label": "Variance Notification Threshold"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_store_manager",
+   "fieldtype": "Check",
+   "label": "Notify Store Manager"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_hod_inventory",
+   "fieldtype": "Check",
+   "label": "Notify HOD Inventory"
+  },
+  {
+   "fieldname": "section_break_approval",
+   "fieldtype": "Section Break",
+   "label": "Approval Settings"
+  },
+  {
+   "default": "1",
+   "description": "Require HOD approval for stock take variances",
+   "fieldname": "require_hod_approval",
+   "fieldtype": "Check",
+   "label": "Require HOD Approval"
+  },
+  {
+   "depends_on": "require_hod_approval",
+   "description": "Auto-approve variances below this threshold",
+   "fieldname": "auto_approve_below_threshold",
+   "fieldtype": "Check",
+   "label": "Auto Approve Below Threshold"
+  },
+  {
+   "depends_on": "eval:doc.auto_approve_below_threshold",
+   "description": "Auto-approval threshold amount",
+   "fieldname": "approval_threshold_amount",
+   "fieldtype": "Currency",
+   "label": "Approval Threshold Amount"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "require_hod_approval",
+   "fieldname": "approval_workflow",
+   "fieldtype": "Select",
+   "label": "Approval Workflow",
+   "options": "Single Level\nMulti Level"
+  },
+  {
+   "fieldname": "section_break_inventory",
+   "fieldtype": "Section Break",
+   "label": "Inventory Settings"
+  },
+  {
+   "fieldname": "default_counting_method",
+   "fieldtype": "Select",
+   "label": "Default Counting Method",
+   "options": "Manual Count\nBarcode Scan\nRFID\nSystem Integration"
+  },
+  {
+   "default": "0",
+   "description": "Allow negative variances in stock counts",
+   "fieldname": "allow_negative_variance",
+   "fieldtype": "Check",
+   "label": "Allow Negative Variance"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Process stock items in batches for performance",
+   "fieldname": "enable_batch_processing",
+   "fieldtype": "Check",
+   "label": "Enable Batch Processing"
+  },
+  {
+   "depends_on": "enable_batch_processing",
+   "default": "100",
+   "description": "Maximum items to process in a single batch",
+   "fieldname": "max_batch_size",
+   "fieldtype": "Int",
+   "label": "Max Batch Size"
+  },
+  {
+   "fieldname": "section_break_audit",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail Settings"
+  },
+  {
+   "default": "365",
+   "description": "Number of days to retain audit records",
+   "fieldname": "audit_retention_days",
+   "fieldtype": "Int",
+   "label": "Audit Retention Days"
+  },
+  {
+   "default": "1",
+   "description": "Enable detailed audit trail for all changes",
+   "fieldname": "enable_audit_trail",
+   "fieldtype": "Check",
+   "label": "Enable Audit Trail"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Automatically archive completed audits",
+   "fieldname": "auto_archive_completed_audits",
+   "fieldtype": "Check",
+   "label": "Auto Archive Completed Audits"
+  },
+  {
+   "depends_on": "auto_archive_completed_audits",
+   "default": "90",
+   "description": "Archive audits after this many days",
+   "fieldname": "archive_after_days",
+   "fieldtype": "Int",
+   "label": "Archive After Days"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_single": 1,
+ "links": [],
+ "modified": "2025-11-27 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Inventory Audit Settings",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "write": 1,
+   "role": "Internal Auditor"
+  },
+  {
+   "read": 1,
+   "role": "HOD Inventory"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

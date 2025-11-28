@@ -1,0 +1,42 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "penalty_type",
+  "penalty_description",
+  "penalty_amount_range"
+ ],
+ "fields": [
+  {
+   "fieldname": "penalty_type",
+   "fieldtype": "Select",
+   "label": "Penalty Type",
+   "options": "Fine\nInterest\nLicense Suspension\nProsecution\nReputational",
+   "reqd": 1
+  },
+  {
+   "fieldname": "penalty_description",
+   "fieldtype": "Text",
+   "label": "Penalty Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "penalty_amount_range",
+   "fieldtype": "Data",
+   "label": "Penalty Amount Range"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "Penalty",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

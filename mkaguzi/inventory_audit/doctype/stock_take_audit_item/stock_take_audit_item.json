@@ -1,0 +1,228 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2025-11-27 15:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_description",
+  "column_break_1",
+  "barcode",
+  "bin_location",
+  "section_break_qty",
+  "system_quantity",
+  "physical_quantity",
+  "pending_dispatch",
+  "column_break_2",
+  "variance_quantity",
+  "variance_percent",
+  "section_break_value",
+  "unit_value",
+  "system_value",
+  "column_break_3",
+  "variance_value",
+  "section_break_verification",
+  "verification_status",
+  "verified_by",
+  "verified_date",
+  "column_break_4",
+  "reason_provided",
+  "resolution_type",
+  "responsible_person",
+  "resolution_notes",
+  "section_break_charge",
+  "staff_charge_record",
+  "charge_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Description"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Data",
+   "label": "Barcode"
+  },
+  {
+   "fieldname": "bin_location",
+   "fieldtype": "Data",
+   "label": "Bin Location"
+  },
+  {
+   "fieldname": "section_break_qty",
+   "fieldtype": "Section Break",
+   "label": "Quantity Details"
+  },
+  {
+   "fieldname": "system_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "System Quantity",
+   "description": "Quantity from BC system (expected stock)"
+  },
+  {
+   "fieldname": "physical_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Physical Quantity",
+   "description": "Actual quantity found during physical count"
+  },
+  {
+   "fieldname": "pending_dispatch",
+   "fieldtype": "Float",
+   "label": "Pending Dispatch",
+   "description": "Quantity committed for dispatch but not yet shipped"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "variance_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Variance Quantity",
+   "read_only": 1,
+   "description": "System Qty - Physical Qty - Pending Dispatch (positive = surplus, negative = shortage)"
+  },
+  {
+   "fieldname": "variance_percent",
+   "fieldtype": "Percent",
+   "label": "Variance %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_value",
+   "fieldtype": "Section Break",
+   "label": "Value Details"
+  },
+  {
+   "fieldname": "unit_value",
+   "fieldtype": "Currency",
+   "label": "Unit Value"
+  },
+  {
+   "fieldname": "system_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "System Value",
+   "description": "System Quantity × Unit Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "variance_value",
+   "fieldtype": "Currency",
+   "label": "Variance Value",
+   "read_only": 1,
+   "description": "Variance Quantity × Unit Value"
+  },
+  {
+   "fieldname": "section_break_verification",
+   "fieldtype": "Section Break",
+   "label": "Verification & Resolution"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Verification Status",
+   "options": "Pending\nVerified-Match\nVerified-Discrepancy\nResolved"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "verified_date",
+   "fieldtype": "Datetime",
+   "label": "Verified Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reason_provided",
+   "fieldtype": "Small Text",
+   "label": "Reason Provided",
+   "description": "Reason for any variance identified"
+  },
+  {
+   "fieldname": "resolution_type",
+   "fieldtype": "Select",
+   "label": "Resolution Type",
+   "options": "\nStock Amendment\nCharge Staff\nWrite-off\nUnder Investigation",
+   "depends_on": "eval:doc.verification_status === 'Verified-Discrepancy'"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "User",
+   "depends_on": "eval:doc.resolution_type === 'Charge Staff'"
+  },
+  {
+   "fieldname": "resolution_notes",
+   "fieldtype": "Small Text",
+   "label": "Resolution Notes"
+  },
+  {
+   "fieldname": "section_break_charge",
+   "fieldtype": "Section Break",
+   "label": "Staff Charge",
+   "depends_on": "eval:doc.resolution_type === 'Charge Staff'",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "staff_charge_record",
+   "fieldtype": "Link",
+   "label": "Staff Charge Record",
+   "options": "Staff Charge Record",
+   "read_only": 1
+  },
+  {
+   "fieldname": "charge_amount",
+   "fieldtype": "Currency",
+   "label": "Charge Amount",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-27 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Stock Take Audit Item",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

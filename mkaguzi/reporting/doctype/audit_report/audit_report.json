@@ -1,0 +1,329 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "report_id",
+  "engagement_reference",
+  "report_title",
+  "report_type",
+  "report_date",
+  "report_period",
+  "report_status",
+  "column_break_7",
+  "executive_summary",
+  "background",
+  "audit_scope",
+  "audit_objectives",
+  "methodology",
+  "key_findings_summary_section",
+  "key_findings_summary",
+  "detailed_findings_section",
+  "detailed_findings",
+  "overall_audit_opinion",
+  "opinion_basis",
+  "positive_observations",
+  "areas_for_improvement",
+  "conclusion",
+  "acknowledgements",
+  "appendices_section",
+  "appendices",
+  "distribution_list_section",
+  "distribution_list",
+  "approval_workflow",
+  "prepared_by",
+  "preparation_date",
+  "reviewed_by",
+  "review_date",
+  "review_comments",
+  "approved_by",
+  "approval_date",
+  "management_acknowledgement",
+  "management_ack_date",
+  "management_ack_by",
+  "report_file",
+  "report_template",
+  "version_control",
+  "version_number",
+  "revision_history",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "report_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Report ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "engagement_reference",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Audit Engagement",
+   "options": "Audit Engagement",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Report Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Report Type",
+   "options": "Full Audit Report\nExecutive Summary\nManagement Letter\nBoard Report\nFollow-up Report\nSpecial Report",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Report Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_period",
+   "fieldtype": "Data",
+   "label": "Report Period"
+  },
+  {
+   "fieldname": "report_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Report Status",
+   "options": "Draft\nUnder Review\nFinalized\nIssued",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "executive_summary",
+   "fieldtype": "Text Editor",
+   "label": "Executive Summary"
+  },
+  {
+   "fieldname": "background",
+   "fieldtype": "Text Editor",
+   "label": "Background"
+  },
+  {
+   "fieldname": "audit_scope",
+   "fieldtype": "Text Editor",
+   "label": "Audit Scope"
+  },
+  {
+   "fieldname": "audit_objectives",
+   "fieldtype": "Text Editor",
+   "label": "Audit Objectives"
+  },
+  {
+   "fieldname": "methodology",
+   "fieldtype": "Text Editor",
+   "label": "Methodology"
+  },
+  {
+   "fieldname": "key_findings_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Key Findings Summary"
+  },
+  {
+   "fieldname": "key_findings_summary",
+   "fieldtype": "Table",
+   "label": "Key Findings Summary",
+   "options": "Key Finding Summary"
+  },
+  {
+   "fieldname": "detailed_findings_section",
+   "fieldtype": "Section Break",
+   "label": "Detailed Findings"
+  },
+  {
+   "fieldname": "detailed_findings",
+   "fieldtype": "Table",
+   "label": "Detailed Findings",
+   "options": "Detailed Finding"
+  },
+  {
+   "fieldname": "overall_audit_opinion",
+   "fieldtype": "Select",
+   "label": "Overall Audit Opinion",
+   "options": "Satisfactory\nSatisfactory with Minor Improvements\nNeeds Improvement\nUnsatisfactory"
+  },
+  {
+   "fieldname": "opinion_basis",
+   "fieldtype": "Text Editor",
+   "label": "Opinion Basis"
+  },
+  {
+   "fieldname": "positive_observations",
+   "fieldtype": "Text Editor",
+   "label": "Positive Observations"
+  },
+  {
+   "fieldname": "areas_for_improvement",
+   "fieldtype": "Text Editor",
+   "label": "Areas for Improvement"
+  },
+  {
+   "fieldname": "conclusion",
+   "fieldtype": "Text Editor",
+   "label": "Conclusion"
+  },
+  {
+   "fieldname": "acknowledgements",
+   "fieldtype": "Text",
+   "label": "Acknowledgements"
+  },
+  {
+   "fieldname": "appendices_section",
+   "fieldtype": "Section Break",
+   "label": "Appendices"
+  },
+  {
+   "fieldname": "appendices",
+   "fieldtype": "Table",
+   "label": "Appendices",
+   "options": "Appendix"
+  },
+  {
+   "fieldname": "distribution_list_section",
+   "fieldtype": "Section Break",
+   "label": "Distribution List"
+  },
+  {
+   "fieldname": "distribution_list",
+   "fieldtype": "Table",
+   "label": "Distribution List",
+   "options": "Distribution"
+  },
+  {
+   "fieldname": "approval_workflow",
+   "fieldtype": "Section Break",
+   "label": "Approval Workflow"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "label": "Prepared By",
+   "options": "User"
+  },
+  {
+   "fieldname": "preparation_date",
+   "fieldtype": "Date",
+   "label": "Preparation Date"
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "label": "Review Date"
+  },
+  {
+   "fieldname": "review_comments",
+   "fieldtype": "Text Editor",
+   "label": "Review Comments"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "management_acknowledgement",
+   "fieldtype": "Check",
+   "label": "Management Acknowledgement"
+  },
+  {
+   "fieldname": "management_ack_date",
+   "fieldtype": "Date",
+   "label": "Management Ack Date"
+  },
+  {
+   "fieldname": "management_ack_by",
+   "fieldtype": "Link",
+   "label": "Management Ack By",
+   "options": "User"
+  },
+  {
+   "fieldname": "report_file",
+   "fieldtype": "Attach",
+   "label": "Report File"
+  },
+  {
+   "fieldname": "report_template",
+   "fieldtype": "Link",
+   "label": "Report Template",
+   "options": "Report Template"
+  },
+  {
+   "fieldname": "version_control",
+   "fieldtype": "Section Break",
+   "label": "Version Control"
+  },
+  {
+   "fieldname": "version_number",
+   "fieldtype": "Float",
+   "label": "Version Number",
+   "default": "1.0"
+  },
+  {
+   "fieldname": "revision_history",
+   "fieldtype": "Table",
+   "label": "Revision History",
+   "options": "Report Revision"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Reporting",
+ "name": "Audit Report",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "report_title",
+ "track_changes": 1
+}

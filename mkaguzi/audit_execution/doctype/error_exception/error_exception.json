@@ -1,0 +1,81 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "error_id",
+  "error_type",
+  "error_description",
+  "severity",
+  "impact_amount",
+  "column_break_5",
+  "root_cause",
+  "corrective_action",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "error_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Error ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "error_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Error Type",
+   "options": "Mathematical Error\nOmission\nDuplication\nMisclassification\nTiming Difference\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "error_description",
+   "fieldtype": "Text",
+   "label": "Error Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "impact_amount",
+   "fieldtype": "Currency",
+   "label": "Impact Amount"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "root_cause",
+   "fieldtype": "Text",
+   "label": "Root Cause"
+  },
+  {
+   "fieldname": "corrective_action",
+   "fieldtype": "Text",
+   "label": "Corrective Action"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "default": "Open",
+   "label": "Status",
+   "options": "Open\nResolved\nAccepted"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit Execution",
+ "name": "Error Exception",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

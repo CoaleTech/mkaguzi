@@ -1,0 +1,289 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tracker_id",
+  "tax_period",
+  "vat_compliance",
+  "vat_on_sales",
+  "vat_on_purchases",
+  "net_vat_payable",
+  "vat_return_filed",
+  "vat_return_reference",
+  "vat_filing_date",
+  "vat_payment_date",
+  "vat_payment_amount",
+  "vat_payment_reference",
+  "vat_reconciliation",
+  "paye_compliance",
+  "total_paye",
+  "paye_return_filed",
+  "paye_filing_date",
+  "paye_payment_date",
+  "paye_payment_reference",
+  "withholding_tax_compliance",
+  "wht_on_services",
+  "wht_on_rent",
+  "wht_on_professional_fees",
+  "other_wht",
+  "total_wht",
+  "wht_return_filed",
+  "wht_filing_date",
+  "wht_payment_date",
+  "nssf_compliance",
+  "employee_contributions",
+  "employer_contributions",
+  "total_nssf",
+  "nssf_return_filed",
+  "nssf_payment_date",
+  "nhif_compliance",
+  "total_nhif",
+  "nhif_return_filed",
+  "nhif_payment_date",
+  "compliance_score",
+  "issues_identified"
+ ],
+ "fields": [
+  {
+   "fieldname": "tracker_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tracker ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "tax_period",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tax Period",
+   "options": "Data Period",
+   "reqd": 1
+  },
+  {
+   "fieldname": "vat_compliance",
+   "fieldtype": "Section Break",
+   "label": "VAT Compliance"
+  },
+  {
+   "fieldname": "vat_on_sales",
+   "fieldtype": "Currency",
+   "label": "VAT on Sales"
+  },
+  {
+   "fieldname": "vat_on_purchases",
+   "fieldtype": "Currency",
+   "label": "VAT on Purchases"
+  },
+  {
+   "fieldname": "net_vat_payable",
+   "fieldtype": "Currency",
+   "label": "Net VAT Payable",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vat_return_filed",
+   "fieldtype": "Check",
+   "label": "VAT Return Filed"
+  },
+  {
+   "fieldname": "vat_return_reference",
+   "fieldtype": "Data",
+   "label": "VAT Return Reference"
+  },
+  {
+   "fieldname": "vat_filing_date",
+   "fieldtype": "Date",
+   "label": "VAT Filing Date"
+  },
+  {
+   "fieldname": "vat_payment_date",
+   "fieldtype": "Date",
+   "label": "VAT Payment Date"
+  },
+  {
+   "fieldname": "vat_payment_amount",
+   "fieldtype": "Currency",
+   "label": "VAT Payment Amount"
+  },
+  {
+   "fieldname": "vat_payment_reference",
+   "fieldtype": "Data",
+   "label": "VAT Payment Reference"
+  },
+  {
+   "fieldname": "vat_reconciliation",
+   "fieldtype": "Attach",
+   "label": "VAT Reconciliation"
+  },
+  {
+   "fieldname": "paye_compliance",
+   "fieldtype": "Section Break",
+   "label": "PAYE Compliance"
+  },
+  {
+   "fieldname": "total_paye",
+   "fieldtype": "Currency",
+   "label": "Total PAYE"
+  },
+  {
+   "fieldname": "paye_return_filed",
+   "fieldtype": "Check",
+   "label": "PAYE Return Filed"
+  },
+  {
+   "fieldname": "paye_filing_date",
+   "fieldtype": "Date",
+   "label": "PAYE Filing Date"
+  },
+  {
+   "fieldname": "paye_payment_date",
+   "fieldtype": "Date",
+   "label": "PAYE Payment Date"
+  },
+  {
+   "fieldname": "paye_payment_reference",
+   "fieldtype": "Data",
+   "label": "PAYE Payment Reference"
+  },
+  {
+   "fieldname": "withholding_tax_compliance",
+   "fieldtype": "Section Break",
+   "label": "Withholding Tax Compliance"
+  },
+  {
+   "fieldname": "wht_on_services",
+   "fieldtype": "Currency",
+   "label": "WHT on Services"
+  },
+  {
+   "fieldname": "wht_on_rent",
+   "fieldtype": "Currency",
+   "label": "WHT on Rent"
+  },
+  {
+   "fieldname": "wht_on_professional_fees",
+   "fieldtype": "Currency",
+   "label": "WHT on Professional Fees"
+  },
+  {
+   "fieldname": "other_wht",
+   "fieldtype": "Currency",
+   "label": "Other WHT"
+  },
+  {
+   "fieldname": "total_wht",
+   "fieldtype": "Currency",
+   "label": "Total WHT",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wht_return_filed",
+   "fieldtype": "Check",
+   "label": "WHT Return Filed"
+  },
+  {
+   "fieldname": "wht_filing_date",
+   "fieldtype": "Date",
+   "label": "WHT Filing Date"
+  },
+  {
+   "fieldname": "wht_payment_date",
+   "fieldtype": "Date",
+   "label": "WHT Payment Date"
+  },
+  {
+   "fieldname": "nssf_compliance",
+   "fieldtype": "Section Break",
+   "label": "NSSF Compliance"
+  },
+  {
+   "fieldname": "employee_contributions",
+   "fieldtype": "Currency",
+   "label": "Employee Contributions"
+  },
+  {
+   "fieldname": "employer_contributions",
+   "fieldtype": "Currency",
+   "label": "Employer Contributions"
+  },
+  {
+   "fieldname": "total_nssf",
+   "fieldtype": "Currency",
+   "label": "Total NSSF",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nssf_return_filed",
+   "fieldtype": "Check",
+   "label": "NSSF Return Filed"
+  },
+  {
+   "fieldname": "nssf_payment_date",
+   "fieldtype": "Date",
+   "label": "NSSF Payment Date"
+  },
+  {
+   "fieldname": "nhif_compliance",
+   "fieldtype": "Section Break",
+   "label": "NHIF Compliance"
+  },
+  {
+   "fieldname": "total_nhif",
+   "fieldtype": "Currency",
+   "label": "Total NHIF"
+  },
+  {
+   "fieldname": "nhif_return_filed",
+   "fieldtype": "Check",
+   "label": "NHIF Return Filed"
+  },
+  {
+   "fieldname": "nhif_payment_date",
+   "fieldtype": "Date",
+   "label": "NHIF Payment Date"
+  },
+  {
+   "fieldname": "compliance_score",
+   "fieldtype": "Percent",
+   "label": "Compliance Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "issues_identified",
+   "fieldtype": "Table",
+   "label": "Issues Identified",
+   "options": "Tax Issue"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "Tax Compliance Tracker",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "tracker_id",
+ "track_changes": 1
+}

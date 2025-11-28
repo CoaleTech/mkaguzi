@@ -1,0 +1,227 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:warehouse_code",
+ "creation": "2025-11-27 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "warehouse_code",
+  "warehouse_name",
+  "column_break_1",
+  "warehouse_type",
+  "is_active",
+  "section_break_location",
+  "branch",
+  "address",
+  "column_break_2",
+  "city",
+  "county",
+  "section_break_contacts",
+  "store_manager",
+  "store_manager_name",
+  "column_break_3",
+  "contact_phone",
+  "contact_email",
+  "section_break_settings",
+  "default_stock_analyst",
+  "default_stock_taker",
+  "column_break_4",
+  "hod_approver",
+  "section_break_notes",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "warehouse_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Warehouse Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "warehouse_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Warehouse Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "warehouse_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Warehouse Type",
+   "options": "Store\nWarehouse\nDistribution Center\nReturns Center"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "section_break_location",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Branch"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Data",
+   "label": "County"
+  },
+  {
+   "fieldname": "section_break_contacts",
+   "fieldtype": "Section Break",
+   "label": "Management & Contacts"
+  },
+  {
+   "fieldname": "store_manager",
+   "fieldtype": "Link",
+   "label": "Store Manager",
+   "options": "User"
+  },
+  {
+   "fetch_from": "store_manager.full_name",
+   "fieldname": "store_manager_name",
+   "fieldtype": "Data",
+   "label": "Store Manager Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_phone",
+   "fieldtype": "Data",
+   "label": "Contact Phone"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "section_break_settings",
+   "fieldtype": "Section Break",
+   "label": "Default Assignments"
+  },
+  {
+   "fieldname": "default_stock_analyst",
+   "fieldtype": "Link",
+   "label": "Default Stock Analyst",
+   "options": "User"
+  },
+  {
+   "fieldname": "default_stock_taker",
+   "fieldtype": "Link",
+   "label": "Default Stock Taker",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hod_approver",
+   "fieldtype": "Link",
+   "label": "HOD Approver",
+   "options": "User"
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-27 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Warehouse Master",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Stock Analyst"
+  },
+  {
+   "read": 1,
+   "role": "Stock Taker"
+  },
+  {
+   "read": 1,
+   "write": 1,
+   "role": "Store Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "role": "HOD Inventory"
+  }
+ ],
+ "search_fields": "warehouse_name,branch,warehouse_type",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,460 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2025-11-27 15:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "stock_take_type",
+  "status",
+  "column_break_header",
+  "audit_date",
+  "resolution_deadline",
+  "section_break_warehouse",
+  "warehouse",
+  "branch",
+  "column_break_import",
+  "import_date",
+  "import_file",
+  "import_batch_id",
+  "created_by",
+  "section_break_items",
+  "stock_take_items",
+  "section_break_summary",
+  "total_items",
+  "total_system_qty",
+  "column_break_summary",
+  "total_physical_qty",
+  "total_variance_value",
+  "section_break_resolution_summary",
+  "items_pending",
+  "items_verified_match",
+  "column_break_resolution",
+  "items_verified_discrepancy",
+  "items_resolved",
+  "section_break_workflow",
+  "investigation_deadline",
+  "section_break_physical_count",
+  "physical_count_submitted",
+  "physical_count_submitted_by",
+  "physical_count_submitted_date",
+  "column_break_manager_sign",
+  "signed_stock_take_copy",
+  "section_break_analyst",
+  "stock_analyst",
+  "analyst_reviewed",
+  "analyst_review_date",
+  "analyst_resolution_notes",
+  "column_break_hod",
+  "hod_approver",
+  "hod_approved",
+  "hod_approval_date",
+  "section_break_report",
+  "final_report_generated",
+  "final_report_date",
+  "final_report_file",
+  "section_break_notes",
+  "notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "STA-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_take_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Take Type",
+   "options": "Sales Return\nDaily Stock Take\nWeekly Stock Take\nMonthly Stock Take",
+   "reqd": 1,
+   "default": "Daily Stock Take"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nPhysical Count Submitted\nAnalyst Reviewed\nHOD Approved\nUnder Investigation"
+  },
+  {
+   "fieldname": "column_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "audit_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Stock Take Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "resolution_deadline",
+   "fieldtype": "Date",
+   "label": "Resolution Deadline",
+   "description": "Deadline for resolving all variances",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_warehouse",
+   "fieldtype": "Section Break",
+   "label": "Location & Import"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Warehouse",
+   "options": "Warehouse Master",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Branch",
+   "fetch_from": "warehouse.branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_import",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "import_date",
+   "fieldtype": "Date",
+   "label": "Import Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "import_file",
+   "fieldtype": "Data",
+   "label": "Import File",
+   "read_only": 1
+  },
+  {
+   "fieldname": "import_batch_id",
+   "fieldtype": "Data",
+   "label": "Import Batch ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By (Analyst)",
+   "options": "User",
+   "read_only": 1,
+   "description": "Stock Analyst who imported/created this stock take"
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Stock Take Items"
+  },
+  {
+   "fieldname": "stock_take_items",
+   "fieldtype": "Table",
+   "label": "Stock Take Items",
+   "options": "Stock Take Audit Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_summary",
+   "fieldtype": "Section Break",
+   "label": "Summary Totals"
+  },
+  {
+   "fieldname": "total_items",
+   "fieldtype": "Int",
+   "label": "Total Items",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_system_qty",
+   "fieldtype": "Float",
+   "label": "Total System Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_summary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_physical_qty",
+   "fieldtype": "Float",
+   "label": "Total Physical Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_variance_value",
+   "fieldtype": "Currency",
+   "label": "Total Variance Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_resolution_summary",
+   "fieldtype": "Section Break",
+   "label": "Resolution Summary"
+  },
+  {
+   "fieldname": "items_pending",
+   "fieldtype": "Int",
+   "label": "Items Pending",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_verified_match",
+   "fieldtype": "Int",
+   "label": "Items Verified (Match)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_resolution",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "items_verified_discrepancy",
+   "fieldtype": "Int",
+   "label": "Items with Discrepancy",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_resolved",
+   "fieldtype": "Int",
+   "label": "Items Resolved",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_workflow",
+   "fieldtype": "Section Break",
+   "label": "Workflow & Deadlines"
+  },
+  {
+   "fieldname": "investigation_deadline",
+   "fieldtype": "Date",
+   "label": "Investigation Deadline",
+   "description": "For items under investigation"
+  },
+  {
+   "fieldname": "section_break_physical_count",
+   "fieldtype": "Section Break",
+   "label": "Step 1: Physical Count (Stock Taker)"
+  },
+  {
+   "default": "0",
+   "fieldname": "physical_count_submitted",
+   "fieldtype": "Check",
+   "label": "Physical Count Submitted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "physical_count_submitted_by",
+   "fieldtype": "Link",
+   "label": "Submitted By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "physical_count_submitted_date",
+   "fieldtype": "Datetime",
+   "label": "Submission Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_manager_sign",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "signed_stock_take_copy",
+   "fieldtype": "Attach",
+   "label": "Signed Stock Take Copy",
+   "description": "Upload the manager-signed physical copy (required before submission)"
+  },
+  {
+   "fieldname": "section_break_analyst",
+   "fieldtype": "Section Break",
+   "label": "Step 2: Analyst Review"
+  },
+  {
+   "fieldname": "stock_analyst",
+   "fieldtype": "Link",
+   "label": "Stock Analyst",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "analyst_reviewed",
+   "fieldtype": "Check",
+   "label": "Analyst Reviewed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "analyst_review_date",
+   "fieldtype": "Datetime",
+   "label": "Analyst Review Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "analyst_resolution_notes",
+   "fieldtype": "Text",
+   "label": "Analyst Resolution Notes",
+   "description": "Notes on resolutions applied to discrepancies"
+  },
+  {
+   "fieldname": "column_break_hod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hod_approver",
+   "fieldtype": "Link",
+   "label": "HOD Approver",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "hod_approved",
+   "fieldtype": "Check",
+   "label": "HOD Approved",
+   "read_only": 1
+  },
+  {
+   "fieldname": "hod_approval_date",
+   "fieldtype": "Datetime",
+   "label": "HOD Approval Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_report",
+   "fieldtype": "Section Break",
+   "label": "Final Report"
+  },
+  {
+   "default": "0",
+   "fieldname": "final_report_generated",
+   "fieldtype": "Check",
+   "label": "Final Report Generated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "final_report_date",
+   "fieldtype": "Datetime",
+   "label": "Report Generation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "final_report_file",
+   "fieldtype": "Attach",
+   "label": "Final Report File",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Stock Take Audit",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-27 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Stock Take Audit",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Analyst",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Taker",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Store Manager",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HOD Inventory",
+   "write": 1
+  }
+ ],
+ "search_fields": "warehouse,branch,status,audit_date,stock_take_type",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

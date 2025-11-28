@@ -1,1 +1,11 @@
 Mkaguzi
+Inventory Audit
+Audit Planning
+Audit Execution
+Findings Remediation
+Risk Assessment
+Compliance Management
+Reporting
+Data Integration
+Dashboard Analytics
+Settings Masters

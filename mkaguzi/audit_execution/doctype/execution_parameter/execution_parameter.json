@@ -1,0 +1,48 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "parameter_name",
+  "parameter_value",
+  "parameter_type",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "parameter_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parameter Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parameter_value",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parameter Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parameter_type",
+   "fieldtype": "Select",
+   "label": "Parameter Type",
+   "options": "String\nInteger\nFloat\nDate\nBoolean\nList"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit Execution",
+ "name": "Execution Parameter",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

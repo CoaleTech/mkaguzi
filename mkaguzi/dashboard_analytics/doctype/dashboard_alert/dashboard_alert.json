@@ -1,0 +1,96 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "alert_name",
+  "alert_type",
+  "condition_field",
+  "condition_operator",
+  "condition_value",
+  "column_break_5",
+  "alert_message",
+  "severity",
+  "notification_method",
+  "recipients",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "alert_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Alert Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "alert_type",
+   "fieldtype": "Select",
+   "label": "Alert Type",
+   "options": "Threshold\nTrend\nAnomaly\nSchedule",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_field",
+   "fieldtype": "Data",
+   "label": "Condition Field",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_operator",
+   "fieldtype": "Select",
+   "label": "Condition Operator",
+   "options": ">\n<\n>=\n<=\n==\n!=\nContains\nNot Contains",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_value",
+   "fieldtype": "Data",
+   "label": "Condition Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "alert_message",
+   "fieldtype": "Text",
+   "label": "Alert Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "notification_method",
+   "fieldtype": "Select",
+   "label": "Notification Method",
+   "options": "Email\nIn-App\nSMS\nWebhook"
+  },
+  {
+   "fieldname": "recipients",
+   "fieldtype": "Data",
+   "label": "Recipients"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dashboard Analytics",
+ "name": "Dashboard Alert",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -427,6 +427,100 @@
             </div>
           </div>
 
+          <!-- Inventory Audit -->
+          <div class="nav-group">
+            <div
+              class="nav-group-header"
+              @click="toggleNavGroup('inventoryAudit')"
+            >
+              <div class="flex items-center space-x-2">
+                <PackageIcon class="h-5 w-5" />
+                <span v-if="!isSidebarCollapsed">Inventory Audit</span>
+              </div>
+              <ChevronDownIcon
+                v-if="!isSidebarCollapsed"
+                :class="[
+                  'h-4 w-4 transition-transform',
+                  expandedGroups.inventoryAudit ? 'rotate-180' : ''
+                ]"
+              />
+            </div>
+            <div v-if="expandedGroups.inventoryAudit || isSidebarCollapsed" class="nav-group-items">
+              <router-link
+                to="/inventory-audit"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/inventory-audit' }"
+              >
+                <LayoutDashboardIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Dashboard</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/items"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/items') }"
+              >
+                <PackageIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Item Master</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/plans"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/plans') }"
+              >
+                <ClipboardListIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Audit Plans</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/sessions"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/sessions') }"
+              >
+                <ClipboardCheckIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Stock Take Sessions</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/variance-cases"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/variance-cases') }"
+              >
+                <AlertTriangleIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Variance Cases</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/stock-take"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/stock-take') }"
+              >
+                <RotateCcwIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Stock Take</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/issues"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/issues') }"
+              >
+                <AlertCircleIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Issue Log</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/scorecards"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/inventory-audit/scorecards') }"
+              >
+                <BarChart2Icon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Scorecards</span>
+              </router-link>
+              <router-link
+                to="/inventory-audit/settings"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/inventory-audit/settings' }"
+              >
+                <SettingsIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Settings</span>
+              </router-link>
+            </div>
+          </div>
+
           <!-- Settings -->
           <div class="nav-group">
             <div
@@ -505,6 +599,7 @@ import { Avatar, Badge, Button, Dropdown } from "frappe-ui"
 import {
 	AlertCircleIcon,
 	AlertTriangleIcon,
+	BarChart2Icon,
 	BarChartIcon,
 	BellIcon,
 	BriefcaseIcon,
@@ -515,6 +610,7 @@ import {
 	CheckSquareIcon,
 	ChevronDownIcon,
 	ChevronLeftIcon,
+	ClipboardCheckIcon,
 	ClipboardListIcon,
 	ClockIcon,
 	CogIcon,
@@ -526,9 +622,12 @@ import {
 	GlobeIcon,
 	HistoryIcon,
 	HomeIcon,
+	LayoutDashboardIcon,
 	MoonIcon,
+	PackageIcon,
 	PlayCircleIcon,
 	PresentationIcon,
+	RotateCcwIcon,
 	SearchIcon,
 	SettingsIcon,
 	ShieldCheckIcon,
@@ -554,6 +653,7 @@ const expandedGroups = ref({
 	dataManagement: false,
 	compliance: false,
 	reports: false,
+	inventoryAudit: false,
 	settings: false,
 })
 

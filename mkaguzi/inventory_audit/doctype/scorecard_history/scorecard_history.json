@@ -1,0 +1,128 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2025-11-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "scorecard",
+  "snapshot_date",
+  "column_break_1",
+  "overall_score",
+  "grade",
+  "section_break_metrics",
+  "completion_rate",
+  "variance_rate",
+  "material_variance_count",
+  "column_break_2",
+  "timeliness_score",
+  "accuracy_score",
+  "sla_compliance_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "scorecard",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Scorecard",
+   "options": "Audit Compliance Scorecard",
+   "reqd": 1
+  },
+  {
+   "fieldname": "snapshot_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Snapshot Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overall_score",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Overall Score"
+  },
+  {
+   "fieldname": "grade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Grade",
+   "options": "A\nB\nC\nD\nF"
+  },
+  {
+   "fieldname": "section_break_metrics",
+   "fieldtype": "Section Break",
+   "label": "Metrics"
+  },
+  {
+   "fieldname": "completion_rate",
+   "fieldtype": "Percent",
+   "label": "Completion Rate"
+  },
+  {
+   "fieldname": "variance_rate",
+   "fieldtype": "Percent",
+   "label": "Variance Rate"
+  },
+  {
+   "fieldname": "material_variance_count",
+   "fieldtype": "Int",
+   "label": "Material Variance Count"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "timeliness_score",
+   "fieldtype": "Percent",
+   "label": "Timeliness Score"
+  },
+  {
+   "fieldname": "accuracy_score",
+   "fieldtype": "Percent",
+   "label": "Accuracy Score"
+  },
+  {
+   "fieldname": "sla_compliance_rate",
+   "fieldtype": "Percent",
+   "label": "SLA Compliance Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Inventory Audit",
+ "name": "Scorecard History",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1
+  }
+ ],
+ "sort_field": "snapshot_date",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
