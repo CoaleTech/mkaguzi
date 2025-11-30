@@ -144,53 +144,58 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  SearchIcon as DocumentMagnifyingGlassIcon,
-  AlertTriangleIcon as ExclamationTriangleIcon,
-  ClockIcon,
-  CheckCircle2Icon as CheckCircleIcon,
-} from 'lucide-vue-next'
+	CheckCircle2Icon as CheckCircleIcon,
+	ClockIcon,
+	SearchIcon as DocumentMagnifyingGlassIcon,
+	AlertTriangleIcon as ExclamationTriangleIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      total: 0,
-      thisMonth: 0,
-      open: 0,
-      overdue: 0,
-      inProgress: 0,
-      pendingVerification: 0,
-      closed: 0,
-      closureRate: 0,
-      bySeverity: {
-        critical: 0,
-        high: 0,
-        medium: 0,
-        low: 0,
-      },
-      aging: {
-        days0to30: 0,
-        days31to60: 0,
-        days61to90: 0,
-        days90plus: 0,
-      },
-    }),
-  },
+	stats: {
+		type: Object,
+		default: () => ({
+			total: 0,
+			thisMonth: 0,
+			open: 0,
+			overdue: 0,
+			inProgress: 0,
+			pendingVerification: 0,
+			closed: 0,
+			closureRate: 0,
+			bySeverity: {
+				critical: 0,
+				high: 0,
+				medium: 0,
+				low: 0,
+			},
+			aging: {
+				days0to30: 0,
+				days31to60: 0,
+				days61to90: 0,
+				days90plus: 0,
+			},
+		}),
+	},
 })
 
 // Computed
 const totalAging = computed(() => {
-  const aging = props.stats.aging || {}
-  return (aging.days0to30 || 0) + (aging.days31to60 || 0) + (aging.days61to90 || 0) + (aging.days90plus || 0)
+	const aging = props.stats.aging || {}
+	return (
+		(aging.days0to30 || 0) +
+		(aging.days31to60 || 0) +
+		(aging.days61to90 || 0) +
+		(aging.days90plus || 0)
+	)
 })
 
 // Methods
 const getAgingPercentage = (count) => {
-  if (totalAging.value === 0) return 0
-  return Math.round((count / totalAging.value) * 100)
+	if (totalAging.value === 0) return 0
+	return Math.round((count / totalAging.value) * 100)
 }
 </script>

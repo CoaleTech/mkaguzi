@@ -112,68 +112,84 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  AlertCircleIcon,
-  ClipboardCheckIcon,
-  FileTextIcon,
-  PercentIcon,
-  PlayCircleIcon,
-} from 'lucide-vue-next'
+	AlertCircleIcon,
+	ClipboardCheckIcon,
+	FileTextIcon,
+	PercentIcon,
+	PlayCircleIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      total: 0,
-      templates: 0,
-      active: 0,
-      avgCompletion: 0,
-      totalProcedures: 0,
-      completedProcedures: 0,
-      overdue: 0,
-      byType: {},
-      proceduresByStatus: {},
-    }),
-  },
-  showDetails: {
-    type: Boolean,
-    default: true,
-  },
+	stats: {
+		type: Object,
+		default: () => ({
+			total: 0,
+			templates: 0,
+			active: 0,
+			avgCompletion: 0,
+			totalProcedures: 0,
+			completedProcedures: 0,
+			overdue: 0,
+			byType: {},
+			proceduresByStatus: {},
+		}),
+	},
+	showDetails: {
+		type: Boolean,
+		default: true,
+	},
 })
 
 // Computed
 const typeDistribution = computed(() => {
-  const types = props.stats.byType || {}
-  const total = Object.values(types).reduce((sum, count) => sum + count, 0) || 1
-  
-  const colors = {
-    'Financial': 'bg-blue-500',
-    'Operational': 'bg-green-500',
-    'Compliance': 'bg-purple-500',
-    'IT': 'bg-amber-500',
-    'Inventory': 'bg-cyan-500',
-    'Cash': 'bg-emerald-500',
-    'Sales': 'bg-pink-500',
-    'Procurement': 'bg-indigo-500',
-  }
+	const types = props.stats.byType || {}
+	const total = Object.values(types).reduce((sum, count) => sum + count, 0) || 1
 
-  return Object.entries(types).map(([label, count]) => ({
-    label,
-    count,
-    percentage: (count / total) * 100,
-    color: colors[label] || 'bg-gray-400',
-  }))
+	const colors = {
+		Financial: "bg-blue-500",
+		Operational: "bg-green-500",
+		Compliance: "bg-purple-500",
+		IT: "bg-amber-500",
+		Inventory: "bg-cyan-500",
+		Cash: "bg-emerald-500",
+		Sales: "bg-pink-500",
+		Procurement: "bg-indigo-500",
+	}
+
+	return Object.entries(types).map(([label, count]) => ({
+		label,
+		count,
+		percentage: (count / total) * 100,
+		color: colors[label] || "bg-gray-400",
+	}))
 })
 
 const procedureStatus = computed(() => {
-  const statuses = props.stats.proceduresByStatus || {}
-  return [
-    { label: 'Not Started', count: statuses['Not Started'] || 0, color: 'text-gray-600' },
-    { label: 'In Progress', count: statuses['In Progress'] || 0, color: 'text-blue-600' },
-    { label: 'Completed', count: statuses['Completed'] || 0, color: 'text-green-600' },
-    { label: 'N/A', count: statuses['Not Applicable'] || 0, color: 'text-amber-600' },
-  ]
+	const statuses = props.stats.proceduresByStatus || {}
+	return [
+		{
+			label: "Not Started",
+			count: statuses["Not Started"] || 0,
+			color: "text-gray-600",
+		},
+		{
+			label: "In Progress",
+			count: statuses["In Progress"] || 0,
+			color: "text-blue-600",
+		},
+		{
+			label: "Completed",
+			count: statuses["Completed"] || 0,
+			color: "text-green-600",
+		},
+		{
+			label: "N/A",
+			count: statuses["Not Applicable"] || 0,
+			color: "text-amber-600",
+		},
+	]
 })
 </script>

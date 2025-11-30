@@ -600,72 +600,77 @@
 <script setup>
 import ChildTable from "@/components/Common/ChildTable.vue"
 import InlineChildTable from "@/components/Common/InlineChildTable.vue"
-import LinkField from "@/components/Common/fields/LinkField.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
 import RiskHeatMap from "@/components/risk/RiskHeatMap.vue"
 import { useMultiSectionForm } from "@/composables/useMultiSectionForm"
 import { Badge, Button, Dialog, FormControl, Select } from "frappe-ui"
 import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  CheckCircleIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ClockIcon,
-  SaveIcon,
-  XIcon,
+	AlertCircleIcon,
+	AlertTriangleIcon,
+	CheckCircleIcon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ClockIcon,
+	SaveIcon,
+	XIcon,
 } from "lucide-vue-next"
 import { computed, reactive, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  assessment: {
-    type: Object,
-    default: null,
-  },
-  mode: {
-    type: String,
-    default: "create", // 'create' or 'edit'
-  },
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	assessment: {
+		type: Object,
+		default: null,
+	},
+	mode: {
+		type: String,
+		default: "create", // 'create' or 'edit'
+	},
 })
 
 // Emits
-const emit = defineEmits(["update:modelValue", "submit", "cancel", "save-draft"])
+const emit = defineEmits([
+	"update:modelValue",
+	"submit",
+	"cancel",
+	"save-draft",
+])
 
 // Dialog state
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const isEditMode = computed(() => props.mode === "edit")
 
 // Form data
 const form = reactive({
-  assessment_id: "",
-  assessment_name: "",
-  assessment_date: new Date().toISOString().split("T")[0],
-  fiscal_year: "",
-  assessment_period: "Annual",
-  status: "Planning",
-  assessment_scope: "",
-  methodology: "",
-  assessment_team: [],
-  risk_register: [],
-  action_plan: [],
-  top_risks: [],
-  overall_risk_score: 0,
-  overall_risk_rating: "",
-  assessment_summary: "",
-  recommendations: "",
-  prepared_by: "",
-  reviewed_by: "",
-  approved_by: "",
+	assessment_id: "",
+	assessment_name: "",
+	assessment_date: new Date().toISOString().split("T")[0],
+	fiscal_year: "",
+	assessment_period: "Annual",
+	status: "Planning",
+	assessment_scope: "",
+	methodology: "",
+	assessment_team: [],
+	risk_register: [],
+	action_plan: [],
+	top_risks: [],
+	overall_risk_score: 0,
+	overall_risk_rating: "",
+	assessment_summary: "",
+	recommendations: "",
+	prepared_by: "",
+	reviewed_by: "",
+	approved_by: "",
 })
 
 // Selected methodologies (array for checkboxes)
@@ -673,527 +678,649 @@ const selectedMethodologies = ref([])
 
 // Section definitions
 const sections = [
-  {
-    id: "basic",
-    label: "Basic Information",
-    description: "Assessment details",
-    requiredFields: ["assessment_name", "assessment_date", "fiscal_year", "assessment_period"],
-  },
-  {
-    id: "scope",
-    label: "Scope & Methodology",
-    description: "Assessment scope",
-    requiredFields: ["assessment_scope"],
-  },
-  {
-    id: "team",
-    label: "Assessment Team",
-    description: "Team members",
-    requiredFields: [],
-  },
-  {
-    id: "risks",
-    label: "Risk Register",
-    description: "Identified risks",
-    requiredFields: [],
-  },
-  {
-    id: "actions",
-    label: "Action Plan",
-    description: "Mitigation actions",
-    requiredFields: [],
-  },
-  {
-    id: "summary",
-    label: "Summary",
-    description: "Assessment summary",
-    requiredFields: [],
-  },
-  {
-    id: "approvals",
-    label: "Approvals",
-    description: "Review & approval",
-    requiredFields: [],
-  },
+	{
+		id: "basic",
+		label: "Basic Information",
+		description: "Assessment details",
+		requiredFields: [
+			"assessment_name",
+			"assessment_date",
+			"fiscal_year",
+			"assessment_period",
+		],
+	},
+	{
+		id: "scope",
+		label: "Scope & Methodology",
+		description: "Assessment scope",
+		requiredFields: ["assessment_scope"],
+	},
+	{
+		id: "team",
+		label: "Assessment Team",
+		description: "Team members",
+		requiredFields: [],
+	},
+	{
+		id: "risks",
+		label: "Risk Register",
+		description: "Identified risks",
+		requiredFields: [],
+	},
+	{
+		id: "actions",
+		label: "Action Plan",
+		description: "Mitigation actions",
+		requiredFields: [],
+	},
+	{
+		id: "summary",
+		label: "Summary",
+		description: "Assessment summary",
+		requiredFields: [],
+	},
+	{
+		id: "approvals",
+		label: "Approvals",
+		description: "Review & approval",
+		requiredFields: [],
+	},
 ]
 
 // Child table configurations
 const childTables = {
-  assessment_team: "Assessment Team Member",
-  risk_register: "Risk Assessment Register",
-  action_plan: "Risk Assessment Action",
+	assessment_team: "Assessment Team Member",
+	risk_register: "Risk Assessment Register",
+	action_plan: "Risk Assessment Action",
 }
 
 // Validation function
 const validateSection = (sectionId, formData) => {
-  const errors = {}
-  const section = sections.find((s) => s.id === sectionId)
+	const errors = {}
+	const section = sections.find((s) => s.id === sectionId)
 
-  if (!section) return errors
+	if (!section) return errors
 
-  for (const field of section.requiredFields || []) {
-    const value = formData[field]
-    if (!value || (Array.isArray(value) && value.length === 0)) {
-      errors[field] = `${field.replace(/_/g, " ")} is required`
-    }
-  }
+	for (const field of section.requiredFields || []) {
+		const value = formData[field]
+		if (!value || (Array.isArray(value) && value.length === 0)) {
+			errors[field] = `${field.replace(/_/g, " ")} is required`
+		}
+	}
 
-  return errors
+	return errors
 }
 
 // Use the multi-section form composable
 const {
-  activeSection,
-  errors,
-  isSaving,
-  isSavingDraft,
-  hasUnsavedChanges,
-  completedSections,
-  formProgress,
-  isFormValid,
-  isFirstSection,
-  isLastSection,
-  currentSectionIndex,
-  getSectionStatus,
-  getSectionStatusClass,
-  navigateToSection,
-  nextSection,
-  prevSection,
-  clearError,
-  clearAllErrors,
-  prepareFormData,
-  resetForm,
-  loadFormData,
+	activeSection,
+	errors,
+	isSaving,
+	isSavingDraft,
+	hasUnsavedChanges,
+	completedSections,
+	formProgress,
+	isFormValid,
+	isFirstSection,
+	isLastSection,
+	currentSectionIndex,
+	getSectionStatus,
+	getSectionStatusClass,
+	navigateToSection,
+	nextSection,
+	prevSection,
+	clearError,
+	clearAllErrors,
+	prepareFormData,
+	resetForm,
+	loadFormData,
 } = useMultiSectionForm({
-  sections,
-  form,
-  validateSection,
-  childTables,
+	sections,
+	form,
+	validateSection,
+	childTables,
 })
 
 // Options
 const periodOptions = [
-  { label: "Annual", value: "Annual" },
-  { label: "Mid-Year", value: "Mid-Year" },
-  { label: "Quarterly", value: "Quarterly" },
-  { label: "Ad-hoc", value: "Ad-hoc" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Mid-Year", value: "Mid-Year" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Ad-hoc", value: "Ad-hoc" },
 ]
 
 const statusOptions = [
-  { label: "Planning", value: "Planning" },
-  { label: "In Progress", value: "In Progress" },
-  { label: "Review", value: "Review" },
-  { label: "Finalized", value: "Finalized" },
-  { label: "Approved", value: "Approved" },
+	{ label: "Planning", value: "Planning" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Review", value: "Review" },
+	{ label: "Finalized", value: "Finalized" },
+	{ label: "Approved", value: "Approved" },
 ]
 
 const methodologyOptions = [
-  { label: "Interview", value: "Interview" },
-  { label: "Workshop", value: "Workshop" },
-  { label: "Survey", value: "Survey" },
-  { label: "Document Review", value: "Document Review" },
-  { label: "Data Analysis", value: "Data Analysis" },
-  { label: "Self-Assessment", value: "Self-Assessment" },
+	{ label: "Interview", value: "Interview" },
+	{ label: "Workshop", value: "Workshop" },
+	{ label: "Survey", value: "Survey" },
+	{ label: "Document Review", value: "Document Review" },
+	{ label: "Data Analysis", value: "Data Analysis" },
+	{ label: "Self-Assessment", value: "Self-Assessment" },
 ]
 
 // Team member columns
 const teamColumns = [
-  { key: "team_member", label: "Team Member", type: "link", doctype: "User" },
-  { key: "role", label: "Role", type: "select", options: ["Lead", "Member", "Observer", "SME"] },
+	{ key: "team_member", label: "Team Member", type: "link", doctype: "User" },
+	{
+		key: "role",
+		label: "Role",
+		type: "select",
+		options: ["Lead", "Member", "Observer", "SME"],
+	},
 ]
 
 const defaultTeamMember = {
-  team_member: "",
-  role: "Member",
+	team_member: "",
+	role: "Member",
 }
 
 // Risk register columns (simplified for table display)
 const riskRegisterColumns = [
-  { key: "risk_id", label: "Risk ID", width: "100px" },
-  { key: "risk_title", label: "Risk Title" },
-  { key: "risk_category", label: "Category", width: "120px" },
-  { key: "likelihood_score", label: "Likelihood", width: "90px" },
-  { key: "impact_score", label: "Impact", width: "80px" },
-  { key: "inherent_risk_score", label: "Score", width: "80px", computed: true },
-  { key: "inherent_risk_rating", label: "Rating", width: "100px" },
+	{ key: "risk_id", label: "Risk ID", width: "100px" },
+	{ key: "risk_title", label: "Risk Title" },
+	{ key: "risk_category", label: "Category", width: "120px" },
+	{ key: "likelihood_score", label: "Likelihood", width: "90px" },
+	{ key: "impact_score", label: "Impact", width: "80px" },
+	{ key: "inherent_risk_score", label: "Score", width: "80px", computed: true },
+	{ key: "inherent_risk_rating", label: "Rating", width: "100px" },
 ]
 
 // Risk register form fields (for modal - 24 fields)
 const riskRegisterFormFields = [
-  { key: "risk_id", label: "Risk ID", type: "text", required: true },
-  { key: "risk_title", label: "Risk Title", type: "text", required: true },
-  { key: "risk_description", label: "Risk Description", type: "textarea", required: true },
-  { key: "risk_category", label: "Category", type: "select", options: [
-    "Strategic", "Operational", "Financial", "Compliance", "Technology", "Reputational"
-  ], required: true },
-  { key: "risk_subcategory", label: "Subcategory", type: "text" },
-  { key: "auditable_entity", label: "Auditable Entity", type: "link", doctype: "Audit Universe Entity" },
-  { key: "threat_source", label: "Threat Source", type: "text" },
-  { key: "vulnerability", label: "Vulnerability", type: "textarea" },
-  { key: "likelihood_score", label: "Likelihood Score (1-5)", type: "rating", required: true },
-  { key: "likelihood_rationale", label: "Likelihood Rationale", type: "textarea" },
-  { key: "impact_score", label: "Impact Score (1-5)", type: "rating", required: true },
-  { key: "impact_rationale", label: "Impact Rationale", type: "textarea" },
-  { key: "control_effectiveness", label: "Control Effectiveness", type: "select", options: [
-    "Strong", "Adequate", "Weak", "Non-existent"
-  ] },
-  { key: "existing_controls", label: "Existing Controls", type: "textarea" },
-  { key: "residual_likelihood", label: "Residual Likelihood (1-5)", type: "rating" },
-  { key: "residual_impact", label: "Residual Impact (1-5)", type: "rating" },
-  { key: "risk_owner", label: "Risk Owner", type: "link", doctype: "User" },
-  { key: "risk_response", label: "Risk Response", type: "select", options: [
-    "Accept", "Mitigate", "Transfer", "Avoid"
-  ] },
-  { key: "target_risk_score", label: "Target Risk Score", type: "number" },
-  { key: "risk_velocity", label: "Risk Velocity", type: "select", options: [
-    "Very Slow", "Slow", "Medium", "Fast", "Very Fast"
-  ] },
-  { key: "risk_trend", label: "Risk Trend", type: "select", options: [
-    "Increasing", "Stable", "Decreasing"
-  ] },
-  { key: "last_review_date", label: "Last Review Date", type: "date" },
-  { key: "next_review_date", label: "Next Review Date", type: "date" },
-  { key: "notes", label: "Notes", type: "textarea" },
+	{ key: "risk_id", label: "Risk ID", type: "text", required: true },
+	{ key: "risk_title", label: "Risk Title", type: "text", required: true },
+	{
+		key: "risk_description",
+		label: "Risk Description",
+		type: "textarea",
+		required: true,
+	},
+	{
+		key: "risk_category",
+		label: "Category",
+		type: "select",
+		options: [
+			"Strategic",
+			"Operational",
+			"Financial",
+			"Compliance",
+			"Technology",
+			"Reputational",
+		],
+		required: true,
+	},
+	{ key: "risk_subcategory", label: "Subcategory", type: "text" },
+	{
+		key: "auditable_entity",
+		label: "Auditable Entity",
+		type: "link",
+		doctype: "Audit Universe Entity",
+	},
+	{ key: "threat_source", label: "Threat Source", type: "text" },
+	{ key: "vulnerability", label: "Vulnerability", type: "textarea" },
+	{
+		key: "likelihood_score",
+		label: "Likelihood Score (1-5)",
+		type: "rating",
+		required: true,
+	},
+	{
+		key: "likelihood_rationale",
+		label: "Likelihood Rationale",
+		type: "textarea",
+	},
+	{
+		key: "impact_score",
+		label: "Impact Score (1-5)",
+		type: "rating",
+		required: true,
+	},
+	{ key: "impact_rationale", label: "Impact Rationale", type: "textarea" },
+	{
+		key: "control_effectiveness",
+		label: "Control Effectiveness",
+		type: "select",
+		options: ["Strong", "Adequate", "Weak", "Non-existent"],
+	},
+	{ key: "existing_controls", label: "Existing Controls", type: "textarea" },
+	{
+		key: "residual_likelihood",
+		label: "Residual Likelihood (1-5)",
+		type: "rating",
+	},
+	{ key: "residual_impact", label: "Residual Impact (1-5)", type: "rating" },
+	{ key: "risk_owner", label: "Risk Owner", type: "link", doctype: "User" },
+	{
+		key: "risk_response",
+		label: "Risk Response",
+		type: "select",
+		options: ["Accept", "Mitigate", "Transfer", "Avoid"],
+	},
+	{ key: "target_risk_score", label: "Target Risk Score", type: "number" },
+	{
+		key: "risk_velocity",
+		label: "Risk Velocity",
+		type: "select",
+		options: ["Very Slow", "Slow", "Medium", "Fast", "Very Fast"],
+	},
+	{
+		key: "risk_trend",
+		label: "Risk Trend",
+		type: "select",
+		options: ["Increasing", "Stable", "Decreasing"],
+	},
+	{ key: "last_review_date", label: "Last Review Date", type: "date" },
+	{ key: "next_review_date", label: "Next Review Date", type: "date" },
+	{ key: "notes", label: "Notes", type: "textarea" },
 ]
 
 const defaultRiskEntry = {
-  risk_id: "",
-  risk_title: "",
-  risk_description: "",
-  risk_category: "",
-  risk_subcategory: "",
-  auditable_entity: "",
-  threat_source: "",
-  vulnerability: "",
-  likelihood_score: 3,
-  likelihood_rationale: "",
-  impact_score: 3,
-  impact_rationale: "",
-  inherent_risk_score: 9,
-  inherent_risk_rating: "Medium",
-  control_effectiveness: "Adequate",
-  existing_controls: "",
-  residual_likelihood: 0,
-  residual_impact: 0,
-  residual_risk_score: 0,
-  residual_risk_rating: "",
-  risk_owner: "",
-  risk_response: "Mitigate",
-  target_risk_score: 0,
-  risk_velocity: "Medium",
-  risk_trend: "Stable",
-  last_review_date: "",
-  next_review_date: "",
-  notes: "",
+	risk_id: "",
+	risk_title: "",
+	risk_description: "",
+	risk_category: "",
+	risk_subcategory: "",
+	auditable_entity: "",
+	threat_source: "",
+	vulnerability: "",
+	likelihood_score: 3,
+	likelihood_rationale: "",
+	impact_score: 3,
+	impact_rationale: "",
+	inherent_risk_score: 9,
+	inherent_risk_rating: "Medium",
+	control_effectiveness: "Adequate",
+	existing_controls: "",
+	residual_likelihood: 0,
+	residual_impact: 0,
+	residual_risk_score: 0,
+	residual_risk_rating: "",
+	risk_owner: "",
+	risk_response: "Mitigate",
+	target_risk_score: 0,
+	risk_velocity: "Medium",
+	risk_trend: "Stable",
+	last_review_date: "",
+	next_review_date: "",
+	notes: "",
 }
 
 // Action plan columns
 const actionPlanColumns = [
-  { key: "action_id", label: "Action ID", width: "100px" },
-  { key: "action_description", label: "Description" },
-  { key: "responsible_party", label: "Responsible", width: "150px" },
-  { key: "target_completion_date", label: "Due Date", width: "120px" },
-  { key: "priority", label: "Priority", width: "100px" },
-  { key: "status", label: "Status", width: "120px" },
+	{ key: "action_id", label: "Action ID", width: "100px" },
+	{ key: "action_description", label: "Description" },
+	{ key: "responsible_party", label: "Responsible", width: "150px" },
+	{ key: "target_completion_date", label: "Due Date", width: "120px" },
+	{ key: "priority", label: "Priority", width: "100px" },
+	{ key: "status", label: "Status", width: "120px" },
 ]
 
 // Action plan form fields (12 fields)
 const actionPlanFormFields = [
-  { key: "action_id", label: "Action ID", type: "text", required: true },
-  { key: "action_description", label: "Action Description", type: "textarea", required: true },
-  { key: "action_type", label: "Action Type", type: "select", options: [
-    "Process Improvement", "Control Enhancement", "Training", "System Enhancement", "Policy Update"
-  ] },
-  { key: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High", "Critical"], required: true },
-  { key: "responsible_party", label: "Responsible Party", type: "link", doctype: "User", required: true },
-  { key: "target_completion_date", label: "Target Completion Date", type: "date", required: true },
-  { key: "estimated_cost", label: "Estimated Cost", type: "currency" },
-  { key: "resource_required", label: "Resources Required", type: "text" },
-  { key: "status", label: "Status", type: "select", options: [
-    "Planned", "In Progress", "Completed", "Overdue", "Cancelled"
-  ] },
-  { key: "actual_completion_date", label: "Actual Completion Date", type: "date" },
-  { key: "effectiveness_review_date", label: "Effectiveness Review Date", type: "date" },
-  { key: "review_notes", label: "Review Notes", type: "textarea" },
+	{ key: "action_id", label: "Action ID", type: "text", required: true },
+	{
+		key: "action_description",
+		label: "Action Description",
+		type: "textarea",
+		required: true,
+	},
+	{
+		key: "action_type",
+		label: "Action Type",
+		type: "select",
+		options: [
+			"Process Improvement",
+			"Control Enhancement",
+			"Training",
+			"System Enhancement",
+			"Policy Update",
+		],
+	},
+	{
+		key: "priority",
+		label: "Priority",
+		type: "select",
+		options: ["Low", "Medium", "High", "Critical"],
+		required: true,
+	},
+	{
+		key: "responsible_party",
+		label: "Responsible Party",
+		type: "link",
+		doctype: "User",
+		required: true,
+	},
+	{
+		key: "target_completion_date",
+		label: "Target Completion Date",
+		type: "date",
+		required: true,
+	},
+	{ key: "estimated_cost", label: "Estimated Cost", type: "currency" },
+	{ key: "resource_required", label: "Resources Required", type: "text" },
+	{
+		key: "status",
+		label: "Status",
+		type: "select",
+		options: ["Planned", "In Progress", "Completed", "Overdue", "Cancelled"],
+	},
+	{
+		key: "actual_completion_date",
+		label: "Actual Completion Date",
+		type: "date",
+	},
+	{
+		key: "effectiveness_review_date",
+		label: "Effectiveness Review Date",
+		type: "date",
+	},
+	{ key: "review_notes", label: "Review Notes", type: "textarea" },
 ]
 
 const defaultActionEntry = {
-  action_id: "",
-  action_description: "",
-  action_type: "",
-  priority: "Medium",
-  responsible_party: "",
-  target_completion_date: "",
-  estimated_cost: 0,
-  resource_required: "",
-  status: "Planned",
-  actual_completion_date: "",
-  effectiveness_review_date: "",
-  review_notes: "",
+	action_id: "",
+	action_description: "",
+	action_type: "",
+	priority: "Medium",
+	responsible_party: "",
+	target_completion_date: "",
+	estimated_cost: 0,
+	resource_required: "",
+	status: "Planned",
+	actual_completion_date: "",
+	effectiveness_review_date: "",
+	review_notes: "",
 }
 
 // Likelihood and impact levels for heat map
 const likelihoodLevels = [
-  { id: 1, label: "Rare", description: "Unlikely to occur" },
-  { id: 2, label: "Unlikely", description: "Could occur occasionally" },
-  { id: 3, label: "Possible", description: "Might occur sometime" },
-  { id: 4, label: "Likely", description: "Will probably occur" },
-  { id: 5, label: "Almost Certain", description: "Expected to occur" },
+	{ id: 1, label: "Rare", description: "Unlikely to occur" },
+	{ id: 2, label: "Unlikely", description: "Could occur occasionally" },
+	{ id: 3, label: "Possible", description: "Might occur sometime" },
+	{ id: 4, label: "Likely", description: "Will probably occur" },
+	{ id: 5, label: "Almost Certain", description: "Expected to occur" },
 ]
 
 const impactLevels = [
-  { id: 1, label: "Negligible", description: "Minimal impact" },
-  { id: 2, label: "Minor", description: "Some minor issues" },
-  { id: 3, label: "Moderate", description: "Noticeable impact" },
-  { id: 4, label: "Major", description: "Significant impact" },
-  { id: 5, label: "Catastrophic", description: "Severe impact" },
+	{ id: 1, label: "Negligible", description: "Minimal impact" },
+	{ id: 2, label: "Minor", description: "Some minor issues" },
+	{ id: 3, label: "Moderate", description: "Noticeable impact" },
+	{ id: 4, label: "Major", description: "Significant impact" },
+	{ id: 5, label: "Catastrophic", description: "Severe impact" },
 ]
 
 // Draft save state
 const lastSaved = ref(null)
 const lastSavedText = computed(() => {
-  if (!lastSaved.value) return "not yet saved"
-  const diff = Date.now() - lastSaved.value
-  if (diff < 60000) return "just now"
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} minutes ago`
-  return "over an hour ago"
+	if (!lastSaved.value) return "not yet saved"
+	const diff = Date.now() - lastSaved.value
+	if (diff < 60000) return "just now"
+	if (diff < 3600000) return `${Math.floor(diff / 60000)} minutes ago`
+	return "over an hour ago"
 })
 
 // Computed properties
 const riskCounts = computed(() => {
-  const counts = { critical: 0, high: 0, medium: 0, low: 0 }
-  form.risk_register.forEach((risk) => {
-    const score = risk.inherent_risk_score || (risk.likelihood_score * risk.impact_score)
-    if (score >= 20) counts.critical++
-    else if (score >= 15) counts.high++
-    else if (score >= 10) counts.medium++
-    else counts.low++
-  })
-  return counts
+	const counts = { critical: 0, high: 0, medium: 0, low: 0 }
+	form.risk_register.forEach((risk) => {
+		const score =
+			risk.inherent_risk_score || risk.likelihood_score * risk.impact_score
+		if (score >= 20) counts.critical++
+		else if (score >= 15) counts.high++
+		else if (score >= 10) counts.medium++
+		else counts.low++
+	})
+	return counts
 })
 
 const actionCounts = computed(() => {
-  const counts = { planned: 0, inProgress: 0, completed: 0 }
-  form.action_plan.forEach((action) => {
-    if (action.status === "Planned") counts.planned++
-    else if (action.status === "In Progress") counts.inProgress++
-    else if (action.status === "Completed") counts.completed++
-  })
-  return counts
+	const counts = { planned: 0, inProgress: 0, completed: 0 }
+	form.action_plan.forEach((action) => {
+		if (action.status === "Planned") counts.planned++
+		else if (action.status === "In Progress") counts.inProgress++
+		else if (action.status === "Completed") counts.completed++
+	})
+	return counts
 })
 
 const topRisks = computed(() => {
-  return [...form.risk_register]
-    .map((risk) => ({
-      ...risk,
-      inherent_risk_score: risk.inherent_risk_score || (risk.likelihood_score * risk.impact_score),
-    }))
-    .sort((a, b) => b.inherent_risk_score - a.inherent_risk_score)
-    .slice(0, 5)
+	return [...form.risk_register]
+		.map((risk) => ({
+			...risk,
+			inherent_risk_score:
+				risk.inherent_risk_score || risk.likelihood_score * risk.impact_score,
+		}))
+		.sort((a, b) => b.inherent_risk_score - a.inherent_risk_score)
+		.slice(0, 5)
 })
 
 const computedHeatMapData = computed(() => {
-  // Transform risk_register into heat map matrix format
-  const matrix = []
-  for (let i = 5; i >= 1; i--) {
-    const row = []
-    for (let j = 1; j <= 5; j++) {
-      const risksInCell = form.risk_register.filter(
-        (r) => r.likelihood_score === j && r.impact_score === i
-      )
-      const score = i * j
-      let level = "Low"
-      let color = "#22c55e"
-      if (score >= 20) { level = "Critical"; color = "#ef4444" }
-      else if (score >= 15) { level = "High"; color = "#f97316" }
-      else if (score >= 10) { level = "Medium"; color = "#eab308" }
+	// Transform risk_register into heat map matrix format
+	const matrix = []
+	for (let i = 5; i >= 1; i--) {
+		const row = []
+		for (let j = 1; j <= 5; j++) {
+			const risksInCell = form.risk_register.filter(
+				(r) => r.likelihood_score === j && r.impact_score === i,
+			)
+			const score = i * j
+			let level = "Low"
+			let color = "#22c55e"
+			if (score >= 20) {
+				level = "Critical"
+				color = "#ef4444"
+			} else if (score >= 15) {
+				level = "High"
+				color = "#f97316"
+			} else if (score >= 10) {
+				level = "Medium"
+				color = "#eab308"
+			}
 
-      row.push({
-        likelihood: j,
-        impact: i,
-        level,
-        color,
-        count: risksInCell.length,
-        risks: risksInCell,
-      })
-    }
-    matrix.push(row)
-  }
-  return matrix
+			row.push({
+				likelihood: j,
+				impact: i,
+				level,
+				color,
+				count: risksInCell.length,
+				risks: risksInCell,
+			})
+		}
+		matrix.push(row)
+	}
+	return matrix
 })
 
 const overallRiskColor = computed(() => {
-  const score = form.overall_risk_score || calculateOverallRiskScore()
-  if (score >= 20) return "text-red-600"
-  if (score >= 15) return "text-orange-600"
-  if (score >= 10) return "text-yellow-600"
-  return "text-green-600"
+	const score = form.overall_risk_score || calculateOverallRiskScore()
+	if (score >= 20) return "text-red-600"
+	if (score >= 15) return "text-orange-600"
+	if (score >= 10) return "text-yellow-600"
+	return "text-green-600"
 })
 
 const overallRiskVariant = computed(() => {
-  const score = form.overall_risk_score || calculateOverallRiskScore()
-  if (score >= 20) return "destructive"
-  if (score >= 15) return "warning"
-  if (score >= 10) return "secondary"
-  return "success"
+	const score = form.overall_risk_score || calculateOverallRiskScore()
+	if (score >= 20) return "destructive"
+	if (score >= 15) return "warning"
+	if (score >= 10) return "secondary"
+	return "success"
 })
 
 const overallRiskBarColor = computed(() => {
-  const score = form.overall_risk_score || calculateOverallRiskScore()
-  if (score >= 20) return "bg-red-500"
-  if (score >= 15) return "bg-orange-500"
-  if (score >= 10) return "bg-yellow-500"
-  return "bg-green-500"
+	const score = form.overall_risk_score || calculateOverallRiskScore()
+	if (score >= 20) return "bg-red-500"
+	if (score >= 15) return "bg-orange-500"
+	if (score >= 10) return "bg-yellow-500"
+	return "bg-green-500"
 })
 
 // Methods
 const isMethodSelected = (method) => {
-  return selectedMethodologies.value.includes(method)
+	return selectedMethodologies.value.includes(method)
 }
 
 const calculateOverallRiskScore = () => {
-  if (form.risk_register.length === 0) return 0
-  const total = form.risk_register.reduce((sum, risk) => {
-    return sum + (risk.inherent_risk_score || (risk.likelihood_score * risk.impact_score))
-  }, 0)
-  return Math.round(total / form.risk_register.length)
+	if (form.risk_register.length === 0) return 0
+	const total = form.risk_register.reduce((sum, risk) => {
+		return (
+			sum +
+			(risk.inherent_risk_score || risk.likelihood_score * risk.impact_score)
+		)
+	}, 0)
+	return Math.round(total / form.risk_register.length)
 }
 
 const calculateOverallRiskRating = () => {
-  const score = calculateOverallRiskScore()
-  if (score >= 20) return "Critical"
-  if (score >= 15) return "High"
-  if (score >= 10) return "Medium"
-  return "Low"
+	const score = calculateOverallRiskScore()
+	if (score >= 20) return "Critical"
+	if (score >= 15) return "High"
+	if (score >= 10) return "Medium"
+	return "Low"
 }
 
 const getRiskVariant = (score) => {
-  if (score >= 20) return "destructive"
-  if (score >= 15) return "warning"
-  if (score >= 10) return "secondary"
-  return "success"
+	if (score >= 20) return "destructive"
+	if (score >= 15) return "warning"
+	if (score >= 10) return "secondary"
+	return "success"
 }
 
 const getRiskBorderClass = (score) => {
-  if (score >= 20) return "border-red-200 bg-red-50"
-  if (score >= 15) return "border-orange-200 bg-orange-50"
-  if (score >= 10) return "border-yellow-200 bg-yellow-50"
-  return "border-green-200 bg-green-50"
+	if (score >= 20) return "border-red-200 bg-red-50"
+	if (score >= 15) return "border-orange-200 bg-orange-50"
+	if (score >= 10) return "border-yellow-200 bg-yellow-50"
+	return "border-green-200 bg-green-50"
 }
 
 const getRiskBgClass = (score) => {
-  if (score >= 20) return "bg-red-500"
-  if (score >= 15) return "bg-orange-500"
-  if (score >= 10) return "bg-yellow-500"
-  return "bg-green-500"
+	if (score >= 20) return "bg-red-500"
+	if (score >= 15) return "bg-orange-500"
+	if (score >= 10) return "bg-yellow-500"
+	return "bg-green-500"
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return null
-  return new Date(dateString).toLocaleDateString()
+	if (!dateString) return null
+	return new Date(dateString).toLocaleDateString()
 }
 
 const onRiskRowClick = (risk) => {
-  console.log("Risk clicked:", risk)
+	console.log("Risk clicked:", risk)
 }
 
 const onHeatMapRiskClick = (risk) => {
-  console.log("Heat map risk clicked:", risk)
+	console.log("Heat map risk clicked:", risk)
 }
 
 const saveDraft = async () => {
-  isSavingDraft.value = true
-  try {
-    // Update methodology string from array
-    form.methodology = selectedMethodologies.value.join(", ")
-    
-    const formData = prepareFormData()
-    emit("save-draft", formData)
-    lastSaved.value = Date.now()
-  } catch (error) {
-    console.error("Error saving draft:", error)
-  } finally {
-    isSavingDraft.value = false
-  }
+	isSavingDraft.value = true
+	try {
+		// Update methodology string from array
+		form.methodology = selectedMethodologies.value.join(", ")
+
+		const formData = prepareFormData()
+		emit("save-draft", formData)
+		lastSaved.value = Date.now()
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		isSavingDraft.value = false
+	}
 }
 
 const submitForm = async () => {
-  isSaving.value = true
-  try {
-    // Update methodology string from array
-    form.methodology = selectedMethodologies.value.join(", ")
-    
-    // Calculate risk scores before submission
-    form.risk_register.forEach((risk) => {
-      risk.inherent_risk_score = risk.likelihood_score * risk.impact_score
-      risk.inherent_risk_rating = getRiskRatingFromScore(risk.inherent_risk_score)
-      if (risk.residual_likelihood && risk.residual_impact) {
-        risk.residual_risk_score = risk.residual_likelihood * risk.residual_impact
-        risk.residual_risk_rating = getRiskRatingFromScore(risk.residual_risk_score)
-      }
-    })
+	isSaving.value = true
+	try {
+		// Update methodology string from array
+		form.methodology = selectedMethodologies.value.join(", ")
 
-    // Update overall scores
-    form.overall_risk_score = calculateOverallRiskScore()
-    form.overall_risk_rating = calculateOverallRiskRating()
+		// Calculate risk scores before submission
+		form.risk_register.forEach((risk) => {
+			risk.inherent_risk_score = risk.likelihood_score * risk.impact_score
+			risk.inherent_risk_rating = getRiskRatingFromScore(
+				risk.inherent_risk_score,
+			)
+			if (risk.residual_likelihood && risk.residual_impact) {
+				risk.residual_risk_score =
+					risk.residual_likelihood * risk.residual_impact
+				risk.residual_risk_rating = getRiskRatingFromScore(
+					risk.residual_risk_score,
+				)
+			}
+		})
 
-    // Update top risks
-    form.top_risks = topRisks.value.map((risk) => ({
-      risk_description: risk.risk_title,
-      inherent_risk_score: risk.inherent_risk_score,
-    }))
+		// Update overall scores
+		form.overall_risk_score = calculateOverallRiskScore()
+		form.overall_risk_rating = calculateOverallRiskRating()
 
-    const formData = prepareFormData()
-    emit("submit", formData)
-    isOpen.value = false
-  } catch (error) {
-    console.error("Error submitting form:", error)
-  } finally {
-    isSaving.value = false
-  }
+		// Update top risks
+		form.top_risks = topRisks.value.map((risk) => ({
+			risk_description: risk.risk_title,
+			inherent_risk_score: risk.inherent_risk_score,
+		}))
+
+		const formData = prepareFormData()
+		emit("submit", formData)
+		isOpen.value = false
+	} catch (error) {
+		console.error("Error submitting form:", error)
+	} finally {
+		isSaving.value = false
+	}
 }
 
 const getRiskRatingFromScore = (score) => {
-  if (score >= 20) return "Critical"
-  if (score >= 15) return "High"
-  if (score >= 10) return "Medium"
-  return "Low"
+	if (score >= 20) return "Critical"
+	if (score >= 15) return "High"
+	if (score >= 10) return "Medium"
+	return "Low"
 }
 
 const closeForm = () => {
-  if (hasUnsavedChanges.value) {
-    if (confirm("You have unsaved changes. Are you sure you want to close?")) {
-      emit("cancel")
-      isOpen.value = false
-    }
-  } else {
-    emit("cancel")
-    isOpen.value = false
-  }
+	if (hasUnsavedChanges.value) {
+		if (confirm("You have unsaved changes. Are you sure you want to close?")) {
+			emit("cancel")
+			isOpen.value = false
+		}
+	} else {
+		emit("cancel")
+		isOpen.value = false
+	}
 }
 
 // Watch for assessment prop changes (edit mode)
 watch(
-  () => props.assessment,
-  (newAssessment) => {
-    if (newAssessment) {
-      loadFormData(newAssessment)
-      // Parse methodology string back to array
-      if (newAssessment.methodology) {
-        selectedMethodologies.value = newAssessment.methodology.split(", ").filter(Boolean)
-      }
-    }
-  },
-  { immediate: true }
+	() => props.assessment,
+	(newAssessment) => {
+		if (newAssessment) {
+			loadFormData(newAssessment)
+			// Parse methodology string back to array
+			if (newAssessment.methodology) {
+				selectedMethodologies.value = newAssessment.methodology
+					.split(", ")
+					.filter(Boolean)
+			}
+		}
+	},
+	{ immediate: true },
 )
 
 // Watch methodologies to update form
 watch(
-  selectedMethodologies,
-  (newMethods) => {
-    form.methodology = newMethods.join(", ")
-  },
-  { deep: true }
+	selectedMethodologies,
+	(newMethods) => {
+		form.methodology = newMethods.join(", ")
+	},
+	{ deep: true },
 )
 </script>
 

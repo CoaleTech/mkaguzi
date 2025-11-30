@@ -880,19 +880,19 @@ const currentMode = computed(() => {
 })
 
 // Methods
-	const fetchData = async () => {
-		loading.value = true
-		try {
-			await Promise.all([
-				dataStore.fetchCsvImportTypes(), // This now also fetches field mappings
-				dataStore.fetchCsvImportHistory(),
-			])
-		} catch (error) {
-			console.error("Error loading import data:", error)
-		} finally {
-			loading.value = false
-		}
+const fetchData = async () => {
+	loading.value = true
+	try {
+		await Promise.all([
+			dataStore.fetchCsvImportTypes(), // This now also fetches field mappings
+			dataStore.fetchCsvImportHistory(),
+		])
+	} catch (error) {
+		console.error("Error loading import data:", error)
+	} finally {
+		loading.value = false
 	}
+}
 
 const getImportTypeVariant = (type) => {
 	const variants = {

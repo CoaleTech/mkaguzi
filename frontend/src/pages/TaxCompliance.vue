@@ -174,7 +174,9 @@ const selectedTracker = ref(null)
 
 // Store bindings
 const loading = computed(() => complianceStore.loading)
-const taxComplianceTrackers = computed(() => complianceStore.taxComplianceTrackers)
+const taxComplianceTrackers = computed(
+	() => complianceStore.taxComplianceTrackers,
+)
 
 // Filter bindings
 const searchQuery = ref("")
@@ -187,19 +189,25 @@ const selectedPayeStatus = ref("")
 const stats = computed(() => {
 	const trackers = taxComplianceTrackers.value
 	const totalTrackers = trackers.length
-	const avgScore = totalTrackers > 0
-		? Math.round(trackers.reduce((sum, t) => sum + (t.compliance_score || 0), 0) / totalTrackers)
-		: 0
-	const vatFiled = trackers.filter(t => t.vat_return_filed).length
-	const payeFiled = trackers.filter(t => t.paye_return_filed).length
-	const compliant = trackers.filter(t => (t.compliance_score || 0) >= 80).length
+	const avgScore =
+		totalTrackers > 0
+			? Math.round(
+					trackers.reduce((sum, t) => sum + (t.compliance_score || 0), 0) /
+						totalTrackers,
+				)
+			: 0
+	const vatFiled = trackers.filter((t) => t.vat_return_filed).length
+	const payeFiled = trackers.filter((t) => t.paye_return_filed).length
+	const compliant = trackers.filter(
+		(t) => (t.compliance_score || 0) >= 80,
+	).length
 
 	return {
 		total: totalTrackers,
 		avgScore,
 		vatFiled,
 		payeFiled,
-		compliant
+		compliant,
 	}
 })
 
@@ -216,7 +224,9 @@ const createTracker = () => {
 
 const viewTracker = async (tracker) => {
 	try {
-		selectedTracker.value = await complianceStore.getTaxTrackerDetails(tracker.name)
+		selectedTracker.value = await complianceStore.getTaxTrackerDetails(
+			tracker.name,
+		)
 		isEditMode.value = true
 		showFormDialog.value = true
 	} catch (error) {
@@ -226,7 +236,9 @@ const viewTracker = async (tracker) => {
 
 const editTracker = async (tracker) => {
 	try {
-		selectedTracker.value = await complianceStore.getTaxTrackerDetails(tracker.name)
+		selectedTracker.value = await complianceStore.getTaxTrackerDetails(
+			tracker.name,
+		)
 		isEditMode.value = true
 		showFormDialog.value = true
 	} catch (error) {

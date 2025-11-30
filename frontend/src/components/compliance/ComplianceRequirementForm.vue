@@ -81,57 +81,57 @@
 import { FormControl } from "frappe-ui"
 
 const props = defineProps({
-  formData: {
-    type: Object,
-    required: true,
-    default: () => ({
-      requirement_id: "",
-      requirement_name: "",
-      regulatory_body: "",
-      compliance_category: "",
-      description: "",
-      frequency: "",
-      responsible_person: "",
-      responsible_department: "",
-      is_active: true,
-    })
-  }
+	formData: {
+		type: Object,
+		required: true,
+		default: () => ({
+			requirement_id: "",
+			requirement_name: "",
+			regulatory_body: "",
+			compliance_category: "",
+			description: "",
+			frequency: "",
+			responsible_person: "",
+			responsible_department: "",
+			is_active: true,
+		}),
+	},
 })
 
 // Options
 const regulatoryBodyOptions = [
-  { label: "KRA", value: "KRA" },
-  { label: "NSSF", value: "NSSF" },
-  { label: "NHIF", value: "NHIF" },
-  { label: "NEMA", value: "NEMA" },
-  { label: "County Government", value: "County Government" },
-  { label: "KEBS", value: "KEBS" },
-  { label: "Central Bank of Kenya", value: "Central Bank of Kenya" },
-  { label: "CMA", value: "CMA" },
-  { label: "IRA", value: "IRA" },
-  { label: "Other", value: "Other" },
+	{ label: "KRA", value: "KRA" },
+	{ label: "NSSF", value: "NSSF" },
+	{ label: "NHIF", value: "NHIF" },
+	{ label: "NEMA", value: "NEMA" },
+	{ label: "County Government", value: "County Government" },
+	{ label: "KEBS", value: "KEBS" },
+	{ label: "Central Bank of Kenya", value: "Central Bank of Kenya" },
+	{ label: "CMA", value: "CMA" },
+	{ label: "IRA", value: "IRA" },
+	{ label: "Other", value: "Other" },
 ]
 
 const categoryOptions = [
-  { label: "Tax", value: "Tax" },
-  { label: "Social Security", value: "Social Security" },
-  { label: "Environmental", value: "Environmental" },
-  { label: "Licensing", value: "Licensing" },
-  { label: "Health & Safety", value: "Health & Safety" },
-  { label: "Industry-Specific", value: "Industry-Specific" },
-  { label: "Employment", value: "Employment" },
-  { label: "Data Protection", value: "Data Protection" },
+	{ label: "Tax", value: "Tax" },
+	{ label: "Social Security", value: "Social Security" },
+	{ label: "Environmental", value: "Environmental" },
+	{ label: "Licensing", value: "Licensing" },
+	{ label: "Health & Safety", value: "Health & Safety" },
+	{ label: "Industry-Specific", value: "Industry-Specific" },
+	{ label: "Employment", value: "Employment" },
+	{ label: "Data Protection", value: "Data Protection" },
 ]
 
 const frequencyOptions = [
-  { label: "Daily", value: "Daily" },
-  { label: "Weekly", value: "Weekly" },
-  { label: "Monthly", value: "Monthly" },
-  { label: "Quarterly", value: "Quarterly" },
-  { label: "Semi-Annual", value: "Semi-Annual" },
-  { label: "Annual", value: "Annual" },
-  { label: "One-time", value: "One-time" },
-  { label: "Event-Based", value: "Event-Based" },
+	{ label: "Daily", value: "Daily" },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "One-time", value: "One-time" },
+	{ label: "Event-Based", value: "Event-Based" },
 ]
 </script>
 

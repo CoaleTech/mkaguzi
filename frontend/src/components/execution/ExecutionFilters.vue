@@ -157,90 +157,90 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch } from 'vue'
-import { FormControl, Select, Button, Badge } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { Search, X, RefreshCw, Play } from 'lucide-vue-next'
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, FormControl, Select } from "frappe-ui"
+import { Play, RefreshCw, Search, X } from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 const props = defineProps({
-  filters: {
-    type: Object,
-    default: () => ({}),
-  },
+	filters: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:filters', 'refresh', 'create'])
+const emit = defineEmits(["update:filters", "refresh", "create"])
 
 const localFilters = reactive({
-  search: '',
-  testLibrary: '',
-  executionType: '',
-  priority: '',
-  status: '',
-  dateFrom: '',
-  dateTo: '',
+	search: "",
+	testLibrary: "",
+	executionType: "",
+	priority: "",
+	status: "",
+	dateFrom: "",
+	dateTo: "",
 })
 
 // Watch for external filter changes
 watch(
-  () => props.filters,
-  (newFilters) => {
-    if (newFilters) {
-      Object.assign(localFilters, newFilters)
-    }
-  },
-  { immediate: true, deep: true }
+	() => props.filters,
+	(newFilters) => {
+		if (newFilters) {
+			Object.assign(localFilters, newFilters)
+		}
+	},
+	{ immediate: true, deep: true },
 )
 
 const executionTypeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Manual', value: 'Manual' },
-  { label: 'Scheduled', value: 'Scheduled' },
-  { label: 'Batch', value: 'Batch' },
-  { label: 'API', value: 'API' },
+	{ label: "All Types", value: "" },
+	{ label: "Manual", value: "Manual" },
+	{ label: "Scheduled", value: "Scheduled" },
+	{ label: "Batch", value: "Batch" },
+	{ label: "API", value: "API" },
 ]
 
 const priorityOptions = [
-  { label: 'All Priorities', value: '' },
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' },
+	{ label: "All Priorities", value: "" },
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Pending', value: 'Pending' },
-  { label: 'Queued', value: 'Queued' },
-  { label: 'Running', value: 'Running' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Failed', value: 'Failed' },
-  { label: 'Cancelled', value: 'Cancelled' },
-  { label: 'Paused', value: 'Paused' },
+	{ label: "All Status", value: "" },
+	{ label: "Pending", value: "Pending" },
+	{ label: "Queued", value: "Queued" },
+	{ label: "Running", value: "Running" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Failed", value: "Failed" },
+	{ label: "Cancelled", value: "Cancelled" },
+	{ label: "Paused", value: "Paused" },
 ]
 
 const hasActiveFilters = computed(() => {
-  return Object.values(localFilters).some((v) => v !== '')
+	return Object.values(localFilters).some((v) => v !== "")
 })
 
 function emitFilters() {
-  emit('update:filters', { ...localFilters })
+	emit("update:filters", { ...localFilters })
 }
 
 function removeFilter(key) {
-  if (key === 'dateRange') {
-    localFilters.dateFrom = ''
-    localFilters.dateTo = ''
-  } else {
-    localFilters[key] = ''
-  }
-  emitFilters()
+	if (key === "dateRange") {
+		localFilters.dateFrom = ""
+		localFilters.dateTo = ""
+	} else {
+		localFilters[key] = ""
+	}
+	emitFilters()
 }
 
 function clearFilters() {
-  Object.keys(localFilters).forEach((key) => {
-    localFilters[key] = ''
-  })
-  emitFilters()
+	Object.keys(localFilters).forEach((key) => {
+		localFilters[key] = ""
+	})
+	emitFilters()
 }
 </script>

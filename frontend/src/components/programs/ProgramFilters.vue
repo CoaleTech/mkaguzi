@@ -139,85 +139,90 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { FormControl } from 'frappe-ui'
+import { FormControl } from "frappe-ui"
 import {
-  FilterXIcon,
-  LayoutGridIcon,
-  ListIcon,
-  SearchIcon,
-  XIcon,
-} from 'lucide-vue-next'
+	FilterXIcon,
+	LayoutGridIcon,
+	ListIcon,
+	SearchIcon,
+	XIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  searchQuery: {
-    type: String,
-    default: '',
-  },
-  typeFilter: {
-    type: String,
-    default: '',
-  },
-  templateFilter: {
-    type: String,
-    default: '',
-  },
-  statusFilter: {
-    type: String,
-    default: '',
-  },
-  viewMode: {
-    type: String,
-    default: 'table',
-  },
+	searchQuery: {
+		type: String,
+		default: "",
+	},
+	typeFilter: {
+		type: String,
+		default: "",
+	},
+	templateFilter: {
+		type: String,
+		default: "",
+	},
+	statusFilter: {
+		type: String,
+		default: "",
+	},
+	viewMode: {
+		type: String,
+		default: "table",
+	},
 })
 
 // Emit
 const emit = defineEmits([
-  'update:searchQuery',
-  'update:typeFilter',
-  'update:templateFilter',
-  'update:statusFilter',
-  'update:viewMode',
+	"update:searchQuery",
+	"update:typeFilter",
+	"update:templateFilter",
+	"update:statusFilter",
+	"update:viewMode",
 ])
 
 // Options
 const typeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Financial', value: 'Financial' },
-  { label: 'Operational', value: 'Operational' },
-  { label: 'Compliance', value: 'Compliance' },
-  { label: 'IT', value: 'IT' },
-  { label: 'Inventory', value: 'Inventory' },
-  { label: 'Cash', value: 'Cash' },
-  { label: 'Sales', value: 'Sales' },
-  { label: 'Procurement', value: 'Procurement' },
+	{ label: "All Types", value: "" },
+	{ label: "Financial", value: "Financial" },
+	{ label: "Operational", value: "Operational" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "IT", value: "IT" },
+	{ label: "Inventory", value: "Inventory" },
+	{ label: "Cash", value: "Cash" },
+	{ label: "Sales", value: "Sales" },
+	{ label: "Procurement", value: "Procurement" },
 ]
 
 const templateOptions = [
-  { label: 'All Programs', value: '' },
-  { label: 'Templates Only', value: 'templates' },
-  { label: 'Programs Only', value: 'programs' },
+	{ label: "All Programs", value: "" },
+	{ label: "Templates Only", value: "templates" },
+	{ label: "Programs Only", value: "programs" },
 ]
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Not Started', value: 'not_started' },
-  { label: 'In Progress', value: 'in_progress' },
-  { label: 'Completed', value: 'completed' },
+	{ label: "All Status", value: "" },
+	{ label: "Not Started", value: "not_started" },
+	{ label: "In Progress", value: "in_progress" },
+	{ label: "Completed", value: "completed" },
 ]
 
 // Computed
 const hasActiveFilters = computed(() => {
-  return props.searchQuery || props.typeFilter || props.templateFilter || props.statusFilter
+	return (
+		props.searchQuery ||
+		props.typeFilter ||
+		props.templateFilter ||
+		props.statusFilter
+	)
 })
 
 // Methods
 const clearFilters = () => {
-  emit('update:searchQuery', '')
-  emit('update:typeFilter', '')
-  emit('update:templateFilter', '')
-  emit('update:statusFilter', '')
+	emit("update:searchQuery", "")
+	emit("update:typeFilter", "")
+	emit("update:templateFilter", "")
+	emit("update:statusFilter", "")
 }
 </script>

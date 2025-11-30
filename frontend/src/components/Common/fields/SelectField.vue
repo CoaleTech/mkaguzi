@@ -16,49 +16,49 @@
 </template>
 
 <script setup>
-import { Select } from 'frappe-ui'
+import { Select } from "frappe-ui"
 
 const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    default: ''
-  },
-  label: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: 'Select an option'
-  },
-  options: {
-    type: Array,
-    required: true,
-    validator: (options) => {
-      return options.every(opt =>
-        typeof opt === 'object' && 'label' in opt && 'value' in opt
-      )
-    }
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+	modelValue: {
+		type: [String, Number],
+		default: "",
+	},
+	label: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "Select an option",
+	},
+	options: {
+		type: Array,
+		required: true,
+		validator: (options) => {
+			return options.every(
+				(opt) => typeof opt === "object" && "label" in opt && "value" in opt,
+			)
+		},
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	error: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const handleChange = (value) => {
-  emit('update:modelValue', value)
-  emit('change', value)
+	emit("update:modelValue", value)
+	emit("change", value)
 }
 </script>
 

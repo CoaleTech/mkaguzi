@@ -453,12 +453,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge, Dialog } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
-import { RefreshCw, Plus, Upload, MapPin, Calendar, AlertTriangle, ClipboardList, Warehouse, CheckCircleIcon } from 'lucide-vue-next'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button, Dialog } from "frappe-ui"
+import { call } from "frappe-ui"
+import {
+	AlertTriangle,
+	Calendar,
+	CheckCircleIcon,
+	ClipboardList,
+	MapPin,
+	Plus,
+	RefreshCw,
+	Upload,
+	Warehouse,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
@@ -474,213 +484,245 @@ const currentPage = ref(1)
 const pageSize = ref(20)
 
 const filters = ref({
-  stock_take_type: '',
-  status: '',
-  warehouse: '',
-  date_from: '',
-  date_to: ''
+	stock_take_type: "",
+	status: "",
+	warehouse: "",
+	date_from: "",
+	date_to: "",
 })
 
 const importForm = ref({
-  stock_take_type: 'Daily Stock Take',
-  warehouse: '',
-  audit_date: new Date().toISOString().split('T')[0]
+	stock_take_type: "Daily Stock Take",
+	warehouse: "",
+	audit_date: new Date().toISOString().split("T")[0],
 })
 const importPreview = ref([])
-const csvContent = ref('')
+const csvContent = ref("")
 
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
-const pendingCount = computed(() => 
-  stockTakes.value.filter(a => ['Draft', 'Physical Count Submitted'].includes(a.status)).length
+const pendingCount = computed(
+	() =>
+		stockTakes.value.filter((a) =>
+			["Draft", "Physical Count Submitted"].includes(a.status),
+		).length,
 )
 
-const discrepancyCount = computed(() => 
-  stockTakes.value.filter(a => (a.items_verified_discrepancy || 0) > 0).length
+const discrepancyCount = computed(
+	() =>
+		stockTakes.value.filter((a) => (a.items_verified_discrepancy || 0) > 0)
+			.length,
 )
 
-const investigationCount = computed(() => 
-  stockTakes.value.filter(a => a.status === 'Under Investigation').length
+const investigationCount = computed(
+	() =>
+		stockTakes.value.filter((a) => a.status === "Under Investigation").length,
 )
 
-const resolvedCount = computed(() => 
-  stockTakes.value.filter(a => a.status === 'HOD Approved').length
+const resolvedCount = computed(
+	() => stockTakes.value.filter((a) => a.status === "HOD Approved").length,
 )
 
-const totalVariance = computed(() => 
-  stockTakes.value.reduce((sum, a) => sum + Math.abs(a.total_variance_value || 0), 0)
+const totalVariance = computed(() =>
+	stockTakes.value.reduce(
+		(sum, a) => sum + Math.abs(a.total_variance_value || 0),
+		0,
+	),
 )
 
 onMounted(async () => {
-  await Promise.all([
-    loadStockTakes(),
-    loadWarehouses()
-  ])
+	await Promise.all([loadStockTakes(), loadWarehouses()])
 })
 
 async function loadWarehouses() {
-  try {
-    const result = await call('frappe.client.get_list', {
-      doctype: 'Warehouse Master',
-      filters: { is_active: 1 },
-      fields: ['name', 'warehouse_code', 'warehouse_name'],
-      limit_page_length: 0
-    })
-    warehouses.value = result
-  } catch (error) {
-    console.error('Error loading warehouses:', error)
-  }
+	try {
+		const result = await call("frappe.client.get_list", {
+			doctype: "Warehouse Master",
+			filters: { is_active: 1 },
+			fields: ["name", "warehouse_code", "warehouse_name"],
+			limit_page_length: 0,
+		})
+		warehouses.value = result
+	} catch (error) {
+		console.error("Error loading warehouses:", error)
+	}
 }
 
 async function loadStockTakes() {
-  loading.value = true
-  try {
-    const filterObj = {}
-    
-    if (filters.value.stock_take_type) {
-      filterObj.stock_take_type = filters.value.stock_take_type
-    }
-    if (filters.value.status) {
-      filterObj.status = filters.value.status
-    }
-    if (filters.value.warehouse) {
-      filterObj.warehouse = filters.value.warehouse
-    }
-    if (filters.value.date_from) {
-      filterObj.audit_date = ['>=', filters.value.date_from]
-    }
-    if (filters.value.date_to) {
-      if (filterObj.audit_date) {
-        filterObj.audit_date = ['between', [filters.value.date_from, filters.value.date_to]]
-      } else {
-        filterObj.audit_date = ['<=', filters.value.date_to]
-      }
-    }
-    if (overdueOnly.value) {
-      filterObj.resolution_deadline = ['<', new Date().toISOString().split('T')[0]]
-      filterObj.status = ['not in', ['Resolved', 'Closed']]
-    }
+	loading.value = true
+	try {
+		const filterObj = {}
 
-    await store.loadStockTakeAudits(filterObj, currentPage.value, pageSize.value)
-    stockTakes.value = store.returnAudits
-    totalCount.value = store.returnAuditsTotalCount
-  } catch (error) {
-    console.error('Error loading stock takes:', error)
-  } finally {
-    loading.value = false
-  }
+		if (filters.value.stock_take_type) {
+			filterObj.stock_take_type = filters.value.stock_take_type
+		}
+		if (filters.value.status) {
+			filterObj.status = filters.value.status
+		}
+		if (filters.value.warehouse) {
+			filterObj.warehouse = filters.value.warehouse
+		}
+		if (filters.value.date_from) {
+			filterObj.audit_date = [">=", filters.value.date_from]
+		}
+		if (filters.value.date_to) {
+			if (filterObj.audit_date) {
+				filterObj.audit_date = [
+					"between",
+					[filters.value.date_from, filters.value.date_to],
+				]
+			} else {
+				filterObj.audit_date = ["<=", filters.value.date_to]
+			}
+		}
+		if (overdueOnly.value) {
+			filterObj.resolution_deadline = [
+				"<",
+				new Date().toISOString().split("T")[0],
+			]
+			filterObj.status = ["not in", ["Resolved", "Closed"]]
+		}
+
+		await store.loadStockTakeAudits(
+			filterObj,
+			currentPage.value,
+			pageSize.value,
+		)
+		stockTakes.value = store.returnAudits
+		totalCount.value = store.returnAuditsTotalCount
+	} catch (error) {
+		console.error("Error loading stock takes:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  filters.value = { stock_take_type: '', status: '', warehouse: '', date_from: '', date_to: '' }
-  overdueOnly.value = false
-  currentPage.value = 1
-  await loadStockTakes()
+	filters.value = {
+		stock_take_type: "",
+		status: "",
+		warehouse: "",
+		date_from: "",
+		date_to: "",
+	}
+	overdueOnly.value = false
+	currentPage.value = 1
+	await loadStockTakes()
 }
 
 async function changePage(page) {
-  currentPage.value = page
-  await loadStockTakes()
+	currentPage.value = page
+	await loadStockTakes()
 }
 
 function createStockTake() {
-  router.push('/inventory-audit/stock-take/new')
+	router.push("/inventory-audit/stock-take/new")
 }
 
 function viewStockTake(name) {
-  router.push(`/inventory-audit/stock-take/${name}`)
+	router.push(`/inventory-audit/stock-take/${name}`)
 }
 
 function isOverdue(stockTake) {
-  if (!stockTake.resolution_deadline) return false
-  if (['HOD Approved', 'Under Investigation'].includes(stockTake.status)) return false
-  return new Date(stockTake.resolution_deadline) < new Date()
+	if (!stockTake.resolution_deadline) return false
+	if (["HOD Approved", "Under Investigation"].includes(stockTake.status))
+		return false
+	return new Date(stockTake.resolution_deadline) < new Date()
 }
 
 function getTypeVariant(type) {
-  const variants = { 
-    'Sales Return': 'orange',
-    'Daily Stock Take': 'blue', 
-    'Weekly Stock Take': 'purple',
-    'Monthly Stock Take': 'green'
-  }
-  return variants[type] || 'gray'
+	const variants = {
+		"Sales Return": "orange",
+		"Daily Stock Take": "blue",
+		"Weekly Stock Take": "purple",
+		"Monthly Stock Take": "green",
+	}
+	return variants[type] || "gray"
 }
 
 function getStatusVariant(status) {
-  const variants = { 
-    'Draft': 'subtle',
-    'Physical Count Submitted': 'yellow', 
-    'Analyst Reviewed': 'blue',
-    'HOD Approved': 'green',
-    'Under Investigation': 'red'
-  }
-  return variants[status] || 'gray'
+	const variants = {
+		Draft: "subtle",
+		"Physical Count Submitted": "yellow",
+		"Analyst Reviewed": "blue",
+		"HOD Approved": "green",
+		"Under Investigation": "red",
+	}
+	return variants[status] || "gray"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency', currency: 'KES', minimumFractionDigits: 0
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount || 0)
 }
 
 function onFileSelected(event) {
-  const file = event.target.files[0]
-  if (!file) return
-  
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    csvContent.value = e.target.result
-    parseCSV(csvContent.value)
-  }
-  reader.readAsText(file)
+	const file = event.target.files[0]
+	if (!file) return
+
+	const reader = new FileReader()
+	reader.onload = (e) => {
+		csvContent.value = e.target.result
+		parseCSV(csvContent.value)
+	}
+	reader.readAsText(file)
 }
 
 function parseCSV(content) {
-  const lines = content.split('\n').filter(line => line.trim())
-  if (lines.length < 2) return
-  
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
-  importPreview.value = lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
-    const row = {}
-    headers.forEach((h, i) => {
-      row[h] = values[i] || ''
-    })
-    return row
-  })
+	const lines = content.split("\n").filter((line) => line.trim())
+	if (lines.length < 2) return
+
+	const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""))
+	importPreview.value = lines.slice(1).map((line) => {
+		const values = line.split(",").map((v) => v.trim().replace(/"/g, ""))
+		const row = {}
+		headers.forEach((h, i) => {
+			row[h] = values[i] || ""
+		})
+		return row
+	})
 }
 
 async function confirmImport() {
-  if (!importForm.value.warehouse) {
-    alert('Please select a warehouse')
-    return
-  }
-  
-  importing.value = true
-  try {
-    const result = await call('mkaguzi.inventory_audit.doctype.stock_take_audit.stock_take_audit.import_stock_take_from_csv', {
-      file_content: csvContent.value,
-      warehouse: importForm.value.warehouse,
-      stock_take_type: importForm.value.stock_take_type,
-      audit_date: importForm.value.audit_date
-    })
-    
-    alert(`Successfully created ${result.audits.length} stock take(s)`)
-    showImportModal.value = false
-    importPreview.value = []
-    csvContent.value = ''
-    await loadStockTakes()
-  } catch (error) {
-    console.error('Import error:', error)
-    alert('Import failed: ' + error.message)
-  } finally {
-    importing.value = false
-  }
+	if (!importForm.value.warehouse) {
+		alert("Please select a warehouse")
+		return
+	}
+
+	importing.value = true
+	try {
+		const result = await call(
+			"mkaguzi.inventory_audit.doctype.stock_take_audit.stock_take_audit.import_stock_take_from_csv",
+			{
+				file_content: csvContent.value,
+				warehouse: importForm.value.warehouse,
+				stock_take_type: importForm.value.stock_take_type,
+				audit_date: importForm.value.audit_date,
+			},
+		)
+
+		alert(`Successfully created ${result.audits.length} stock take(s)`)
+		showImportModal.value = false
+		importPreview.value = []
+		csvContent.value = ""
+		await loadStockTakes()
+	} catch (error) {
+		console.error("Import error:", error)
+		alert("Import failed: " + error.message)
+	} finally {
+		importing.value = false
+	}
 }
 </script>

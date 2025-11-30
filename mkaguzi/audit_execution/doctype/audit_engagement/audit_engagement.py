@@ -209,3 +209,64 @@ def get_team_utilization(engagement_id):
 			})
 
 	return utilization_data
+
+@frappe.whitelist()
+def get_active_audits():
+	"""Get active audits for chat room creation"""
+	try:
+		# Get active audit engagements that can be associated with chat rooms
+		audits = frappe.get_all("Audit Engagement",
+			filters={
+				"status": ["in", ["Planning", "Fieldwork", "Reporting"]],
+				"docstatus": 1  # Submitted
+			},
+			fields=[
+				"name",
+				"engagement_id",
+				"engagement_title",
+				"audit_type",
+				"status",
+				"planning_start",
+				"fieldwork_start",
+				"reporting_start",
+				"period_start",
+				"period_end",
+				"lead_auditor",
+				"findings_count",
+				"high_risk_findings_count"
+			],
+			order_by="creation desc",
+			limit=100
+		)
+
+		# Format audits for the frontend
+		formatted_audits = []
+		for audit in audits:
+			formatted_audits.append({
+				"name": audit.name,
+				"engagement_id": audit.engagement_id,
+				"title": audit.engagement_title,
+				"audit_type": audit.audit_type,
+				"status": audit.status,
+				"start_date": audit.planning_start or audit.fieldwork_start or audit.period_start,
+				"end_date": audit.period_end or audit.reporting_end,
+				"lead_auditor": audit.lead_auditor,
+				"findings_count": audit.findings_count or 0,
+				"high_risk_findings_count": audit.high_risk_findings_count or 0,
+				"display_name": f"{audit.engagement_id}: {audit.engagement_title}",
+				"has_findings": (audit.findings_count or 0) > 0
+			})
+
+		return {
+			"success": True,
+			"audits": formatted_audits,
+			"total_count": len(formatted_audits)
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Failed to get active audits: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e),
+			"audits": []
+		}

@@ -232,11 +232,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge, Dialog } from 'frappe-ui'
-import { RefreshCw, Plus, Download, Upload, Edit2, Package } from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button, Dialog } from "frappe-ui"
+import {
+	Download,
+	Edit2,
+	Package,
+	Plus,
+	RefreshCw,
+	Upload,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
@@ -246,15 +253,21 @@ const importing = ref(false)
 const showImportModal = ref(false)
 const selectedFile = ref(null)
 const importResult = ref(null)
-const searchQuery = ref('')
+const searchQuery = ref("")
 
 const filters = ref({
-  category: '',
-  abc_classification: '',
-  is_active: ''
+	category: "",
+	abc_classification: "",
+	is_active: "",
 })
 
-const categories = ref(['Electronics', 'Raw Materials', 'Finished Goods', 'Consumables', 'Packaging'])
+const categories = ref([
+	"Electronics",
+	"Raw Materials",
+	"Finished Goods",
+	"Consumables",
+	"Packaging",
+])
 
 const items = computed(() => store.items)
 const totalCount = computed(() => store.itemsTotalCount)
@@ -263,104 +276,104 @@ const pageSize = computed(() => store.itemsPageSize)
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 onMounted(async () => {
-  await loadItems()
+	await loadItems()
 })
 
 async function loadItems() {
-  loading.value = true
-  try {
-    const filterObj = { ...filters.value }
-    if (searchQuery.value) {
-      filterObj.search = searchQuery.value
-    }
-    // Remove empty filters
-    Object.keys(filterObj).forEach(key => {
-      if (filterObj[key] === '') delete filterObj[key]
-    })
-    await store.loadItems(filterObj, currentPage.value, pageSize.value)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const filterObj = { ...filters.value }
+		if (searchQuery.value) {
+			filterObj.search = searchQuery.value
+		}
+		// Remove empty filters
+		Object.keys(filterObj).forEach((key) => {
+			if (filterObj[key] === "") delete filterObj[key]
+		})
+		await store.loadItems(filterObj, currentPage.value, pageSize.value)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  searchQuery.value = ''
-  filters.value = { category: '', abc_classification: '', is_active: '' }
-  await loadItems()
+	searchQuery.value = ""
+	filters.value = { category: "", abc_classification: "", is_active: "" }
+	await loadItems()
 }
 
 let searchTimeout = null
 function debouncedSearch() {
-  clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    loadItems()
-  }, 300)
+	clearTimeout(searchTimeout)
+	searchTimeout = setTimeout(() => {
+		loadItems()
+	}, 300)
 }
 
 async function changePage(page) {
-  await store.loadItems(filters.value, page, pageSize.value)
+	await store.loadItems(filters.value, page, pageSize.value)
 }
 
 async function downloadTemplate() {
-  try {
-    const result = await store.getItemImportTemplate()
-    const blob = new Blob([result.content], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = result.filename
-    a.click()
-    URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error('Error downloading template:', error)
-  }
+	try {
+		const result = await store.getItemImportTemplate()
+		const blob = new Blob([result.content], { type: "text/csv" })
+		const url = URL.createObjectURL(blob)
+		const a = document.createElement("a")
+		a.href = url
+		a.download = result.filename
+		a.click()
+		URL.revokeObjectURL(url)
+	} catch (error) {
+		console.error("Error downloading template:", error)
+	}
 }
 
 function handleFileSelect(event) {
-  selectedFile.value = event.target.files[0]
-  importResult.value = null
+	selectedFile.value = event.target.files[0]
+	importResult.value = null
 }
 
 async function importItems() {
-  if (!selectedFile.value) return
-  
-  importing.value = true
-  try {
-    const content = await selectedFile.value.text()
-    importResult.value = await store.importItemsFromCSV(content)
-    if (!importResult.value.errors?.length) {
-      showImportModal.value = false
-    }
-  } catch (error) {
-    console.error('Error importing items:', error)
-  } finally {
-    importing.value = false
-  }
+	if (!selectedFile.value) return
+
+	importing.value = true
+	try {
+		const content = await selectedFile.value.text()
+		importResult.value = await store.importItemsFromCSV(content)
+		if (!importResult.value.errors?.length) {
+			showImportModal.value = false
+		}
+	} catch (error) {
+		console.error("Error importing items:", error)
+	} finally {
+		importing.value = false
+	}
 }
 
 function createItem() {
-  router.push('/inventory-audit/items/new')
+	router.push("/inventory-audit/items/new")
 }
 
 function viewItem(name) {
-  router.push(`/inventory-audit/items/${name}`)
+	router.push(`/inventory-audit/items/${name}`)
 }
 
 function editItem(item) {
-  router.push(`/inventory-audit/items/${item.name}/edit`)
+	router.push(`/inventory-audit/items/${item.name}/edit`)
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'KES',
-    minimumFractionDigits: 0
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount || 0)
 }
 
 function getABCVariant(classification) {
-  if (classification?.includes('A')) return 'red'
-  if (classification?.includes('B')) return 'yellow'
-  return 'gray'
+	if (classification?.includes("A")) return "red"
+	if (classification?.includes("B")) return "yellow"
+	return "gray"
 }
 </script>

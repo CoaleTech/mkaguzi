@@ -476,88 +476,88 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
-import { useRouter } from "vue-router"
 import { createResource } from "frappe-ui"
+import { Badge, Button, Checkbox } from "frappe-ui"
 import {
-  ArrowLeft,
-  Bell,
-  CheckCircle,
-  FileText,
-  List,
-  Plus,
-  RotateCcw,
-  Save,
-  Settings,
-  Users,
-  Warehouse,
-  X,
+	ArrowLeft,
+	Bell,
+	CheckCircle,
+	FileText,
+	List,
+	Plus,
+	RotateCcw,
+	Save,
+	Settings,
+	Users,
+	Warehouse,
+	X,
 } from "lucide-vue-next"
-import { Button, Checkbox, Badge } from "frappe-ui"
+import { onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 // Router
 const router = useRouter()
 
 // Reactive state
 const saving = ref(false)
-const activeTab = ref('general')
+const activeTab = ref("general")
 const creatingWarehouse = ref(false)
 const creatingAssignment = ref(false)
 
 const settings = ref({
-  // General Settings
-  enable_auto_warehouse_creation: false,
-  default_warehouse_type: "Store",
-  auto_generate_warehouse_code: true,
-  warehouse_code_prefix: "WH-",
-  default_counting_method: "Manual Count",
-  allow_negative_variance: false,
-  enable_batch_processing: true,
-  max_batch_size: 100,
+	// General Settings
+	enable_auto_warehouse_creation: false,
+	default_warehouse_type: "Store",
+	auto_generate_warehouse_code: true,
+	warehouse_code_prefix: "WH-",
+	default_counting_method: "Manual Count",
+	allow_negative_variance: false,
+	enable_batch_processing: true,
+	max_batch_size: 100,
 
-  // Notification Settings
-  notify_on_variance_threshold: true,
-  variance_notification_threshold: 5.0,
-  notify_store_manager: true,
-  notify_hod_inventory: true,
+	// Notification Settings
+	notify_on_variance_threshold: true,
+	variance_notification_threshold: 5.0,
+	notify_store_manager: true,
+	notify_hod_inventory: true,
 
-  // Approval Settings
-  require_hod_approval: true,
-  approval_workflow: "Single Level",
-  auto_approve_below_threshold: false,
-  approval_threshold_amount: 0,
+	// Approval Settings
+	require_hod_approval: true,
+	approval_workflow: "Single Level",
+	auto_approve_below_threshold: false,
+	approval_threshold_amount: 0,
 
-  // Audit Trail Settings
-  audit_retention_days: 365,
-  enable_audit_trail: true,
-  auto_archive_completed_audits: true,
-  archive_after_days: 90,
+	// Audit Trail Settings
+	audit_retention_days: 365,
+	enable_audit_trail: true,
+	auto_archive_completed_audits: true,
+	archive_after_days: 90,
 })
 
 // Tabs configuration
 const tabs = [
-  { id: 'general', name: 'General', icon: Settings },
-  { id: 'notifications', name: 'Notifications', icon: Bell },
-  { id: 'approvals', name: 'Approvals', icon: CheckCircle },
-  { id: 'audit', name: 'Audit Trail', icon: FileText },
-  { id: 'warehouses', name: 'Warehouses & Teams', icon: Users },
+	{ id: "general", name: "General", icon: Settings },
+	{ id: "notifications", name: "Notifications", icon: Bell },
+	{ id: "approvals", name: "Approvals", icon: CheckCircle },
+	{ id: "audit", name: "Audit Trail", icon: FileText },
+	{ id: "warehouses", name: "Warehouses & Teams", icon: Users },
 ]
 
 // Warehouse creation state
 const newWarehouse = ref({
-  warehouse_code: '',
-  warehouse_name: '',
-  warehouse_type: 'Store',
-  branch: '',
-  city: '',
-  county: '',
+	warehouse_code: "",
+	warehouse_name: "",
+	warehouse_type: "Store",
+	branch: "",
+	city: "",
+	county: "",
 })
 
 // Team assignment state
 const newAssignment = ref({
-  warehouse: '',
-  team_lead: '',
-  team_members: [],
+	warehouse: "",
+	team_lead: "",
+	team_members: [],
 })
 
 const warehouseAssignments = ref([])
@@ -566,325 +566,339 @@ const availableUsers = ref([])
 
 // Options
 const warehouseTypeOptions = [
-  { label: "Store", value: "Store" },
-  { label: "Warehouse", value: "Warehouse" },
-  { label: "Distribution Center", value: "Distribution Center" },
-  { label: "Returns Center", value: "Returns Center" },
+	{ label: "Store", value: "Store" },
+	{ label: "Warehouse", value: "Warehouse" },
+	{ label: "Distribution Center", value: "Distribution Center" },
+	{ label: "Returns Center", value: "Returns Center" },
 ]
 
 const countingMethodOptions = [
-  { label: "Manual Count", value: "Manual Count" },
-  { label: "Barcode Scan", value: "Barcode Scan" },
-  { label: "RFID", value: "RFID" },
-  { label: "System Integration", value: "System Integration" },
+	{ label: "Manual Count", value: "Manual Count" },
+	{ label: "Barcode Scan", value: "Barcode Scan" },
+	{ label: "RFID", value: "RFID" },
+	{ label: "System Integration", value: "System Integration" },
 ]
 
 const approvalWorkflowOptions = [
-  { label: "Single Level", value: "Single Level" },
-  { label: "Multi Level", value: "Multi Level" },
+	{ label: "Single Level", value: "Single Level" },
+	{ label: "Multi Level", value: "Multi Level" },
 ]
 
 const teamRoleOptions = [
-  { label: "Counter", value: "Counter" },
-  { label: "Supervisor", value: "Supervisor" },
-  { label: "Auditor", value: "Auditor" },
+	{ label: "Counter", value: "Counter" },
+	{ label: "Supervisor", value: "Supervisor" },
+	{ label: "Auditor", value: "Auditor" },
 ]
 
 // Resources
 const settingsResource = createResource({
-  url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.get_settings",
-  auto: false,
+	url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.get_settings",
+	auto: false,
 })
 
 const saveSettingsResource = createResource({
-  url: "frappe.client.set_value",
-  auto: false,
+	url: "frappe.client.set_value",
+	auto: false,
 })
 
 const createWarehouseResource = createResource({
-  url: "/api/resource/Warehouse Master",
-  auto: false,
+	url: "/api/resource/Warehouse Master",
+	auto: false,
 })
 
 const getWarehousesResource = createResource({
-  url: "/api/resource/Warehouse Master",
-  method: "GET",
-  auto: false,
+	url: "/api/resource/Warehouse Master",
+	method: "GET",
+	auto: false,
 })
 
 const getUsersResource = createResource({
-  url: "/api/resource/User",
-  method: "GET",
-  auto: false,
+	url: "/api/resource/User",
+	method: "GET",
+	auto: false,
 })
 
 const createWarehouseMethodResource = createResource({
-  url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_warehouse",
-  auto: false,
+	url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_warehouse",
+	auto: false,
 })
 
 const createSampleWarehouseResource = createResource({
-  url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_sample_warehouse",
-  auto: false,
+	url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_sample_warehouse",
+	auto: false,
 })
 
 const createTeamAssignmentResource = createResource({
-  url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_team_assignment",
-  auto: false,
+	url: "/api/method/mkaguzi.inventory_audit.doctype.inventory_audit_settings.inventory_audit_settings.create_team_assignment",
+	auto: false,
 })
 
 // Methods
 const goBack = () => {
-  router.push("/inventory-audit")
+	router.push("/inventory-audit")
 }
 
 const goToWarehouseList = () => {
-  // This would navigate to warehouse list - for now just show a message
-  alert("Warehouse list functionality would be implemented here")
+	// This would navigate to warehouse list - for now just show a message
+	alert("Warehouse list functionality would be implemented here")
 }
 
 const loadSettings = async () => {
-  try {
-    const settingsData = await settingsResource.fetch()
+	try {
+		const settingsData = await settingsResource.fetch()
 
-    if (settingsData) {
-      Object.assign(settings.value, settingsData)
-    }
-  } catch (error) {
-    console.error("Error loading settings:", error)
-    // Settings don't exist yet, use defaults
-  }
+		if (settingsData) {
+			Object.assign(settings.value, settingsData)
+		}
+	} catch (error) {
+		console.error("Error loading settings:", error)
+		// Settings don't exist yet, use defaults
+	}
 }
 
 const saveSettings = async () => {
-  saving.value = true
-  try {
-    await saveSettingsResource.fetch({
-      doctype: "Inventory Audit Settings",
-      name: "Inventory Audit Settings",
-      fieldname: settings.value,
-    })
+	saving.value = true
+	try {
+		await saveSettingsResource.fetch({
+			doctype: "Inventory Audit Settings",
+			name: "Inventory Audit Settings",
+			fieldname: settings.value,
+		})
 
-    // Show success message
-    alert("Settings saved successfully!")
-  } catch (error) {
-    console.error("Error saving settings:", error)
-    alert("Error saving settings. Please try again.")
-  } finally {
-    saving.value = false
-  }
+		// Show success message
+		alert("Settings saved successfully!")
+	} catch (error) {
+		console.error("Error saving settings:", error)
+		alert("Error saving settings. Please try again.")
+	} finally {
+		saving.value = false
+	}
 }
 
 const resetToDefaults = () => {
-  if (confirm("Are you sure you want to reset all settings to defaults? This action cannot be undone.")) {
-    // Reset to default values
-    settings.value = {
-      enable_auto_warehouse_creation: false,
-      default_warehouse_type: "Store",
-      auto_generate_warehouse_code: true,
-      warehouse_code_prefix: "WH-",
-      default_counting_method: "Manual Count",
-      allow_negative_variance: false,
-      enable_batch_processing: true,
-      max_batch_size: 100,
-      notify_on_variance_threshold: true,
-      variance_notification_threshold: 5.0,
-      notify_store_manager: true,
-      notify_hod_inventory: true,
-      require_hod_approval: true,
-      approval_workflow: "Single Level",
-      auto_approve_below_threshold: false,
-      approval_threshold_amount: 0,
-      audit_retention_days: 365,
-      enable_audit_trail: true,
-      auto_archive_completed_audits: true,
-      archive_after_days: 90,
-    }
-  }
+	if (
+		confirm(
+			"Are you sure you want to reset all settings to defaults? This action cannot be undone.",
+		)
+	) {
+		// Reset to default values
+		settings.value = {
+			enable_auto_warehouse_creation: false,
+			default_warehouse_type: "Store",
+			auto_generate_warehouse_code: true,
+			warehouse_code_prefix: "WH-",
+			default_counting_method: "Manual Count",
+			allow_negative_variance: false,
+			enable_batch_processing: true,
+			max_batch_size: 100,
+			notify_on_variance_threshold: true,
+			variance_notification_threshold: 5.0,
+			notify_store_manager: true,
+			notify_hod_inventory: true,
+			require_hod_approval: true,
+			approval_workflow: "Single Level",
+			auto_approve_below_threshold: false,
+			approval_threshold_amount: 0,
+			audit_retention_days: 365,
+			enable_audit_trail: true,
+			auto_archive_completed_audits: true,
+			archive_after_days: 90,
+		}
+	}
 }
 
 const createSampleWarehouse = async () => {
-  try {
-    const result = await createSampleWarehouseResource.fetch()
+	try {
+		const result = await createSampleWarehouseResource.fetch()
 
-    if (result) {
-      alert(`Sample warehouse created successfully!`)
-      // Refresh warehouse list
-      loadWarehouseData()
-    }
-  } catch (error) {
-    console.error("Error creating sample warehouse:", error)
-    alert("Error creating sample warehouse. Please try again.")
-  }
+		if (result) {
+			alert(`Sample warehouse created successfully!`)
+			// Refresh warehouse list
+			loadWarehouseData()
+		}
+	} catch (error) {
+		console.error("Error creating sample warehouse:", error)
+		alert("Error creating sample warehouse. Please try again.")
+	}
 }
 
 // Warehouse and Team Methods
 const createWarehouse = async () => {
-  if (!newWarehouse.value.warehouse_code || !newWarehouse.value.warehouse_name) {
-    alert("Please fill in warehouse code and name")
-    return
-  }
+	if (
+		!newWarehouse.value.warehouse_code ||
+		!newWarehouse.value.warehouse_name
+	) {
+		alert("Please fill in warehouse code and name")
+		return
+	}
 
-  creatingWarehouse.value = true
-  try {
-    const result = await createWarehouseMethodResource.fetch({
-      warehouse_code: newWarehouse.value.warehouse_code,
-      warehouse_name: newWarehouse.value.warehouse_name,
-      warehouse_type: newWarehouse.value.warehouse_type,
-      branch: newWarehouse.value.branch,
-      city: newWarehouse.value.city,
-      county: newWarehouse.value.county
-    })
+	creatingWarehouse.value = true
+	try {
+		const result = await createWarehouseMethodResource.fetch({
+			warehouse_code: newWarehouse.value.warehouse_code,
+			warehouse_name: newWarehouse.value.warehouse_name,
+			warehouse_type: newWarehouse.value.warehouse_type,
+			branch: newWarehouse.value.branch,
+			city: newWarehouse.value.city,
+			county: newWarehouse.value.county,
+		})
 
-    if (result) {
-      alert(`Warehouse '${newWarehouse.value.warehouse_code}' created successfully!`)
-      // Reset form
-      newWarehouse.value = {
-        warehouse_code: '',
-        warehouse_name: '',
-        warehouse_type: 'Store',
-        branch: '',
-        city: '',
-        county: '',
-      }
-      // Refresh warehouse list
-      loadWarehouseData()
-    }
-  } catch (error) {
-    console.error("Error creating warehouse:", error)
-    // Extract the actual error message from Frappe's response
-    const errorMessage = error?.exc_type === 'ValidationError' 
-      ? error?.message 
-      : (error?.message || error?._server_messages || "Error creating warehouse. Please try again.")
-    
-    // Try to parse server messages if available
-    let displayMessage = errorMessage
-    if (error?._server_messages) {
-      try {
-        const serverMessages = JSON.parse(error._server_messages)
-        if (serverMessages.length > 0) {
-          const parsed = JSON.parse(serverMessages[0])
-          displayMessage = parsed.message || errorMessage
-        }
-      } catch (e) {
-        // Use original error message
-      }
-    }
-    
-    alert(displayMessage)
-  } finally {
-    creatingWarehouse.value = false
-  }
+		if (result) {
+			alert(
+				`Warehouse '${newWarehouse.value.warehouse_code}' created successfully!`,
+			)
+			// Reset form
+			newWarehouse.value = {
+				warehouse_code: "",
+				warehouse_name: "",
+				warehouse_type: "Store",
+				branch: "",
+				city: "",
+				county: "",
+			}
+			// Refresh warehouse list
+			loadWarehouseData()
+		}
+	} catch (error) {
+		console.error("Error creating warehouse:", error)
+		// Extract the actual error message from Frappe's response
+		const errorMessage =
+			error?.exc_type === "ValidationError"
+				? error?.message
+				: error?.message ||
+					error?._server_messages ||
+					"Error creating warehouse. Please try again."
+
+		// Try to parse server messages if available
+		let displayMessage = errorMessage
+		if (error?._server_messages) {
+			try {
+				const serverMessages = JSON.parse(error._server_messages)
+				if (serverMessages.length > 0) {
+					const parsed = JSON.parse(serverMessages[0])
+					displayMessage = parsed.message || errorMessage
+				}
+			} catch (e) {
+				// Use original error message
+			}
+		}
+
+		alert(displayMessage)
+	} finally {
+		creatingWarehouse.value = false
+	}
 }
 
 const addTeamMember = () => {
-  newAssignment.value.team_members.push({ user: '', role: 'Counter' })
+	newAssignment.value.team_members.push({ user: "", role: "Counter" })
 }
 
 const removeTeamMember = (index) => {
-  newAssignment.value.team_members.splice(index, 1)
+	newAssignment.value.team_members.splice(index, 1)
 }
 
 const createTeamAssignment = async () => {
-  if (!newAssignment.value.warehouse || !newAssignment.value.team_lead) {
-    alert("Please select a warehouse and team lead")
-    return
-  }
+	if (!newAssignment.value.warehouse || !newAssignment.value.team_lead) {
+		alert("Please select a warehouse and team lead")
+		return
+	}
 
-  if (newAssignment.value.team_members.length === 0) {
-    alert("Please add at least one team member")
-    return
-  }
+	if (newAssignment.value.team_members.length === 0) {
+		alert("Please add at least one team member")
+		return
+	}
 
-  creatingAssignment.value = true
-  try {
-    const result = await createTeamAssignmentResource.fetch({
-      warehouse: newAssignment.value.warehouse,
-      team_lead: newAssignment.value.team_lead,
-      team_members: JSON.stringify(newAssignment.value.team_members)
-    })
+	creatingAssignment.value = true
+	try {
+		const result = await createTeamAssignmentResource.fetch({
+			warehouse: newAssignment.value.warehouse,
+			team_lead: newAssignment.value.team_lead,
+			team_members: JSON.stringify(newAssignment.value.team_members),
+		})
 
-    if (result) {
-      alert("Team assignment created successfully!")
-      // Reset form
-      newAssignment.value = {
-        warehouse: '',
-        team_lead: '',
-        team_members: [],
-      }
-      // Refresh assignments
-      loadWarehouseData()
-    }
-  } catch (error) {
-    console.error("Error creating team assignment:", error)
-    alert("Error creating team assignment. Please try again.")
-  } finally {
-    creatingAssignment.value = false
-  }
+		if (result) {
+			alert("Team assignment created successfully!")
+			// Reset form
+			newAssignment.value = {
+				warehouse: "",
+				team_lead: "",
+				team_members: [],
+			}
+			// Refresh assignments
+			loadWarehouseData()
+		}
+	} catch (error) {
+		console.error("Error creating team assignment:", error)
+		alert("Error creating team assignment. Please try again.")
+	} finally {
+		creatingAssignment.value = false
+	}
 }
 
 const manageTeamAssignment = (assignment) => {
-  // This would open a modal or navigate to team management
-  alert(`Team management for ${assignment.warehouse_name} would be implemented here`)
+	// This would open a modal or navigate to team management
+	alert(
+		`Team management for ${assignment.warehouse_name} would be implemented here`,
+	)
 }
 
 const loadWarehouseData = async () => {
-  try {
-    // Load available warehouses
-    const warehousesResult = await getWarehousesResource.fetch({
-      params: {
-        fields: '["name","warehouse_name","warehouse_type"]',
-        limit_page_length: 100,
-      },
-    })
+	try {
+		// Load available warehouses
+		const warehousesResult = await getWarehousesResource.fetch({
+			params: {
+				fields: '["name","warehouse_name","warehouse_type"]',
+				limit_page_length: 100,
+			},
+		})
 
-    if (warehousesResult && warehousesResult.data) {
-      availableWarehouses.value = warehousesResult.data.map(w => ({
-        label: `${w.warehouse_name} (${w.name})`,
-        value: w.name,
-      }))
-    }
+		if (warehousesResult && warehousesResult.data) {
+			availableWarehouses.value = warehousesResult.data.map((w) => ({
+				label: `${w.warehouse_name} (${w.name})`,
+				value: w.name,
+			}))
+		}
 
-    // Load available users
-    const usersResult = await getUsersResource.fetch({
-      params: {
-        fields: '["name","full_name"]',
-        filters: '[["enabled","=","1"]]',
-        limit_page_length: 100,
-      },
-    })
+		// Load available users
+		const usersResult = await getUsersResource.fetch({
+			params: {
+				fields: '["name","full_name"]',
+				filters: '[["enabled","=","1"]]',
+				limit_page_length: 100,
+			},
+		})
 
-    if (usersResult && usersResult.data) {
-      availableUsers.value = usersResult.data.map(u => ({
-        label: u.full_name || u.name,
-        value: u.name,
-      }))
-    }
+		if (usersResult && usersResult.data) {
+			availableUsers.value = usersResult.data.map((u) => ({
+				label: u.full_name || u.name,
+				value: u.name,
+			}))
+		}
 
-    // Load warehouse assignments (this would need a custom method)
-    // For now, we'll simulate some data
-    warehouseAssignments.value = [
-      {
-        warehouse: 'WH-001',
-        warehouse_name: 'Main Warehouse',
-        warehouse_code: 'WH-001',
-        warehouse_type: 'Warehouse',
-        team_assigned: true,
-      },
-      {
-        warehouse: 'ST-001',
-        warehouse_name: 'Store A',
-        warehouse_code: 'ST-001',
-        warehouse_type: 'Store',
-        team_assigned: false,
-      },
-    ]
-  } catch (error) {
-    console.error("Error loading warehouse data:", error)
-  }
-}// Lifecycle
+		// Load warehouse assignments (this would need a custom method)
+		// For now, we'll simulate some data
+		warehouseAssignments.value = [
+			{
+				warehouse: "WH-001",
+				warehouse_name: "Main Warehouse",
+				warehouse_code: "WH-001",
+				warehouse_type: "Warehouse",
+				team_assigned: true,
+			},
+			{
+				warehouse: "ST-001",
+				warehouse_name: "Store A",
+				warehouse_code: "ST-001",
+				warehouse_type: "Store",
+				team_assigned: false,
+			},
+		]
+	} catch (error) {
+		console.error("Error loading warehouse data:", error)
+	}
+} // Lifecycle
 onMounted(() => {
-  loadSettings()
-  loadWarehouseData()
+	loadSettings()
+	loadWarehouseData()
 })
 </script>

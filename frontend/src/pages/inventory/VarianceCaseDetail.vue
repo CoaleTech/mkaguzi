@@ -372,15 +372,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { 
-  ArrowLeft, Edit, TrendingDown, TrendingUp, FileText, ExternalLink,
-  Upload, Image, Eye, Download, Camera, User, Send, Search, CheckCircle,
-  AlertTriangle, ClipboardList, Calendar, Plus
-} from 'lucide-vue-next'
+import { Badge, Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import {
+	AlertTriangle,
+	ArrowLeft,
+	Calendar,
+	Camera,
+	CheckCircle,
+	ClipboardList,
+	Download,
+	Edit,
+	ExternalLink,
+	Eye,
+	FileText,
+	Image,
+	Plus,
+	Search,
+	Send,
+	TrendingDown,
+	TrendingUp,
+	Upload,
+	User,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -389,238 +405,242 @@ const loading = ref(true)
 const varianceCase = ref(null)
 const evidence = ref([])
 const comments = ref([])
-const newComment = ref('')
+const newComment = ref("")
 
 onMounted(async () => {
-  await Promise.all([
-    loadVarianceCase(),
-    loadEvidence(),
-    loadComments()
-  ])
+	await Promise.all([loadVarianceCase(), loadEvidence(), loadComments()])
 })
 
 async function loadVarianceCase() {
-  loading.value = true
-  try {
-    const doc = await call('frappe.client.get', {
-      doctype: 'Inventory Variance Case',
-      name: route.params.id
-    })
-    varianceCase.value = doc
-  } catch (error) {
-    console.error('Error loading variance case:', error)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const doc = await call("frappe.client.get", {
+			doctype: "Inventory Variance Case",
+			name: route.params.id,
+		})
+		varianceCase.value = doc
+	} catch (error) {
+		console.error("Error loading variance case:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadEvidence() {
-  try {
-    const files = await call('frappe.client.get_list', {
-      doctype: 'File',
-      filters: {
-        attached_to_doctype: 'Inventory Variance Case',
-        attached_to_name: route.params.id
-      },
-      fields: ['name', 'file_name', 'file_url']
-    })
-    evidence.value = files
-  } catch (error) {
-    console.error('Error loading evidence:', error)
-  }
+	try {
+		const files = await call("frappe.client.get_list", {
+			doctype: "File",
+			filters: {
+				attached_to_doctype: "Inventory Variance Case",
+				attached_to_name: route.params.id,
+			},
+			fields: ["name", "file_name", "file_url"],
+		})
+		evidence.value = files
+	} catch (error) {
+		console.error("Error loading evidence:", error)
+	}
 }
 
 async function loadComments() {
-  try {
-    const result = await call('frappe.client.get_list', {
-      doctype: 'Comment',
-      filters: {
-        reference_doctype: 'Inventory Variance Case',
-        reference_name: route.params.id,
-        comment_type: 'Comment'
-      },
-      fields: ['name', 'content', 'comment_by', 'creation'],
-      order_by: 'creation desc'
-    })
-    comments.value = result
-  } catch (error) {
-    console.error('Error loading comments:', error)
-  }
+	try {
+		const result = await call("frappe.client.get_list", {
+			doctype: "Comment",
+			filters: {
+				reference_doctype: "Inventory Variance Case",
+				reference_name: route.params.id,
+				comment_type: "Comment",
+			},
+			fields: ["name", "content", "comment_by", "creation"],
+			order_by: "creation desc",
+		})
+		comments.value = result
+	} catch (error) {
+		console.error("Error loading comments:", error)
+	}
 }
 
 const statusVariant = computed(() => {
-  const variants = {
-    'Open': 'warning',
-    'Under Investigation': 'outline',
-    'Resolved': 'success',
-    'Written Off': 'subtle',
-    'Closed': 'subtle'
-  }
-  return variants[varianceCase.value?.status] || 'subtle'
+	const variants = {
+		Open: "warning",
+		"Under Investigation": "outline",
+		Resolved: "success",
+		"Written Off": "subtle",
+		Closed: "subtle",
+	}
+	return variants[varianceCase.value?.status] || "subtle"
 })
 
 const priorityVariant = computed(() => {
-  const variants = {
-    'Critical': 'solid',
-    'High': 'warning',
-    'Medium': 'outline',
-    'Low': 'subtle'
-  }
-  return variants[varianceCase.value?.priority] || 'subtle'
+	const variants = {
+		Critical: "solid",
+		High: "warning",
+		Medium: "outline",
+		Low: "subtle",
+	}
+	return variants[varianceCase.value?.priority] || "subtle"
 })
 
 const varianceQtyClass = computed(() => {
-  if (!varianceCase.value) return 'bg-gray-50'
-  return varianceCase.value.variance_qty < 0 ? 'bg-red-50' : 'bg-green-50'
+	if (!varianceCase.value) return "bg-gray-50"
+	return varianceCase.value.variance_qty < 0 ? "bg-red-50" : "bg-green-50"
 })
 
 const varianceTextClass = computed(() => {
-  if (!varianceCase.value) return 'text-gray-700'
-  return varianceCase.value.variance_qty < 0 ? 'text-red-700' : 'text-green-700'
+	if (!varianceCase.value) return "text-gray-700"
+	return varianceCase.value.variance_qty < 0 ? "text-red-700" : "text-green-700"
 })
 
 const varianceIconBg = computed(() => {
-  if (!varianceCase.value) return 'bg-gray-100'
-  return varianceCase.value.variance_qty < 0 ? 'bg-red-100' : 'bg-green-100'
+	if (!varianceCase.value) return "bg-gray-100"
+	return varianceCase.value.variance_qty < 0 ? "bg-red-100" : "bg-green-100"
 })
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString()
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString()
 }
 
 function formatDateTime(datetime) {
-  if (!datetime) return '-'
-  return new Date(datetime).toLocaleString()
+	if (!datetime) return "-"
+	return new Date(datetime).toLocaleString()
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined) return '-'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES'
-  }).format(value)
+	if (value === null || value === undefined) return "-"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+	}).format(value)
 }
 
 function getResolutionVariant(type) {
-  const variants = {
-    'Adjusted': 'success',
-    'Written Off': 'warning',
-    'No Action Required': 'subtle',
-    'Transferred': 'outline'
-  }
-  return variants[type] || 'subtle'
+	const variants = {
+		Adjusted: "success",
+		"Written Off": "warning",
+		"No Action Required": "subtle",
+		Transferred: "outline",
+	}
+	return variants[type] || "subtle"
 }
 
 function isImage(url) {
-  if (!url) return false
-  return /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
+	if (!url) return false
+	return /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
 }
 
 function goBack() {
-  router.push('/inventory-audit/variance-cases')
+	router.push("/inventory-audit/variance-cases")
 }
 
 function editCase() {
-  router.push(`/inventory-audit/variance-cases/${route.params.id}/edit`)
+	router.push(`/inventory-audit/variance-cases/${route.params.id}/edit`)
 }
 
 function viewSession() {
-  if (varianceCase.value?.stock_take_session) {
-    router.push(`/inventory-audit/sessions/${varianceCase.value.stock_take_session}`)
-  }
+	if (varianceCase.value?.stock_take_session) {
+		router.push(
+			`/inventory-audit/sessions/${varianceCase.value.stock_take_session}`,
+		)
+	}
 }
 
 function viewAuditPlan() {
-  if (varianceCase.value?.audit_plan) {
-    router.push(`/inventory-audit/plans/${varianceCase.value.audit_plan}`)
-  }
+	if (varianceCase.value?.audit_plan) {
+		router.push(`/inventory-audit/plans/${varianceCase.value.audit_plan}`)
+	}
 }
 
 function viewAdjustment() {
-  if (varianceCase.value?.adjustment_entry) {
-    window.open(`/app/stock-entry/${varianceCase.value.adjustment_entry}`, '_blank')
-  }
+	if (varianceCase.value?.adjustment_entry) {
+		window.open(
+			`/app/stock-entry/${varianceCase.value.adjustment_entry}`,
+			"_blank",
+		)
+	}
 }
 
 async function startInvestigation() {
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Inventory Variance Case',
-      name: route.params.id,
-      fieldname: {
-        status: 'Under Investigation',
-        investigation_start_date: new Date().toISOString().split('T')[0]
-      }
-    })
-    await loadVarianceCase()
-  } catch (error) {
-    console.error('Error starting investigation:', error)
-  }
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Inventory Variance Case",
+			name: route.params.id,
+			fieldname: {
+				status: "Under Investigation",
+				investigation_start_date: new Date().toISOString().split("T")[0],
+			},
+		})
+		await loadVarianceCase()
+	} catch (error) {
+		console.error("Error starting investigation:", error)
+	}
 }
 
 async function resolveCase() {
-  // Navigate to resolution form
-  router.push(`/inventory-audit/variance-cases/${route.params.id}/resolve`)
+	// Navigate to resolution form
+	router.push(`/inventory-audit/variance-cases/${route.params.id}/resolve`)
 }
 
 function createAdjustment() {
-  // Navigate to create stock adjustment
-  window.open(`/app/stock-entry/new-stock-entry-1?from_variance_case=${route.params.id}`, '_blank')
+	// Navigate to create stock adjustment
+	window.open(
+		`/app/stock-entry/new-stock-entry-1?from_variance_case=${route.params.id}`,
+		"_blank",
+	)
 }
 
 async function writeOff() {
-  if (!confirm('Are you sure you want to write off this variance?')) return
-  
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Inventory Variance Case',
-      name: route.params.id,
-      fieldname: {
-        status: 'Written Off',
-        resolution_type: 'Written Off',
-        resolved_date: new Date().toISOString().split('T')[0]
-      }
-    })
-    await loadVarianceCase()
-  } catch (error) {
-    console.error('Error writing off:', error)
-  }
+	if (!confirm("Are you sure you want to write off this variance?")) return
+
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Inventory Variance Case",
+			name: route.params.id,
+			fieldname: {
+				status: "Written Off",
+				resolution_type: "Written Off",
+				resolved_date: new Date().toISOString().split("T")[0],
+			},
+		})
+		await loadVarianceCase()
+	} catch (error) {
+		console.error("Error writing off:", error)
+	}
 }
 
 function addEvidence() {
-  // Trigger file upload
-  console.log('Add evidence - implement file upload')
+	// Trigger file upload
+	console.log("Add evidence - implement file upload")
 }
 
 function previewFile(item) {
-  window.open(item.file_url, '_blank')
+	window.open(item.file_url, "_blank")
 }
 
 function downloadFile(item) {
-  const a = document.createElement('a')
-  a.href = item.file_url
-  a.download = item.file_name
-  a.click()
+	const a = document.createElement("a")
+	a.href = item.file_url
+	a.download = item.file_name
+	a.click()
 }
 
 async function addComment() {
-  if (!newComment.value.trim()) return
-  
-  try {
-    await call('frappe.client.insert', {
-      doc: {
-        doctype: 'Comment',
-        comment_type: 'Comment',
-        reference_doctype: 'Inventory Variance Case',
-        reference_name: route.params.id,
-        content: newComment.value
-      }
-    })
-    newComment.value = ''
-    await loadComments()
-  } catch (error) {
-    console.error('Error adding comment:', error)
-  }
+	if (!newComment.value.trim()) return
+
+	try {
+		await call("frappe.client.insert", {
+			doc: {
+				doctype: "Comment",
+				comment_type: "Comment",
+				reference_doctype: "Inventory Variance Case",
+				reference_name: route.params.id,
+				content: newComment.value,
+			},
+		})
+		newComment.value = ""
+		await loadComments()
+	} catch (error) {
+		console.error("Error adding comment:", error)
+	}
 }
 </script>

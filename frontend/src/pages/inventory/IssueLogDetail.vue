@@ -260,17 +260,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge, Dialog, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
+import { Badge, Button, Dialog, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
 import {
-  ArrowLeft,
-  Edit,
-  CheckCircle,
-  MessageSquare,
-  Copy
-} from 'lucide-vue-next'
+	ArrowLeft,
+	CheckCircle,
+	Copy,
+	Edit,
+	MessageSquare,
+} from "lucide-vue-next"
+import { onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -279,158 +279,158 @@ const issue = ref({})
 const comments = ref([])
 const showCommentModal = ref(false)
 const showResolveModal = ref(false)
-const newComment = ref('')
-const resolutionText = ref('')
+const newComment = ref("")
+const resolutionText = ref("")
 const addingComment = ref(false)
 const resolving = ref(false)
 
 onMounted(async () => {
-  await loadIssue()
-  await loadComments()
+	await loadIssue()
+	await loadComments()
 })
 
 async function loadIssue() {
-  try {
-    const result = await call('frappe.client.get', {
-      doctype: 'Issue Log',
-      name: route.params.id
-    })
-    issue.value = result
-  } catch (error) {
-    console.error('Error loading issue:', error)
-  }
+	try {
+		const result = await call("frappe.client.get", {
+			doctype: "Issue Log",
+			name: route.params.id,
+		})
+		issue.value = result
+	} catch (error) {
+		console.error("Error loading issue:", error)
+	}
 }
 
 async function loadComments() {
-  try {
-    const result = await call('frappe.client.get_list', {
-      doctype: 'Comment',
-      filters: {
-        reference_doctype: 'Issue Log',
-        reference_name: route.params.id
-      },
-      fields: ['name', 'comment', 'user', 'creation'],
-      order_by: 'creation desc'
-    })
-    comments.value = result
-  } catch (error) {
-    console.error('Error loading comments:', error)
-  }
+	try {
+		const result = await call("frappe.client.get_list", {
+			doctype: "Comment",
+			filters: {
+				reference_doctype: "Issue Log",
+				reference_name: route.params.id,
+			},
+			fields: ["name", "comment", "user", "creation"],
+			order_by: "creation desc",
+		})
+		comments.value = result
+	} catch (error) {
+		console.error("Error loading comments:", error)
+	}
 }
 
 function getSeverityVariant(severity) {
-  const variants = {
-    'Low': 'outline',
-    'Medium': 'secondary',
-    'High': 'destructive',
-    'Critical': 'destructive'
-  }
-  return variants[severity] || 'secondary'
+	const variants = {
+		Low: "outline",
+		Medium: "secondary",
+		High: "destructive",
+		Critical: "destructive",
+	}
+	return variants[severity] || "secondary"
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    'Open': 'secondary',
-    'In Progress': 'outline',
-    'Resolved': 'solid',
-    'Closed': 'outline'
-  }
-  return variants[status] || 'secondary'
+	const variants = {
+		Open: "secondary",
+		"In Progress": "outline",
+		Resolved: "solid",
+		Closed: "outline",
+	}
+	return variants[status] || "secondary"
 }
 
 function getPriorityVariant(priority) {
-  const variants = {
-    'Low': 'outline',
-    'Medium': 'secondary',
-    'High': 'destructive',
-    'Urgent': 'destructive'
-  }
-  return variants[priority] || 'secondary'
+	const variants = {
+		Low: "outline",
+		Medium: "secondary",
+		High: "destructive",
+		Urgent: "destructive",
+	}
+	return variants[priority] || "secondary"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString()
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString()
 }
 
 function formatDateTime(dateTime) {
-  if (!dateTime) return '-'
-  return new Date(dateTime).toLocaleString()
+	if (!dateTime) return "-"
+	return new Date(dateTime).toLocaleString()
 }
 
 function goBack() {
-  router.push('/inventory-audit/issues')
+	router.push("/inventory-audit/issues")
 }
 
 function editIssue() {
-  router.push(`/inventory-audit/issues/${route.params.id}/edit`)
+	router.push(`/inventory-audit/issues/${route.params.id}/edit`)
 }
 
 function resolveIssue() {
-  if (issue.value.status === 'Resolved') return
-  showResolveModal.value = true
+	if (issue.value.status === "Resolved") return
+	showResolveModal.value = true
 }
 
 async function confirmResolve() {
-  resolving.value = true
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Issue Log',
-      name: route.params.id,
-      fieldname: {
-        status: 'Resolved',
-        resolution: resolutionText.value,
-        resolved_by: frappe.session.user,
-        resolved_date: new Date().toISOString().split('T')[0]
-      }
-    })
-    await loadIssue()
-    showResolveModal.value = false
-    resolutionText.value = ''
-  } catch (error) {
-    console.error('Error resolving issue:', error)
-  } finally {
-    resolving.value = false
-  }
+	resolving.value = true
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Issue Log",
+			name: route.params.id,
+			fieldname: {
+				status: "Resolved",
+				resolution: resolutionText.value,
+				resolved_by: frappe.session.user,
+				resolved_date: new Date().toISOString().split("T")[0],
+			},
+		})
+		await loadIssue()
+		showResolveModal.value = false
+		resolutionText.value = ""
+	} catch (error) {
+		console.error("Error resolving issue:", error)
+	} finally {
+		resolving.value = false
+	}
 }
 
 async function addComment() {
-  if (!newComment.value.trim()) return
+	if (!newComment.value.trim()) return
 
-  addingComment.value = true
-  try {
-    await call('frappe.client.insert', {
-      doc: {
-        doctype: 'Comment',
-        reference_doctype: 'Issue Log',
-        reference_name: route.params.id,
-        comment: newComment.value,
-        comment_type: 'Comment'
-      }
-    })
-    await loadComments()
-    showCommentModal.value = false
-    newComment.value = ''
-  } catch (error) {
-    console.error('Error adding comment:', error)
-  } finally {
-    addingComment.value = false
-  }
+	addingComment.value = true
+	try {
+		await call("frappe.client.insert", {
+			doc: {
+				doctype: "Comment",
+				reference_doctype: "Issue Log",
+				reference_name: route.params.id,
+				comment: newComment.value,
+				comment_type: "Comment",
+			},
+		})
+		await loadComments()
+		showCommentModal.value = false
+		newComment.value = ""
+	} catch (error) {
+		console.error("Error adding comment:", error)
+	} finally {
+		addingComment.value = false
+	}
 }
 
 function duplicateIssue() {
-  router.push(`/inventory-audit/issues/new?duplicate=${route.params.id}`)
+	router.push(`/inventory-audit/issues/new?duplicate=${route.params.id}`)
 }
 
 function goToSession(sessionId) {
-  router.push(`/inventory-audit/sessions/${sessionId}`)
+	router.push(`/inventory-audit/sessions/${sessionId}`)
 }
 
 function goToVarianceCase(caseId) {
-  router.push(`/inventory-audit/variance-cases/${caseId}`)
+	router.push(`/inventory-audit/variance-cases/${caseId}`)
 }
 
 function goToAuditPlan(planId) {
-  router.push(`/inventory-audit/plans/${planId}`)
+	router.push(`/inventory-audit/plans/${planId}`)
 }
 </script>

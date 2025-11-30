@@ -154,96 +154,97 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  BuildingIcon,
-  CalendarIcon,
-  CheckCircleIcon,
-} from 'lucide-vue-next'
+	AlertCircleIcon,
+	AlertTriangleIcon,
+	BuildingIcon,
+	CalendarIcon,
+	CheckCircleIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      total: 0,
-      criticalRisk: 0,
-      highRisk: 0,
-      mediumRisk: 0,
-      lowRisk: 0,
-      active: 0,
-      inactive: 0,
-      dueThisQuarter: 0,
-      dueThisMonth: 0,
-      overdue: 0,
-      mandatory: 0,
-      byType: {},
-      byControlEnvironment: {},
-    }),
-  },
-  showDetails: {
-    type: Boolean,
-    default: true,
-  },
+	stats: {
+		type: Object,
+		default: () => ({
+			total: 0,
+			criticalRisk: 0,
+			highRisk: 0,
+			mediumRisk: 0,
+			lowRisk: 0,
+			active: 0,
+			inactive: 0,
+			dueThisQuarter: 0,
+			dueThisMonth: 0,
+			overdue: 0,
+			mandatory: 0,
+			byType: {},
+			byControlEnvironment: {},
+		}),
+	},
+	showDetails: {
+		type: Boolean,
+		default: true,
+	},
 })
 
 // Computed
 const riskDistribution = computed(() => {
-  const total = props.stats.total || 1
-  return [
-    {
-      label: 'Critical',
-      count: props.stats.criticalRisk || 0,
-      percentage: ((props.stats.criticalRisk || 0) / total) * 100,
-      color: 'bg-red-500',
-    },
-    {
-      label: 'High',
-      count: props.stats.highRisk || 0,
-      percentage: ((props.stats.highRisk || 0) / total) * 100,
-      color: 'bg-orange-500',
-    },
-    {
-      label: 'Medium',
-      count: props.stats.mediumRisk || 0,
-      percentage: ((props.stats.mediumRisk || 0) / total) * 100,
-      color: 'bg-amber-500',
-    },
-    {
-      label: 'Low',
-      count: props.stats.lowRisk || 0,
-      percentage: ((props.stats.lowRisk || 0) / total) * 100,
-      color: 'bg-green-500',
-    },
-  ]
+	const total = props.stats.total || 1
+	return [
+		{
+			label: "Critical",
+			count: props.stats.criticalRisk || 0,
+			percentage: ((props.stats.criticalRisk || 0) / total) * 100,
+			color: "bg-red-500",
+		},
+		{
+			label: "High",
+			count: props.stats.highRisk || 0,
+			percentage: ((props.stats.highRisk || 0) / total) * 100,
+			color: "bg-orange-500",
+		},
+		{
+			label: "Medium",
+			count: props.stats.mediumRisk || 0,
+			percentage: ((props.stats.mediumRisk || 0) / total) * 100,
+			color: "bg-amber-500",
+		},
+		{
+			label: "Low",
+			count: props.stats.lowRisk || 0,
+			percentage: ((props.stats.lowRisk || 0) / total) * 100,
+			color: "bg-green-500",
+		},
+	]
 })
 
 const typeDistribution = computed(() => {
-  const types = props.stats.byType || {}
-  return Object.entries(types).map(([label, count]) => ({
-    label,
-    count,
-  }))
+	const types = props.stats.byType || {}
+	return Object.entries(types).map(([label, count]) => ({
+		label,
+		count,
+	}))
 })
 
 const controlDistribution = computed(() => {
-  const controls = props.stats.byControlEnvironment || {}
-  const total = Object.values(controls).reduce((sum, count) => sum + count, 0) || 1
-  
-  const colors = {
-    'Strong': 'bg-green-500',
-    'Adequate': 'bg-blue-500',
-    'Weak': 'bg-orange-500',
-    'Not Assessed': 'bg-gray-400',
-  }
+	const controls = props.stats.byControlEnvironment || {}
+	const total =
+		Object.values(controls).reduce((sum, count) => sum + count, 0) || 1
 
-  return Object.entries(controls).map(([label, count]) => ({
-    label,
-    count,
-    percentage: (count / total) * 100,
-    color: colors[label] || 'bg-gray-400',
-  }))
+	const colors = {
+		Strong: "bg-green-500",
+		Adequate: "bg-blue-500",
+		Weak: "bg-orange-500",
+		"Not Assessed": "bg-gray-400",
+	}
+
+	return Object.entries(controls).map(([label, count]) => ({
+		label,
+		count,
+		percentage: (count / total) * 100,
+		color: colors[label] || "bg-gray-400",
+	}))
 })
 </script>

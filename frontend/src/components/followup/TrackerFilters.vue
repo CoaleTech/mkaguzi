@@ -149,93 +149,102 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch } from 'vue'
-import { FormControl, Select, Button, Badge } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { Search, X, RefreshCw, Plus } from 'lucide-vue-next'
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, FormControl, Select } from "frappe-ui"
+import { Plus, RefreshCw, Search, X } from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 const props = defineProps({
-  filters: {
-    type: Object,
-    default: () => ({}),
-  },
+	filters: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:filters', 'refresh', 'create'])
+const emit = defineEmits(["update:filters", "refresh", "create"])
 
 const localFilters = reactive({
-  search: '',
-  auditFinding: '',
-  status: '',
-  followUpType: '',
-  frequency: '',
-  currentStatus: '',
+	search: "",
+	auditFinding: "",
+	status: "",
+	followUpType: "",
+	frequency: "",
+	currentStatus: "",
 })
 
 // Watch for external filter changes
 watch(
-  () => props.filters,
-  (newFilters) => {
-    if (newFilters) {
-      Object.assign(localFilters, newFilters)
-    }
-  },
-  { immediate: true, deep: true }
+	() => props.filters,
+	(newFilters) => {
+		if (newFilters) {
+			Object.assign(localFilters, newFilters)
+		}
+	},
+	{ immediate: true, deep: true },
 )
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'On Hold', value: 'On Hold' },
-  { label: 'Cancelled', value: 'Cancelled' },
+	{ label: "All Status", value: "" },
+	{ label: "Active", value: "Active" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "On Hold", value: "On Hold" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const followUpTypeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Corrective Action Monitoring', value: 'Corrective Action Monitoring' },
-  { label: 'Preventive Measure Verification', value: 'Preventive Measure Verification' },
-  { label: 'Process Improvement Tracking', value: 'Process Improvement Tracking' },
-  { label: 'Risk Mitigation Assessment', value: 'Risk Mitigation Assessment' },
-  { label: 'Compliance Verification', value: 'Compliance Verification' },
+	{ label: "All Types", value: "" },
+	{
+		label: "Corrective Action Monitoring",
+		value: "Corrective Action Monitoring",
+	},
+	{
+		label: "Preventive Measure Verification",
+		value: "Preventive Measure Verification",
+	},
+	{
+		label: "Process Improvement Tracking",
+		value: "Process Improvement Tracking",
+	},
+	{ label: "Risk Mitigation Assessment", value: "Risk Mitigation Assessment" },
+	{ label: "Compliance Verification", value: "Compliance Verification" },
 ]
 
 const frequencyOptions = [
-  { label: 'All Frequencies', value: '' },
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Semi-Annual', value: 'Semi-Annual' },
-  { label: 'Annual', value: 'Annual' },
-  { label: 'One-time', value: 'One-time' },
-  { label: 'As Needed', value: 'As Needed' },
+	{ label: "All Frequencies", value: "" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "One-time", value: "One-time" },
+	{ label: "As Needed", value: "As Needed" },
 ]
 
 const currentStatusOptions = [
-  { label: 'All Progress', value: '' },
-  { label: 'On Track', value: 'On Track' },
-  { label: 'Behind Schedule', value: 'Behind Schedule' },
-  { label: 'At Risk', value: 'At Risk' },
-  { label: 'Off Track', value: 'Off Track' },
-  { label: 'Completed Successfully', value: 'Completed Successfully' },
+	{ label: "All Progress", value: "" },
+	{ label: "On Track", value: "On Track" },
+	{ label: "Behind Schedule", value: "Behind Schedule" },
+	{ label: "At Risk", value: "At Risk" },
+	{ label: "Off Track", value: "Off Track" },
+	{ label: "Completed Successfully", value: "Completed Successfully" },
 ]
 
 const hasActiveFilters = computed(() => {
-  return Object.values(localFilters).some((v) => v !== '')
+	return Object.values(localFilters).some((v) => v !== "")
 })
 
 function emitFilters() {
-  emit('update:filters', { ...localFilters })
+	emit("update:filters", { ...localFilters })
 }
 
 function removeFilter(key) {
-  localFilters[key] = ''
-  emitFilters()
+	localFilters[key] = ""
+	emitFilters()
 }
 
 function clearFilters() {
-  Object.keys(localFilters).forEach((key) => {
-    localFilters[key] = ''
-  })
-  emitFilters()
+	Object.keys(localFilters).forEach((key) => {
+		localFilters[key] = ""
+	})
+	emitFilters()
 }
 </script>

@@ -281,16 +281,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { 
-  ArrowLeft, Edit, Play, CheckCircle, ClipboardList, ExternalLink,
-  AlertTriangle, TrendingDown, TrendingUp, DollarSign, AlertCircle,
-  Calendar, Printer, Download, History
-} from 'lucide-vue-next'
-import { SignoffSection, PhysicalCountTable } from '@/components/inventory-audit'
+import {
+	PhysicalCountTable,
+	SignoffSection,
+} from "@/components/inventory-audit"
+import { Badge, Button } from "frappe-ui"
+import { call } from "frappe-ui"
+import {
+	AlertCircle,
+	AlertTriangle,
+	ArrowLeft,
+	Calendar,
+	CheckCircle,
+	ClipboardList,
+	DollarSign,
+	Download,
+	Edit,
+	ExternalLink,
+	History,
+	Play,
+	Printer,
+	TrendingDown,
+	TrendingUp,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -300,219 +315,247 @@ const session = ref(null)
 const varianceCases = ref([])
 
 onMounted(async () => {
-  await loadSession()
-  await loadVarianceCases()
+	await loadSession()
+	await loadVarianceCases()
 })
 
 async function loadSession() {
-  loading.value = true
-  try {
-    const doc = await call('frappe.client.get', {
-      doctype: 'Stock Take Session',
-      name: route.params.id
-    })
-    session.value = doc
-  } catch (error) {
-    console.error('Error loading session:', error)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const doc = await call("frappe.client.get", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+		})
+		session.value = doc
+	} catch (error) {
+		console.error("Error loading session:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadVarianceCases() {
-  try {
-    const cases = await call('frappe.client.get_list', {
-      doctype: 'Inventory Variance Case',
-      filters: { stock_take_session: route.params.id },
-      fields: ['name', 'item_code', 'item_name', 'status', 'variance_qty', 'variance_value']
-    })
-    varianceCases.value = cases
-  } catch (error) {
-    console.error('Error loading variance cases:', error)
-  }
+	try {
+		const cases = await call("frappe.client.get_list", {
+			doctype: "Inventory Variance Case",
+			filters: { stock_take_session: route.params.id },
+			fields: [
+				"name",
+				"item_code",
+				"item_name",
+				"status",
+				"variance_qty",
+				"variance_value",
+			],
+		})
+		varianceCases.value = cases
+	} catch (error) {
+		console.error("Error loading variance cases:", error)
+	}
 }
 
 const statusVariant = computed(() => {
-  const variants = {
-    'Scheduled': 'subtle',
-    'In Progress': 'outline',
-    'Pending Review': 'warning',
-    'Completed': 'success',
-    'Approved': 'success',
-    'Cancelled': 'subtle'
-  }
-  return variants[session.value?.status] || 'subtle'
+	const variants = {
+		Scheduled: "subtle",
+		"In Progress": "outline",
+		"Pending Review": "warning",
+		Completed: "success",
+		Approved: "success",
+		Cancelled: "subtle",
+	}
+	return variants[session.value?.status] || "subtle"
 })
 
 const totalItems = computed(() => session.value?.count_items?.length || 0)
 
 const countedItems = computed(() => {
-  if (!session.value?.count_items) return 0
-  return session.value.count_items.filter(i => i.counted_qty !== null && i.counted_qty !== undefined).length
+	if (!session.value?.count_items) return 0
+	return session.value.count_items.filter(
+		(i) => i.counted_qty !== null && i.counted_qty !== undefined,
+	).length
 })
 
 const progressPercent = computed(() => {
-  if (totalItems.value === 0) return 0
-  return Math.round((countedItems.value / totalItems.value) * 100)
+	if (totalItems.value === 0) return 0
+	return Math.round((countedItems.value / totalItems.value) * 100)
 })
 
 const itemsWithIssues = computed(() => {
-  if (!session.value?.count_items) return 0
-  return session.value.count_items.filter(i => 
-    i.condition && i.condition !== 'Good'
-  ).length
+	if (!session.value?.count_items) return 0
+	return session.value.count_items.filter(
+		(i) => i.condition && i.condition !== "Good",
+	).length
 })
 
 const accuracyRate = computed(() => {
-  if (countedItems.value === 0) return 100
-  const accurateItems = session.value?.count_items?.filter(i => 
-    i.variance_qty === 0
-  ).length || 0
-  return Math.round((accurateItems / countedItems.value) * 100)
+	if (countedItems.value === 0) return 100
+	const accurateItems =
+		session.value?.count_items?.filter((i) => i.variance_qty === 0).length || 0
+	return Math.round((accurateItems / countedItems.value) * 100)
 })
 
 const varianceStats = computed(() => {
-  if (!session.value?.count_items) {
-    return { totalVariances: 0, shortages: 0, overages: 0, netVarianceValue: 0, materialVariances: 0 }
-  }
-  
-  const items = session.value.count_items.filter(i => i.variance_qty !== 0)
-  return {
-    totalVariances: items.length,
-    shortages: items.filter(i => (i.variance_qty || 0) < 0).length,
-    overages: items.filter(i => (i.variance_qty || 0) > 0).length,
-    netVarianceValue: items.reduce((sum, i) => sum + (i.variance_value || 0), 0),
-    materialVariances: items.filter(i => i.is_material).length
-  }
+	if (!session.value?.count_items) {
+		return {
+			totalVariances: 0,
+			shortages: 0,
+			overages: 0,
+			netVarianceValue: 0,
+			materialVariances: 0,
+		}
+	}
+
+	const items = session.value.count_items.filter((i) => i.variance_qty !== 0)
+	return {
+		totalVariances: items.length,
+		shortages: items.filter((i) => (i.variance_qty || 0) < 0).length,
+		overages: items.filter((i) => (i.variance_qty || 0) > 0).length,
+		netVarianceValue: items.reduce(
+			(sum, i) => sum + (i.variance_value || 0),
+			0,
+		),
+		materialVariances: items.filter((i) => i.is_material).length,
+	}
 })
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString()
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString()
 }
 
 function formatDateTime(datetime) {
-  if (!datetime) return '-'
-  return new Date(datetime).toLocaleString()
+	if (!datetime) return "-"
+	return new Date(datetime).toLocaleString()
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined) return '-'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES'
-  }).format(value)
+	if (value === null || value === undefined) return "-"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+	}).format(value)
 }
 
 function getCaseStatusVariant(status) {
-  const variants = {
-    'Open': 'warning',
-    'Under Investigation': 'outline',
-    'Resolved': 'success',
-    'Written Off': 'subtle',
-    'Closed': 'subtle'
-  }
-  return variants[status] || 'subtle'
+	const variants = {
+		Open: "warning",
+		"Under Investigation": "outline",
+		Resolved: "success",
+		"Written Off": "subtle",
+		Closed: "subtle",
+	}
+	return variants[status] || "subtle"
 }
 
 function goBack() {
-  router.push('/inventory-audit/sessions')
+	router.push("/inventory-audit/sessions")
 }
 
 function editSession() {
-  router.push(`/inventory-audit/sessions/${route.params.id}/edit`)
+	router.push(`/inventory-audit/sessions/${route.params.id}/edit`)
 }
 
 function viewAuditPlan() {
-  if (session.value?.audit_plan) {
-    router.push(`/inventory-audit/plans/${session.value.audit_plan}`)
-  }
+	if (session.value?.audit_plan) {
+		router.push(`/inventory-audit/plans/${session.value.audit_plan}`)
+	}
 }
 
 function viewVarianceCase(name) {
-  router.push(`/inventory-audit/variance-cases/${name}`)
+	router.push(`/inventory-audit/variance-cases/${name}`)
 }
 
 async function startCount() {
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Stock Take Session',
-      name: route.params.id,
-      fieldname: {
-        status: 'In Progress',
-        start_time: new Date().toISOString()
-      }
-    })
-    await loadSession()
-  } catch (error) {
-    console.error('Error starting count:', error)
-  }
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+			fieldname: {
+				status: "In Progress",
+				start_time: new Date().toISOString(),
+			},
+		})
+		await loadSession()
+	} catch (error) {
+		console.error("Error starting count:", error)
+	}
 }
 
 async function submitForReview() {
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Stock Take Session',
-      name: route.params.id,
-      fieldname: {
-        status: 'Pending Review',
-        end_time: new Date().toISOString()
-      }
-    })
-    await loadSession()
-  } catch (error) {
-    console.error('Error submitting for review:', error)
-  }
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+			fieldname: {
+				status: "Pending Review",
+				end_time: new Date().toISOString(),
+			},
+		})
+		await loadSession()
+	} catch (error) {
+		console.error("Error submitting for review:", error)
+	}
 }
 
 async function handleCountItemsUpdate(items) {
-  // Auto-save count items
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Stock Take Session',
-      name: route.params.id,
-      fieldname: { count_items: items }
-    })
-  } catch (error) {
-    console.error('Error saving count items:', error)
-  }
+	// Auto-save count items
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+			fieldname: { count_items: items },
+		})
+	} catch (error) {
+		console.error("Error saving count items:", error)
+	}
 }
 
 async function handleSignoff(type) {
-  const fieldMap = {
-    team: { team_signoff: 1, team_signoff_date: new Date().toISOString() },
-    supervisor: { supervisor_signoff: 1, supervisor_signoff_date: new Date().toISOString() },
-    auditor: { auditor_signoff: 1, auditor_signoff_date: new Date().toISOString() }
-  }
-  
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Stock Take Session',
-      name: route.params.id,
-      fieldname: fieldMap[type]
-    })
-    await loadSession()
-  } catch (error) {
-    console.error('Error applying signoff:', error)
-  }
+	const fieldMap = {
+		team: { team_signoff: 1, team_signoff_date: new Date().toISOString() },
+		supervisor: {
+			supervisor_signoff: 1,
+			supervisor_signoff_date: new Date().toISOString(),
+		},
+		auditor: {
+			auditor_signoff: 1,
+			auditor_signoff_date: new Date().toISOString(),
+		},
+	}
+
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+			fieldname: fieldMap[type],
+		})
+		await loadSession()
+	} catch (error) {
+		console.error("Error applying signoff:", error)
+	}
 }
 
 function createVarianceCases() {
-  // Navigate to create variance cases from material variances
-  router.push(`/inventory-audit/sessions/${route.params.id}/create-variance-cases`)
+	// Navigate to create variance cases from material variances
+	router.push(
+		`/inventory-audit/sessions/${route.params.id}/create-variance-cases`,
+	)
 }
 
 function printCountSheet() {
-  window.open(`/api/method/frappe.utils.print_format.download_pdf?doctype=Stock Take Session&name=${route.params.id}&format=Count Sheet`, '_blank')
+	window.open(
+		`/api/method/frappe.utils.print_format.download_pdf?doctype=Stock Take Session&name=${route.params.id}&format=Count Sheet`,
+		"_blank",
+	)
 }
 
 function exportToExcel() {
-  // Implementation for Excel export
-  console.log('Export to Excel')
+	// Implementation for Excel export
+	console.log("Export to Excel")
 }
 
 function viewAuditLog() {
-  // Show audit log modal
-  console.log('View Audit Log')
+	// Show audit log modal
+	console.log("View Audit Log")
 }
 </script>

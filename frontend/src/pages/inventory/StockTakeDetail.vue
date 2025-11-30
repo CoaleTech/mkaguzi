@@ -509,14 +509,23 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge, FormControl, Dialog } from 'frappe-ui'
-import { call } from 'frappe-ui'
+import { Badge, Button, Dialog, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
 import {
-  ArrowLeft, Edit, CheckCircle, Download, Printer, Check,
-  UserMinus, FileText, Upload, Eye, Trash2
-} from 'lucide-vue-next'
+	ArrowLeft,
+	Check,
+	CheckCircle,
+	Download,
+	Edit,
+	Eye,
+	FileText,
+	Printer,
+	Trash2,
+	Upload,
+	UserMinus,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -525,411 +534,426 @@ const loading = ref(true)
 const actionLoading = ref(false)
 const chargeLoading = ref(false)
 const audit = ref(null)
-const filterStatus = ref('')
+const filterStatus = ref("")
 const showChargeModal = ref(false)
 const selectedItem = ref(null)
 const userOptions = ref([])
 const chargeForm = ref({
-  employee: '',
-  reason: ''
+	employee: "",
+	reason: "",
 })
 const fileInput = ref(null)
 const updatingItem = ref(null)
 
 onMounted(async () => {
-  await Promise.all([
-    loadAudit(),
-    loadUsers()
-  ])
+	await Promise.all([loadAudit(), loadUsers()])
 })
 
 async function loadAudit() {
-  loading.value = true
-  try {
-    const doc = await call('frappe.client.get', {
-      doctype: 'Stock Take Audit',
-      name: route.params.id
-    })
-    audit.value = doc
-  } catch (error) {
-    console.error('Error loading audit:', error)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const doc = await call("frappe.client.get", {
+			doctype: "Stock Take Audit",
+			name: route.params.id,
+		})
+		audit.value = doc
+	} catch (error) {
+		console.error("Error loading audit:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 const statusVariant = computed(() => {
-  const variants = {
-    'Draft': 'subtle',
-    'Physical Count Submitted': 'yellow',
-    'Analyst Reviewed': 'blue',
-    'HOD Approved': 'green',
-    'Under Investigation': 'red'
-  }
-  return variants[audit.value?.status] || 'subtle'
+	const variants = {
+		Draft: "subtle",
+		"Physical Count Submitted": "yellow",
+		"Analyst Reviewed": "blue",
+		"HOD Approved": "green",
+		"Under Investigation": "red",
+	}
+	return variants[audit.value?.status] || "subtle"
 })
 
 const canEdit = computed(() => {
-  return !['HOD Approved', 'Under Investigation'].includes(audit.value?.status)
+	return !["HOD Approved", "Under Investigation"].includes(audit.value?.status)
 })
 
 const canSubmitPhysicalCount = computed(() => {
-  if (!audit.value?.stock_take_items) return false
-  // Check if all items have physical quantities
-  const allHavePhysical = audit.value.stock_take_items.every(item => item.physical_quantity !== null)
-  // Check if signed copy is attached
-  const hasSignedCopy = audit.value.signed_stock_take_copy
-  return allHavePhysical && hasSignedCopy
+	if (!audit.value?.stock_take_items) return false
+	// Check if all items have physical quantities
+	const allHavePhysical = audit.value.stock_take_items.every(
+		(item) => item.physical_quantity !== null,
+	)
+	// Check if signed copy is attached
+	const hasSignedCopy = audit.value.signed_stock_take_copy
+	return allHavePhysical && hasSignedCopy
 })
 
 const canReview = computed(() => {
-  // Analyst can review if they have Stock Analyst role and status is Physical Count Submitted
-  // Note: stock_analyst field gets set when review is performed, not before
-  return audit.value?.status === 'Physical Count Submitted'
+	// Analyst can review if they have Stock Analyst role and status is Physical Count Submitted
+	// Note: stock_analyst field gets set when review is performed, not before
+	return audit.value?.status === "Physical Count Submitted"
 })
 
 const canApprove = computed(() => {
-  // HOD can approve if status is Analyst Reviewed
-  // Note: hod_approver field gets set when approval is performed, not before
-  return audit.value?.status === 'Analyst Reviewed'
+	// HOD can approve if status is Analyst Reviewed
+	// Note: hod_approver field gets set when approval is performed, not before
+	return audit.value?.status === "Analyst Reviewed"
 })
 
 const totalItems = computed(() => {
-  return audit.value?.stock_take_items?.length || 0
+	return audit.value?.stock_take_items?.length || 0
 })
 
 const countedItems = computed(() => {
-  if (!audit.value?.stock_take_items) return 0
-  return audit.value.stock_take_items.filter(item => item.physical_quantity !== null && item.physical_quantity !== undefined).length
+	if (!audit.value?.stock_take_items) return 0
+	return audit.value.stock_take_items.filter(
+		(item) =>
+			item.physical_quantity !== null && item.physical_quantity !== undefined,
+	).length
 })
 
 const allItemsHavePhysicalQty = computed(() => {
-  if (!audit.value?.stock_take_items) return false
-  return audit.value.stock_take_items.every(item => item.physical_quantity !== null && item.physical_quantity !== undefined)
+	if (!audit.value?.stock_take_items) return false
+	return audit.value.stock_take_items.every(
+		(item) =>
+			item.physical_quantity !== null && item.physical_quantity !== undefined,
+	)
 })
 
 const filteredItems = computed(() => {
-  if (!audit.value?.stock_take_items) return []
-  if (!filterStatus.value) return audit.value.stock_take_items
-  return audit.value.stock_take_items.filter(i => i.verification_status === filterStatus.value)
+	if (!audit.value?.stock_take_items) return []
+	if (!filterStatus.value) return audit.value.stock_take_items
+	return audit.value.stock_take_items.filter(
+		(i) => i.verification_status === filterStatus.value,
+	)
 })
 
 function getStepClass(step) {
-  const completed = {
-    1: audit.value?.status !== 'Draft',
-    2: audit.value?.physical_count_submitted,
-    3: audit.value?.analyst_reviewed,
-    4: audit.value?.hod_approved
-  }
+	const completed = {
+		1: audit.value?.status !== "Draft",
+		2: audit.value?.physical_count_submitted,
+		3: audit.value?.analyst_reviewed,
+		4: audit.value?.hod_approved,
+	}
 
-  if (completed[step]) {
-    return 'bg-green-500 text-white'
-  }
+	if (completed[step]) {
+		return "bg-green-500 text-white"
+	}
 
-  // Check if it's the current step
-  const prevCompleted = step === 1 ? true : completed[step - 1]
-  if (prevCompleted && !completed[step]) {
-    return 'bg-blue-500 text-white'
-  }
+	// Check if it's the current step
+	const prevCompleted = step === 1 ? true : completed[step - 1]
+	if (prevCompleted && !completed[step]) {
+		return "bg-blue-500 text-white"
+	}
 
-  return 'bg-gray-200 text-gray-500'
+	return "bg-gray-200 text-gray-500"
 }
 
 function getRowClass(item) {
-  if (item.verification_status === 'Verified-Match') return 'bg-green-50'
-  if (item.verification_status === 'Verified-Discrepancy') return 'bg-red-50'
-  if (item.verification_status === 'Resolved') return 'bg-blue-50'
-  return ''
+	if (item.verification_status === "Verified-Match") return "bg-green-50"
+	if (item.verification_status === "Verified-Discrepancy") return "bg-red-50"
+	if (item.verification_status === "Resolved") return "bg-blue-50"
+	return ""
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    'Verified-Match': 'green',
-    'Verified-Discrepancy': 'red',
-    'Resolved': 'blue',
-    'Pending': 'yellow'
-  }
-  return variants[status] || 'subtle'
+	const variants = {
+		"Verified-Match": "green",
+		"Verified-Discrepancy": "red",
+		Resolved: "blue",
+		Pending: "yellow",
+	}
+	return variants[status] || "subtle"
 }
 
 function getVarianceClass(variance) {
-  if (!variance || variance === 0) return 'text-green-600 font-medium'
-  return 'text-red-600 font-medium'
+	if (!variance || variance === 0) return "text-green-600 font-medium"
+	return "text-red-600 font-medium"
 }
 
 function getResolutionClass(resolution) {
-  const classes = {
-    'Stock Amendment': 'text-blue-600',
-    'Charge Staff': 'text-red-600',
-    'Write-off': 'text-gray-600',
-    'Under Investigation': 'text-yellow-600'
-  }
-  return classes[resolution] || ''
+	const classes = {
+		"Stock Amendment": "text-blue-600",
+		"Charge Staff": "text-red-600",
+		"Write-off": "text-gray-600",
+		"Under Investigation": "text-yellow-600",
+	}
+	return classes[resolution] || ""
 }
 
 function isOverdue(date) {
-  if (!date) return false
-  return new Date(date) < new Date()
+	if (!date) return false
+	return new Date(date) < new Date()
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString()
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString()
 }
 
 function formatDateTime(datetime) {
-  if (!datetime) return '-'
-  return new Date(datetime).toLocaleString()
+	if (!datetime) return "-"
+	return new Date(datetime).toLocaleString()
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined) return 'KES 0'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES'
-  }).format(value)
+	if (value === null || value === undefined) return "KES 0"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+	}).format(value)
 }
 
 async function submitPhysicalCount() {
-  actionLoading.value = true
-  try {
-    await call('run_doc_method', {
-      dt: 'Stock Take Audit',
-      dn: route.params.id,
-      method: 'submit_physical_count'
-    })
-    await loadAudit()
-  } catch (error) {
-    console.error('Error:', error)
-    alert(error.message)
-  } finally {
-    actionLoading.value = false
-  }
+	actionLoading.value = true
+	try {
+		await call("run_doc_method", {
+			dt: "Stock Take Audit",
+			dn: route.params.id,
+			method: "submit_physical_count",
+		})
+		await loadAudit()
+	} catch (error) {
+		console.error("Error:", error)
+		alert(error.message)
+	} finally {
+		actionLoading.value = false
+	}
 }
 
 async function analystReview() {
-  actionLoading.value = true
-  try {
-    await call('run_doc_method', {
-      dt: 'Stock Take Audit',
-      dn: route.params.id,
-      method: 'analyst_review'
-    })
-    await loadAudit()
-  } catch (error) {
-    console.error('Error:', error)
-    alert(error.message)
-  } finally {
-    actionLoading.value = false
-  }
+	actionLoading.value = true
+	try {
+		await call("run_doc_method", {
+			dt: "Stock Take Audit",
+			dn: route.params.id,
+			method: "analyst_review",
+		})
+		await loadAudit()
+	} catch (error) {
+		console.error("Error:", error)
+		alert(error.message)
+	} finally {
+		actionLoading.value = false
+	}
 }
 
 async function hodApprove() {
-  actionLoading.value = true
-  try {
-    await call('run_doc_method', {
-      dt: 'Stock Take Audit',
-      dn: route.params.id,
-      method: 'hod_approve'
-    })
-    await loadAudit()
-  } catch (error) {
-    console.error('Error:', error)
-    alert(error.message)
-  } finally {
-    actionLoading.value = false
-  }
+	actionLoading.value = true
+	try {
+		await call("run_doc_method", {
+			dt: "Stock Take Audit",
+			dn: route.params.id,
+			method: "hod_approve",
+		})
+		await loadAudit()
+	} catch (error) {
+		console.error("Error:", error)
+		alert(error.message)
+	} finally {
+		actionLoading.value = false
+	}
 }
 
 function createStaffCharge(item) {
-  selectedItem.value = item
-  chargeForm.value = {
-    employee: '',
-    reason: `Stock discrepancy for ${item.item_code}`
-  }
-  showChargeModal.value = true
+	selectedItem.value = item
+	chargeForm.value = {
+		employee: "",
+		reason: `Stock discrepancy for ${item.item_code}`,
+	}
+	showChargeModal.value = true
 }
 
 async function confirmCreateCharge() {
-  if (!chargeForm.value.employee) {
-    alert('Please select an employee')
-    return
-  }
+	if (!chargeForm.value.employee) {
+		alert("Please select an employee")
+		return
+	}
 
-  chargeLoading.value = true
-  try {
-    await call('run_doc_method', {
-      dt: 'Stock Take Audit',
-      dn: route.params.id,
-      method: 'create_staff_charge',
-      args: {
-        item_row_name: selectedItem.value.name,
-        employee: chargeForm.value.employee,
-        charge_reason: chargeForm.value.reason
-      }
-    })
-    showChargeModal.value = false
-    await loadAudit()
-  } catch (error) {
-    console.error('Error:', error)
-    alert(error.message)
-  } finally {
-    chargeLoading.value = false
-  }
+	chargeLoading.value = true
+	try {
+		await call("run_doc_method", {
+			dt: "Stock Take Audit",
+			dn: route.params.id,
+			method: "create_staff_charge",
+			args: {
+				item_row_name: selectedItem.value.name,
+				employee: chargeForm.value.employee,
+				charge_reason: chargeForm.value.reason,
+			},
+		})
+		showChargeModal.value = false
+		await loadAudit()
+	} catch (error) {
+		console.error("Error:", error)
+		alert(error.message)
+	} finally {
+		chargeLoading.value = false
+	}
 }
 
 function viewStaffCharge(name) {
-  // Navigate to staff charge record
-  window.open(`/app/staff-charge-record/${name}`, '_blank')
+	// Navigate to staff charge record
+	window.open(`/app/staff-charge-record/${name}`, "_blank")
 }
 
 function goBack() {
-  router.push('/inventory-audit/stock-take')
+	router.push("/inventory-audit/stock-take")
 }
 
 function editAudit() {
-  router.push(`/inventory-audit/stock-take/${route.params.id}/edit`)
+	router.push(`/inventory-audit/stock-take/${route.params.id}/edit`)
 }
 
 function printAuditReport() {
-  window.open(`/api/method/frappe.utils.print_format.download_pdf?doctype=Stock Take Audit&name=${route.params.id}&format=Stock Take Audit Daily Summary`, '_blank')
+	window.open(
+		`/api/method/frappe.utils.print_format.download_pdf?doctype=Stock Take Audit&name=${route.params.id}&format=Stock Take Audit Daily Summary`,
+		"_blank",
+	)
 }
 
 function exportToExcel() {
-  // Implementation for Excel export
-  console.log('Export to Excel')
+	// Implementation for Excel export
+	console.log("Export to Excel")
 }
 
 async function handleFileUpload(event) {
-  const file = event.target.files[0]
-  if (!file) return
+	const file = event.target.files[0]
+	if (!file) return
 
-  // Validate file type
-  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png']
-  if (!allowedTypes.includes(file.type)) {
-    alert('Please upload a PDF, DOC, DOCX, JPG, or PNG file')
-    return
-  }
+	// Validate file type
+	const allowedTypes = [
+		"application/pdf",
+		"application/msword",
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		"image/jpeg",
+		"image/png",
+	]
+	if (!allowedTypes.includes(file.type)) {
+		alert("Please upload a PDF, DOC, DOCX, JPG, or PNG file")
+		return
+	}
 
-  // Validate file size (max 10MB)
-  const maxSize = 10 * 1024 * 1024 // 10MB
-  if (file.size > maxSize) {
-    alert('File size must be less than 10MB')
-    return
-  }
+	// Validate file size (max 10MB)
+	const maxSize = 10 * 1024 * 1024 // 10MB
+	if (file.size > maxSize) {
+		alert("File size must be less than 10MB")
+		return
+	}
 
-  try {
-    // Create FormData for file upload
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('is_private', '1')
-    formData.append('doctype', 'Stock Take Audit')
-    formData.append('docname', route.params.id)
-    formData.append('fieldname', 'signed_stock_take_copy')
+	try {
+		// Create FormData for file upload
+		const formData = new FormData()
+		formData.append("file", file)
+		formData.append("is_private", "1")
+		formData.append("doctype", "Stock Take Audit")
+		formData.append("docname", route.params.id)
+		formData.append("fieldname", "signed_stock_take_copy")
 
-    // Upload file using fetch
-    const response = await fetch('/api/method/upload_file', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Accept': 'application/json',
-        // Don't set Content-Type header - let browser set it with boundary
-      }
-    })
+		// Upload file using fetch
+		const response = await fetch("/api/method/upload_file", {
+			method: "POST",
+			body: formData,
+			headers: {
+				Accept: "application/json",
+				// Don't set Content-Type header - let browser set it with boundary
+			},
+		})
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`Upload failed: ${response.status} ${errorText}`)
-    }
+		if (!response.ok) {
+			const errorText = await response.text()
+			throw new Error(`Upload failed: ${response.status} ${errorText}`)
+		}
 
-    const result = await response.json()
-    
-    if (result.message && result.message.file_url) {
-      // Update the audit record with the file URL
-      await call('frappe.client.set_value', {
-        doctype: 'Stock Take Audit',
-        name: route.params.id,
-        fieldname: 'signed_stock_take_copy',
-        value: result.message.file_url
-      })
+		const result = await response.json()
 
-      // Reload audit data
-      await loadAudit()
-    } else {
-      throw new Error('Invalid response from server')
-    }
-    
-  } catch (error) {
-    console.error('Error uploading file:', error)
-    alert('Error uploading file: ' + error.message)
-  }
+		if (result.message && result.message.file_url) {
+			// Update the audit record with the file URL
+			await call("frappe.client.set_value", {
+				doctype: "Stock Take Audit",
+				name: route.params.id,
+				fieldname: "signed_stock_take_copy",
+				value: result.message.file_url,
+			})
+
+			// Reload audit data
+			await loadAudit()
+		} else {
+			throw new Error("Invalid response from server")
+		}
+	} catch (error) {
+		console.error("Error uploading file:", error)
+		alert("Error uploading file: " + error.message)
+	}
 }
 
 function getFileName(fileUrl) {
-  if (!fileUrl) return ''
-  return fileUrl.split('/').pop()
+	if (!fileUrl) return ""
+	return fileUrl.split("/").pop()
 }
 
 function viewAttachment(fileUrl) {
-  if (fileUrl) {
-    window.open(fileUrl, '_blank')
-  }
+	if (fileUrl) {
+		window.open(fileUrl, "_blank")
+	}
 }
 
 async function removeAttachment() {
-  if (confirm('Are you sure you want to remove the signed stock take copy?')) {
-    try {
-      await call('frappe.client.set_value', {
-        doctype: 'Stock Take Audit',
-        name: route.params.id,
-        fieldname: 'signed_stock_take_copy',
-        value: ''
-      })
-      await loadAudit()
-    } catch (error) {
-      console.error('Error removing attachment:', error)
-      alert('Error removing attachment: ' + error.message)
-    }
-  }
+	if (confirm("Are you sure you want to remove the signed stock take copy?")) {
+		try {
+			await call("frappe.client.set_value", {
+				doctype: "Stock Take Audit",
+				name: route.params.id,
+				fieldname: "signed_stock_take_copy",
+				value: "",
+			})
+			await loadAudit()
+		} catch (error) {
+			console.error("Error removing attachment:", error)
+			alert("Error removing attachment: " + error.message)
+		}
+	}
 }
 
 async function updatePhysicalQuantity(item, newValue) {
-  if (updatingItem.value) return // Prevent multiple simultaneous updates
-  
-  updatingItem.value = item.name
-  try {
-    // Update the item in the child table
-    await call('frappe.client.set_value', {
-      doctype: 'Stock Take Audit Item',
-      name: item.name,
-      fieldname: 'physical_quantity',
-      value: parseFloat(newValue) || 0
-    })
-    
-    // Reload audit to get updated calculations
-    await loadAudit()
-  } catch (error) {
-    console.error('Error updating physical quantity:', error)
-    alert('Error updating physical quantity: ' + error.message)
-  } finally {
-    updatingItem.value = null
-  }
+	if (updatingItem.value) return // Prevent multiple simultaneous updates
+
+	updatingItem.value = item.name
+	try {
+		// Update the item in the child table
+		await call("frappe.client.set_value", {
+			doctype: "Stock Take Audit Item",
+			name: item.name,
+			fieldname: "physical_quantity",
+			value: Number.parseFloat(newValue) || 0,
+		})
+
+		// Reload audit to get updated calculations
+		await loadAudit()
+	} catch (error) {
+		console.error("Error updating physical quantity:", error)
+		alert("Error updating physical quantity: " + error.message)
+	} finally {
+		updatingItem.value = null
+	}
 }
 </script>

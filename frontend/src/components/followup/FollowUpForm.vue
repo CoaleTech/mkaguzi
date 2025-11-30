@@ -481,35 +481,35 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Dialog, Button, FormControl, TextEditor, Select } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Button, Dialog, FormControl, Select, TextEditor } from "frappe-ui"
 import {
-  Info,
-  FileText,
-  History,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Plus,
-  Trash2,
-  Star,
-} from 'lucide-vue-next'
+	AlertTriangle,
+	CheckCircle2,
+	ChevronLeft,
+	ChevronRight,
+	FileText,
+	History,
+	Info,
+	Plus,
+	Save,
+	Star,
+	Trash2,
+	TrendingUp,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  tracker: { type: Object, default: null },
+	show: { type: Boolean, default: false },
+	tracker: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:show', 'saved'])
+const emit = defineEmits(["update:show", "saved"])
 
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (val) => emit('update:show', val),
+	get: () => props.show,
+	set: (val) => emit("update:show", val),
 })
 
 const isEditMode = computed(() => !!props.tracker?.name)
@@ -518,212 +518,265 @@ const currentSectionIndex = ref(0)
 
 // Section definitions
 const sections = [
-  { id: 'basic', title: 'Basic Info', icon: Info, description: 'Tracker identification and scheduling' },
-  { id: 'details', title: 'Details', icon: FileText, description: 'Objectives and responsibility' },
-  { id: 'history', title: 'Activities', icon: History, description: 'Follow-up activities and history' },
-  { id: 'progress', title: 'Progress', icon: TrendingUp, description: 'Progress assessment and ratings' },
-  { id: 'escalation', title: 'Escalation', icon: AlertTriangle, description: 'Escalation management' },
-  { id: 'closure', title: 'Closure', icon: CheckCircle2, description: 'Closure and final assessment' },
+	{
+		id: "basic",
+		title: "Basic Info",
+		icon: Info,
+		description: "Tracker identification and scheduling",
+	},
+	{
+		id: "details",
+		title: "Details",
+		icon: FileText,
+		description: "Objectives and responsibility",
+	},
+	{
+		id: "history",
+		title: "Activities",
+		icon: History,
+		description: "Follow-up activities and history",
+	},
+	{
+		id: "progress",
+		title: "Progress",
+		icon: TrendingUp,
+		description: "Progress assessment and ratings",
+	},
+	{
+		id: "escalation",
+		title: "Escalation",
+		icon: AlertTriangle,
+		description: "Escalation management",
+	},
+	{
+		id: "closure",
+		title: "Closure",
+		icon: CheckCircle2,
+		description: "Closure and final assessment",
+	},
 ]
 
 // Form data
 const formData = reactive({
-  tracker_id: '',
-  audit_finding: '',
-  finding_title: '',
-  status: 'Active',
-  follow_up_type: '',
-  frequency: '',
-  start_date: '',
-  next_due_date: '',
-  responsible_person: '',
-  responsible_department: '',
-  follow_up_objective: '',
-  success_criteria: '',
-  follow_up_activities: [],
-  last_follow_up_date: '',
-  last_follow_up_by: '',
-  last_findings: '',
-  next_steps: '',
-  current_status: '',
-  progress_rating: 0,
-  effectiveness_rating: 0,
-  issues_identified: '',
-  recommendations: '',
-  escalation_required: false,
-  escalation_level: '',
-  escalation_reason: '',
-  escalation_date: '',
-  closure_criteria_met: false,
-  closure_date: '',
-  closed_by: '',
-  closure_reason: '',
-  final_assessment: '',
-  notes: '',
+	tracker_id: "",
+	audit_finding: "",
+	finding_title: "",
+	status: "Active",
+	follow_up_type: "",
+	frequency: "",
+	start_date: "",
+	next_due_date: "",
+	responsible_person: "",
+	responsible_department: "",
+	follow_up_objective: "",
+	success_criteria: "",
+	follow_up_activities: [],
+	last_follow_up_date: "",
+	last_follow_up_by: "",
+	last_findings: "",
+	next_steps: "",
+	current_status: "",
+	progress_rating: 0,
+	effectiveness_rating: 0,
+	issues_identified: "",
+	recommendations: "",
+	escalation_required: false,
+	escalation_level: "",
+	escalation_reason: "",
+	escalation_date: "",
+	closure_criteria_met: false,
+	closure_date: "",
+	closed_by: "",
+	closure_reason: "",
+	final_assessment: "",
+	notes: "",
 })
 
 // Options
 const statusOptions = [
-  { label: 'Active', value: 'Active' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'On Hold', value: 'On Hold' },
-  { label: 'Cancelled', value: 'Cancelled' },
+	{ label: "Active", value: "Active" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "On Hold", value: "On Hold" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const followUpTypeOptions = [
-  { label: 'Corrective Action Monitoring', value: 'Corrective Action Monitoring' },
-  { label: 'Preventive Measure Verification', value: 'Preventive Measure Verification' },
-  { label: 'Process Improvement Tracking', value: 'Process Improvement Tracking' },
-  { label: 'Risk Mitigation Assessment', value: 'Risk Mitigation Assessment' },
-  { label: 'Compliance Verification', value: 'Compliance Verification' },
+	{
+		label: "Corrective Action Monitoring",
+		value: "Corrective Action Monitoring",
+	},
+	{
+		label: "Preventive Measure Verification",
+		value: "Preventive Measure Verification",
+	},
+	{
+		label: "Process Improvement Tracking",
+		value: "Process Improvement Tracking",
+	},
+	{ label: "Risk Mitigation Assessment", value: "Risk Mitigation Assessment" },
+	{ label: "Compliance Verification", value: "Compliance Verification" },
 ]
 
 const frequencyOptions = [
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Semi-Annual', value: 'Semi-Annual' },
-  { label: 'Annual', value: 'Annual' },
-  { label: 'One-time', value: 'One-time' },
-  { label: 'As Needed', value: 'As Needed' },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "One-time", value: "One-time" },
+	{ label: "As Needed", value: "As Needed" },
 ]
 
 const activityTypeOptions = [
-  { label: 'Review', value: 'Review' },
-  { label: 'Meeting', value: 'Meeting' },
-  { label: 'Document Request', value: 'Document Request' },
-  { label: 'Testing', value: 'Testing' },
-  { label: 'Observation', value: 'Observation' },
-  { label: 'Other', value: 'Other' },
+	{ label: "Review", value: "Review" },
+	{ label: "Meeting", value: "Meeting" },
+	{ label: "Document Request", value: "Document Request" },
+	{ label: "Testing", value: "Testing" },
+	{ label: "Observation", value: "Observation" },
+	{ label: "Other", value: "Other" },
 ]
 
 const currentStatusOptions = [
-  { label: 'On Track', value: 'On Track' },
-  { label: 'Behind Schedule', value: 'Behind Schedule' },
-  { label: 'At Risk', value: 'At Risk' },
-  { label: 'Off Track', value: 'Off Track' },
-  { label: 'Completed Successfully', value: 'Completed Successfully' },
+	{ label: "On Track", value: "On Track" },
+	{ label: "Behind Schedule", value: "Behind Schedule" },
+	{ label: "At Risk", value: "At Risk" },
+	{ label: "Off Track", value: "Off Track" },
+	{ label: "Completed Successfully", value: "Completed Successfully" },
 ]
 
 const escalationLevelOptions = [
-  { label: 'Manager', value: 'Manager' },
-  { label: 'Senior Management', value: 'Senior Management' },
-  { label: 'Audit Committee', value: 'Audit Committee' },
-  { label: 'Board', value: 'Board' },
+	{ label: "Manager", value: "Manager" },
+	{ label: "Senior Management", value: "Senior Management" },
+	{ label: "Audit Committee", value: "Audit Committee" },
+	{ label: "Board", value: "Board" },
 ]
 
 const closureReasonOptions = [
-  { label: 'Successfully Completed', value: 'Successfully Completed' },
-  { label: 'No Longer Required', value: 'No Longer Required' },
-  { label: 'Alternative Solution Implemented', value: 'Alternative Solution Implemented' },
-  { label: 'Management Decision', value: 'Management Decision' },
+	{ label: "Successfully Completed", value: "Successfully Completed" },
+	{ label: "No Longer Required", value: "No Longer Required" },
+	{
+		label: "Alternative Solution Implemented",
+		value: "Alternative Solution Implemented",
+	},
+	{ label: "Management Decision", value: "Management Decision" },
 ]
 
 // Watch for tracker prop changes
 watch(
-  () => props.tracker,
-  (newTracker) => {
-    if (newTracker) {
-      Object.keys(formData).forEach((key) => {
-        if (newTracker[key] !== undefined) {
-          formData[key] = newTracker[key]
-        }
-      })
-    } else {
-      resetForm()
-    }
-  },
-  { immediate: true }
+	() => props.tracker,
+	(newTracker) => {
+		if (newTracker) {
+			Object.keys(formData).forEach((key) => {
+				if (newTracker[key] !== undefined) {
+					formData[key] = newTracker[key]
+				}
+			})
+		} else {
+			resetForm()
+		}
+	},
+	{ immediate: true },
 )
 
 // Section validation
 const sectionValidation = computed(() => [
-  !!(formData.tracker_id && formData.audit_finding && formData.status && formData.follow_up_type && formData.frequency && formData.start_date),
-  !!(formData.responsible_person && formData.responsible_department && formData.follow_up_objective),
-  true, // Activities - optional
-  true, // Progress - optional
-  true, // Escalation - optional
-  true, // Closure - optional
+	!!(
+		formData.tracker_id &&
+		formData.audit_finding &&
+		formData.status &&
+		formData.follow_up_type &&
+		formData.frequency &&
+		formData.start_date
+	),
+	!!(
+		formData.responsible_person &&
+		formData.responsible_department &&
+		formData.follow_up_objective
+	),
+	true, // Activities - optional
+	true, // Progress - optional
+	true, // Escalation - optional
+	true, // Closure - optional
 ])
 
-const completedSections = computed(() =>
-  sectionValidation.value.filter(Boolean).length
+const completedSections = computed(
+	() => sectionValidation.value.filter(Boolean).length,
 )
 
 const progressPercentage = computed(() =>
-  Math.round((completedSections.value / sections.length) * 100)
+	Math.round((completedSections.value / sections.length) * 100),
 )
 
 function isSectionComplete(index) {
-  return sectionValidation.value[index]
+	return sectionValidation.value[index]
 }
 
 function getSectionStatusClass(index) {
-  if (currentSectionIndex.value === index) return 'text-blue-600'
-  if (isSectionComplete(index)) return 'text-green-500'
-  return 'text-gray-400'
+	if (currentSectionIndex.value === index) return "text-blue-600"
+	if (isSectionComplete(index)) return "text-green-500"
+	return "text-gray-400"
 }
 
 function goToSection(index) {
-  currentSectionIndex.value = index
+	currentSectionIndex.value = index
 }
 
 function nextSection() {
-  if (currentSectionIndex.value < sections.length - 1) {
-    currentSectionIndex.value++
-  }
+	if (currentSectionIndex.value < sections.length - 1) {
+		currentSectionIndex.value++
+	}
 }
 
 function previousSection() {
-  if (currentSectionIndex.value > 0) {
-    currentSectionIndex.value--
-  }
+	if (currentSectionIndex.value > 0) {
+		currentSectionIndex.value--
+	}
 }
 
 // Child table management
 function addActivity() {
-  formData.follow_up_activities.push({
-    activity_date: new Date().toISOString().split('T')[0],
-    activity_type: '',
-    description: '',
-    performed_by: '',
-  })
+	formData.follow_up_activities.push({
+		activity_date: new Date().toISOString().split("T")[0],
+		activity_type: "",
+		description: "",
+		performed_by: "",
+	})
 }
 
 function removeActivity(index) {
-  formData.follow_up_activities.splice(index, 1)
+	formData.follow_up_activities.splice(index, 1)
 }
 
 function resetForm() {
-  Object.keys(formData).forEach((key) => {
-    if (Array.isArray(formData[key])) {
-      formData[key] = []
-    } else if (typeof formData[key] === 'boolean') {
-      formData[key] = false
-    } else if (typeof formData[key] === 'number') {
-      formData[key] = 0
-    } else {
-      formData[key] = ''
-    }
-  })
-  formData.status = 'Active'
-  currentSectionIndex.value = 0
+	Object.keys(formData).forEach((key) => {
+		if (Array.isArray(formData[key])) {
+			formData[key] = []
+		} else if (typeof formData[key] === "boolean") {
+			formData[key] = false
+		} else if (typeof formData[key] === "number") {
+			formData[key] = 0
+		} else {
+			formData[key] = ""
+		}
+	})
+	formData.status = "Active"
+	currentSectionIndex.value = 0
 }
 
 function closeDialog() {
-  emit('update:show', false)
-  resetForm()
+	emit("update:show", false)
+	resetForm()
 }
 
 async function saveTracker() {
-  saving.value = true
-  try {
-    console.log('Saving tracker:', formData)
-    emit('saved', { ...formData })
-    closeDialog()
-  } catch (error) {
-    console.error('Error saving tracker:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		console.log("Saving tracker:", formData)
+		emit("saved", { ...formData })
+		closeDialog()
+	} catch (error) {
+		console.error("Error saving tracker:", error)
+	} finally {
+		saving.value = false
+	}
 }
 </script>

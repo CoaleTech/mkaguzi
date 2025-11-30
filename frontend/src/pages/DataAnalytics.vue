@@ -169,6 +169,7 @@
 </template>
 
 <script setup>
+import DataAnalyticsStats from "@/components/data/DataAnalyticsStats.vue"
 import { useDataStore } from "@/stores/data"
 import { Badge, Button } from "frappe-ui"
 import {
@@ -182,7 +183,6 @@ import {
 } from "lucide-vue-next"
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import DataAnalyticsStats from "@/components/data/DataAnalyticsStats.vue"
 
 const router = useRouter()
 const dataStore = useDataStore()

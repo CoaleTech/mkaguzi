@@ -483,43 +483,48 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { Button, Dialog } from 'frappe-ui'
+import { Button, Dialog } from "frappe-ui"
 import {
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ClipboardListIcon,
-  FileTextIcon,
-  PlusIcon,
-  UsersIcon,
-  CheckCircleIcon,
-} from 'lucide-vue-next'
+	CheckCircleIcon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ClipboardListIcon,
+	FileTextIcon,
+	PlusIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, reactive, ref, watch } from "vue"
 
 // Import custom components
-import FileUploader from '@/components/Common/FileUploader.vue'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import SectionHeader from '@/components/workingpaper/SectionHeader.vue'
+import FileUploader from "@/components/Common/FileUploader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import SectionHeader from "@/components/workingpaper/SectionHeader.vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  workingPaper: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	workingPaper: {
+		type: Object,
+		default: null,
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'created', 'updated', 'cancelled'])
+const emit = defineEmits([
+	"update:modelValue",
+	"created",
+	"updated",
+	"cancelled",
+])
 
 // Dialog visibility
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+	get: () => props.modelValue,
+	set: (val) => emit("update:modelValue", val),
 })
 
 // Edit mode detection
@@ -527,43 +532,63 @@ const isEditMode = computed(() => !!props.workingPaper?.name)
 
 // Form Sections
 const formSections = [
-  { id: 'basic', label: 'Basic Information', description: 'Core details', icon: 'file-text' },
-  { id: 'content', label: 'Content & Work', description: 'Documentation', icon: 'clipboard-list' },
-  { id: 'assignment', label: 'Assignment', description: 'Team & timeline', icon: 'users' },
-  { id: 'quality', label: 'Quality Control', description: 'Review & docs', icon: 'check-circle' },
+	{
+		id: "basic",
+		label: "Basic Information",
+		description: "Core details",
+		icon: "file-text",
+	},
+	{
+		id: "content",
+		label: "Content & Work",
+		description: "Documentation",
+		icon: "clipboard-list",
+	},
+	{
+		id: "assignment",
+		label: "Assignment",
+		description: "Team & timeline",
+		icon: "users",
+	},
+	{
+		id: "quality",
+		label: "Quality Control",
+		description: "Review & docs",
+		icon: "check-circle",
+	},
 ]
 
-const activeSection = ref('basic')
+const activeSection = ref("basic")
 
 // Form State
 const form = reactive({
-  // Basic Information
-  working_paper_id: '',
-  wp_title: '',
-  wp_reference_no: '',
-  wp_type: '',
-  engagement_reference: '',
-  procedure_reference: '',
+	// Basic Information
+	working_paper_id: "",
+	wp_title: "",
+	wp_reference_no: "",
+	wp_type: "",
+	engagement_reference: "",
+	procedure_reference: "",
 
-  // Content & Work Performed
-  work_performed: '',
-  objective: '',
-  scope: '',
+	// Content & Work Performed
+	work_performed: "",
+	objective: "",
+	scope: "",
 
-  // Assignment & Timeline
-  prepared_by: '',
-  reviewed_by: '',
-  preparation_date: '',
-  review_date: '',
-  due_date: '',
-  review_status: 'Not Reviewed',
+	// Assignment & Timeline
+	prepared_by: "",
+	reviewed_by: "",
+	preparation_date: "",
+	review_date: "",
+	due_date: "",
+	review_status: "Not Reviewed",
 
-  // Quality & Documentation
-  quality_score: '',
-  review_comments: '',
-  supporting_documents: '',
-  attachments: [],
-  notes: '',
+	// Quality & Documentation
+	quality_score: "",
+	review_comments: "",
+	supporting_documents: "",
+	attachments: [],
+	notes: "",
 })
 
 const errors = reactive({})
@@ -572,198 +597,214 @@ const isSavingDraft = ref(false)
 
 // Options
 const reviewStatusOptions = [
-  { label: 'Not Reviewed', value: 'Not Reviewed' },
-  { label: 'Under Review', value: 'Under Review' },
-  { label: 'Review Complete', value: 'Review Complete' },
-  { label: 'Revision Required', value: 'Revision Required' },
+	{ label: "Not Reviewed", value: "Not Reviewed" },
+	{ label: "Under Review", value: "Under Review" },
+	{ label: "Review Complete", value: "Review Complete" },
+	{ label: "Revision Required", value: "Revision Required" },
 ]
 
 const wpTypeOptions = [
-  { label: 'Planning Memo', value: 'Planning Memo' },
-  { label: 'Risk Assessment', value: 'Risk Assessment' },
-  { label: 'Walkthrough', value: 'Walkthrough' },
-  { label: 'Test of Controls', value: 'Test of Controls' },
-  { label: 'Substantive Test', value: 'Substantive Test' },
-  { label: 'Analytical Review', value: 'Analytical Review' },
-  { label: 'Data Analytics', value: 'Data Analytics' },
-  { label: 'Summary', value: 'Summary' },
-  { label: 'Other', value: 'Other' },
+	{ label: "Planning Memo", value: "Planning Memo" },
+	{ label: "Risk Assessment", value: "Risk Assessment" },
+	{ label: "Walkthrough", value: "Walkthrough" },
+	{ label: "Test of Controls", value: "Test of Controls" },
+	{ label: "Substantive Test", value: "Substantive Test" },
+	{ label: "Analytical Review", value: "Analytical Review" },
+	{ label: "Data Analytics", value: "Data Analytics" },
+	{ label: "Summary", value: "Summary" },
+	{ label: "Other", value: "Other" },
 ]
 
 // Computed Properties
 const currentSectionIndex = computed(() =>
-  formSections.findIndex(s => s.id === activeSection.value)
+	formSections.findIndex((s) => s.id === activeSection.value),
 )
 
 const getSectionStatus = (sectionId) => {
-  switch (sectionId) {
-    case 'basic':
-      return (form.wp_title && form.wp_type && form.engagement_reference) ? 'complete' :
-             (form.wp_title || form.wp_type) ? 'partial' : 'incomplete'
-    case 'content':
-      return form.work_performed ? 'complete' : 'incomplete'
-    case 'assignment':
-      return (form.prepared_by && form.preparation_date) ? 'complete' :
-             (form.prepared_by || form.preparation_date) ? 'partial' : 'incomplete'
-    case 'quality':
-      return 'complete' // Optional section
-    default:
-      return 'incomplete'
-  }
+	switch (sectionId) {
+		case "basic":
+			return form.wp_title && form.wp_type && form.engagement_reference
+				? "complete"
+				: form.wp_title || form.wp_type
+					? "partial"
+					: "incomplete"
+		case "content":
+			return form.work_performed ? "complete" : "incomplete"
+		case "assignment":
+			return form.prepared_by && form.preparation_date
+				? "complete"
+				: form.prepared_by || form.preparation_date
+					? "partial"
+					: "incomplete"
+		case "quality":
+			return "complete" // Optional section
+		default:
+			return "incomplete"
+	}
 }
 
 const getSectionStatusClass = (sectionId) => {
-  const status = getSectionStatus(sectionId)
-  if (status === 'complete') return 'bg-purple-500 text-white'
-  if (status === 'partial') return 'bg-amber-500 text-white'
-  return 'bg-gray-300 text-gray-600'
+	const status = getSectionStatus(sectionId)
+	if (status === "complete") return "bg-purple-500 text-white"
+	if (status === "partial") return "bg-amber-500 text-white"
+	return "bg-gray-300 text-gray-600"
 }
 
-const completedSections = computed(() =>
-  formSections.filter(s => getSectionStatus(s.id) === 'complete').length
+const completedSections = computed(
+	() =>
+		formSections.filter((s) => getSectionStatus(s.id) === "complete").length,
 )
 
 const formProgress = computed(() =>
-  Math.round((completedSections.value / formSections.length) * 100)
+	Math.round((completedSections.value / formSections.length) * 100),
 )
 
 const isFormValid = computed(() => {
-  return !!(
-    form.wp_title &&
-    form.wp_type &&
-    form.engagement_reference &&
-    form.work_performed &&
-    form.prepared_by &&
-    form.preparation_date
-  )
+	return !!(
+		form.wp_title &&
+		form.wp_type &&
+		form.engagement_reference &&
+		form.work_performed &&
+		form.prepared_by &&
+		form.preparation_date
+	)
 })
 
 // Methods
 const goToPreviousSection = () => {
-  const idx = currentSectionIndex.value
-  if (idx > 0) {
-    activeSection.value = formSections[idx - 1].id
-  }
+	const idx = currentSectionIndex.value
+	if (idx > 0) {
+		activeSection.value = formSections[idx - 1].id
+	}
 }
 
 const goToNextSection = () => {
-  const idx = currentSectionIndex.value
-  if (idx < formSections.length - 1) {
-    activeSection.value = formSections[idx + 1].id
-  }
+	const idx = currentSectionIndex.value
+	if (idx < formSections.length - 1) {
+		activeSection.value = formSections[idx + 1].id
+	}
 }
 
 const validateForm = () => {
-  const errs = {}
+	const errs = {}
 
-  // Required fields validation
-  if (!form.wp_title) errs.wp_title = 'Working paper title is required'
-  if (!form.wp_type) errs.wp_type = 'Type is required'
-  if (!form.engagement_reference) errs.engagement_reference = 'Engagement reference is required'
-  if (!form.work_performed) errs.work_performed = 'Work performed is required'
-  if (!form.prepared_by) errs.prepared_by = 'Prepared by is required'
-  if (!form.preparation_date) errs.preparation_date = 'Preparation date is required'
+	// Required fields validation
+	if (!form.wp_title) errs.wp_title = "Working paper title is required"
+	if (!form.wp_type) errs.wp_type = "Type is required"
+	if (!form.engagement_reference)
+		errs.engagement_reference = "Engagement reference is required"
+	if (!form.work_performed) errs.work_performed = "Work performed is required"
+	if (!form.prepared_by) errs.prepared_by = "Prepared by is required"
+	if (!form.preparation_date)
+		errs.preparation_date = "Preparation date is required"
 
-  Object.assign(errors, errs)
-  return Object.keys(errs).length === 0
+	Object.assign(errors, errs)
+	return Object.keys(errs).length === 0
 }
 
 const prepareFormData = () => {
-  return {
-    ...form,
-    // Ensure arrays are properly formatted
-    attachments: Array.isArray(form.attachments) ? form.attachments : [],
-  }
+	return {
+		...form,
+		// Ensure arrays are properly formatted
+		attachments: Array.isArray(form.attachments) ? form.attachments : [],
+	}
 }
 
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    // Navigate to the first section with errors
-    const firstErrorSection = formSections.find(s => {
-      const status = getSectionStatus(s.id)
-      return status !== 'complete'
-    })
-    if (firstErrorSection) {
-      activeSection.value = firstErrorSection.id
-    }
-    return
-  }
+	if (!validateForm()) {
+		// Navigate to the first section with errors
+		const firstErrorSection = formSections.find((s) => {
+			const status = getSectionStatus(s.id)
+			return status !== "complete"
+		})
+		if (firstErrorSection) {
+			activeSection.value = firstErrorSection.id
+		}
+		return
+	}
 
-  try {
-    isSaving.value = true
-    const formData = prepareFormData()
+	try {
+		isSaving.value = true
+		const formData = prepareFormData()
 
-    if (isEditMode.value) {
-      emit('updated', { ...formData, name: props.workingPaper.name })
-    } else {
-      emit('created', formData)
-    }
+		if (isEditMode.value) {
+			emit("updated", { ...formData, name: props.workingPaper.name })
+		} else {
+			emit("created", formData)
+		}
 
-    isOpen.value = false
-  } catch (error) {
-    console.error('Error saving working paper:', error)
-  } finally {
-    isSaving.value = false
-  }
+		isOpen.value = false
+	} catch (error) {
+		console.error("Error saving working paper:", error)
+	} finally {
+		isSaving.value = false
+	}
 }
 
 const saveAsDraft = async () => {
-  try {
-    isSavingDraft.value = true
-    const formData = prepareFormData()
-    emit('created', { ...formData, review_status: 'Not Reviewed' })
-    isOpen.value = false
-  } catch (error) {
-    console.error('Error saving draft:', error)
-  } finally {
-    isSavingDraft.value = false
-  }
+	try {
+		isSavingDraft.value = true
+		const formData = prepareFormData()
+		emit("created", { ...formData, review_status: "Not Reviewed" })
+		isOpen.value = false
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		isSavingDraft.value = false
+	}
 }
 
 const handleCancel = () => {
-  emit('cancelled')
-  isOpen.value = false
+	emit("cancelled")
+	isOpen.value = false
 }
 
 const resetForm = () => {
-  Object.keys(form).forEach(key => {
-    if (Array.isArray(form[key])) {
-      form[key] = []
-    } else if (typeof form[key] === 'number') {
-      form[key] = null
-    } else {
-      form[key] = ''
-    }
-  })
-  form.review_status = 'Not Reviewed'
-  Object.keys(errors).forEach(key => delete errors[key])
-  activeSection.value = 'basic'
+	Object.keys(form).forEach((key) => {
+		if (Array.isArray(form[key])) {
+			form[key] = []
+		} else if (typeof form[key] === "number") {
+			form[key] = null
+		} else {
+			form[key] = ""
+		}
+	})
+	form.review_status = "Not Reviewed"
+	Object.keys(errors).forEach((key) => delete errors[key])
+	activeSection.value = "basic"
 }
 
 const loadWorkingPaperData = (workingPaper) => {
-  if (!workingPaper) return
+	if (!workingPaper) return
 
-  Object.keys(form).forEach(key => {
-    if (workingPaper[key] !== undefined) {
-      form[key] = workingPaper[key]
-    }
-  })
+	Object.keys(form).forEach((key) => {
+		if (workingPaper[key] !== undefined) {
+			form[key] = workingPaper[key]
+		}
+	})
 }
 
 // Watchers
-watch(() => props.modelValue, (newVal) => {
-  if (newVal) {
-    if (props.workingPaper) {
-      loadWorkingPaperData(props.workingPaper)
-    } else {
-      resetForm()
-    }
-  }
-})
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal) {
+			if (props.workingPaper) {
+				loadWorkingPaperData(props.workingPaper)
+			} else {
+				resetForm()
+			}
+		}
+	},
+)
 
-watch(() => props.workingPaper, (newVal) => {
-  if (newVal && props.modelValue) {
-    loadWorkingPaperData(newVal)
-  }
-}, { deep: true })
+watch(
+	() => props.workingPaper,
+	(newVal) => {
+		if (newVal && props.modelValue) {
+			loadWorkingPaperData(newVal)
+		}
+	},
+	{ deep: true },
+)
 </script>

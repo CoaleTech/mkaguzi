@@ -18,42 +18,42 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  FileTextIcon,
-  ClipboardListIcon,
-  UsersIcon,
-  CheckCircleIcon,
-} from 'lucide-vue-next'
+	CheckCircleIcon,
+	ClipboardListIcon,
+	FileTextIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  icon: {
-    type: String,
-    default: 'file-text'
-  },
-  step: {
-    type: [String, Number],
-    required: true
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
+	icon: {
+		type: String,
+		default: "file-text",
+	},
+	step: {
+		type: [String, Number],
+		required: true,
+	},
 })
 
 // Icon mapping
 const iconComponent = computed(() => {
-  const icons = {
-    'file-text': FileTextIcon,
-    'clipboard-list': ClipboardListIcon,
-    'users': UsersIcon,
-    'check-circle': CheckCircleIcon,
-  }
-  return icons[props.icon] || FileTextIcon
+	const icons = {
+		"file-text": FileTextIcon,
+		"clipboard-list": ClipboardListIcon,
+		users: UsersIcon,
+		"check-circle": CheckCircleIcon,
+	}
+	return icons[props.icon] || FileTextIcon
 })
 </script>

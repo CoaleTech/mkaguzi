@@ -176,150 +176,166 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Button, FormControl, Badge } from 'frappe-ui'
+import { Badge, Button, FormControl } from "frappe-ui"
 import {
-  SearchIcon as MagnifyingGlassIcon,
-  XIcon as XMarkIcon,
-  SlidersHorizontalIcon as AdjustmentsHorizontalIcon,
-} from 'lucide-vue-next'
+	SlidersHorizontalIcon as AdjustmentsHorizontalIcon,
+	SearchIcon as MagnifyingGlassIcon,
+	XIcon as XMarkIcon,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({}),
-  },
-  engagementOptions: {
-    type: Array,
-    default: () => [],
-  },
-  userOptions: {
-    type: Array,
-    default: () => [],
-  },
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
+	engagementOptions: {
+		type: Array,
+		default: () => [],
+	},
+	userOptions: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'filter-change'])
+const emit = defineEmits(["update:modelValue", "filter-change"])
 
 // Local state
 const showAdvanced = ref(false)
 const localFilters = reactive({
-  search: '',
-  status: '',
-  category: '',
-  riskRating: '',
-  engagement: '',
-  dateFrom: '',
-  dateTo: '',
-  responsiblePerson: '',
-  followUpRequired: '',
-  overdueOnly: false,
-  repeatFindingsOnly: false,
-  includeInReport: false,
+	search: "",
+	status: "",
+	category: "",
+	riskRating: "",
+	engagement: "",
+	dateFrom: "",
+	dateTo: "",
+	responsiblePerson: "",
+	followUpRequired: "",
+	overdueOnly: false,
+	repeatFindingsOnly: false,
+	includeInReport: false,
 })
 
 // Options
 const statusOptions = [
-  { label: 'All Statuses', value: '' },
-  { label: 'Open', value: 'Open' },
-  { label: 'Action in Progress', value: 'Action in Progress' },
-  { label: 'Pending Verification', value: 'Pending Verification' },
-  { label: 'Closed', value: 'Closed' },
-  { label: 'Accepted as Risk', value: 'Accepted as Risk' },
-  { label: 'Management Override', value: 'Management Override' },
+	{ label: "All Statuses", value: "" },
+	{ label: "Open", value: "Open" },
+	{ label: "Action in Progress", value: "Action in Progress" },
+	{ label: "Pending Verification", value: "Pending Verification" },
+	{ label: "Closed", value: "Closed" },
+	{ label: "Accepted as Risk", value: "Accepted as Risk" },
+	{ label: "Management Override", value: "Management Override" },
 ]
 
 const categoryOptions = [
-  { label: 'All Categories', value: '' },
-  { label: 'Control Weakness', value: 'Control Weakness' },
-  { label: 'Process Inefficiency', value: 'Process Inefficiency' },
-  { label: 'Compliance Gap', value: 'Compliance Gap' },
-  { label: 'Policy Violation', value: 'Policy Violation' },
-  { label: 'Documentation Issue', value: 'Documentation Issue' },
-  { label: 'Fraud Indicator', value: 'Fraud Indicator' },
-  { label: 'IT/System Issue', value: 'IT/System Issue' },
-  { label: 'Operational Risk', value: 'Operational Risk' },
+	{ label: "All Categories", value: "" },
+	{ label: "Control Weakness", value: "Control Weakness" },
+	{ label: "Process Inefficiency", value: "Process Inefficiency" },
+	{ label: "Compliance Gap", value: "Compliance Gap" },
+	{ label: "Policy Violation", value: "Policy Violation" },
+	{ label: "Documentation Issue", value: "Documentation Issue" },
+	{ label: "Fraud Indicator", value: "Fraud Indicator" },
+	{ label: "IT/System Issue", value: "IT/System Issue" },
+	{ label: "Operational Risk", value: "Operational Risk" },
 ]
 
 const riskRatingOptions = [
-  { label: 'All Ratings', value: '' },
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "All Ratings", value: "" },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const followUpOptions = [
-  { label: 'All', value: '' },
-  { label: 'Required', value: '1' },
-  { label: 'Not Required', value: '0' },
+	{ label: "All", value: "" },
+	{ label: "Required", value: "1" },
+	{ label: "Not Required", value: "0" },
 ]
 
 // Computed
 const hasActiveFilters = computed(() => {
-  return Object.entries(localFilters).some(([key, value]) => {
-    if (typeof value === 'boolean') return value
-    return value !== ''
-  })
+	return Object.entries(localFilters).some(([key, value]) => {
+		if (typeof value === "boolean") return value
+		return value !== ""
+	})
 })
 
 const activeFilterPills = computed(() => {
-  const pills = []
-  
-  if (localFilters.status) {
-    pills.push({ key: 'status', label: 'Status', value: localFilters.status })
-  }
-  if (localFilters.category) {
-    pills.push({ key: 'category', label: 'Category', value: localFilters.category })
-  }
-  if (localFilters.riskRating) {
-    pills.push({ key: 'riskRating', label: 'Risk', value: localFilters.riskRating })
-  }
-  if (localFilters.engagement) {
-    pills.push({ key: 'engagement', label: 'Engagement', value: localFilters.engagement })
-  }
-  if (localFilters.overdueOnly) {
-    pills.push({ key: 'overdueOnly', label: 'Filter', value: 'Overdue' })
-  }
-  if (localFilters.repeatFindingsOnly) {
-    pills.push({ key: 'repeatFindingsOnly', label: 'Filter', value: 'Repeat' })
-  }
-  
-  return pills
+	const pills = []
+
+	if (localFilters.status) {
+		pills.push({ key: "status", label: "Status", value: localFilters.status })
+	}
+	if (localFilters.category) {
+		pills.push({
+			key: "category",
+			label: "Category",
+			value: localFilters.category,
+		})
+	}
+	if (localFilters.riskRating) {
+		pills.push({
+			key: "riskRating",
+			label: "Risk",
+			value: localFilters.riskRating,
+		})
+	}
+	if (localFilters.engagement) {
+		pills.push({
+			key: "engagement",
+			label: "Engagement",
+			value: localFilters.engagement,
+		})
+	}
+	if (localFilters.overdueOnly) {
+		pills.push({ key: "overdueOnly", label: "Filter", value: "Overdue" })
+	}
+	if (localFilters.repeatFindingsOnly) {
+		pills.push({ key: "repeatFindingsOnly", label: "Filter", value: "Repeat" })
+	}
+
+	return pills
 })
 
 // Methods
 const emitFilters = () => {
-  emit('update:modelValue', { ...localFilters })
-  emit('filter-change', { ...localFilters })
+	emit("update:modelValue", { ...localFilters })
+	emit("filter-change", { ...localFilters })
 }
 
 const clearFilters = () => {
-  Object.keys(localFilters).forEach(key => {
-    if (typeof localFilters[key] === 'boolean') {
-      localFilters[key] = false
-    } else {
-      localFilters[key] = ''
-    }
-  })
-  emitFilters()
+	Object.keys(localFilters).forEach((key) => {
+		if (typeof localFilters[key] === "boolean") {
+			localFilters[key] = false
+		} else {
+			localFilters[key] = ""
+		}
+	})
+	emitFilters()
 }
 
 const removeFilter = (key) => {
-  if (typeof localFilters[key] === 'boolean') {
-    localFilters[key] = false
-  } else {
-    localFilters[key] = ''
-  }
-  emitFilters()
+	if (typeof localFilters[key] === "boolean") {
+		localFilters[key] = false
+	} else {
+		localFilters[key] = ""
+	}
+	emitFilters()
 }
 
 // Watch for prop changes
-watch(() => props.modelValue, (newVal) => {
-  if (newVal) {
-    Object.assign(localFilters, newVal)
-  }
-}, { immediate: true, deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal) {
+			Object.assign(localFilters, newVal)
+		}
+	},
+	{ immediate: true, deep: true },
+)
 </script>

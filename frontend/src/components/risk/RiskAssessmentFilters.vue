@@ -105,107 +105,107 @@
 <script setup>
 import { Button, Select } from "frappe-ui"
 import {
-  BarChart3Icon,
-  LayoutGridIcon,
-  LayersIcon,
-  SearchIcon,
-  TableIcon,
-  XIcon,
+	BarChart3Icon,
+	LayersIcon,
+	LayoutGridIcon,
+	SearchIcon,
+	TableIcon,
+	XIcon,
 } from "lucide-vue-next"
 import { computed } from "vue"
 
 const props = defineProps({
-  searchQuery: {
-    type: String,
-    default: "",
-  },
-  filterStatus: {
-    type: String,
-    default: "",
-  },
-  filterPeriod: {
-    type: String,
-    default: "",
-  },
-  filterYear: {
-    type: String,
-    default: "",
-  },
-  viewMode: {
-    type: String,
-    default: "table",
-  },
-  selectedCount: {
-    type: Number,
-    default: 0,
-  },
-  filteredCount: {
-    type: Number,
-    default: 0,
-  },
-  totalCount: {
-    type: Number,
-    default: 0,
-  },
+	searchQuery: {
+		type: String,
+		default: "",
+	},
+	filterStatus: {
+		type: String,
+		default: "",
+	},
+	filterPeriod: {
+		type: String,
+		default: "",
+	},
+	filterYear: {
+		type: String,
+		default: "",
+	},
+	viewMode: {
+		type: String,
+		default: "table",
+	},
+	selectedCount: {
+		type: Number,
+		default: 0,
+	},
+	filteredCount: {
+		type: Number,
+		default: 0,
+	},
+	totalCount: {
+		type: Number,
+		default: 0,
+	},
 })
 
 defineEmits([
-  "update:searchQuery",
-  "update:filterStatus",
-  "update:filterPeriod",
-  "update:filterYear",
-  "bulk-action",
-  "show-analytics",
-  "toggle-view",
-  "clear-filters",
+	"update:searchQuery",
+	"update:filterStatus",
+	"update:filterPeriod",
+	"update:filterYear",
+	"bulk-action",
+	"show-analytics",
+	"toggle-view",
+	"clear-filters",
 ])
 
 // Options
 const periodOptions = [
-  { label: "Annual", value: "Annual" },
-  { label: "Mid-Year", value: "Mid-Year" },
-  { label: "Quarterly", value: "Quarterly" },
-  { label: "Ad-hoc", value: "Ad-hoc" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Mid-Year", value: "Mid-Year" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Ad-hoc", value: "Ad-hoc" },
 ]
 
 const statusOptions = [
-  { label: "Planning", value: "Planning" },
-  { label: "In Progress", value: "In Progress" },
-  { label: "Review", value: "Review" },
-  { label: "Finalized", value: "Finalized" },
-  { label: "Approved", value: "Approved" },
+	{ label: "Planning", value: "Planning" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Review", value: "Review" },
+	{ label: "Finalized", value: "Finalized" },
+	{ label: "Approved", value: "Approved" },
 ]
 
 // Generate year options
 const currentYear = new Date().getFullYear()
 const yearOptions = []
 for (let i = currentYear - 2; i <= currentYear + 2; i++) {
-  yearOptions.push({ label: i.toString(), value: i.toString() })
+	yearOptions.push({ label: i.toString(), value: i.toString() })
 }
 
 // Options with "All" as first item
 const statusOptionsWithAll = computed(() => [
-  { label: "All Statuses", value: "" },
-  ...statusOptions,
+	{ label: "All Statuses", value: "" },
+	...statusOptions,
 ])
 
 const periodOptionsWithAll = computed(() => [
-  { label: "All Periods", value: "" },
-  ...periodOptions,
+	{ label: "All Periods", value: "" },
+	...periodOptions,
 ])
 
 const yearOptionsWithAll = computed(() => [
-  { label: "All Years", value: "" },
-  ...yearOptions,
+	{ label: "All Years", value: "" },
+	...yearOptions,
 ])
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-  return (
-    props.searchQuery ||
-    props.filterStatus ||
-    props.filterPeriod ||
-    props.filterYear
-  )
+	return (
+		props.searchQuery ||
+		props.filterStatus ||
+		props.filterPeriod ||
+		props.filterYear
+	)
 })
 </script>

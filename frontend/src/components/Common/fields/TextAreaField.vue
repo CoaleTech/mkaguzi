@@ -23,42 +23,42 @@
 
 <script setup>
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  label: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: ''
-  },
-  rows: {
-    type: Number,
-    default: 3
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	label: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "",
+	},
+	rows: {
+		type: Number,
+		default: 3,
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	error: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const handleChange = (event) => {
-  const value = event.target.value
-  emit('update:modelValue', value)
-  emit('change', value)
+	const value = event.target.value
+	emit("update:modelValue", value)
+	emit("change", value)
 }
 </script>
 

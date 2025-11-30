@@ -109,6 +109,9 @@
 
 <script setup>
 import { DataTable } from "@/components/Common"
+import ActionFilters from "@/components/actions/ActionFilters.vue"
+import ActionStats from "@/components/actions/ActionStats.vue"
+import CorrectiveActionForm from "@/components/actions/CorrectiveActionForm.vue"
 import { useCorrectiveActionsStore } from "@/stores/correctiveActions"
 import { Badge, Button } from "frappe-ui"
 import {
@@ -124,9 +127,6 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import ActionStats from "@/components/actions/ActionStats.vue"
-import ActionFilters from "@/components/actions/ActionFilters.vue"
-import CorrectiveActionForm from "@/components/actions/CorrectiveActionForm.vue"
 
 const router = useRouter()
 const store = useCorrectiveActionsStore()
@@ -134,7 +134,7 @@ const store = useCorrectiveActionsStore()
 // Reactive state
 const showCreateForm = ref(false)
 const selectedAction = ref(null)
-const formMode = ref('create')
+const formMode = ref("create")
 
 // Computed properties
 const actions = computed(() => store.actions)
@@ -143,14 +143,14 @@ const stats = computed(() => store.stats)
 const loading = computed(() => store.loading)
 const saving = computed(() => store.saving)
 const filters = computed({
-  get: () => ({
-    search: store.searchQuery,
-    ...store.filters
-  }),
-  set: (value) => {
-    store.searchQuery = value.search || ''
-    store.setFilters(value)
-  }
+	get: () => ({
+		search: store.searchQuery,
+		...store.filters,
+	}),
+	set: (value) => {
+		store.searchQuery = value.search || ""
+		store.setFilters(value)
+	},
 })
 
 // Legacy computed properties for backward compatibility
@@ -235,7 +235,7 @@ const viewAction = (action) => {
 
 const editAction = (action) => {
 	selectedAction.value = action
-	formMode.value = 'edit'
+	formMode.value = "edit"
 	showCreateForm.value = true
 }
 
@@ -257,13 +257,13 @@ const exportActions = () => {
 const onActionSaved = () => {
 	showCreateForm.value = false
 	selectedAction.value = null
-	formMode.value = 'create'
+	formMode.value = "create"
 }
 
 const onFormClose = () => {
 	showCreateForm.value = false
 	selectedAction.value = null
-	formMode.value = 'create'
+	formMode.value = "create"
 }
 
 // Lifecycle

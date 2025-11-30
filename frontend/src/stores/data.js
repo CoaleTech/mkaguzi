@@ -251,9 +251,12 @@ export const useDataStore = defineStore("data", () => {
 			csvImportTypes.value = response || []
 			// Extract field mappings from all import types and flatten them
 			const allFieldMappings = []
-			csvImportTypes.value.forEach(importType => {
-				if (importType.field_mappings && Array.isArray(importType.field_mappings)) {
-					importType.field_mappings.forEach(mapping => {
+			csvImportTypes.value.forEach((importType) => {
+				if (
+					importType.field_mappings &&
+					Array.isArray(importType.field_mappings)
+				) {
+					importType.field_mappings.forEach((mapping) => {
 						allFieldMappings.push({
 							...mapping,
 							import_type_name: importType.import_name || importType.name,

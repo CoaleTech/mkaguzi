@@ -713,6 +713,8 @@
         </Dialog>
   </div>
 </template><script setup>
+import WorkingPapersForm from "@/components/workingpaper/WorkingPapersForm.vue"
+import WorkingPapersStats from "@/components/workingpaper/WorkingPapersStats.vue"
 import { useAuditStore } from "@/stores/audit"
 import { Badge, Button, Checkbox, Dialog, FormControl, Select } from "frappe-ui"
 import {
@@ -738,8 +740,6 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import WorkingPapersForm from "@/components/workingpaper/WorkingPapersForm.vue"
-import WorkingPapersStats from "@/components/workingpaper/WorkingPapersStats.vue"
 
 const router = useRouter()
 const auditStore = useAuditStore()

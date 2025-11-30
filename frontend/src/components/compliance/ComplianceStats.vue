@@ -56,26 +56,26 @@
 import { Building, CheckCircle, FileText, Tag } from "lucide-vue-next"
 
 defineProps({
-  totalRequirements: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  activeRequirementsCount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  regulatoryBodiesCount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  categoriesCount: {
-    type: Number,
-    required: true,
-    default: 0
-  }
+	totalRequirements: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
+	activeRequirementsCount: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
+	regulatoryBodiesCount: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
+	categoriesCount: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
 })
 </script>
 

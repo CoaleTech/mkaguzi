@@ -717,14 +717,7 @@
 
 <script setup>
 import { useAuditStore } from "@/stores/audit"
-import {
-	Badge,
-	Button,
-	Checkbox,
-	Dialog,
-	FeatherIcon,
-	Select,
-} from "frappe-ui"
+import { Badge, Button, Checkbox, Dialog, FeatherIcon, Select } from "frappe-ui"
 import {
 	ArrowUpDownIcon,
 	BarChart3Icon,

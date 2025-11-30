@@ -130,91 +130,91 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch } from 'vue'
-import { FormControl, Select, Button, Badge } from 'frappe-ui'
-import { Search, X, RefreshCw, Plus } from 'lucide-vue-next'
+import { Badge, Button, FormControl, Select } from "frappe-ui"
+import { Plus, RefreshCw, Search, X } from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 const props = defineProps({
-  filters: {
-    type: Object,
-    default: () => ({}),
-  },
+	filters: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:filters', 'refresh', 'create'])
+const emit = defineEmits(["update:filters", "refresh", "create"])
 
 const localFilters = reactive({
-  search: '',
-  category: '',
-  testType: '',
-  logicType: '',
-  status: '',
+	search: "",
+	category: "",
+	testType: "",
+	logicType: "",
+	status: "",
 })
 
 // Watch for external filter changes
 watch(
-  () => props.filters,
-  (newFilters) => {
-    if (newFilters) {
-      Object.assign(localFilters, newFilters)
-    }
-  },
-  { immediate: true, deep: true }
+	() => props.filters,
+	(newFilters) => {
+		if (newFilters) {
+			Object.assign(localFilters, newFilters)
+		}
+	},
+	{ immediate: true, deep: true },
 )
 
 const categoryOptions = [
-  { label: 'All Categories', value: '' },
-  { label: 'Duplicate Detection', value: 'Duplicate Detection' },
-  { label: 'Outlier Analysis', value: 'Outlier Analysis' },
-  { label: 'Trend Analysis', value: 'Trend Analysis' },
-  { label: 'Ratio Analysis', value: 'Ratio Analysis' },
-  { label: 'Completeness Check', value: 'Completeness Check' },
-  { label: 'Validity Check', value: 'Validity Check' },
-  { label: 'Accuracy Check', value: 'Accuracy Check' },
-  { label: 'Timeliness Check', value: 'Timeliness Check' },
-  { label: 'Consistency Check', value: 'Consistency Check' },
-  { label: 'Custom Analysis', value: 'Custom Analysis' },
+	{ label: "All Categories", value: "" },
+	{ label: "Duplicate Detection", value: "Duplicate Detection" },
+	{ label: "Outlier Analysis", value: "Outlier Analysis" },
+	{ label: "Trend Analysis", value: "Trend Analysis" },
+	{ label: "Ratio Analysis", value: "Ratio Analysis" },
+	{ label: "Completeness Check", value: "Completeness Check" },
+	{ label: "Validity Check", value: "Validity Check" },
+	{ label: "Accuracy Check", value: "Accuracy Check" },
+	{ label: "Timeliness Check", value: "Timeliness Check" },
+	{ label: "Consistency Check", value: "Consistency Check" },
+	{ label: "Custom Analysis", value: "Custom Analysis" },
 ]
 
 const testTypeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Substantive', value: 'Substantive' },
-  { label: 'Controls', value: 'Controls' },
-  { label: 'Analytical', value: 'Analytical' },
-  { label: 'Compliance', value: 'Compliance' },
+	{ label: "All Types", value: "" },
+	{ label: "Substantive", value: "Substantive" },
+	{ label: "Controls", value: "Controls" },
+	{ label: "Analytical", value: "Analytical" },
+	{ label: "Compliance", value: "Compliance" },
 ]
 
 const logicTypeOptions = [
-  { label: 'All Logic Types', value: '' },
-  { label: 'SQL Query', value: 'SQL Query' },
-  { label: 'Python Script', value: 'Python Script' },
-  { label: 'Built-in Function', value: 'Built-in Function' },
+	{ label: "All Logic Types", value: "" },
+	{ label: "SQL Query", value: "SQL Query" },
+	{ label: "Python Script", value: "Python Script" },
+	{ label: "Built-in Function", value: "Built-in Function" },
 ]
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Inactive', value: 'Inactive' },
-  { label: 'Under Review', value: 'Under Review' },
+	{ label: "All Status", value: "" },
+	{ label: "Active", value: "Active" },
+	{ label: "Inactive", value: "Inactive" },
+	{ label: "Under Review", value: "Under Review" },
 ]
 
 const hasActiveFilters = computed(() => {
-  return Object.values(localFilters).some((v) => v !== '')
+	return Object.values(localFilters).some((v) => v !== "")
 })
 
 function emitFilters() {
-  emit('update:filters', { ...localFilters })
+	emit("update:filters", { ...localFilters })
 }
 
 function removeFilter(key) {
-  localFilters[key] = ''
-  emitFilters()
+	localFilters[key] = ""
+	emitFilters()
 }
 
 function clearFilters() {
-  Object.keys(localFilters).forEach((key) => {
-    localFilters[key] = ''
-  })
-  emitFilters()
+	Object.keys(localFilters).forEach((key) => {
+		localFilters[key] = ""
+	})
+	emitFilters()
 }
 </script>

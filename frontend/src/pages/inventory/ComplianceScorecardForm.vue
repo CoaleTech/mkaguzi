@@ -255,11 +255,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save, Download, Plus, Trash2 } from 'lucide-vue-next'
+import { Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Download, Plus, Save, Trash2 } from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -267,213 +267,263 @@ const router = useRouter()
 const saving = ref(false)
 const auditPlanOptions = ref([])
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  audit_plan: '',
-  period: '',
-  status: 'Draft',
-  overall_score: 0,
-  compliance_categories: [],
-  key_findings: '',
-  recommendations: '',
-  notes: ''
+	audit_plan: "",
+	period: "",
+	status: "Draft",
+	overall_score: 0,
+	compliance_categories: [],
+	key_findings: "",
+	recommendations: "",
+	notes: "",
 })
 
 const totalWeight = computed(() => {
-  return form.value.compliance_categories.reduce((sum, cat) => sum + (cat.weight || 0), 0)
+	return form.value.compliance_categories.reduce(
+		(sum, cat) => sum + (cat.weight || 0),
+		0,
+	)
 })
 
 const weightedScore = computed(() => {
-  if (totalWeight.value === 0) return 0
-  const weightedSum = form.value.compliance_categories.reduce((sum, cat) => {
-    return sum + ((cat.score || 0) * (cat.weight || 0))
-  }, 0)
-  return Math.round(weightedSum / totalWeight.value)
+	if (totalWeight.value === 0) return 0
+	const weightedSum = form.value.compliance_categories.reduce((sum, cat) => {
+		return sum + (cat.score || 0) * (cat.weight || 0)
+	}, 0)
+	return Math.round(weightedSum / totalWeight.value)
 })
 
 const calculatedScore = computed(() => {
-  if (form.value.compliance_categories.length === 0) return 0
-  const totalScore = form.value.compliance_categories.reduce((sum, cat) => sum + (cat.score || 0), 0)
-  return Math.round(totalScore / form.value.compliance_categories.length)
+	if (form.value.compliance_categories.length === 0) return 0
+	const totalScore = form.value.compliance_categories.reduce(
+		(sum, cat) => sum + (cat.score || 0),
+		0,
+	)
+	return Math.round(totalScore / form.value.compliance_categories.length)
 })
 
 onMounted(async () => {
-  await loadAuditPlans()
+	await loadAuditPlans()
 
-  if (isEdit.value) {
-    await loadScorecard()
-  }
+	if (isEdit.value) {
+		await loadScorecard()
+	}
 })
 
 async function loadAuditPlans() {
-  try {
-    const plans = await call('frappe.client.get_list', {
-      doctype: 'Audit Plan',
-      fields: ['name', 'plan_title'],
-      limit_page_length: 0
-    })
-    auditPlanOptions.value = plans.map(p => ({
-      label: p.plan_title || p.name,
-      value: p.name
-    }))
-  } catch (error) {
-    console.error('Error loading audit plans:', error)
-  }
+	try {
+		const plans = await call("frappe.client.get_list", {
+			doctype: "Audit Plan",
+			fields: ["name", "plan_title"],
+			limit_page_length: 0,
+		})
+		auditPlanOptions.value = plans.map((p) => ({
+			label: p.plan_title || p.name,
+			value: p.name,
+		}))
+	} catch (error) {
+		console.error("Error loading audit plans:", error)
+	}
 }
 
 async function loadScorecard() {
-  try {
-    const scorecard = await call('frappe.client.get', {
-      doctype: 'Compliance Scorecard',
-      name: route.params.id
-    })
+	try {
+		const scorecard = await call("frappe.client.get", {
+			doctype: "Compliance Scorecard",
+			name: route.params.id,
+		})
 
-    form.value = {
-      audit_plan: scorecard.audit_plan || '',
-      period: scorecard.period || '',
-      status: scorecard.status || 'Draft',
-      overall_score: scorecard.overall_score || 0,
-      compliance_categories: scorecard.compliance_categories || [],
-      key_findings: scorecard.key_findings || '',
-      recommendations: scorecard.recommendations || '',
-      notes: scorecard.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading scorecard:', error)
-  }
+		form.value = {
+			audit_plan: scorecard.audit_plan || "",
+			period: scorecard.period || "",
+			status: scorecard.status || "Draft",
+			overall_score: scorecard.overall_score || 0,
+			compliance_categories: scorecard.compliance_categories || [],
+			key_findings: scorecard.key_findings || "",
+			recommendations: scorecard.recommendations || "",
+			notes: scorecard.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading scorecard:", error)
+	}
 }
 
 function onAuditPlanChange() {
-  // Auto-set period if audit plan is selected
-  const selectedPlan = auditPlanOptions.value.find(p => p.value === form.value.audit_plan)
-  if (selectedPlan && !form.value.period) {
-    // Could auto-populate period from audit plan, but for now just leave it
-  }
+	// Auto-set period if audit plan is selected
+	const selectedPlan = auditPlanOptions.value.find(
+		(p) => p.value === form.value.audit_plan,
+	)
+	if (selectedPlan && !form.value.period) {
+		// Could auto-populate period from audit plan, but for now just leave it
+	}
 }
 
 function addCategory() {
-  form.value.compliance_categories.push({
-    category_name: '',
-    score: 0,
-    total_checks: 0,
-    passed_checks: 0,
-    failed_checks: 0,
-    weight: 0,
-    findings: ''
-  })
+	form.value.compliance_categories.push({
+		category_name: "",
+		score: 0,
+		total_checks: 0,
+		passed_checks: 0,
+		failed_checks: 0,
+		weight: 0,
+		findings: "",
+	})
 }
 
 function removeCategory(index) {
-  form.value.compliance_categories.splice(index, 1)
-  calculateOverallScore()
+	form.value.compliance_categories.splice(index, 1)
+	calculateOverallScore()
 }
 
 function updateFailedChecks(index) {
-  const category = form.value.compliance_categories[index]
-  if (category.total_checks && category.passed_checks) {
-    category.failed_checks = category.total_checks - category.passed_checks
-    updateScoreFromChecks(index)
-  }
+	const category = form.value.compliance_categories[index]
+	if (category.total_checks && category.passed_checks) {
+		category.failed_checks = category.total_checks - category.passed_checks
+		updateScoreFromChecks(index)
+	}
 }
 
 function updateScoreFromChecks(index) {
-  const category = form.value.compliance_categories[index]
-  if (category.total_checks > 0) {
-    category.score = Math.round((category.passed_checks / category.total_checks) * 100)
-    calculateOverallScore()
-  }
+	const category = form.value.compliance_categories[index]
+	if (category.total_checks > 0) {
+		category.score = Math.round(
+			(category.passed_checks / category.total_checks) * 100,
+		)
+		calculateOverallScore()
+	}
 }
 
 function calculateOverallScore() {
-  // Use weighted average if weights are provided, otherwise simple average
-  if (totalWeight.value > 0) {
-    form.value.overall_score = weightedScore.value
-  } else {
-    form.value.overall_score = calculatedScore.value
-  }
+	// Use weighted average if weights are provided, otherwise simple average
+	if (totalWeight.value > 0) {
+		form.value.overall_score = weightedScore.value
+	} else {
+		form.value.overall_score = calculatedScore.value
+	}
 }
 
 async function loadFromAuditPlan() {
-  if (!form.value.audit_plan) {
-    alert('Please select an audit plan first')
-    return
-  }
+	if (!form.value.audit_plan) {
+		alert("Please select an audit plan first")
+		return
+	}
 
-  try {
-    // Load audit plan to get related data
-    const plan = await call('frappe.client.get', {
-      doctype: 'Audit Plan',
-      name: form.value.audit_plan
-    })
+	try {
+		// Load audit plan to get related data
+		const plan = await call("frappe.client.get", {
+			doctype: "Audit Plan",
+			name: form.value.audit_plan,
+		})
 
-    // Auto-populate categories based on plan data
-    // This is a simplified example - in reality, you'd have predefined categories
-    const defaultCategories = [
-      { category_name: 'Planning & Preparation', score: 0, total_checks: 0, passed_checks: 0, failed_checks: 0, weight: 20, findings: '' },
-      { category_name: 'Execution & Documentation', score: 0, total_checks: 0, passed_checks: 0, failed_checks: 0, weight: 25, findings: '' },
-      { category_name: 'Quality Control', score: 0, total_checks: 0, passed_checks: 0, failed_checks: 0, weight: 20, findings: '' },
-      { category_name: 'Compliance & Standards', score: 0, total_checks: 0, passed_checks: 0, failed_checks: 0, weight: 20, findings: '' },
-      { category_name: 'Reporting & Follow-up', score: 0, total_checks: 0, passed_checks: 0, failed_checks: 0, weight: 15, findings: '' }
-    ]
+		// Auto-populate categories based on plan data
+		// This is a simplified example - in reality, you'd have predefined categories
+		const defaultCategories = [
+			{
+				category_name: "Planning & Preparation",
+				score: 0,
+				total_checks: 0,
+				passed_checks: 0,
+				failed_checks: 0,
+				weight: 20,
+				findings: "",
+			},
+			{
+				category_name: "Execution & Documentation",
+				score: 0,
+				total_checks: 0,
+				passed_checks: 0,
+				failed_checks: 0,
+				weight: 25,
+				findings: "",
+			},
+			{
+				category_name: "Quality Control",
+				score: 0,
+				total_checks: 0,
+				passed_checks: 0,
+				failed_checks: 0,
+				weight: 20,
+				findings: "",
+			},
+			{
+				category_name: "Compliance & Standards",
+				score: 0,
+				total_checks: 0,
+				passed_checks: 0,
+				failed_checks: 0,
+				weight: 20,
+				findings: "",
+			},
+			{
+				category_name: "Reporting & Follow-up",
+				score: 0,
+				total_checks: 0,
+				passed_checks: 0,
+				failed_checks: 0,
+				weight: 15,
+				findings: "",
+			},
+		]
 
-    form.value.compliance_categories = defaultCategories
-    calculateOverallScore()
-  } catch (error) {
-    console.error('Error loading from audit plan:', error)
-  }
+		form.value.compliance_categories = defaultCategories
+		calculateOverallScore()
+	} catch (error) {
+		console.error("Error loading from audit plan:", error)
+	}
 }
 
 async function saveScorecard() {
-  // Validate required fields
-  if (!form.value.audit_plan) {
-    alert('Audit plan is required')
-    return
-  }
+	// Validate required fields
+	if (!form.value.audit_plan) {
+		alert("Audit plan is required")
+		return
+	}
 
-  saving.value = true
+	saving.value = true
 
-  try {
-    if (isEdit.value) {
-      // Update existing
-      await call('frappe.client.set_value', {
-        doctype: 'Compliance Scorecard',
-        name: route.params.id,
-        fieldname: form.value
-      })
-      router.push(`/inventory-audit/scorecards/${route.params.id}`)
-    } else {
-      // Create new
-      const result = await call('frappe.client.insert', {
-        doc: {
-          doctype: 'Compliance Scorecard',
-          ...form.value
-        }
-      })
-      router.push(`/inventory-audit/scorecards/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving scorecard:', error)
-    alert('Error saving scorecard: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	try {
+		if (isEdit.value) {
+			// Update existing
+			await call("frappe.client.set_value", {
+				doctype: "Compliance Scorecard",
+				name: route.params.id,
+				fieldname: form.value,
+			})
+			router.push(`/inventory-audit/scorecards/${route.params.id}`)
+		} else {
+			// Create new
+			const result = await call("frappe.client.insert", {
+				doc: {
+					doctype: "Compliance Scorecard",
+					...form.value,
+				},
+			})
+			router.push(`/inventory-audit/scorecards/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving scorecard:", error)
+		alert("Error saving scorecard: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/scorecards/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/scorecards')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/scorecards/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/scorecards")
+	}
 }
 
 // Options
 const statusOptions = [
-  { label: 'Draft', value: 'Draft' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'Archived', value: 'Archived' }
+	{ label: "Draft", value: "Draft" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Archived", value: "Archived" },
 ]
 </script>

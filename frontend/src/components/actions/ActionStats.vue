@@ -135,67 +135,76 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  AlertCircleIcon,
-  CheckCircleIcon,
-  ClipboardListIcon,
-  PercentIcon,
-  PlayCircleIcon,
-} from 'lucide-vue-next'
+	AlertCircleIcon,
+	CheckCircleIcon,
+	ClipboardListIcon,
+	PercentIcon,
+	PlayCircleIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      total: 0,
-      inProgress: 0,
-      completed: 0,
-      overdue: 0,
-      avgProgress: 0,
-      dueThisWeek: 0,
-      dueThisMonth: 0,
-      dueLater: 0,
-      byStatus: {},
-      byPriority: {},
-    }),
-  },
-  showDetails: {
-    type: Boolean,
-    default: true,
-  },
+	stats: {
+		type: Object,
+		default: () => ({
+			total: 0,
+			inProgress: 0,
+			completed: 0,
+			overdue: 0,
+			avgProgress: 0,
+			dueThisWeek: 0,
+			dueThisMonth: 0,
+			dueLater: 0,
+			byStatus: {},
+			byPriority: {},
+		}),
+	},
+	showDetails: {
+		type: Boolean,
+		default: true,
+	},
 })
 
 // Computed
 const statusDistribution = computed(() => {
-  const statuses = props.stats.byStatus || {}
-  const total = Object.values(statuses).reduce((sum, count) => sum + count, 0) || 1
-  
-  const colors = {
-    'Draft': 'bg-gray-400',
-    'Approved': 'bg-blue-500',
-    'In Progress': 'bg-amber-500',
-    'On Hold': 'bg-purple-500',
-    'Completed': 'bg-green-500',
-    'Cancelled': 'bg-red-500',
-  }
+	const statuses = props.stats.byStatus || {}
+	const total =
+		Object.values(statuses).reduce((sum, count) => sum + count, 0) || 1
 
-  return Object.entries(statuses).map(([label, count]) => ({
-    label,
-    count,
-    percentage: (count / total) * 100,
-    color: colors[label] || 'bg-gray-400',
-  }))
+	const colors = {
+		Draft: "bg-gray-400",
+		Approved: "bg-blue-500",
+		"In Progress": "bg-amber-500",
+		"On Hold": "bg-purple-500",
+		Completed: "bg-green-500",
+		Cancelled: "bg-red-500",
+	}
+
+	return Object.entries(statuses).map(([label, count]) => ({
+		label,
+		count,
+		percentage: (count / total) * 100,
+		color: colors[label] || "bg-gray-400",
+	}))
 })
 
 const priorityDistribution = computed(() => {
-  const priorities = props.stats.byPriority || {}
-  return [
-    { label: 'Critical', count: priorities['Critical'] || 0, color: 'text-red-600' },
-    { label: 'High', count: priorities['High'] || 0, color: 'text-orange-600' },
-    { label: 'Medium', count: priorities['Medium'] || 0, color: 'text-amber-600' },
-    { label: 'Low', count: priorities['Low'] || 0, color: 'text-green-600' },
-  ]
+	const priorities = props.stats.byPriority || {}
+	return [
+		{
+			label: "Critical",
+			count: priorities["Critical"] || 0,
+			color: "text-red-600",
+		},
+		{ label: "High", count: priorities["High"] || 0, color: "text-orange-600" },
+		{
+			label: "Medium",
+			count: priorities["Medium"] || 0,
+			color: "text-amber-600",
+		},
+		{ label: "Low", count: priorities["Low"] || 0, color: "text-green-600" },
+	]
 })
 </script>

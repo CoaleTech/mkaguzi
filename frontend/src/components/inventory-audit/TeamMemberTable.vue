@@ -98,121 +98,129 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
-import { Button, FormControl, Badge } from 'frappe-ui'
-import { Plus, Trash2, Users } from 'lucide-vue-next'
-import { call } from 'frappe-ui'
+import { Badge, Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { Plus, Trash2, Users } from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  readonly: {
-    type: Boolean,
-    default: false
-  },
-  title: {
-    type: String,
-    default: 'Team Members'
-  },
-  roleOptions: {
-    type: Array,
-    default: () => [
-      { label: 'Counter', value: 'Counter' },
-      { label: 'Verifier', value: 'Verifier' },
-      { label: 'Supervisor', value: 'Supervisor' },
-      { label: 'Auditor', value: 'Auditor' }
-    ]
-  }
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
+	readonly: {
+		type: Boolean,
+		default: false,
+	},
+	title: {
+		type: String,
+		default: "Team Members",
+	},
+	roleOptions: {
+		type: Array,
+		default: () => [
+			{ label: "Counter", value: "Counter" },
+			{ label: "Verifier", value: "Verifier" },
+			{ label: "Supervisor", value: "Supervisor" },
+			{ label: "Auditor", value: "Auditor" },
+		],
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const members = computed({
-  get: () => props.modelValue || [],
-  set: (val) => emit('update:modelValue', val)
+	get: () => props.modelValue || [],
+	set: (val) => emit("update:modelValue", val),
 })
 
 const userOptions = ref([])
 
 onMounted(async () => {
-  await loadUsers()
+	await loadUsers()
 })
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 function addMember() {
-  const newMembers = [...members.value, {
-    user: '',
-    user_name: '',
-    role: 'Counter',
-    is_lead: 0
-  }]
-  emit('update:modelValue', newMembers)
+	const newMembers = [
+		...members.value,
+		{
+			user: "",
+			user_name: "",
+			role: "Counter",
+			is_lead: 0,
+		},
+	]
+	emit("update:modelValue", newMembers)
 }
 
 function removeMember(index) {
-  const newMembers = members.value.filter((_, i) => i !== index)
-  emit('update:modelValue', newMembers)
+	const newMembers = members.value.filter((_, i) => i !== index)
+	emit("update:modelValue", newMembers)
 }
 
 function onUserChange(index, userId) {
-  const user = userOptions.value.find(u => u.value === userId)
-  if (user) {
-    const newMembers = [...members.value]
-    newMembers[index] = {
-      ...newMembers[index],
-      user: userId,
-      user_name: user.label
-    }
-    emit('update:modelValue', newMembers)
-  }
+	const user = userOptions.value.find((u) => u.value === userId)
+	if (user) {
+		const newMembers = [...members.value]
+		newMembers[index] = {
+			...newMembers[index],
+			user: userId,
+			user_name: user.label,
+		}
+		emit("update:modelValue", newMembers)
+	}
 }
 
 function getInitials(name) {
-  if (!name) return '?'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+	if (!name) return "?"
+	return name
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.toUpperCase()
+		.slice(0, 2)
 }
 
 function getRoleBadgeVariant(role) {
-  const variants = {
-    'Counter': 'blue',
-    'Verifier': 'green',
-    'Supervisor': 'yellow',
-    'Auditor': 'purple'
-  }
-  return variants[role] || 'gray'
+	const variants = {
+		Counter: "blue",
+		Verifier: "green",
+		Supervisor: "yellow",
+		Auditor: "purple",
+	}
+	return variants[role] || "gray"
 }
 
 const leadCount = computed(() => {
-  return members.value.filter(m => m.is_lead).length
+	return members.value.filter((m) => m.is_lead).length
 })
 
 const roleBreakdown = computed(() => {
-  const counts = {}
-  members.value.forEach(m => {
-    if (m.role) {
-      counts[m.role] = (counts[m.role] || 0) + 1
-    }
-  })
-  return Object.entries(counts)
-    .map(([role, count]) => `${count} ${role}${count !== 1 ? 's' : ''}`)
-    .join(', ')
+	const counts = {}
+	members.value.forEach((m) => {
+		if (m.role) {
+			counts[m.role] = (counts[m.role] || 0) + 1
+		}
+	})
+	return Object.entries(counts)
+		.map(([role, count]) => `${count} ${role}${count !== 1 ? "s" : ""}`)
+		.join(", ")
 })
 </script>

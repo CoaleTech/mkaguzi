@@ -110,25 +110,25 @@ import { FormControl, Select } from "frappe-ui"
 
 // Props
 defineProps({
-  form: {
-    type: Object,
-    required: true
-  },
-  universeOptions: {
-    type: Array,
-    required: true
-  },
-  auditTypeOptions: {
-    type: Array,
-    required: true
-  },
-  statusOptions: {
-    type: Array,
-    required: true
-  },
-  planOptions: {
-    type: Array,
-    required: true
-  }
+	form: {
+		type: Object,
+		required: true,
+	},
+	universeOptions: {
+		type: Array,
+		required: true,
+	},
+	auditTypeOptions: {
+		type: Array,
+		required: true,
+	},
+	statusOptions: {
+		type: Array,
+		required: true,
+	},
+	planOptions: {
+		type: Array,
+		required: true,
+	},
 })
 </script>

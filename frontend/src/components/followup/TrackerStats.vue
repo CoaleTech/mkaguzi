@@ -161,141 +161,198 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  ListChecks,
-  CheckCircle,
-  Clock,
-  Pause,
-  XCircle,
-  Star,
-} from 'lucide-vue-next'
+	CheckCircle,
+	Clock,
+	ListChecks,
+	Pause,
+	Star,
+	XCircle,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  trackers: { type: Array, default: () => [] },
-  activeFilter: { type: String, default: '' },
+	trackers: { type: Array, default: () => [] },
+	activeFilter: { type: String, default: "" },
 })
 
-defineEmits(['filter'])
+defineEmits(["filter"])
 
 // Stats cards
 const statsCards = computed(() => {
-  const trackers = props.trackers
-  const total = trackers.length
-  const active = trackers.filter((t) => t.status === 'Active').length
-  const completed = trackers.filter((t) => t.status === 'Completed').length
-  const onHold = trackers.filter((t) => t.status === 'On Hold').length
-  const cancelled = trackers.filter((t) => t.status === 'Cancelled').length
+	const trackers = props.trackers
+	const total = trackers.length
+	const active = trackers.filter((t) => t.status === "Active").length
+	const completed = trackers.filter((t) => t.status === "Completed").length
+	const onHold = trackers.filter((t) => t.status === "On Hold").length
+	const cancelled = trackers.filter((t) => t.status === "Cancelled").length
 
-  return [
-    { label: 'Total Trackers', value: total, icon: ListChecks, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', filterKey: null, filterValue: null },
-    { label: 'Active', value: active, icon: Clock, bgColor: 'bg-green-100', iconColor: 'text-green-600', filterKey: 'status', filterValue: 'Active', active: props.activeFilter === 'Active' },
-    { label: 'Completed', value: completed, icon: CheckCircle, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', filterKey: 'status', filterValue: 'Completed', active: props.activeFilter === 'Completed' },
-    { label: 'On Hold', value: onHold, icon: Pause, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', filterKey: 'status', filterValue: 'On Hold', active: props.activeFilter === 'On Hold' },
-    { label: 'Cancelled', value: cancelled, icon: XCircle, bgColor: 'bg-gray-100', iconColor: 'text-gray-600', filterKey: 'status', filterValue: 'Cancelled', active: props.activeFilter === 'Cancelled' },
-  ]
+	return [
+		{
+			label: "Total Trackers",
+			value: total,
+			icon: ListChecks,
+			bgColor: "bg-blue-100",
+			iconColor: "text-blue-600",
+			filterKey: null,
+			filterValue: null,
+		},
+		{
+			label: "Active",
+			value: active,
+			icon: Clock,
+			bgColor: "bg-green-100",
+			iconColor: "text-green-600",
+			filterKey: "status",
+			filterValue: "Active",
+			active: props.activeFilter === "Active",
+		},
+		{
+			label: "Completed",
+			value: completed,
+			icon: CheckCircle,
+			bgColor: "bg-purple-100",
+			iconColor: "text-purple-600",
+			filterKey: "status",
+			filterValue: "Completed",
+			active: props.activeFilter === "Completed",
+		},
+		{
+			label: "On Hold",
+			value: onHold,
+			icon: Pause,
+			bgColor: "bg-yellow-100",
+			iconColor: "text-yellow-600",
+			filterKey: "status",
+			filterValue: "On Hold",
+			active: props.activeFilter === "On Hold",
+		},
+		{
+			label: "Cancelled",
+			value: cancelled,
+			icon: XCircle,
+			bgColor: "bg-gray-100",
+			iconColor: "text-gray-600",
+			filterKey: "status",
+			filterValue: "Cancelled",
+			active: props.activeFilter === "Cancelled",
+		},
+	]
 })
 
 // Current status distribution
 const currentStatusDistribution = computed(() => {
-  const trackers = props.trackers
-  const statuses = [
-    { name: 'On Track', dotColor: 'bg-green-500', theme: 'green' },
-    { name: 'Behind Schedule', dotColor: 'bg-yellow-500', theme: 'orange' },
-    { name: 'At Risk', dotColor: 'bg-orange-500', theme: 'orange' },
-    { name: 'Off Track', dotColor: 'bg-red-500', theme: 'red' },
-    { name: 'Completed Successfully', dotColor: 'bg-blue-500', theme: 'blue' },
-  ]
+	const trackers = props.trackers
+	const statuses = [
+		{ name: "On Track", dotColor: "bg-green-500", theme: "green" },
+		{ name: "Behind Schedule", dotColor: "bg-yellow-500", theme: "orange" },
+		{ name: "At Risk", dotColor: "bg-orange-500", theme: "orange" },
+		{ name: "Off Track", dotColor: "bg-red-500", theme: "red" },
+		{ name: "Completed Successfully", dotColor: "bg-blue-500", theme: "blue" },
+	]
 
-  return statuses.map((s) => ({
-    ...s,
-    count: trackers.filter((t) => t.current_status === s.name).length,
-  })).filter((s) => s.count > 0)
+	return statuses
+		.map((s) => ({
+			...s,
+			count: trackers.filter((t) => t.current_status === s.name).length,
+		}))
+		.filter((s) => s.count > 0)
 })
 
 // Due date calculations
 const overdueCount = computed(() => {
-  const today = new Date()
-  return props.trackers.filter((t) => {
-    if (t.status !== 'Active' || !t.next_due_date) return false
-    return new Date(t.next_due_date) < today
-  }).length
+	const today = new Date()
+	return props.trackers.filter((t) => {
+		if (t.status !== "Active" || !t.next_due_date) return false
+		return new Date(t.next_due_date) < today
+	}).length
 })
 
 const dueSoonCount = computed(() => {
-  const today = new Date()
-  const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-  return props.trackers.filter((t) => {
-    if (t.status !== 'Active' || !t.next_due_date) return false
-    const dueDate = new Date(t.next_due_date)
-    return dueDate >= today && dueDate <= weekFromNow
-  }).length
+	const today = new Date()
+	const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+	return props.trackers.filter((t) => {
+		if (t.status !== "Active" || !t.next_due_date) return false
+		const dueDate = new Date(t.next_due_date)
+		return dueDate >= today && dueDate <= weekFromNow
+	}).length
 })
 
 const onTimeCount = computed(() => {
-  const today = new Date()
-  const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-  return props.trackers.filter((t) => {
-    if (t.status !== 'Active' || !t.next_due_date) return false
-    return new Date(t.next_due_date) > weekFromNow
-  }).length
+	const today = new Date()
+	const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+	return props.trackers.filter((t) => {
+		if (t.status !== "Active" || !t.next_due_date) return false
+		return new Date(t.next_due_date) > weekFromNow
+	}).length
 })
 
 // Escalation stats
 const escalatedCount = computed(() => {
-  return props.trackers.filter((t) => t.escalation_required).length
+	return props.trackers.filter((t) => t.escalation_required).length
 })
 
 const notEscalatedCount = computed(() => {
-  return props.trackers.filter((t) => !t.escalation_required && t.status === 'Active').length
+	return props.trackers.filter(
+		(t) => !t.escalation_required && t.status === "Active",
+	).length
 })
 
 const escalationLevelDistribution = computed(() => {
-  const levels = ['Manager', 'Senior Management', 'Audit Committee', 'Board']
-  return levels.map((level) => ({
-    name: level,
-    count: props.trackers.filter((t) => t.escalation_level === level).length,
-  })).filter((l) => l.count > 0)
+	const levels = ["Manager", "Senior Management", "Audit Committee", "Board"]
+	return levels
+		.map((level) => ({
+			name: level,
+			count: props.trackers.filter((t) => t.escalation_level === level).length,
+		}))
+		.filter((l) => l.count > 0)
 })
 
 // Average ratings
 const avgProgressRating = computed(() => {
-  const rated = props.trackers.filter((t) => t.progress_rating)
-  if (!rated.length) return 0
-  return rated.reduce((sum, t) => sum + t.progress_rating, 0) / rated.length
+	const rated = props.trackers.filter((t) => t.progress_rating)
+	if (!rated.length) return 0
+	return rated.reduce((sum, t) => sum + t.progress_rating, 0) / rated.length
 })
 
 const avgEffectivenessRating = computed(() => {
-  const rated = props.trackers.filter((t) => t.effectiveness_rating)
-  if (!rated.length) return 0
-  return rated.reduce((sum, t) => sum + t.effectiveness_rating, 0) / rated.length
+	const rated = props.trackers.filter((t) => t.effectiveness_rating)
+	if (!rated.length) return 0
+	return (
+		rated.reduce((sum, t) => sum + t.effectiveness_rating, 0) / rated.length
+	)
 })
 
 // Follow-up type distribution
 const followUpTypeDistribution = computed(() => {
-  const trackers = props.trackers
-  const total = trackers.length || 1
-  const types = [
-    'Corrective Action Monitoring',
-    'Preventive Measure Verification',
-    'Process Improvement Tracking',
-    'Risk Mitigation Assessment',
-    'Compliance Verification',
-  ]
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-purple-500',
-    'bg-orange-500',
-    'bg-indigo-500',
-  ]
+	const trackers = props.trackers
+	const total = trackers.length || 1
+	const types = [
+		"Corrective Action Monitoring",
+		"Preventive Measure Verification",
+		"Process Improvement Tracking",
+		"Risk Mitigation Assessment",
+		"Compliance Verification",
+	]
+	const colors = [
+		"bg-blue-500",
+		"bg-green-500",
+		"bg-purple-500",
+		"bg-orange-500",
+		"bg-indigo-500",
+	]
 
-  return types.map((name, idx) => ({
-    name,
-    count: trackers.filter((t) => t.follow_up_type === name).length,
-    percentage: Math.round((trackers.filter((t) => t.follow_up_type === name).length / total) * 100),
-    barColor: colors[idx],
-  })).filter((t) => t.count > 0)
+	return types
+		.map((name, idx) => ({
+			name,
+			count: trackers.filter((t) => t.follow_up_type === name).length,
+			percentage: Math.round(
+				(trackers.filter((t) => t.follow_up_type === name).length / total) *
+					100,
+			),
+			barColor: colors[idx],
+		}))
+		.filter((t) => t.count > 0)
 })
 </script>

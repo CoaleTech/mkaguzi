@@ -51,141 +51,145 @@
 </template>
 
 <script setup>
-import { Autocomplete } from 'frappe-ui'
-import { ref, computed, watch } from 'vue'
-import { useLinkField } from '@/composables/useLinkField'
+import { useLinkField } from "@/composables/useLinkField"
+import { Autocomplete } from "frappe-ui"
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    default: ''
-  },
-  doctype: {
-    type: String,
-    required: true
-  },
-  label: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  filters: {
-    type: Object,
-    default: () => ({})
-  },
-  fetchFields: {
-    type: Array,
-    default: () => []
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+	modelValue: {
+		type: [String, Number],
+		default: "",
+	},
+	doctype: {
+		type: String,
+		required: true,
+	},
+	label: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	filters: {
+		type: Object,
+		default: () => ({}),
+	},
+	fetchFields: {
+		type: Array,
+		default: () => [],
+	},
+	error: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const { searchResults, isSearching, search, getValue } = useLinkField(
-  props.doctype,
-  props.filters
+	props.doctype,
+	props.filters,
 )
 
 const selectedValue = ref(props.modelValue)
-const displayLabel = ref('')
+const displayLabel = ref("")
 
 // Computed options for Autocomplete
 const options = computed(() => {
-  return searchResults.value.map(item => ({
-    label: item.label,
-    value: item.value
-  }))
+	return searchResults.value.map((item) => ({
+		label: item.label,
+		value: item.value,
+	}))
 })
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newValue) => {
-  selectedValue.value = newValue
-  if (newValue) {
-    // Fetch display label if needed
-    fetchDisplayLabel(newValue)
-  } else {
-    displayLabel.value = ''
-  }
-}, { immediate: true })
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		selectedValue.value = newValue
+		if (newValue) {
+			// Fetch display label if needed
+			fetchDisplayLabel(newValue)
+		} else {
+			displayLabel.value = ""
+		}
+	},
+	{ immediate: true },
+)
 
 /**
  * Fetch display label for the selected value
  */
 const fetchDisplayLabel = async (value) => {
-  if (!value) {
-    displayLabel.value = ''
-    return
-  }
+	if (!value) {
+		displayLabel.value = ""
+		return
+	}
 
-  // If we have fetchFields, use them to get a proper label
-  if (props.fetchFields.length > 0) {
-    const data = await getValue(value, props.fetchFields)
-    if (data) {
-      // Use the first field as display label
-      displayLabel.value = data[props.fetchFields[0]] || value
-    } else {
-      displayLabel.value = value
-    }
-  } else {
-    // Just use the value as label
-    displayLabel.value = value
-  }
+	// If we have fetchFields, use them to get a proper label
+	if (props.fetchFields.length > 0) {
+		const data = await getValue(value, props.fetchFields)
+		if (data) {
+			// Use the first field as display label
+			displayLabel.value = data[props.fetchFields[0]] || value
+		} else {
+			displayLabel.value = value
+		}
+	} else {
+		// Just use the value as label
+		displayLabel.value = value
+	}
 }
 
 /**
  * Handle search input
  */
 const handleSearch = (query) => {
-  if (query && query.length > 0) {
-    search(query)
-  }
+	if (query && query.length > 0) {
+		search(query)
+	}
 }
 
 /**
  * Handle selection from autocomplete
  */
 const handleSelect = async (selected) => {
-  if (!selected) {
-    selectedValue.value = ''
-    displayLabel.value = ''
-    emit('update:modelValue', '')
-    emit('change', { value: '', relatedData: null })
-    return
-  }
+	if (!selected) {
+		selectedValue.value = ""
+		displayLabel.value = ""
+		emit("update:modelValue", "")
+		emit("change", { value: "", relatedData: null })
+		return
+	}
 
-  const value = typeof selected === 'object' ? selected.value : selected
-  selectedValue.value = value
-  emit('update:modelValue', value)
+	const value = typeof selected === "object" ? selected.value : selected
+	selectedValue.value = value
+	emit("update:modelValue", value)
 
-  // Fetch related fields if specified
-  let relatedData = null
-  if (props.fetchFields.length > 0) {
-    relatedData = await getValue(value, props.fetchFields)
-    if (relatedData) {
-      // Set display label from fetched data
-      displayLabel.value = relatedData[props.fetchFields[0]] || value
-    }
-  } else {
-    displayLabel.value = typeof selected === 'object' ? selected.label : value
-  }
+	// Fetch related fields if specified
+	let relatedData = null
+	if (props.fetchFields.length > 0) {
+		relatedData = await getValue(value, props.fetchFields)
+		if (relatedData) {
+			// Set display label from fetched data
+			displayLabel.value = relatedData[props.fetchFields[0]] || value
+		}
+	} else {
+		displayLabel.value = typeof selected === "object" ? selected.label : value
+	}
 
-  // Emit change event with related data for auto-population
-  emit('change', { value, relatedData })
+	// Emit change event with related data for auto-population
+	emit("change", { value, relatedData })
 }
 </script>
 

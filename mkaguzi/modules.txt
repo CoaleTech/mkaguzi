@@ -2,6 +2,7 @@ Mkaguzi
 Inventory Audit
 Audit Planning
 Audit Execution
+Chat System
 Findings Remediation
 Risk Assessment
 Compliance Management

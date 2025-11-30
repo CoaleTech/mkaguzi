@@ -304,11 +304,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save } from 'lucide-vue-next'
+import { Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Save } from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -320,309 +320,313 @@ const warehouseOptions = ref([])
 const sessionOptions = ref([])
 const auditPlanOptions = ref([])
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  item_code: '',
-  item_name: '',
-  warehouse: '',
-  branch: '',
-  system_qty: 0,
-  counted_qty: 0,
-  variance_qty: 0,
-  unit_cost: 0,
-  variance_value: 0,
-  uom: 'Nos',
-  status: 'Open',
-  priority: 'Medium',
-  category: '',
-  stock_take_session: '',
-  audit_plan: '',
-  assigned_to: '',
-  due_date: '',
-  root_cause: '',
-  investigation_notes: '',
-  resolution_type: '',
-  resolved_date: '',
-  resolution_notes: '',
-  notes: ''
+	item_code: "",
+	item_name: "",
+	warehouse: "",
+	branch: "",
+	system_qty: 0,
+	counted_qty: 0,
+	variance_qty: 0,
+	unit_cost: 0,
+	variance_value: 0,
+	uom: "Nos",
+	status: "Open",
+	priority: "Medium",
+	category: "",
+	stock_take_session: "",
+	audit_plan: "",
+	assigned_to: "",
+	due_date: "",
+	root_cause: "",
+	investigation_notes: "",
+	resolution_type: "",
+	resolved_date: "",
+	resolution_notes: "",
+	notes: "",
 })
 
 const varianceQtyClass = computed(() => {
-  if (form.value.variance_qty === 0) return 'bg-gray-100 text-gray-700'
-  return form.value.variance_qty < 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+	if (form.value.variance_qty === 0) return "bg-gray-100 text-gray-700"
+	return form.value.variance_qty < 0
+		? "bg-red-100 text-red-700"
+		: "bg-green-100 text-green-700"
 })
 
 onMounted(async () => {
-  await Promise.all([
-    loadUsers(),
-    loadItems(),
-    loadWarehouses(),
-    loadSessions(),
-    loadAuditPlans()
-  ])
-  
-  if (isEdit.value) {
-    await loadCase()
-  }
-  
-  // Check for prefilled data from query params
-  if (route.query.session) {
-    form.value.stock_take_session = route.query.session
-  }
-  if (route.query.item_code) {
-    form.value.item_code = route.query.item_code
-  }
+	await Promise.all([
+		loadUsers(),
+		loadItems(),
+		loadWarehouses(),
+		loadSessions(),
+		loadAuditPlans(),
+	])
+
+	if (isEdit.value) {
+		await loadCase()
+	}
+
+	// Check for prefilled data from query params
+	if (route.query.session) {
+		form.value.stock_take_session = route.query.session
+	}
+	if (route.query.item_code) {
+		form.value.item_code = route.query.item_code
+	}
 })
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 async function loadItems() {
-  try {
-    const items = await call('frappe.client.get_list', {
-      doctype: 'Item',
-      fields: ['name', 'item_name', 'stock_uom', 'valuation_rate'],
-      limit_page_length: 0
-    })
-    itemOptions.value = items.map(i => ({
-      label: `${i.name} - ${i.item_name}`,
-      value: i.name,
-      item_name: i.item_name,
-      uom: i.stock_uom,
-      cost: i.valuation_rate
-    }))
-  } catch (error) {
-    console.error('Error loading items:', error)
-  }
+	try {
+		const items = await call("frappe.client.get_list", {
+			doctype: "Item",
+			fields: ["name", "item_name", "stock_uom", "valuation_rate"],
+			limit_page_length: 0,
+		})
+		itemOptions.value = items.map((i) => ({
+			label: `${i.name} - ${i.item_name}`,
+			value: i.name,
+			item_name: i.item_name,
+			uom: i.stock_uom,
+			cost: i.valuation_rate,
+		}))
+	} catch (error) {
+		console.error("Error loading items:", error)
+	}
 }
 
 async function loadWarehouses() {
-  try {
-    const warehouses = await call('frappe.client.get_list', {
-      doctype: 'Warehouse',
-      fields: ['name', 'warehouse_name'],
-      limit_page_length: 0
-    })
-    warehouseOptions.value = warehouses.map(w => ({
-      label: w.warehouse_name || w.name,
-      value: w.name
-    }))
-  } catch (error) {
-    console.error('Error loading warehouses:', error)
-  }
+	try {
+		const warehouses = await call("frappe.client.get_list", {
+			doctype: "Warehouse",
+			fields: ["name", "warehouse_name"],
+			limit_page_length: 0,
+		})
+		warehouseOptions.value = warehouses.map((w) => ({
+			label: w.warehouse_name || w.name,
+			value: w.name,
+		}))
+	} catch (error) {
+		console.error("Error loading warehouses:", error)
+	}
 }
 
 async function loadSessions() {
-  try {
-    const sessions = await call('frappe.client.get_list', {
-      doctype: 'Stock Take Session',
-      fields: ['name', 'session_name', 'scheduled_date'],
-      limit_page_length: 50,
-      order_by: 'scheduled_date desc'
-    })
-    sessionOptions.value = sessions.map(s => ({
-      label: s.session_name || s.name,
-      value: s.name
-    }))
-  } catch (error) {
-    console.error('Error loading sessions:', error)
-  }
+	try {
+		const sessions = await call("frappe.client.get_list", {
+			doctype: "Stock Take Session",
+			fields: ["name", "session_name", "scheduled_date"],
+			limit_page_length: 50,
+			order_by: "scheduled_date desc",
+		})
+		sessionOptions.value = sessions.map((s) => ({
+			label: s.session_name || s.name,
+			value: s.name,
+		}))
+	} catch (error) {
+		console.error("Error loading sessions:", error)
+	}
 }
 
 async function loadAuditPlans() {
-  try {
-    const plans = await call('frappe.client.get_list', {
-      doctype: 'Inventory Audit Plan',
-      filters: { status: ['in', ['Planned', 'In Progress']] },
-      fields: ['name', 'plan_title'],
-      limit_page_length: 0
-    })
-    auditPlanOptions.value = plans.map(p => ({
-      label: p.plan_title || p.name,
-      value: p.name
-    }))
-  } catch (error) {
-    console.error('Error loading audit plans:', error)
-  }
+	try {
+		const plans = await call("frappe.client.get_list", {
+			doctype: "Inventory Audit Plan",
+			filters: { status: ["in", ["Planned", "In Progress"]] },
+			fields: ["name", "plan_title"],
+			limit_page_length: 0,
+		})
+		auditPlanOptions.value = plans.map((p) => ({
+			label: p.plan_title || p.name,
+			value: p.name,
+		}))
+	} catch (error) {
+		console.error("Error loading audit plans:", error)
+	}
 }
 
 async function loadCase() {
-  try {
-    const doc = await call('frappe.client.get', {
-      doctype: 'Inventory Variance Case',
-      name: route.params.id
-    })
-    
-    form.value = {
-      item_code: doc.item_code || '',
-      item_name: doc.item_name || '',
-      warehouse: doc.warehouse || '',
-      branch: doc.branch || '',
-      system_qty: doc.system_qty || 0,
-      counted_qty: doc.counted_qty || 0,
-      variance_qty: doc.variance_qty || 0,
-      unit_cost: doc.unit_cost || 0,
-      variance_value: doc.variance_value || 0,
-      uom: doc.uom || 'Nos',
-      status: doc.status || 'Open',
-      priority: doc.priority || 'Medium',
-      category: doc.category || '',
-      stock_take_session: doc.stock_take_session || '',
-      audit_plan: doc.audit_plan || '',
-      assigned_to: doc.assigned_to || '',
-      due_date: doc.due_date || '',
-      root_cause: doc.root_cause || '',
-      investigation_notes: doc.investigation_notes || '',
-      resolution_type: doc.resolution_type || '',
-      resolved_date: doc.resolved_date || '',
-      resolution_notes: doc.resolution_notes || '',
-      notes: doc.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading case:', error)
-  }
+	try {
+		const doc = await call("frappe.client.get", {
+			doctype: "Inventory Variance Case",
+			name: route.params.id,
+		})
+
+		form.value = {
+			item_code: doc.item_code || "",
+			item_name: doc.item_name || "",
+			warehouse: doc.warehouse || "",
+			branch: doc.branch || "",
+			system_qty: doc.system_qty || 0,
+			counted_qty: doc.counted_qty || 0,
+			variance_qty: doc.variance_qty || 0,
+			unit_cost: doc.unit_cost || 0,
+			variance_value: doc.variance_value || 0,
+			uom: doc.uom || "Nos",
+			status: doc.status || "Open",
+			priority: doc.priority || "Medium",
+			category: doc.category || "",
+			stock_take_session: doc.stock_take_session || "",
+			audit_plan: doc.audit_plan || "",
+			assigned_to: doc.assigned_to || "",
+			due_date: doc.due_date || "",
+			root_cause: doc.root_cause || "",
+			investigation_notes: doc.investigation_notes || "",
+			resolution_type: doc.resolution_type || "",
+			resolved_date: doc.resolved_date || "",
+			resolution_notes: doc.resolution_notes || "",
+			notes: doc.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading case:", error)
+	}
 }
 
 function onItemChange(value) {
-  const item = itemOptions.value.find(i => i.value === value)
-  if (item) {
-    form.value.item_name = item.item_name
-    form.value.uom = item.uom || 'Nos'
-    form.value.unit_cost = item.cost || 0
-    calculateVariance()
-  }
+	const item = itemOptions.value.find((i) => i.value === value)
+	if (item) {
+		form.value.item_name = item.item_name
+		form.value.uom = item.uom || "Nos"
+		form.value.unit_cost = item.cost || 0
+		calculateVariance()
+	}
 }
 
 function calculateVariance() {
-  form.value.variance_qty = (form.value.counted_qty || 0) - (form.value.system_qty || 0)
-  form.value.variance_value = form.value.variance_qty * (form.value.unit_cost || 0)
-  
-  // Auto-set priority based on variance value
-  const absValue = Math.abs(form.value.variance_value)
-  if (absValue > 100000) {
-    form.value.priority = 'Critical'
-  } else if (absValue > 50000) {
-    form.value.priority = 'High'
-  } else if (absValue > 10000) {
-    form.value.priority = 'Medium'
-  } else {
-    form.value.priority = 'Low'
-  }
+	form.value.variance_qty =
+		(form.value.counted_qty || 0) - (form.value.system_qty || 0)
+	form.value.variance_value =
+		form.value.variance_qty * (form.value.unit_cost || 0)
+
+	// Auto-set priority based on variance value
+	const absValue = Math.abs(form.value.variance_value)
+	if (absValue > 100000) {
+		form.value.priority = "Critical"
+	} else if (absValue > 50000) {
+		form.value.priority = "High"
+	} else if (absValue > 10000) {
+		form.value.priority = "Medium"
+	} else {
+		form.value.priority = "Low"
+	}
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined) return 'KES 0'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES'
-  }).format(value)
+	if (value === null || value === undefined) return "KES 0"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+	}).format(value)
 }
 
 async function saveCase() {
-  // Validate required fields
-  if (!form.value.item_code) {
-    alert('Item code is required')
-    return
-  }
+	// Validate required fields
+	if (!form.value.item_code) {
+		alert("Item code is required")
+		return
+	}
 
-  saving.value = true
-  
-  try {
-    if (isEdit.value) {
-      // Update existing
-      await call('frappe.client.set_value', {
-        doctype: 'Inventory Variance Case',
-        name: route.params.id,
-        fieldname: form.value
-      })
-      router.push(`/inventory-audit/variance-cases/${route.params.id}`)
-    } else {
-      // Create new
-      const result = await call('frappe.client.insert', {
-        doc: {
-          doctype: 'Inventory Variance Case',
-          ...form.value
-        }
-      })
-      router.push(`/inventory-audit/variance-cases/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving case:', error)
-    alert('Error saving case: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+
+	try {
+		if (isEdit.value) {
+			// Update existing
+			await call("frappe.client.set_value", {
+				doctype: "Inventory Variance Case",
+				name: route.params.id,
+				fieldname: form.value,
+			})
+			router.push(`/inventory-audit/variance-cases/${route.params.id}`)
+		} else {
+			// Create new
+			const result = await call("frappe.client.insert", {
+				doc: {
+					doctype: "Inventory Variance Case",
+					...form.value,
+				},
+			})
+			router.push(`/inventory-audit/variance-cases/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving case:", error)
+		alert("Error saving case: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/variance-cases/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/variance-cases')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/variance-cases/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/variance-cases")
+	}
 }
 
 // Options
 const statusOptions = [
-  { label: 'Open', value: 'Open' },
-  { label: 'Under Investigation', value: 'Under Investigation' },
-  { label: 'Resolved', value: 'Resolved' },
-  { label: 'Written Off', value: 'Written Off' },
-  { label: 'Closed', value: 'Closed' }
+	{ label: "Open", value: "Open" },
+	{ label: "Under Investigation", value: "Under Investigation" },
+	{ label: "Resolved", value: "Resolved" },
+	{ label: "Written Off", value: "Written Off" },
+	{ label: "Closed", value: "Closed" },
 ]
 
 const priorityOptions = [
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' }
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const categoryOptions = [
-  { label: 'Shortage', value: 'Shortage' },
-  { label: 'Overage', value: 'Overage' },
-  { label: 'Damaged', value: 'Damaged' },
-  { label: 'Expired', value: 'Expired' },
-  { label: 'Misplaced', value: 'Misplaced' },
-  { label: 'Data Entry Error', value: 'Data Entry Error' },
-  { label: 'Theft', value: 'Theft' },
-  { label: 'Unknown', value: 'Unknown' }
+	{ label: "Shortage", value: "Shortage" },
+	{ label: "Overage", value: "Overage" },
+	{ label: "Damaged", value: "Damaged" },
+	{ label: "Expired", value: "Expired" },
+	{ label: "Misplaced", value: "Misplaced" },
+	{ label: "Data Entry Error", value: "Data Entry Error" },
+	{ label: "Theft", value: "Theft" },
+	{ label: "Unknown", value: "Unknown" },
 ]
 
 const rootCauseOptions = [
-  { label: 'Not Determined', value: '' },
-  { label: 'Theft / Pilferage', value: 'Theft / Pilferage' },
-  { label: 'Data Entry Error', value: 'Data Entry Error' },
-  { label: 'Receiving Error', value: 'Receiving Error' },
-  { label: 'Shipping Error', value: 'Shipping Error' },
-  { label: 'Damage / Spoilage', value: 'Damage / Spoilage' },
-  { label: 'Misplacement', value: 'Misplacement' },
-  { label: 'System Error', value: 'System Error' },
-  { label: 'Vendor Issue', value: 'Vendor Issue' },
-  { label: 'Process Failure', value: 'Process Failure' },
-  { label: 'Other', value: 'Other' }
+	{ label: "Not Determined", value: "" },
+	{ label: "Theft / Pilferage", value: "Theft / Pilferage" },
+	{ label: "Data Entry Error", value: "Data Entry Error" },
+	{ label: "Receiving Error", value: "Receiving Error" },
+	{ label: "Shipping Error", value: "Shipping Error" },
+	{ label: "Damage / Spoilage", value: "Damage / Spoilage" },
+	{ label: "Misplacement", value: "Misplacement" },
+	{ label: "System Error", value: "System Error" },
+	{ label: "Vendor Issue", value: "Vendor Issue" },
+	{ label: "Process Failure", value: "Process Failure" },
+	{ label: "Other", value: "Other" },
 ]
 
 const resolutionTypeOptions = [
-  { label: 'Adjusted', value: 'Adjusted' },
-  { label: 'Written Off', value: 'Written Off' },
-  { label: 'No Action Required', value: 'No Action Required' },
-  { label: 'Transferred', value: 'Transferred' },
-  { label: 'Recovered', value: 'Recovered' }
+	{ label: "Adjusted", value: "Adjusted" },
+	{ label: "Written Off", value: "Written Off" },
+	{ label: "No Action Required", value: "No Action Required" },
+	{ label: "Transferred", value: "Transferred" },
+	{ label: "Recovered", value: "Recovered" },
 ]
 </script>

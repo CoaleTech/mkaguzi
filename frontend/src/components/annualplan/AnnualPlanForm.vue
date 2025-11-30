@@ -436,46 +436,46 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { Dialog, Button, FormControl, TextEditor } from 'frappe-ui'
-import ChildTable from '@/components/Common/ChildTable.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import { useMultiSectionForm } from '@/composables/useMultiSectionForm'
+import ChildTable from "@/components/Common/ChildTable.vue"
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import { useMultiSectionForm } from "@/composables/useMultiSectionForm"
+import { Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-  FileTextIcon,
-  TargetIcon,
-  UsersIcon,
-  ClipboardListIcon,
-  CalculatorIcon,
-  AlertTriangleIcon,
-  ShieldCheckIcon,
-  FileCheck2Icon,
-  CheckCircle2Icon,
-  AlertCircleIcon,
-  CloudIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from 'lucide-vue-next'
+	AlertCircleIcon,
+	AlertTriangleIcon,
+	CalculatorIcon,
+	CheckCircle2Icon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ClipboardListIcon,
+	CloudIcon,
+	FileCheck2Icon,
+	FileTextIcon,
+	ShieldCheckIcon,
+	TargetIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, reactive, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  plan: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	plan: {
+		type: Object,
+		default: null,
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'saved', 'close'])
+const emit = defineEmits(["update:modelValue", "saved", "close"])
 
 // Dialog visibility
 const showDialog = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const isEditing = computed(() => !!props.plan?.name)
@@ -484,93 +484,99 @@ const lastSaved = ref(null)
 
 // Section definitions
 const sections = {
-  basic: { label: 'Basic Information', icon: FileTextIcon },
-  overview: { label: 'Plan Overview', icon: TargetIcon },
-  resources: { label: 'Resource Summary', icon: UsersIcon },
-  audits: { label: 'Planned Audits', icon: ClipboardListIcon },
-  budget: { label: 'Budget Allocation', icon: CalculatorIcon },
-  risk: { label: 'Risk Prioritization', icon: AlertTriangleIcon },
-  contingency: { label: 'Contingency & Monitoring', icon: ShieldCheckIcon },
-  additional: { label: 'Additional Information', icon: FileCheck2Icon },
+	basic: { label: "Basic Information", icon: FileTextIcon },
+	overview: { label: "Plan Overview", icon: TargetIcon },
+	resources: { label: "Resource Summary", icon: UsersIcon },
+	audits: { label: "Planned Audits", icon: ClipboardListIcon },
+	budget: { label: "Budget Allocation", icon: CalculatorIcon },
+	risk: { label: "Risk Prioritization", icon: AlertTriangleIcon },
+	contingency: { label: "Contingency & Monitoring", icon: ShieldCheckIcon },
+	additional: { label: "Additional Information", icon: FileCheck2Icon },
 }
 
 // Section field mappings for validation
 const sectionFields = {
-  basic: ['plan_id', 'plan_year', 'plan_period', 'prepared_by', 'prepared_date'],
-  overview: ['plan_objectives', 'scope_and_coverage'],
-  resources: [],
-  audits: ['planned_audits'],
-  budget: [],
-  risk: [],
-  contingency: [],
-  additional: [],
+	basic: [
+		"plan_id",
+		"plan_year",
+		"plan_period",
+		"prepared_by",
+		"prepared_date",
+	],
+	overview: ["plan_objectives", "scope_and_coverage"],
+	resources: [],
+	audits: ["planned_audits"],
+	budget: [],
+	risk: [],
+	contingency: [],
+	additional: [],
 }
 
 // Use multi-section form composable
 const {
-  activeSection,
-  formProgress,
-  setActiveSection,
-  getSectionStatus,
-  validateForm,
-  prepareFormData,
+	activeSection,
+	formProgress,
+	setActiveSection,
+	getSectionStatus,
+	validateForm,
+	prepareFormData,
 } = useMultiSectionForm(sections, sectionFields)
 
 // Form data
 const formData = reactive({
-  // Basic Information
-  plan_id: '',
-  plan_year: new Date().getFullYear(),
-  plan_period: 'Annual',
-  prepared_by: '',
-  prepared_date: '',
-  approved_by: '',
-  approved_date: '',
-  status: 'Draft',
+	// Basic Information
+	plan_id: "",
+	plan_year: new Date().getFullYear(),
+	plan_period: "Annual",
+	prepared_by: "",
+	prepared_date: "",
+	approved_by: "",
+	approved_date: "",
+	status: "Draft",
 
-  // Plan Overview
-  plan_objectives: '',
-  scope_and_coverage: '',
-  key_assumptions: '',
+	// Plan Overview
+	plan_objectives: "",
+	scope_and_coverage: "",
+	key_assumptions: "",
 
-  // Resource Summary
-  total_available_days: null,
-  total_planned_days: null,
-  utilization_percentage: null,
-  resource_allocation: [],
+	// Resource Summary
+	total_available_days: null,
+	total_planned_days: null,
+	utilization_percentage: null,
+	resource_allocation: [],
 
-  // Planned Audits
-  planned_audits: [],
+	// Planned Audits
+	planned_audits: [],
 
-  // Budget Allocation
-  budget_allocation: [],
+	// Budget Allocation
+	budget_allocation: [],
 
-  // Risk Prioritization
-  risk_based_prioritization: [],
+	// Risk Prioritization
+	risk_based_prioritization: [],
 
-  // Contingency & Monitoring
-  contingency_plan: '',
-  monitoring_and_reporting: '',
+	// Contingency & Monitoring
+	contingency_plan: "",
+	monitoring_and_reporting: "",
 
-  // Additional Information
-  notes: '',
-  attachments: '',
+	// Additional Information
+	notes: "",
+	attachments: "",
 })
 
 // Options
 const periodOptions = [
-  { label: 'Annual', value: 'Annual' },
-  { label: 'Semi-Annual', value: 'Semi-Annual' },
-  { label: 'Quarterly', value: 'Quarterly' },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Quarterly", value: "Quarterly" },
 ]
 
 const statusOptions = [
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Submitted for Approval', value: 'Submitted for Approval' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'Rejected', value: 'Rejected' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Completed', value: 'Completed' },
+	{ label: "Draft", value: "Draft" },
+	{ label: "Submitted for Approval", value: "Submitted for Approval" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Rejected", value: "Rejected" },
+	{ label: "Active", value: "Active" },
+	{ label: "Completed", value: "Completed" },
 ]
 
 const userOptions = ref([])
@@ -579,274 +585,432 @@ const userOptions = ref([])
 
 // Resource Allocation
 const resourceColumns = [
-  { key: 'auditor', label: 'Auditor', width: '150px' },
-  { key: 'role', label: 'Role', width: '120px' },
-  { key: 'available_days', label: 'Available', width: '80px' },
-  { key: 'allocated_days', label: 'Allocated', width: '80px' },
-  { key: 'utilization_percentage', label: 'Util %', width: '80px' },
+	{ key: "auditor", label: "Auditor", width: "150px" },
+	{ key: "role", label: "Role", width: "120px" },
+	{ key: "available_days", label: "Available", width: "80px" },
+	{ key: "allocated_days", label: "Allocated", width: "80px" },
+	{ key: "utilization_percentage", label: "Util %", width: "80px" },
 ]
 
 const resourceFields = [
-  { key: 'auditor', label: 'Auditor', type: 'link', doctype: 'User', required: true },
-  { key: 'auditor_name', label: 'Auditor Name', type: 'text', readOnly: true },
-  { key: 'role', label: 'Role', type: 'select', required: true, options: [
-    { label: 'Lead Auditor', value: 'Lead Auditor' },
-    { label: 'Senior Auditor', value: 'Senior Auditor' },
-    { label: 'Auditor', value: 'Auditor' },
-    { label: 'Trainee', value: 'Trainee' },
-    { label: 'Specialist', value: 'Specialist' },
-  ]},
-  { key: 'available_days', label: 'Available Days', type: 'number', required: true },
-  { key: 'allocated_days', label: 'Allocated Days', type: 'number' },
-  { key: 'utilization_percentage', label: 'Utilization %', type: 'number', readOnly: true },
-  { key: 'skills_expertise', label: 'Skills/Expertise', type: 'textarea' },
-  { key: 'location', label: 'Location', type: 'select', options: [
-    { label: 'Head Office', value: 'Head Office' },
-    { label: 'Branch 1', value: 'Branch 1' },
-    { label: 'Branch 2', value: 'Branch 2' },
-    { label: 'Remote', value: 'Remote' },
-  ]},
-  { key: 'cost_rate_per_day', label: 'Cost Rate/Day', type: 'currency' },
-  { key: 'total_cost', label: 'Total Cost', type: 'currency', readOnly: true },
+	{
+		key: "auditor",
+		label: "Auditor",
+		type: "link",
+		doctype: "User",
+		required: true,
+	},
+	{ key: "auditor_name", label: "Auditor Name", type: "text", readOnly: true },
+	{
+		key: "role",
+		label: "Role",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Lead Auditor", value: "Lead Auditor" },
+			{ label: "Senior Auditor", value: "Senior Auditor" },
+			{ label: "Auditor", value: "Auditor" },
+			{ label: "Trainee", value: "Trainee" },
+			{ label: "Specialist", value: "Specialist" },
+		],
+	},
+	{
+		key: "available_days",
+		label: "Available Days",
+		type: "number",
+		required: true,
+	},
+	{ key: "allocated_days", label: "Allocated Days", type: "number" },
+	{
+		key: "utilization_percentage",
+		label: "Utilization %",
+		type: "number",
+		readOnly: true,
+	},
+	{ key: "skills_expertise", label: "Skills/Expertise", type: "textarea" },
+	{
+		key: "location",
+		label: "Location",
+		type: "select",
+		options: [
+			{ label: "Head Office", value: "Head Office" },
+			{ label: "Branch 1", value: "Branch 1" },
+			{ label: "Branch 2", value: "Branch 2" },
+			{ label: "Remote", value: "Remote" },
+		],
+	},
+	{ key: "cost_rate_per_day", label: "Cost Rate/Day", type: "currency" },
+	{ key: "total_cost", label: "Total Cost", type: "currency", readOnly: true },
 ]
 
 // Planned Audits
 const auditColumns = [
-  { key: 'audit_universe', label: 'Audit Universe', width: '180px' },
-  { key: 'audit_type', label: 'Type', width: '100px' },
-  { key: 'priority', label: 'Priority', width: '80px', component: 'Badge' },
-  { key: 'planned_days', label: 'Days', width: '60px' },
-  { key: 'planned_start_date', label: 'Start', width: '100px' },
+	{ key: "audit_universe", label: "Audit Universe", width: "180px" },
+	{ key: "audit_type", label: "Type", width: "100px" },
+	{ key: "priority", label: "Priority", width: "80px", component: "Badge" },
+	{ key: "planned_days", label: "Days", width: "60px" },
+	{ key: "planned_start_date", label: "Start", width: "100px" },
 ]
 
 const auditFields = [
-  { key: 'audit_universe', label: 'Audit Universe', type: 'link', doctype: 'Audit Universe', required: true },
-  { key: 'audit_type', label: 'Audit Type', type: 'select', required: true, options: [
-    { label: 'Financial', value: 'Financial' },
-    { label: 'Operational', value: 'Operational' },
-    { label: 'Compliance', value: 'Compliance' },
-    { label: 'IT', value: 'IT' },
-    { label: 'Integrated', value: 'Integrated' },
-    { label: 'Special Investigation', value: 'Special Investigation' },
-    { label: 'Follow-up', value: 'Follow-up' },
-  ]},
-  { key: 'priority', label: 'Priority', type: 'select', required: true, options: [
-    { label: 'Critical', value: 'Critical' },
-    { label: 'High', value: 'High' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Low', value: 'Low' },
-  ]},
-  { key: 'planned_start_date', label: 'Planned Start Date', type: 'date', required: true },
-  { key: 'planned_end_date', label: 'Planned End Date', type: 'date', required: true },
-  { key: 'planned_days', label: 'Planned Days', type: 'number', required: true },
-  { key: 'lead_auditor', label: 'Lead Auditor', type: 'link', doctype: 'User', required: true },
-  { key: 'team_members', label: 'Team Members', type: 'textarea' },
-  { key: 'objectives', label: 'Objectives', type: 'textarea' },
-  { key: 'scope', label: 'Scope', type: 'textarea' },
-  { key: 'risk_assessment_reference', label: 'Risk Assessment', type: 'link', doctype: 'Risk Assessment' },
-  { key: 'budget_allocated', label: 'Budget Allocated', type: 'currency' },
+	{
+		key: "audit_universe",
+		label: "Audit Universe",
+		type: "link",
+		doctype: "Audit Universe",
+		required: true,
+	},
+	{
+		key: "audit_type",
+		label: "Audit Type",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Financial", value: "Financial" },
+			{ label: "Operational", value: "Operational" },
+			{ label: "Compliance", value: "Compliance" },
+			{ label: "IT", value: "IT" },
+			{ label: "Integrated", value: "Integrated" },
+			{ label: "Special Investigation", value: "Special Investigation" },
+			{ label: "Follow-up", value: "Follow-up" },
+		],
+	},
+	{
+		key: "priority",
+		label: "Priority",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Critical", value: "Critical" },
+			{ label: "High", value: "High" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "Low", value: "Low" },
+		],
+	},
+	{
+		key: "planned_start_date",
+		label: "Planned Start Date",
+		type: "date",
+		required: true,
+	},
+	{
+		key: "planned_end_date",
+		label: "Planned End Date",
+		type: "date",
+		required: true,
+	},
+	{
+		key: "planned_days",
+		label: "Planned Days",
+		type: "number",
+		required: true,
+	},
+	{
+		key: "lead_auditor",
+		label: "Lead Auditor",
+		type: "link",
+		doctype: "User",
+		required: true,
+	},
+	{ key: "team_members", label: "Team Members", type: "textarea" },
+	{ key: "objectives", label: "Objectives", type: "textarea" },
+	{ key: "scope", label: "Scope", type: "textarea" },
+	{
+		key: "risk_assessment_reference",
+		label: "Risk Assessment",
+		type: "link",
+		doctype: "Risk Assessment",
+	},
+	{ key: "budget_allocated", label: "Budget Allocated", type: "currency" },
 ]
 
 // Budget Allocation
 const budgetColumns = [
-  { key: 'budget_category', label: 'Category', width: '180px' },
-  { key: 'planned_amount', label: 'Planned', width: '120px' },
-  { key: 'actual_amount', label: 'Actual', width: '120px' },
-  { key: 'variance', label: 'Variance', width: '100px' },
+	{ key: "budget_category", label: "Category", width: "180px" },
+	{ key: "planned_amount", label: "Planned", width: "120px" },
+	{ key: "actual_amount", label: "Actual", width: "120px" },
+	{ key: "variance", label: "Variance", width: "100px" },
 ]
 
 const budgetFields = [
-  { key: 'budget_category', label: 'Budget Category', type: 'select', required: true, options: [
-    { label: 'Personnel Costs', value: 'Personnel Costs' },
-    { label: 'Travel & Accommodation', value: 'Travel & Accommodation' },
-    { label: 'Training & Development', value: 'Training & Development' },
-    { label: 'Technology & Tools', value: 'Technology & Tools' },
-    { label: 'Consulting Services', value: 'Consulting Services' },
-    { label: 'Office Supplies', value: 'Office Supplies' },
-    { label: 'Miscellaneous', value: 'Miscellaneous' },
-    { label: 'Contingency', value: 'Contingency' },
-  ]},
-  { key: 'description', label: 'Description', type: 'textarea' },
-  { key: 'planned_amount', label: 'Planned Amount', type: 'currency', required: true },
-  { key: 'actual_amount', label: 'Actual Amount', type: 'currency' },
-  { key: 'variance', label: 'Variance', type: 'currency', readOnly: true },
-  { key: 'variance_percentage', label: 'Variance %', type: 'number', readOnly: true },
-  { key: 'budget_type', label: 'Budget Type', type: 'select', options: [
-    { label: 'Fixed', value: 'Fixed' },
-    { label: 'Variable', value: 'Variable' },
-    { label: 'Contingency', value: 'Contingency' },
-  ]},
-  { key: 'allocation_basis', label: 'Allocation Basis', type: 'select', options: [
-    { label: 'Per Audit', value: 'Per Audit' },
-    { label: 'Per Day', value: 'Per Day' },
-    { label: 'Percentage of Total', value: 'Percentage of Total' },
-    { label: 'Fixed Amount', value: 'Fixed Amount' },
-  ]},
-  { key: 'notes', label: 'Notes', type: 'textarea' },
+	{
+		key: "budget_category",
+		label: "Budget Category",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Personnel Costs", value: "Personnel Costs" },
+			{ label: "Travel & Accommodation", value: "Travel & Accommodation" },
+			{ label: "Training & Development", value: "Training & Development" },
+			{ label: "Technology & Tools", value: "Technology & Tools" },
+			{ label: "Consulting Services", value: "Consulting Services" },
+			{ label: "Office Supplies", value: "Office Supplies" },
+			{ label: "Miscellaneous", value: "Miscellaneous" },
+			{ label: "Contingency", value: "Contingency" },
+		],
+	},
+	{ key: "description", label: "Description", type: "textarea" },
+	{
+		key: "planned_amount",
+		label: "Planned Amount",
+		type: "currency",
+		required: true,
+	},
+	{ key: "actual_amount", label: "Actual Amount", type: "currency" },
+	{ key: "variance", label: "Variance", type: "currency", readOnly: true },
+	{
+		key: "variance_percentage",
+		label: "Variance %",
+		type: "number",
+		readOnly: true,
+	},
+	{
+		key: "budget_type",
+		label: "Budget Type",
+		type: "select",
+		options: [
+			{ label: "Fixed", value: "Fixed" },
+			{ label: "Variable", value: "Variable" },
+			{ label: "Contingency", value: "Contingency" },
+		],
+	},
+	{
+		key: "allocation_basis",
+		label: "Allocation Basis",
+		type: "select",
+		options: [
+			{ label: "Per Audit", value: "Per Audit" },
+			{ label: "Per Day", value: "Per Day" },
+			{ label: "Percentage of Total", value: "Percentage of Total" },
+			{ label: "Fixed Amount", value: "Fixed Amount" },
+		],
+	},
+	{ key: "notes", label: "Notes", type: "textarea" },
 ]
 
 // Risk Priority
 const riskPriorityColumns = [
-  { key: 'audit_universe', label: 'Audit Universe', width: '180px' },
-  { key: 'risk_rating', label: 'Risk Rating', width: '100px', component: 'Badge' },
-  { key: 'priority_level', label: 'Priority', width: '100px', component: 'Badge' },
-  { key: 'planned_audit_timing', label: 'Timing', width: '80px' },
+	{ key: "audit_universe", label: "Audit Universe", width: "180px" },
+	{
+		key: "risk_rating",
+		label: "Risk Rating",
+		width: "100px",
+		component: "Badge",
+	},
+	{
+		key: "priority_level",
+		label: "Priority",
+		width: "100px",
+		component: "Badge",
+	},
+	{ key: "planned_audit_timing", label: "Timing", width: "80px" },
 ]
 
 const riskPriorityFields = [
-  { key: 'audit_universe', label: 'Audit Universe', type: 'link', doctype: 'Audit Universe', required: true },
-  { key: 'risk_rating', label: 'Risk Rating', type: 'select', required: true, options: [
-    { label: 'Critical', value: 'Critical' },
-    { label: 'High', value: 'High' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Low', value: 'Low' },
-  ]},
-  { key: 'risk_score', label: 'Risk Score', type: 'number', required: true },
-  { key: 'last_assessment_date', label: 'Last Assessment Date', type: 'date' },
-  { key: 'audit_frequency', label: 'Audit Frequency', type: 'select', options: [
-    { label: 'Quarterly', value: 'Quarterly' },
-    { label: 'Semi-Annual', value: 'Semi-Annual' },
-    { label: 'Annual', value: 'Annual' },
-    { label: 'Bi-Annual', value: 'Bi-Annual' },
-    { label: 'Tri-Annual', value: 'Tri-Annual' },
-    { label: 'As Needed', value: 'As Needed' },
-  ]},
-  { key: 'priority_level', label: 'Priority Level', type: 'select', required: true, options: [
-    { label: 'Critical', value: 'Critical' },
-    { label: 'High', value: 'High' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Low', value: 'Low' },
-  ]},
-  { key: 'justification', label: 'Justification', type: 'textarea', required: true },
-  { key: 'planned_audit_timing', label: 'Planned Timing', type: 'select', options: [
-    { label: 'Q1', value: 'Q1' },
-    { label: 'Q2', value: 'Q2' },
-    { label: 'Q3', value: 'Q3' },
-    { label: 'Q4', value: 'Q4' },
-    { label: 'H1', value: 'H1' },
-    { label: 'H2', value: 'H2' },
-    { label: 'As Required', value: 'As Required' },
-  ]},
-  { key: 'resource_intensity', label: 'Resource Intensity', type: 'select', options: [
-    { label: 'High', value: 'High' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Low', value: 'Low' },
-  ]},
+	{
+		key: "audit_universe",
+		label: "Audit Universe",
+		type: "link",
+		doctype: "Audit Universe",
+		required: true,
+	},
+	{
+		key: "risk_rating",
+		label: "Risk Rating",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Critical", value: "Critical" },
+			{ label: "High", value: "High" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "Low", value: "Low" },
+		],
+	},
+	{ key: "risk_score", label: "Risk Score", type: "number", required: true },
+	{ key: "last_assessment_date", label: "Last Assessment Date", type: "date" },
+	{
+		key: "audit_frequency",
+		label: "Audit Frequency",
+		type: "select",
+		options: [
+			{ label: "Quarterly", value: "Quarterly" },
+			{ label: "Semi-Annual", value: "Semi-Annual" },
+			{ label: "Annual", value: "Annual" },
+			{ label: "Bi-Annual", value: "Bi-Annual" },
+			{ label: "Tri-Annual", value: "Tri-Annual" },
+			{ label: "As Needed", value: "As Needed" },
+		],
+	},
+	{
+		key: "priority_level",
+		label: "Priority Level",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Critical", value: "Critical" },
+			{ label: "High", value: "High" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "Low", value: "Low" },
+		],
+	},
+	{
+		key: "justification",
+		label: "Justification",
+		type: "textarea",
+		required: true,
+	},
+	{
+		key: "planned_audit_timing",
+		label: "Planned Timing",
+		type: "select",
+		options: [
+			{ label: "Q1", value: "Q1" },
+			{ label: "Q2", value: "Q2" },
+			{ label: "Q3", value: "Q3" },
+			{ label: "Q4", value: "Q4" },
+			{ label: "H1", value: "H1" },
+			{ label: "H2", value: "H2" },
+			{ label: "As Required", value: "As Required" },
+		],
+	},
+	{
+		key: "resource_intensity",
+		label: "Resource Intensity",
+		type: "select",
+		options: [
+			{ label: "High", value: "High" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "Low", value: "Low" },
+		],
+	},
 ]
 
 // Computed properties
 const utilizationColor = computed(() => {
-  const util = formData.utilization_percentage || 0
-  if (util >= 90) return 'text-red-600'
-  if (util >= 75) return 'text-yellow-600'
-  return 'text-green-600'
+	const util = formData.utilization_percentage || 0
+	if (util >= 90) return "text-red-600"
+	if (util >= 75) return "text-yellow-600"
+	return "text-green-600"
 })
 
 const criticalAuditsCount = computed(() => {
-  return formData.planned_audits.filter(a => 
-    a.priority === 'Critical' || a.priority === 'High'
-  ).length
+	return formData.planned_audits.filter(
+		(a) => a.priority === "Critical" || a.priority === "High",
+	).length
 })
 
 const totalAuditDays = computed(() => {
-  return formData.planned_audits.reduce((sum, a) => sum + (a.planned_days || 0), 0)
+	return formData.planned_audits.reduce(
+		(sum, a) => sum + (a.planned_days || 0),
+		0,
+	)
 })
 
 const totalBudgetAllocated = computed(() => {
-  const total = formData.planned_audits.reduce((sum, a) => sum + (a.budget_allocated || 0), 0)
-  return total.toLocaleString()
+	const total = formData.planned_audits.reduce(
+		(sum, a) => sum + (a.budget_allocated || 0),
+		0,
+	)
+	return total.toLocaleString()
 })
 
 // Watch for utilization calculation
-watch([() => formData.total_available_days, () => formData.total_planned_days], () => {
-  if (formData.total_available_days > 0) {
-    formData.utilization_percentage = Math.round(
-      (formData.total_planned_days / formData.total_available_days) * 100
-    )
-  }
-})
+watch(
+	[() => formData.total_available_days, () => formData.total_planned_days],
+	() => {
+		if (formData.total_available_days > 0) {
+			formData.utilization_percentage = Math.round(
+				(formData.total_planned_days / formData.total_available_days) * 100,
+			)
+		}
+	},
+)
 
 // Navigation methods
 const previousSection = () => {
-  const keys = Object.keys(sections)
-  const currentIndex = keys.indexOf(activeSection.value)
-  if (currentIndex > 0) {
-    setActiveSection(keys[currentIndex - 1])
-  }
+	const keys = Object.keys(sections)
+	const currentIndex = keys.indexOf(activeSection.value)
+	if (currentIndex > 0) {
+		setActiveSection(keys[currentIndex - 1])
+	}
 }
 
 const nextSection = () => {
-  const keys = Object.keys(sections)
-  const currentIndex = keys.indexOf(activeSection.value)
-  if (currentIndex < keys.length - 1) {
-    setActiveSection(keys[currentIndex + 1])
-  }
+	const keys = Object.keys(sections)
+	const currentIndex = keys.indexOf(activeSection.value)
+	if (currentIndex < keys.length - 1) {
+		setActiveSection(keys[currentIndex + 1])
+	}
 }
 
 // Time formatting helper
 const formatTimeAgo = (date) => {
-  if (!date) return ''
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000)
-  if (seconds < 60) return 'just now'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
+	if (!date) return ""
+	const seconds = Math.floor((new Date() - new Date(date)) / 1000)
+	if (seconds < 60) return "just now"
+	const minutes = Math.floor(seconds / 60)
+	if (minutes < 60) return `${minutes}m ago`
+	const hours = Math.floor(minutes / 60)
+	if (hours < 24) return `${hours}h ago`
+	const days = Math.floor(hours / 24)
+	return `${days}d ago`
 }
 
 // Draft save
 const saveDraft = async () => {
-  try {
-    lastSaved.value = new Date()
-  } catch (error) {
-    console.error('Failed to save draft:', error)
-  }
+	try {
+		lastSaved.value = new Date()
+	} catch (error) {
+		console.error("Failed to save draft:", error)
+	}
 }
 
 // Submit form
 const submitForm = async () => {
-  const validation = validateForm(formData)
-  if (!validation.isValid) {
-    console.error('Validation errors:', validation.errors)
-    return
-  }
+	const validation = validateForm(formData)
+	if (!validation.isValid) {
+		console.error("Validation errors:", validation.errors)
+		return
+	}
 
-  saving.value = true
-  try {
-    const data = prepareFormData(formData, {
-      planned_audits: 'Annual Audit Plan Item',
-      resource_allocation: 'Annual Audit Plan Resource',
-      budget_allocation: 'Annual Audit Plan Budget',
-      risk_based_prioritization: 'Annual Audit Plan Risk Priority',
-    })
+	saving.value = true
+	try {
+		const data = prepareFormData(formData, {
+			planned_audits: "Annual Audit Plan Item",
+			resource_allocation: "Annual Audit Plan Resource",
+			budget_allocation: "Annual Audit Plan Budget",
+			risk_based_prioritization: "Annual Audit Plan Risk Priority",
+		})
 
-    emit('saved', data)
-    closeDialog()
-  } catch (error) {
-    console.error('Failed to save plan:', error)
-  } finally {
-    saving.value = false
-  }
+		emit("saved", data)
+		closeDialog()
+	} catch (error) {
+		console.error("Failed to save plan:", error)
+	} finally {
+		saving.value = false
+	}
 }
 
 // Close dialog
 const closeDialog = () => {
-  showDialog.value = false
-  emit('close')
+	showDialog.value = false
+	emit("close")
 }
 
 // Watch for plan prop changes (editing mode)
-watch(() => props.plan, (newPlan) => {
-  if (newPlan) {
-    Object.keys(formData).forEach(key => {
-      if (newPlan[key] !== undefined) {
-        formData[key] = newPlan[key]
-      }
-    })
-  }
-}, { immediate: true, deep: true })
+watch(
+	() => props.plan,
+	(newPlan) => {
+		if (newPlan) {
+			Object.keys(formData).forEach((key) => {
+				if (newPlan[key] !== undefined) {
+					formData[key] = newPlan[key]
+				}
+			})
+		}
+	},
+	{ immediate: true, deep: true },
+)
 </script>
 
 <style scoped>

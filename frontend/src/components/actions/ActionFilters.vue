@@ -139,93 +139,103 @@
 </template>
 
 <script setup>
-import { computed, reactive, watch } from 'vue'
-import { Badge, Button, FormControl } from 'frappe-ui'
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, FormControl } from "frappe-ui"
 import {
-  DownloadIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  XIcon,
-} from 'lucide-vue-next'
-import LinkField from '@/components/Common/fields/LinkField.vue'
+	DownloadIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	XIcon,
+} from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({}),
-  },
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'refresh', 'export', 'create'])
+const emit = defineEmits(["update:modelValue", "refresh", "export", "create"])
 
 // State
 const filters = reactive({
-  search: '',
-  status: '',
-  priority: '',
-  dueRange: '',
-  responsiblePerson: '',
+	search: "",
+	status: "",
+	priority: "",
+	dueRange: "",
+	responsiblePerson: "",
 })
 
 // Options
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'On Hold', value: 'On Hold' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Cancelled', value: 'Cancelled' },
+	{ label: "All Status", value: "" },
+	{ label: "Draft", value: "Draft" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "On Hold", value: "On Hold" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const priorityOptions = [
-  { label: 'All Priority', value: '' },
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "All Priority", value: "" },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const dueRangeOptions = [
-  { label: 'All Due Dates', value: '' },
-  { label: 'Overdue', value: 'overdue' },
-  { label: 'Due Today', value: 'today' },
-  { label: 'Due This Week', value: 'this_week' },
-  { label: 'Due This Month', value: 'this_month' },
-  { label: 'Due Later', value: 'later' },
+	{ label: "All Due Dates", value: "" },
+	{ label: "Overdue", value: "overdue" },
+	{ label: "Due Today", value: "today" },
+	{ label: "Due This Week", value: "this_week" },
+	{ label: "Due This Month", value: "this_month" },
+	{ label: "Due Later", value: "later" },
 ]
 
 // Computed
 const hasActiveFilters = computed(() => {
-  return filters.search || filters.status || filters.priority || filters.dueRange || filters.responsiblePerson
+	return (
+		filters.search ||
+		filters.status ||
+		filters.priority ||
+		filters.dueRange ||
+		filters.responsiblePerson
+	)
 })
 
 // Methods
 const getDueRangeLabel = (value) => {
-  const option = dueRangeOptions.find(o => o.value === value)
-  return option ? option.label : value
+	const option = dueRangeOptions.find((o) => o.value === value)
+	return option ? option.label : value
 }
 
 const emitFilters = () => {
-  emit('update:modelValue', { ...filters })
+	emit("update:modelValue", { ...filters })
 }
 
 const clearFilters = () => {
-  filters.search = ''
-  filters.status = ''
-  filters.priority = ''
-  filters.dueRange = ''
-  filters.responsiblePerson = ''
-  emitFilters()
+	filters.search = ""
+	filters.status = ""
+	filters.priority = ""
+	filters.dueRange = ""
+	filters.responsiblePerson = ""
+	emitFilters()
 }
 
 // Watch for external changes
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    Object.assign(filters, newValue)
-  }
-}, { deep: true, immediate: true })
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		if (newValue) {
+			Object.assign(filters, newValue)
+		}
+	},
+	{ deep: true, immediate: true },
+)
 </script>

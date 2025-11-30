@@ -155,7 +155,8 @@ doc_events = {
     },
     "Audit Execution": {
         "on_update": "mkaguzi.utils.notifications.on_audit_execution_update",
-    }
+    },
+
 }
 
 # Scheduled Tasks
@@ -243,4 +244,10 @@ user_data_fields = [
 # }
 
 
+# WebSocket / Real-time Events
+# ----------------------------
+
+
+# Website Routes
+# --------------
 website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'},]

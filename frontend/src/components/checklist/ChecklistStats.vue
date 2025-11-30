@@ -201,121 +201,142 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  ClipboardList,
-  ListChecks,
-  CheckCircle,
-  AlertTriangle,
-  Bell,
-  Calendar,
-} from 'lucide-vue-next'
+	AlertTriangle,
+	Bell,
+	Calendar,
+	CheckCircle,
+	ClipboardList,
+	ListChecks,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  checklists: {
-    type: Array,
-    default: () => [],
-  },
+	checklists: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 const circumference = 2 * Math.PI * 48
 
 const stats = computed(() => {
-  const total = props.checklists.length
+	const total = props.checklists.length
 
-  // Aggregate all items across checklists
-  const allItems = props.checklists.flatMap((c) => c.checklist_items || [])
-  const totalRequirements = allItems.length
-  const completedRequirements = allItems.filter((i) =>
-    ['Completed', 'Filed'].includes(i.status)
-  ).length
-  const overdueRequirements = allItems.filter((i) => i.status === 'Overdue').length
+	// Aggregate all items across checklists
+	const allItems = props.checklists.flatMap((c) => c.checklist_items || [])
+	const totalRequirements = allItems.length
+	const completedRequirements = allItems.filter((i) =>
+		["Completed", "Filed"].includes(i.status),
+	).length
+	const overdueRequirements = allItems.filter(
+		(i) => i.status === "Overdue",
+	).length
 
-  const completionRate =
-    totalRequirements > 0
-      ? Math.round((completedRequirements / totalRequirements) * 100)
-      : 0
+	const completionRate =
+		totalRequirements > 0
+			? Math.round((completedRequirements / totalRequirements) * 100)
+			: 0
 
-  // Alerts
-  const allAlerts = props.checklists.flatMap((c) => c.alerts || [])
-  const totalAlerts = allAlerts.length
-  const criticalAlerts = allAlerts.filter((a) => a.severity === 'Critical').length
+	// Alerts
+	const allAlerts = props.checklists.flatMap((c) => c.alerts || [])
+	const totalAlerts = allAlerts.length
+	const criticalAlerts = allAlerts.filter(
+		(a) => a.severity === "Critical",
+	).length
 
-  // Average completion percentage
-  const completionPercentages = props.checklists
-    .filter((c) => c.completion_percent !== null && c.completion_percent !== undefined)
-    .map((c) => c.completion_percent || 0)
-  const avgCompletion =
-    completionPercentages.length > 0
-      ? Math.round(
-          completionPercentages.reduce((sum, p) => sum + p, 0) / completionPercentages.length
-        )
-      : 0
+	// Average completion percentage
+	const completionPercentages = props.checklists
+		.filter(
+			(c) =>
+				c.completion_percent !== null && c.completion_percent !== undefined,
+		)
+		.map((c) => c.completion_percent || 0)
+	const avgCompletion =
+		completionPercentages.length > 0
+			? Math.round(
+					completionPercentages.reduce((sum, p) => sum + p, 0) /
+						completionPercentages.length,
+				)
+			: 0
 
-  // Unique periods
-  const periodsCount = new Set(props.checklists.map((c) => c.compliance_period)).size
+	// Unique periods
+	const periodsCount = new Set(props.checklists.map((c) => c.compliance_period))
+		.size
 
-  return {
-    total,
-    totalRequirements,
-    completedRequirements,
-    overdueRequirements,
-    completionRate,
-    totalAlerts,
-    criticalAlerts,
-    avgCompletion,
-    periodsCount,
-  }
+	return {
+		total,
+		totalRequirements,
+		completedRequirements,
+		overdueRequirements,
+		completionRate,
+		totalAlerts,
+		criticalAlerts,
+		avgCompletion,
+		periodsCount,
+	}
 })
 
 const strokeDashoffset = computed(() => {
-  const progress = stats.value.avgCompletion / 100
-  return circumference * (1 - progress)
+	const progress = stats.value.avgCompletion / 100
+	return circumference * (1 - progress)
 })
 
 const periodTypeBreakdown = computed(() => {
-  const total = props.checklists.length || 1
-  const types = ['Monthly', 'Quarterly', 'Annual']
+	const total = props.checklists.length || 1
+	const types = ["Monthly", "Quarterly", "Annual"]
 
-  const colors = {
-    Monthly: { bgClass: 'bg-blue-50', iconClass: 'text-blue-600', barClass: 'bg-blue-500' },
-    Quarterly: { bgClass: 'bg-purple-50', iconClass: 'text-purple-600', barClass: 'bg-purple-500' },
-    Annual: { bgClass: 'bg-green-50', iconClass: 'text-green-600', barClass: 'bg-green-500' },
-  }
+	const colors = {
+		Monthly: {
+			bgClass: "bg-blue-50",
+			iconClass: "text-blue-600",
+			barClass: "bg-blue-500",
+		},
+		Quarterly: {
+			bgClass: "bg-purple-50",
+			iconClass: "text-purple-600",
+			barClass: "bg-purple-500",
+		},
+		Annual: {
+			bgClass: "bg-green-50",
+			iconClass: "text-green-600",
+			barClass: "bg-green-500",
+		},
+	}
 
-  return types.map((type) => {
-    const count = props.checklists.filter((c) => c.period_type === type).length
-    return {
-      type,
-      count,
-      percentage: Math.round((count / total) * 100),
-      ...colors[type],
-    }
-  })
+	return types.map((type) => {
+		const count = props.checklists.filter((c) => c.period_type === type).length
+		return {
+			type,
+			count,
+			percentage: Math.round((count / total) * 100),
+			...colors[type],
+		}
+	})
 })
 
 const statusDistribution = computed(() => {
-  const allItems = props.checklists.flatMap((c) => c.checklist_items || [])
-  const statuses = [
-    { label: 'Not Started', color: 'bg-gray-400' },
-    { label: 'In Progress', color: 'bg-blue-500' },
-    { label: 'Completed', color: 'bg-green-500' },
-    { label: 'Filed', color: 'bg-purple-500' },
-    { label: 'Overdue', color: 'bg-red-500' },
-    { label: 'Not Applicable', color: 'bg-gray-300' },
-  ]
+	const allItems = props.checklists.flatMap((c) => c.checklist_items || [])
+	const statuses = [
+		{ label: "Not Started", color: "bg-gray-400" },
+		{ label: "In Progress", color: "bg-blue-500" },
+		{ label: "Completed", color: "bg-green-500" },
+		{ label: "Filed", color: "bg-purple-500" },
+		{ label: "Overdue", color: "bg-red-500" },
+		{ label: "Not Applicable", color: "bg-gray-300" },
+	]
 
-  return statuses.map((s) => ({
-    ...s,
-    count: allItems.filter((i) => i.status === s.label).length,
-  }))
+	return statuses.map((s) => ({
+		...s,
+		count: allItems.filter((i) => i.status === s.label).length,
+	}))
 })
 
 function getCompletionColorClass(percent) {
-  if (percent >= 90) return 'text-green-500'
-  if (percent >= 70) return 'text-blue-500'
-  if (percent >= 50) return 'text-orange-500'
-  return 'text-red-500'
+	if (percent >= 90) return "text-green-500"
+	if (percent >= 70) return "text-blue-500"
+	if (percent >= 50) return "text-orange-500"
+	return "text-red-500"
 }
 </script>

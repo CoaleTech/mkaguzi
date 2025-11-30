@@ -29,7 +29,7 @@ export const useFollowUpStore = defineStore("followup", {
 					(t) =>
 						t.tracker_id?.toLowerCase().includes(search) ||
 						t.finding_title?.toLowerCase().includes(search) ||
-						t.description?.toLowerCase().includes(search)
+						t.description?.toLowerCase().includes(search),
 				)
 			}
 
@@ -39,30 +39,32 @@ export const useFollowUpStore = defineStore("followup", {
 
 			if (state.filters.followUpType) {
 				filtered = filtered.filter(
-					(t) => t.follow_up_type === state.filters.followUpType
+					(t) => t.follow_up_type === state.filters.followUpType,
 				)
 			}
 
 			if (state.filters.frequency) {
-				filtered = filtered.filter((t) => t.frequency === state.filters.frequency)
+				filtered = filtered.filter(
+					(t) => t.frequency === state.filters.frequency,
+				)
 			}
 
 			if (state.filters.currentStatus) {
 				filtered = filtered.filter(
-					(t) => t.current_status === state.filters.currentStatus
+					(t) => t.current_status === state.filters.currentStatus,
 				)
 			}
 
 			if (state.filters.responsiblePerson) {
 				const search = state.filters.responsiblePerson.toLowerCase()
 				filtered = filtered.filter((t) =>
-					t.responsible_person?.toLowerCase().includes(search)
+					t.responsible_person?.toLowerCase().includes(search),
 				)
 			}
 
 			if (state.filters.auditFinding) {
 				filtered = filtered.filter(
-					(t) => t.audit_finding === state.filters.auditFinding
+					(t) => t.audit_finding === state.filters.auditFinding,
 				)
 			}
 
@@ -73,7 +75,7 @@ export const useFollowUpStore = defineStore("followup", {
 			const total = state.trackers.length
 			const active = state.trackers.filter((t) => t.status === "Active").length
 			const completed = state.trackers.filter(
-				(t) => t.status === "Completed"
+				(t) => t.status === "Completed",
 			).length
 			const onHold = state.trackers.filter((t) => t.status === "On Hold").length
 
@@ -85,7 +87,7 @@ export const useFollowUpStore = defineStore("followup", {
 
 			const atRisk = state.trackers.filter(
 				(t) =>
-					t.current_status === "At Risk" || t.current_status === "Off Track"
+					t.current_status === "At Risk" || t.current_status === "Off Track",
 			).length
 
 			// Status distribution
@@ -93,7 +95,8 @@ export const useFollowUpStore = defineStore("followup", {
 				Active: active,
 				Completed: completed,
 				"On Hold": onHold,
-				Cancelled: state.trackers.filter((t) => t.status === "Cancelled").length,
+				Cancelled: state.trackers.filter((t) => t.status === "Cancelled")
+					.length,
 			}
 
 			// Progress by type
@@ -276,7 +279,9 @@ export const useFollowUpStore = defineStore("followup", {
 				// Add new activity
 				activities.push({
 					...activityData,
-					activity_date: activityData.activity_date || new Date().toISOString().split("T")[0],
+					activity_date:
+						activityData.activity_date ||
+						new Date().toISOString().split("T")[0],
 				})
 
 				// Update tracker with new activity

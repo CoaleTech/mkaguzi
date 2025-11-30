@@ -811,6 +811,9 @@
 </template>
 
 <script setup>
+import AuditUniverseForm from "@/components/universe/AuditUniverseForm.vue"
+import UniverseFilters from "@/components/universe/UniverseFilters.vue"
+import UniverseStats from "@/components/universe/UniverseStats.vue"
 import { Badge, Button, Dialog, FormControl, Select } from "frappe-ui"
 import {
 	AlertTriangleIcon,
@@ -840,9 +843,6 @@ import {
 } from "lucide-vue-next"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import UniverseStats from "@/components/universe/UniverseStats.vue"
-import UniverseFilters from "@/components/universe/UniverseFilters.vue"
-import AuditUniverseForm from "@/components/universe/AuditUniverseForm.vue"
 
 const router = useRouter()
 
@@ -862,11 +862,11 @@ const formMode = ref("create")
 
 // Filters object for UniverseFilters component
 const filters = ref({
-  search: "",
-  entityType: "",
-  riskRating: "",
-  department: "",
-  status: "",
+	search: "",
+	entityType: "",
+	riskRating: "",
+	department: "",
+	status: "",
 })
 
 const entities = ref([
@@ -1090,64 +1090,77 @@ const filteredEntities = computed(() => {
 
 // Stats for UniverseStats component
 const universeStats = computed(() => {
-  const total = entities.value.length
-  const criticalRisk = entities.value.filter(e => e.residual_risk_rating === "Critical").length
-  const highRisk = entities.value.filter(e => e.residual_risk_rating === "High").length
-  const mediumRisk = entities.value.filter(e => e.residual_risk_rating === "Medium").length
-  const lowRisk = entities.value.filter(e => e.residual_risk_rating === "Low").length
-  const active = entities.value.filter(e => e.is_active).length
-  const inactive = entities.value.filter(e => !e.is_active).length
+	const total = entities.value.length
+	const criticalRisk = entities.value.filter(
+		(e) => e.residual_risk_rating === "Critical",
+	).length
+	const highRisk = entities.value.filter(
+		(e) => e.residual_risk_rating === "High",
+	).length
+	const mediumRisk = entities.value.filter(
+		(e) => e.residual_risk_rating === "Medium",
+	).length
+	const lowRisk = entities.value.filter(
+		(e) => e.residual_risk_rating === "Low",
+	).length
+	const active = entities.value.filter((e) => e.is_active).length
+	const inactive = entities.value.filter((e) => !e.is_active).length
 
-  const now = new Date()
-  const quarterEnd = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3 + 3, 0)
-  const dueThisQuarter = entities.value.filter(e => {
-    if (!e.next_scheduled_audit) return false
-    const dueDate = new Date(e.next_scheduled_audit)
-    return dueDate <= quarterEnd
-  }).length
+	const now = new Date()
+	const quarterEnd = new Date(
+		now.getFullYear(),
+		Math.floor(now.getMonth() / 3) * 3 + 3,
+		0,
+	)
+	const dueThisQuarter = entities.value.filter((e) => {
+		if (!e.next_scheduled_audit) return false
+		const dueDate = new Date(e.next_scheduled_audit)
+		return dueDate <= quarterEnd
+	}).length
 
-  const dueThisMonth = entities.value.filter(e => {
-    if (!e.next_scheduled_audit) return false
-    const dueDate = new Date(e.next_scheduled_audit)
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    return dueDate <= nextMonth
-  }).length
+	const dueThisMonth = entities.value.filter((e) => {
+		if (!e.next_scheduled_audit) return false
+		const dueDate = new Date(e.next_scheduled_audit)
+		const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+		return dueDate <= nextMonth
+	}).length
 
-  const overdue = entities.value.filter(e => {
-    if (!e.next_scheduled_audit) return false
-    const dueDate = new Date(e.next_scheduled_audit)
-    return dueDate < now
-  }).length
+	const overdue = entities.value.filter((e) => {
+		if (!e.next_scheduled_audit) return false
+		const dueDate = new Date(e.next_scheduled_audit)
+		return dueDate < now
+	}).length
 
-  const mandatory = entities.value.filter(e => e.mandatory_audit).length
+	const mandatory = entities.value.filter((e) => e.mandatory_audit).length
 
-  // Group by entity type
-  const byType = {}
-  entities.value.forEach(e => {
-    byType[e.entity_type] = (byType[e.entity_type] || 0) + 1
-  })
+	// Group by entity type
+	const byType = {}
+	entities.value.forEach((e) => {
+		byType[e.entity_type] = (byType[e.entity_type] || 0) + 1
+	})
 
-  // Group by control environment
-  const byControlEnvironment = {}
-  entities.value.forEach(e => {
-    byControlEnvironment[e.control_environment_rating] = (byControlEnvironment[e.control_environment_rating] || 0) + 1
-  })
+	// Group by control environment
+	const byControlEnvironment = {}
+	entities.value.forEach((e) => {
+		byControlEnvironment[e.control_environment_rating] =
+			(byControlEnvironment[e.control_environment_rating] || 0) + 1
+	})
 
-  return {
-    total,
-    criticalRisk,
-    highRisk,
-    mediumRisk,
-    lowRisk,
-    active,
-    inactive,
-    dueThisQuarter,
-    dueThisMonth,
-    overdue,
-    mandatory,
-    byType,
-    byControlEnvironment,
-  }
+	return {
+		total,
+		criticalRisk,
+		highRisk,
+		mediumRisk,
+		lowRisk,
+		active,
+		inactive,
+		dueThisQuarter,
+		dueThisMonth,
+		overdue,
+		mandatory,
+		byType,
+		byControlEnvironment,
+	}
 })
 
 // Methods
@@ -1235,12 +1248,12 @@ const sortBy = (field) => {
 // Filter methods
 const clearFilters = () => {
 	filters.value = {
-    search: "",
-    entityType: "",
-    riskRating: "",
-    department: "",
-    status: "",
-  }
+		search: "",
+		entityType: "",
+		riskRating: "",
+		department: "",
+		status: "",
+	}
 	selectedEntities.value = []
 }
 

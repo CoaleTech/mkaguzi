@@ -139,85 +139,95 @@
 </template>
 
 <script setup>
-import { computed, reactive, watch } from 'vue'
-import { Badge, Button, FormControl } from 'frappe-ui'
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, FormControl } from "frappe-ui"
 import {
-  DownloadIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  XIcon,
-} from 'lucide-vue-next'
-import LinkField from '@/components/Common/fields/LinkField.vue'
+	DownloadIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	XIcon,
+} from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({}),
-  },
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'refresh', 'export', 'create'])
+const emit = defineEmits(["update:modelValue", "refresh", "export", "create"])
 
 // State
 const filters = reactive({
-  search: '',
-  entityType: '',
-  riskRating: '',
-  department: '',
-  status: '',
+	search: "",
+	entityType: "",
+	riskRating: "",
+	department: "",
+	status: "",
 })
 
 // Options
 const entityTypeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Process', value: 'Process' },
-  { label: 'Function', value: 'Function' },
-  { label: 'Department', value: 'Department' },
-  { label: 'Location', value: 'Location' },
-  { label: 'System', value: 'System' },
-  { label: 'Compliance Area', value: 'Compliance Area' },
+	{ label: "All Types", value: "" },
+	{ label: "Process", value: "Process" },
+	{ label: "Function", value: "Function" },
+	{ label: "Department", value: "Department" },
+	{ label: "Location", value: "Location" },
+	{ label: "System", value: "System" },
+	{ label: "Compliance Area", value: "Compliance Area" },
 ]
 
 const riskRatingOptions = [
-  { label: 'All Risk Levels', value: '' },
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "All Risk Levels", value: "" },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Active', value: 'active' },
-  { label: 'Inactive', value: 'inactive' },
+	{ label: "All Status", value: "" },
+	{ label: "Active", value: "active" },
+	{ label: "Inactive", value: "inactive" },
 ]
 
 // Computed
 const hasActiveFilters = computed(() => {
-  return filters.search || filters.entityType || filters.riskRating || filters.department || filters.status
+	return (
+		filters.search ||
+		filters.entityType ||
+		filters.riskRating ||
+		filters.department ||
+		filters.status
+	)
 })
 
 // Methods
 const emitFilters = () => {
-  emit('update:modelValue', { ...filters })
+	emit("update:modelValue", { ...filters })
 }
 
 const clearFilters = () => {
-  filters.search = ''
-  filters.entityType = ''
-  filters.riskRating = ''
-  filters.department = ''
-  filters.status = ''
-  emitFilters()
+	filters.search = ""
+	filters.entityType = ""
+	filters.riskRating = ""
+	filters.department = ""
+	filters.status = ""
+	emitFilters()
 }
 
 // Watch for external changes
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    Object.assign(filters, newValue)
-  }
-}, { deep: true, immediate: true })
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		if (newValue) {
+			Object.assign(filters, newValue)
+		}
+	},
+	{ deep: true, immediate: true },
+)
 </script>

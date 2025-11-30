@@ -49,38 +49,33 @@
 </template>
 
 <script setup>
-import {
-  BarChart3,
-  FileText,
-  TrendingUp,
-  Users,
-} from "lucide-vue-next"
+import { BarChart3, FileText, TrendingUp, Users } from "lucide-vue-next"
 import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  activeAuditReports: {
-    type: Array,
-    default: () => [],
-  },
-  activeBoardReports: {
-    type: Array,
-    default: () => [],
-  },
-  activeDashboards: {
-    type: Array,
-    default: () => [],
-  },
-  complianceScore: {
-    type: Number,
-    default: 0,
-  },
+	activeAuditReports: {
+		type: Array,
+		default: () => [],
+	},
+	activeBoardReports: {
+		type: Array,
+		default: () => [],
+	},
+	activeDashboards: {
+		type: Array,
+		default: () => [],
+	},
+	complianceScore: {
+		type: Number,
+		default: 0,
+	},
 })
 
 // Computed properties
 const getScoreColor = (score) => {
-  if (score >= 80) return "text-green-600"
-  if (score >= 60) return "text-yellow-600"
-  return "text-red-600"
+	if (score >= 80) return "text-green-600"
+	if (score >= 60) return "text-yellow-600"
+	return "text-red-600"
 }
 </script>

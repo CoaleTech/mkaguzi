@@ -1,0 +1,207 @@
+{
+  "name": "Mkaguzi AI Audit Chat System",
+  "short_name": "Mkaguzi AI Chat",
+  "description": "AI-powered audit chat system with federated learning and edge computing capabilities",
+  "version": "2.1.0",
+  "start_url": "/app/chat",
+  "scope": "/app/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#2196F3",
+  "background_color": "#ffffff",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/mkaguzi/images/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Chat",
+      "short_name": "New Chat",
+      "description": "Start a new audit chat",
+      "url": "/app/chat?action=new",
+      "icons": [
+        {
+          "src": "/assets/mkaguzi/images/icons/shortcut-chat.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "AI Models",
+      "short_name": "AI Models",
+      "description": "Manage AI models",
+      "url": "/app/chat?tab=ai-models",
+      "icons": [
+        {
+          "src": "/assets/mkaguzi/images/icons/shortcut-ai.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Performance",
+      "short_name": "Performance",
+      "description": "View performance dashboard",
+      "url": "/app/chat?tab=performance",
+      "icons": [
+        {
+          "src": "/assets/mkaguzi/images/icons/shortcut-performance.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Offline Mode",
+      "short_name": "Offline",
+      "description": "Access cached content offline",
+      "url": "/app/chat?mode=offline",
+      "icons": [
+        {
+          "src": "/assets/mkaguzi/images/icons/shortcut-offline.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/mkaguzi/images/screenshots/chat-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Chat interface on desktop"
+    },
+    {
+      "src": "/assets/mkaguzi/images/screenshots/chat-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Chat interface on mobile"
+    },
+    {
+      "src": "/assets/mkaguzi/images/screenshots/ai-dashboard-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "AI dashboard on desktop"
+    },
+    {
+      "src": "/assets/mkaguzi/images/screenshots/ai-dashboard-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AI dashboard on mobile"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "mkaguzi",
+      "url": "/app/chat?protocol=%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/app/chat/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "document",
+          "accept": [
+            "application/pdf",
+            "image/*",
+            "text/*",
+            ".doc",
+            ".docx",
+            ".xls",
+            ".xlsx"
+          ]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/app/chat/file-handler",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "application/msword": [".doc"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+        "image/*": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"],
+        "text/plain": [".txt"]
+      },
+      "launch_type": "single-client"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "handle_links": "preferred",
+  "url_handlers": [
+    {
+      "origin": "https://mkaguzi.app"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "minimal-ui", "standalone", "browser"],
+  "id": "mkaguzi-ai-chat-system"
+}

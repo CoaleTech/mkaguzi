@@ -82,7 +82,7 @@ export const useTestExecutionStore = defineStore("testExecution", () => {
 				(e) =>
 					e.execution_name?.toLowerCase().includes(search) ||
 					e.execution_id?.toLowerCase().includes(search) ||
-					e.test_library_name?.toLowerCase().includes(search)
+					e.test_library_name?.toLowerCase().includes(search),
 			)
 		}
 
@@ -93,12 +93,16 @@ export const useTestExecutionStore = defineStore("testExecution", () => {
 
 		// Apply test library filter
 		if (filters.value.testLibrary) {
-			result = result.filter((e) => e.test_library_id === filters.value.testLibrary)
+			result = result.filter(
+				(e) => e.test_library_id === filters.value.testLibrary,
+			)
 		}
 
 		// Apply execution type filter
 		if (filters.value.executionType) {
-			result = result.filter((e) => e.execution_type === filters.value.executionType)
+			result = result.filter(
+				(e) => e.execution_type === filters.value.executionType,
+			)
 		}
 
 		// Apply priority filter
@@ -108,10 +112,14 @@ export const useTestExecutionStore = defineStore("testExecution", () => {
 
 		// Apply date range filter
 		if (filters.value.dateFrom) {
-			result = result.filter((e) => new Date(e.creation) >= new Date(filters.value.dateFrom))
+			result = result.filter(
+				(e) => new Date(e.creation) >= new Date(filters.value.dateFrom),
+			)
 		}
 		if (filters.value.dateTo) {
-			result = result.filter((e) => new Date(e.creation) <= new Date(filters.value.dateTo))
+			result = result.filter(
+				(e) => new Date(e.creation) <= new Date(filters.value.dateTo),
+			)
 		}
 
 		return result

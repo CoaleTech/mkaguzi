@@ -648,6 +648,9 @@
 </template>
 
 <script setup>
+import AuditCalendarForm from "@/components/calendar/AuditCalendarForm.vue"
+import CalendarFilters from "@/components/calendar/CalendarFilters.vue"
+import CalendarStats from "@/components/calendar/CalendarStats.vue"
 import { useAuditStore } from "@/stores/audit"
 import {
 	addMonths,
@@ -688,9 +691,6 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import CalendarStats from "@/components/calendar/CalendarStats.vue"
-import CalendarFilters from "@/components/calendar/CalendarFilters.vue"
-import AuditCalendarForm from "@/components/calendar/AuditCalendarForm.vue"
 
 const router = useRouter()
 const auditStore = useAuditStore()
@@ -720,10 +720,10 @@ const exporting = ref(false)
 
 // Filters object for CalendarFilters component
 const filters = ref({
-  searchQuery: "",
-  statusFilter: "",
-  typeFilter: "",
-  universeFilter: ""
+	searchQuery: "",
+	statusFilter: "",
+	typeFilter: "",
+	universeFilter: "",
 })
 
 // Form data
@@ -812,12 +812,16 @@ const filteredAudits = computed(() => {
 
 	// Apply status filter
 	if (filters.value.statusFilter) {
-		filtered = filtered.filter((audit) => audit.status === filters.value.statusFilter)
+		filtered = filtered.filter(
+			(audit) => audit.status === filters.value.statusFilter,
+		)
 	}
 
 	// Apply type filter
 	if (filters.value.typeFilter) {
-		filtered = filtered.filter((audit) => audit.audit_type === filters.value.typeFilter)
+		filtered = filtered.filter(
+			(audit) => audit.audit_type === filters.value.typeFilter,
+		)
 	}
 
 	// Apply universe filter
@@ -891,12 +895,12 @@ const overdueCount = computed(() => {
 
 // Calendar stats for CalendarStats component
 const calendarStats = computed(() => ({
-  totalScheduled: auditCalendar.value.length,
-  inProgress: inProgressCount.value,
-  upcoming: upcomingCount.value,
-  averageProgress: averageProgress.value,
-  overdue: overdueCount.value,
-  totalCapacity: 15 // Mock data - would come from auditor records
+	totalScheduled: auditCalendar.value.length,
+	inProgress: inProgressCount.value,
+	upcoming: upcomingCount.value,
+	averageProgress: averageProgress.value,
+	overdue: overdueCount.value,
+	totalCapacity: 15, // Mock data - would come from auditor records
 }))
 
 // Calendar computed properties
@@ -932,15 +936,15 @@ const refreshData = async () => {
 
 // Methods for component interactions
 const updateFilters = (newFilters) => {
-  filters.value = { ...newFilters }
-  searchQuery.value = newFilters.searchQuery
-  statusFilter.value = newFilters.statusFilter
-  typeFilter.value = newFilters.typeFilter
-  universeFilter.value = newFilters.universeFilter
+	filters.value = { ...newFilters }
+	searchQuery.value = newFilters.searchQuery
+	statusFilter.value = newFilters.statusFilter
+	typeFilter.value = newFilters.typeFilter
+	universeFilter.value = newFilters.universeFilter
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'calendar' ? 'list' : 'calendar'
+	viewMode.value = viewMode.value === "calendar" ? "list" : "calendar"
 }
 
 const getUniverseName = (universeId) => {

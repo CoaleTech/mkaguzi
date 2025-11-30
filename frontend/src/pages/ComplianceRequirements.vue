@@ -238,10 +238,10 @@ import {
 	Tag,
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
-import { useComplianceStore } from "../stores/compliance"
-import ComplianceStats from "../components/compliance/ComplianceStats.vue"
 import ComplianceFilters from "../components/compliance/ComplianceFilters.vue"
 import ComplianceRequirementForm from "../components/compliance/ComplianceRequirementForm.vue"
+import ComplianceStats from "../components/compliance/ComplianceStats.vue"
+import { useComplianceStore } from "../stores/compliance"
 
 // Store
 const complianceStore = useComplianceStore()

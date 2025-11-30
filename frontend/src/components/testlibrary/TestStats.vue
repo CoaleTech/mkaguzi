@@ -149,249 +149,265 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  FlaskConical,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Layers,
-  Target,
-  BarChart3,
-  Shield,
-  Database,
-  FileCode,
-  Cog,
-} from 'lucide-vue-next'
+	AlertTriangle,
+	BarChart3,
+	CheckCircle,
+	Cog,
+	Database,
+	FileCode,
+	FlaskConical,
+	Layers,
+	Shield,
+	Target,
+	XCircle,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  tests: { type: Array, default: () => [] },
-  activeFilter: { type: String, default: '' },
+	tests: { type: Array, default: () => [] },
+	activeFilter: { type: String, default: "" },
 })
 
-defineEmits(['filter'])
+defineEmits(["filter"])
 
 // Stats cards computation
 const statsCards = computed(() => {
-  const tests = props.tests
-  const total = tests.length
-  const active = tests.filter((t) => t.status === 'Active').length
-  const inactive = tests.filter((t) => t.status === 'Inactive').length
-  const underReview = tests.filter((t) => t.status === 'Under Review').length
-  const substantive = tests.filter((t) => t.test_type === 'Substantive').length
-  const controls = tests.filter((t) => t.test_type === 'Controls').length
+	const tests = props.tests
+	const total = tests.length
+	const active = tests.filter((t) => t.status === "Active").length
+	const inactive = tests.filter((t) => t.status === "Inactive").length
+	const underReview = tests.filter((t) => t.status === "Under Review").length
+	const substantive = tests.filter((t) => t.test_type === "Substantive").length
+	const controls = tests.filter((t) => t.test_type === "Controls").length
 
-  return [
-    {
-      label: 'Total Tests',
-      value: total,
-      icon: FlaskConical,
-      bgColor: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      filterKey: null,
-      filterValue: null,
-    },
-    {
-      label: 'Active',
-      value: active,
-      icon: CheckCircle,
-      bgColor: 'bg-green-100',
-      iconColor: 'text-green-600',
-      filterKey: 'status',
-      filterValue: 'Active',
-      active: props.activeFilter === 'Active',
-    },
-    {
-      label: 'Inactive',
-      value: inactive,
-      icon: XCircle,
-      bgColor: 'bg-gray-100',
-      iconColor: 'text-gray-600',
-      filterKey: 'status',
-      filterValue: 'Inactive',
-      active: props.activeFilter === 'Inactive',
-    },
-    {
-      label: 'Under Review',
-      value: underReview,
-      icon: AlertTriangle,
-      bgColor: 'bg-orange-100',
-      iconColor: 'text-orange-600',
-      filterKey: 'status',
-      filterValue: 'Under Review',
-      active: props.activeFilter === 'Under Review',
-    },
-    {
-      label: 'Substantive',
-      value: substantive,
-      icon: Target,
-      bgColor: 'bg-purple-100',
-      iconColor: 'text-purple-600',
-      filterKey: 'test_type',
-      filterValue: 'Substantive',
-      active: props.activeFilter === 'Substantive',
-    },
-    {
-      label: 'Controls',
-      value: controls,
-      icon: Shield,
-      bgColor: 'bg-indigo-100',
-      iconColor: 'text-indigo-600',
-      filterKey: 'test_type',
-      filterValue: 'Controls',
-      active: props.activeFilter === 'Controls',
-    },
-  ]
+	return [
+		{
+			label: "Total Tests",
+			value: total,
+			icon: FlaskConical,
+			bgColor: "bg-blue-100",
+			iconColor: "text-blue-600",
+			filterKey: null,
+			filterValue: null,
+		},
+		{
+			label: "Active",
+			value: active,
+			icon: CheckCircle,
+			bgColor: "bg-green-100",
+			iconColor: "text-green-600",
+			filterKey: "status",
+			filterValue: "Active",
+			active: props.activeFilter === "Active",
+		},
+		{
+			label: "Inactive",
+			value: inactive,
+			icon: XCircle,
+			bgColor: "bg-gray-100",
+			iconColor: "text-gray-600",
+			filterKey: "status",
+			filterValue: "Inactive",
+			active: props.activeFilter === "Inactive",
+		},
+		{
+			label: "Under Review",
+			value: underReview,
+			icon: AlertTriangle,
+			bgColor: "bg-orange-100",
+			iconColor: "text-orange-600",
+			filterKey: "status",
+			filterValue: "Under Review",
+			active: props.activeFilter === "Under Review",
+		},
+		{
+			label: "Substantive",
+			value: substantive,
+			icon: Target,
+			bgColor: "bg-purple-100",
+			iconColor: "text-purple-600",
+			filterKey: "test_type",
+			filterValue: "Substantive",
+			active: props.activeFilter === "Substantive",
+		},
+		{
+			label: "Controls",
+			value: controls,
+			icon: Shield,
+			bgColor: "bg-indigo-100",
+			iconColor: "text-indigo-600",
+			filterKey: "test_type",
+			filterValue: "Controls",
+			active: props.activeFilter === "Controls",
+		},
+	]
 })
 
 // Category distribution
 const categoryDistribution = computed(() => {
-  const tests = props.tests
-  const categories = {}
+	const tests = props.tests
+	const categories = {}
 
-  tests.forEach((test) => {
-    const cat = test.test_category || 'Uncategorized'
-    categories[cat] = (categories[cat] || 0) + 1
-  })
+	tests.forEach((test) => {
+		const cat = test.test_category || "Uncategorized"
+		categories[cat] = (categories[cat] || 0) + 1
+	})
 
-  const total = tests.length || 1
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-purple-500',
-    'bg-orange-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-teal-500',
-    'bg-red-500',
-    'bg-yellow-500',
-    'bg-cyan-500',
-  ]
+	const total = tests.length || 1
+	const colors = [
+		"bg-blue-500",
+		"bg-green-500",
+		"bg-purple-500",
+		"bg-orange-500",
+		"bg-pink-500",
+		"bg-indigo-500",
+		"bg-teal-500",
+		"bg-red-500",
+		"bg-yellow-500",
+		"bg-cyan-500",
+	]
 
-  return Object.entries(categories)
-    .map(([name, count], index) => ({
-      name,
-      count,
-      percentage: Math.round((count / total) * 100),
-      color: colors[index % colors.length],
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 6)
+	return Object.entries(categories)
+		.map(([name, count], index) => ({
+			name,
+			count,
+			percentage: Math.round((count / total) * 100),
+			color: colors[index % colors.length],
+		}))
+		.sort((a, b) => b.count - a.count)
+		.slice(0, 6)
 })
 
 // Type distribution
 const typeDistribution = computed(() => {
-  const tests = props.tests
-  const total = tests.length || 1
+	const tests = props.tests
+	const total = tests.length || 1
 
-  return [
-    {
-      name: 'Substantive',
-      count: tests.filter((t) => t.test_type === 'Substantive').length,
-      icon: Target,
-      bgColor: 'bg-purple-50 border-purple-200',
-      iconColor: 'text-purple-600',
-      textColor: 'text-purple-700',
-      percentage: Math.round((tests.filter((t) => t.test_type === 'Substantive').length / total) * 100),
-    },
-    {
-      name: 'Controls',
-      count: tests.filter((t) => t.test_type === 'Controls').length,
-      icon: Shield,
-      bgColor: 'bg-indigo-50 border-indigo-200',
-      iconColor: 'text-indigo-600',
-      textColor: 'text-indigo-700',
-      percentage: Math.round((tests.filter((t) => t.test_type === 'Controls').length / total) * 100),
-    },
-    {
-      name: 'Analytical',
-      count: tests.filter((t) => t.test_type === 'Analytical').length,
-      icon: BarChart3,
-      bgColor: 'bg-blue-50 border-blue-200',
-      iconColor: 'text-blue-600',
-      textColor: 'text-blue-700',
-      percentage: Math.round((tests.filter((t) => t.test_type === 'Analytical').length / total) * 100),
-    },
-    {
-      name: 'Compliance',
-      count: tests.filter((t) => t.test_type === 'Compliance').length,
-      icon: Layers,
-      bgColor: 'bg-green-50 border-green-200',
-      iconColor: 'text-green-600',
-      textColor: 'text-green-700',
-      percentage: Math.round((tests.filter((t) => t.test_type === 'Compliance').length / total) * 100),
-    },
-  ]
+	return [
+		{
+			name: "Substantive",
+			count: tests.filter((t) => t.test_type === "Substantive").length,
+			icon: Target,
+			bgColor: "bg-purple-50 border-purple-200",
+			iconColor: "text-purple-600",
+			textColor: "text-purple-700",
+			percentage: Math.round(
+				(tests.filter((t) => t.test_type === "Substantive").length / total) *
+					100,
+			),
+		},
+		{
+			name: "Controls",
+			count: tests.filter((t) => t.test_type === "Controls").length,
+			icon: Shield,
+			bgColor: "bg-indigo-50 border-indigo-200",
+			iconColor: "text-indigo-600",
+			textColor: "text-indigo-700",
+			percentage: Math.round(
+				(tests.filter((t) => t.test_type === "Controls").length / total) * 100,
+			),
+		},
+		{
+			name: "Analytical",
+			count: tests.filter((t) => t.test_type === "Analytical").length,
+			icon: BarChart3,
+			bgColor: "bg-blue-50 border-blue-200",
+			iconColor: "text-blue-600",
+			textColor: "text-blue-700",
+			percentage: Math.round(
+				(tests.filter((t) => t.test_type === "Analytical").length / total) *
+					100,
+			),
+		},
+		{
+			name: "Compliance",
+			count: tests.filter((t) => t.test_type === "Compliance").length,
+			icon: Layers,
+			bgColor: "bg-green-50 border-green-200",
+			iconColor: "text-green-600",
+			textColor: "text-green-700",
+			percentage: Math.round(
+				(tests.filter((t) => t.test_type === "Compliance").length / total) *
+					100,
+			),
+		},
+	]
 })
 
 // Logic type distribution
 const logicTypeDistribution = computed(() => {
-  const tests = props.tests
+	const tests = props.tests
 
-  return [
-    {
-      name: 'SQL Query',
-      count: tests.filter((t) => t.test_logic_type === 'SQL Query').length,
-      icon: Database,
-      iconColor: 'text-blue-600',
-      theme: 'blue',
-    },
-    {
-      name: 'Python Script',
-      count: tests.filter((t) => t.test_logic_type === 'Python Script').length,
-      icon: FileCode,
-      iconColor: 'text-yellow-600',
-      theme: 'orange',
-    },
-    {
-      name: 'Built-in Function',
-      count: tests.filter((t) => t.test_logic_type === 'Built-in Function').length,
-      icon: Cog,
-      iconColor: 'text-gray-600',
-      theme: 'gray',
-    },
-  ]
+	return [
+		{
+			name: "SQL Query",
+			count: tests.filter((t) => t.test_logic_type === "SQL Query").length,
+			icon: Database,
+			iconColor: "text-blue-600",
+			theme: "blue",
+		},
+		{
+			name: "Python Script",
+			count: tests.filter((t) => t.test_logic_type === "Python Script").length,
+			icon: FileCode,
+			iconColor: "text-yellow-600",
+			theme: "orange",
+		},
+		{
+			name: "Built-in Function",
+			count: tests.filter((t) => t.test_logic_type === "Built-in Function")
+				.length,
+			icon: Cog,
+			iconColor: "text-gray-600",
+			theme: "gray",
+		},
+	]
 })
 
 // Average success rate
 const averageSuccessRate = computed(() => {
-  const tests = props.tests.filter((t) => t.success_rate !== undefined && t.success_rate !== null)
-  if (!tests.length) return 0
-  const sum = tests.reduce((acc, t) => acc + (t.success_rate || 0), 0)
-  return Math.round(sum / tests.length)
+	const tests = props.tests.filter(
+		(t) => t.success_rate !== undefined && t.success_rate !== null,
+	)
+	if (!tests.length) return 0
+	const sum = tests.reduce((acc, t) => acc + (t.success_rate || 0), 0)
+	return Math.round(sum / tests.length)
 })
 
 const successRateColor = computed(() => {
-  const rate = averageSuccessRate.value
-  if (rate >= 80) return '#22C55E' // green-500
-  if (rate >= 60) return '#F59E0B' // amber-500
-  return '#EF4444' // red-500
+	const rate = averageSuccessRate.value
+	if (rate >= 80) return "#22C55E" // green-500
+	if (rate >= 60) return "#F59E0B" // amber-500
+	return "#EF4444" // red-500
 })
 
 // Usage stats
 const totalExecutions = computed(() => {
-  return props.tests.reduce((acc, t) => acc + (t.usage_count || 0), 0)
+	return props.tests.reduce((acc, t) => acc + (t.usage_count || 0), 0)
 })
 
 const mostUsedTest = computed(() => {
-  if (!props.tests.length) return 'N/A'
-  const sorted = [...props.tests].sort((a, b) => (b.usage_count || 0) - (a.usage_count || 0))
-  return sorted[0]?.test_name || 'N/A'
+	if (!props.tests.length) return "N/A"
+	const sorted = [...props.tests].sort(
+		(a, b) => (b.usage_count || 0) - (a.usage_count || 0),
+	)
+	return sorted[0]?.test_name || "N/A"
 })
 
 const avgExecutionsPerTest = computed(() => {
-  if (!props.tests.length) return 0
-  return Math.round(totalExecutions.value / props.tests.length)
+	if (!props.tests.length) return 0
+	return Math.round(totalExecutions.value / props.tests.length)
 })
 
 const underReviewCount = computed(() => {
-  return props.tests.filter((t) => t.status === 'Under Review').length
+	return props.tests.filter((t) => t.status === "Under Review").length
 })
 
 function formatNumber(num) {
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-  return num.toString()
+	if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+	if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+	return num.toString()
 }
 </script>

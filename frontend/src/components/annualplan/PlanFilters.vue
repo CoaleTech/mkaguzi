@@ -151,92 +151,97 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { FormControl } from 'frappe-ui'
+import { FormControl } from "frappe-ui"
 import {
-  SearchIcon,
-  XIcon,
-  ListIcon,
-  LayoutGridIcon,
-  CalendarDaysIcon,
-  FilterXIcon,
-} from 'lucide-vue-next'
+	CalendarDaysIcon,
+	FilterXIcon,
+	LayoutGridIcon,
+	ListIcon,
+	SearchIcon,
+	XIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  searchQuery: {
-    type: String,
-    default: '',
-  },
-  statusFilter: {
-    type: String,
-    default: '',
-  },
-  yearFilter: {
-    type: [String, Number],
-    default: '',
-  },
-  periodFilter: {
-    type: String,
-    default: '',
-  },
-  viewMode: {
-    type: String,
-    default: 'table',
-  },
+	searchQuery: {
+		type: String,
+		default: "",
+	},
+	statusFilter: {
+		type: String,
+		default: "",
+	},
+	yearFilter: {
+		type: [String, Number],
+		default: "",
+	},
+	periodFilter: {
+		type: String,
+		default: "",
+	},
+	viewMode: {
+		type: String,
+		default: "table",
+	},
 })
 
 // Emit
 const emit = defineEmits([
-  'update:searchQuery',
-  'update:statusFilter',
-  'update:yearFilter',
-  'update:periodFilter',
-  'update:viewMode',
+	"update:searchQuery",
+	"update:statusFilter",
+	"update:yearFilter",
+	"update:periodFilter",
+	"update:viewMode",
 ])
 
 // Options
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Pending Approval', value: 'Pending Approval' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Cancelled', value: 'Cancelled' },
+	{ label: "All Status", value: "" },
+	{ label: "Draft", value: "Draft" },
+	{ label: "Pending Approval", value: "Pending Approval" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Active", value: "Active" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const periodOptions = [
-  { label: 'All Periods', value: '' },
-  { label: 'Annual', value: 'Annual' },
-  { label: 'Q1', value: 'Q1' },
-  { label: 'Q2', value: 'Q2' },
-  { label: 'Q3', value: 'Q3' },
-  { label: 'Q4', value: 'Q4' },
-  { label: 'H1', value: 'H1' },
-  { label: 'H2', value: 'H2' },
+	{ label: "All Periods", value: "" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Q1", value: "Q1" },
+	{ label: "Q2", value: "Q2" },
+	{ label: "Q3", value: "Q3" },
+	{ label: "Q4", value: "Q4" },
+	{ label: "H1", value: "H1" },
+	{ label: "H2", value: "H2" },
 ]
 
 // Generate year options (current year +/- 3 years)
 const currentYear = new Date().getFullYear()
 const yearOptions = computed(() => {
-  const years = [{ label: 'All Years', value: '' }]
-  for (let i = currentYear + 2; i >= currentYear - 3; i--) {
-    years.push({ label: String(i), value: i })
-  }
-  return years
+	const years = [{ label: "All Years", value: "" }]
+	for (let i = currentYear + 2; i >= currentYear - 3; i--) {
+		years.push({ label: String(i), value: i })
+	}
+	return years
 })
 
 // Computed
 const hasActiveFilters = computed(() => {
-  return props.searchQuery || props.statusFilter || props.yearFilter || props.periodFilter
+	return (
+		props.searchQuery ||
+		props.statusFilter ||
+		props.yearFilter ||
+		props.periodFilter
+	)
 })
 
 // Methods
 const clearFilters = () => {
-  emit('update:searchQuery', '')
-  emit('update:statusFilter', '')
-  emit('update:yearFilter', '')
-  emit('update:periodFilter', '')
+	emit("update:searchQuery", "")
+	emit("update:statusFilter", "")
+	emit("update:yearFilter", "")
+	emit("update:periodFilter", "")
 }
 </script>

@@ -345,35 +345,42 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Dialog, Button, FormControl, TextEditor, Select, Badge } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
 import {
-  CalendarRange,
-  BarChart3,
-  Shield,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Plus,
-  Trash2,
-  Lock,
-  Unlock,
-  Archive,
-} from 'lucide-vue-next'
+	Badge,
+	Button,
+	Dialog,
+	FormControl,
+	Select,
+	TextEditor,
+} from "frappe-ui"
+import {
+	Archive,
+	BarChart3,
+	CalendarRange,
+	CheckCircle2,
+	ChevronLeft,
+	ChevronRight,
+	Lock,
+	Plus,
+	Save,
+	Shield,
+	Trash2,
+	Unlock,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  period: { type: Object, default: null },
+	show: { type: Boolean, default: false },
+	period: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:show', 'saved'])
+const emit = defineEmits(["update:show", "saved"])
 
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (val) => emit('update:show', val),
+	get: () => props.show,
+	set: (val) => emit("update:show", val),
 })
 
 const isEditMode = computed(() => !!props.period?.name)
@@ -382,201 +389,221 @@ const currentSectionIndex = ref(0)
 
 // Section definitions
 const sections = [
-  { id: 'details', title: 'Period Details', icon: CalendarRange, description: 'Define period identification and dates' },
-  { id: 'quality', title: 'Data Quality', icon: BarChart3, description: 'Track data completeness and imports' },
-  { id: 'approval', title: 'Approval & Lock', icon: Shield, description: 'Manage period approval and archiving' },
+	{
+		id: "details",
+		title: "Period Details",
+		icon: CalendarRange,
+		description: "Define period identification and dates",
+	},
+	{
+		id: "quality",
+		title: "Data Quality",
+		icon: BarChart3,
+		description: "Track data completeness and imports",
+	},
+	{
+		id: "approval",
+		title: "Approval & Lock",
+		icon: Shield,
+		description: "Manage period approval and archiving",
+	},
 ]
 
 // Form data
 const formData = reactive({
-  period_id: '',
-  period_name: '',
-  period_type: '',
-  fiscal_year: '',
-  start_date: '',
-  end_date: '',
-  status: 'Open',
-  data_completeness_score: 0,
-  data_quality_score: 0,
-  reconciliation_status: '',
-  import_checklist: [],
-  approved_by: '',
-  approval_date: '',
-  lock_date: '',
-  archive_date: '',
-  notes: '',
+	period_id: "",
+	period_name: "",
+	period_type: "",
+	fiscal_year: "",
+	start_date: "",
+	end_date: "",
+	status: "Open",
+	data_completeness_score: 0,
+	data_quality_score: 0,
+	reconciliation_status: "",
+	import_checklist: [],
+	approved_by: "",
+	approval_date: "",
+	lock_date: "",
+	archive_date: "",
+	notes: "",
 })
 
 // Options
 const periodTypeOptions = [
-  { label: 'Month', value: 'Month' },
-  { label: 'Quarter', value: 'Quarter' },
-  { label: 'Half-Year', value: 'Half-Year' },
-  { label: 'Year', value: 'Year' },
-  { label: 'Custom', value: 'Custom' },
+	{ label: "Month", value: "Month" },
+	{ label: "Quarter", value: "Quarter" },
+	{ label: "Half-Year", value: "Half-Year" },
+	{ label: "Year", value: "Year" },
+	{ label: "Custom", value: "Custom" },
 ]
 
 const statusOptions = [
-  { label: 'Open', value: 'Open' },
-  { label: 'Locked', value: 'Locked' },
-  { label: 'Closed', value: 'Closed' },
-  { label: 'Archived', value: 'Archived' },
+	{ label: "Open", value: "Open" },
+	{ label: "Locked", value: "Locked" },
+	{ label: "Closed", value: "Closed" },
+	{ label: "Archived", value: "Archived" },
 ]
 
 const reconciliationOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Issues Found', value: 'Issues Found' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Issues Found", value: "Issues Found" },
 ]
 
 const importStatusOptions = [
-  { label: 'Pending', value: 'Pending' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Failed', value: 'Failed' },
+	{ label: "Pending", value: "Pending" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Failed", value: "Failed" },
 ]
 
 // Watch for period prop changes
 watch(
-  () => props.period,
-  (newPeriod) => {
-    if (newPeriod) {
-      Object.keys(formData).forEach((key) => {
-        if (newPeriod[key] !== undefined) {
-          formData[key] = newPeriod[key]
-        }
-      })
-    } else {
-      resetForm()
-    }
-  },
-  { immediate: true }
+	() => props.period,
+	(newPeriod) => {
+		if (newPeriod) {
+			Object.keys(formData).forEach((key) => {
+				if (newPeriod[key] !== undefined) {
+					formData[key] = newPeriod[key]
+				}
+			})
+		} else {
+			resetForm()
+		}
+	},
+	{ immediate: true },
 )
 
 // Computed properties
 const periodDuration = computed(() => {
-  if (!formData.start_date || !formData.end_date) return 0
-  const start = new Date(formData.start_date)
-  const end = new Date(formData.end_date)
-  return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
+	if (!formData.start_date || !formData.end_date) return 0
+	const start = new Date(formData.start_date)
+	const end = new Date(formData.end_date)
+	return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
 })
 
 // Section validation
 const sectionValidation = computed(() => [
-  !!(formData.period_id && formData.period_name && formData.start_date && formData.end_date),
-  true, // Data Quality - optional
-  true, // Approval - optional
+	!!(
+		formData.period_id &&
+		formData.period_name &&
+		formData.start_date &&
+		formData.end_date
+	),
+	true, // Data Quality - optional
+	true, // Approval - optional
 ])
 
-const completedSections = computed(() =>
-  sectionValidation.value.filter(Boolean).length
+const completedSections = computed(
+	() => sectionValidation.value.filter(Boolean).length,
 )
 
 const progressPercentage = computed(() =>
-  Math.round((completedSections.value / sections.length) * 100)
+	Math.round((completedSections.value / sections.length) * 100),
 )
 
 function isSectionComplete(index) {
-  return sectionValidation.value[index]
+	return sectionValidation.value[index]
 }
 
 function getSectionStatusClass(index) {
-  if (currentSectionIndex.value === index) return 'text-blue-600'
-  if (isSectionComplete(index)) return 'text-green-500'
-  return 'text-gray-400'
+	if (currentSectionIndex.value === index) return "text-blue-600"
+	if (isSectionComplete(index)) return "text-green-500"
+	return "text-gray-400"
 }
 
 function goToSection(index) {
-  currentSectionIndex.value = index
+	currentSectionIndex.value = index
 }
 
 function nextSection() {
-  if (currentSectionIndex.value < sections.length - 1) {
-    currentSectionIndex.value++
-  }
+	if (currentSectionIndex.value < sections.length - 1) {
+		currentSectionIndex.value++
+	}
 }
 
 function previousSection() {
-  if (currentSectionIndex.value > 0) {
-    currentSectionIndex.value--
-  }
+	if (currentSectionIndex.value > 0) {
+		currentSectionIndex.value--
+	}
 }
 
 // Helper functions
 function getScoreTheme(score) {
-  if (score >= 80) return 'green'
-  if (score >= 60) return 'orange'
-  if (score >= 40) return 'yellow'
-  return 'red'
+	if (score >= 80) return "green"
+	if (score >= 60) return "orange"
+	if (score >= 40) return "yellow"
+	return "red"
 }
 
 function getScoreColor(score) {
-  if (score >= 80) return 'bg-green-500'
-  if (score >= 60) return 'bg-yellow-500'
-  if (score >= 40) return 'bg-orange-500'
-  return 'bg-red-500'
+	if (score >= 80) return "bg-green-500"
+	if (score >= 60) return "bg-yellow-500"
+	if (score >= 40) return "bg-orange-500"
+	return "bg-red-500"
 }
 
 // Child table management
 function addChecklistItem() {
-  formData.import_checklist.push({
-    import_type: '',
-    status: 'Pending',
-    record_count: 0,
-    imported_date: '',
-  })
+	formData.import_checklist.push({
+		import_type: "",
+		status: "Pending",
+		record_count: 0,
+		imported_date: "",
+	})
 }
 
 function removeChecklistItem(index) {
-  formData.import_checklist.splice(index, 1)
+	formData.import_checklist.splice(index, 1)
 }
 
 // Period actions
 function lockPeriod() {
-  formData.status = 'Locked'
-  formData.lock_date = new Date().toISOString().split('T')[0]
+	formData.status = "Locked"
+	formData.lock_date = new Date().toISOString().split("T")[0]
 }
 
 function unlockPeriod() {
-  formData.status = 'Open'
-  formData.lock_date = ''
+	formData.status = "Open"
+	formData.lock_date = ""
 }
 
 function archivePeriod() {
-  formData.status = 'Archived'
-  formData.archive_date = new Date().toISOString().split('T')[0]
+	formData.status = "Archived"
+	formData.archive_date = new Date().toISOString().split("T")[0]
 }
 
 function resetForm() {
-  Object.keys(formData).forEach((key) => {
-    if (Array.isArray(formData[key])) {
-      formData[key] = []
-    } else if (typeof formData[key] === 'number') {
-      formData[key] = 0
-    } else {
-      formData[key] = ''
-    }
-  })
-  formData.status = 'Open'
-  currentSectionIndex.value = 0
+	Object.keys(formData).forEach((key) => {
+		if (Array.isArray(formData[key])) {
+			formData[key] = []
+		} else if (typeof formData[key] === "number") {
+			formData[key] = 0
+		} else {
+			formData[key] = ""
+		}
+	})
+	formData.status = "Open"
+	currentSectionIndex.value = 0
 }
 
 function closeDialog() {
-  emit('update:show', false)
-  resetForm()
+	emit("update:show", false)
+	resetForm()
 }
 
 async function savePeriod() {
-  saving.value = true
-  try {
-    console.log('Saving period:', formData)
-    emit('saved', { ...formData })
-    closeDialog()
-  } catch (error) {
-    console.error('Error saving period:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		console.log("Saving period:", formData)
+		emit("saved", { ...formData })
+		closeDialog()
+	} catch (error) {
+		console.error("Error saving period:", error)
+	} finally {
+		saving.value = false
+	}
 }
 </script>

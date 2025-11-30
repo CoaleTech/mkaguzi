@@ -93,47 +93,57 @@
 
 <script setup>
 import {
-  BarChartIcon,
-  BriefcaseIcon,
-  CheckCircleIcon,
-  FileTextIcon,
-  PlayCircleIcon,
+	BarChartIcon,
+	BriefcaseIcon,
+	CheckCircleIcon,
+	FileTextIcon,
+	PlayCircleIcon,
 } from "lucide-vue-next"
 import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  engagements: {
-    type: Array,
-    default: () => [],
-  },
+	engagements: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 // Computed properties
 const totalEngagements = computed(() => props.engagements.length)
 
-const inProgressCount = computed(() =>
-  props.engagements.filter((engagement) => engagement.status === "In Progress").length
+const inProgressCount = computed(
+	() =>
+		props.engagements.filter(
+			(engagement) => engagement.status === "In Progress",
+		).length,
 )
 
-const reportingCount = computed(() =>
-  props.engagements.filter((engagement) => engagement.status === "Reporting").length
+const reportingCount = computed(
+	() =>
+		props.engagements.filter((engagement) => engagement.status === "Reporting")
+			.length,
 )
 
-const qualityReviewCount = computed(() =>
-  props.engagements.filter((engagement) => engagement.status === "Quality Review").length
+const qualityReviewCount = computed(
+	() =>
+		props.engagements.filter(
+			(engagement) => engagement.status === "Quality Review",
+		).length,
 )
 
-const completedCount = computed(() =>
-  props.engagements.filter((engagement) => engagement.status === "Completed").length
+const completedCount = computed(
+	() =>
+		props.engagements.filter((engagement) => engagement.status === "Completed")
+			.length,
 )
 
 const averageProgress = computed(() => {
-  if (props.engagements.length === 0) return 0
-  const totalProgress = props.engagements.reduce(
-    (sum, engagement) => sum + (engagement.progress_percentage || 0),
-    0
-  )
-  return Math.round(totalProgress / props.engagements.length)
+	if (props.engagements.length === 0) return 0
+	const totalProgress = props.engagements.reduce(
+		(sum, engagement) => sum + (engagement.progress_percentage || 0),
+		0,
+	)
+	return Math.round(totalProgress / props.engagements.length)
 })
 </script>

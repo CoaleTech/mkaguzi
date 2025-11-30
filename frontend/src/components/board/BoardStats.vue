@@ -61,37 +61,44 @@
 </template>
 
 <script setup>
-import { AlertCircle, AlertTriangle, ShieldCheck, Target, TrendingDown, TrendingUp } from "lucide-vue-next"
+import {
+	AlertCircle,
+	AlertTriangle,
+	ShieldCheck,
+	Target,
+	TrendingDown,
+	TrendingUp,
+} from "lucide-vue-next"
 
 defineProps({
-  boardMetrics: {
-    type: Object,
-    required: true,
-    default: () => ({
-      auditCoverage: 0,
-      auditCoverageTrend: 0,
-      openFindings: 0,
-      findingsTrend: 0,
-      complianceScore: 0,
-      complianceTrend: 0,
-      overallRisk: "Medium"
-    })
-  }
+	boardMetrics: {
+		type: Object,
+		required: true,
+		default: () => ({
+			auditCoverage: 0,
+			auditCoverageTrend: 0,
+			openFindings: 0,
+			findingsTrend: 0,
+			complianceScore: 0,
+			complianceTrend: 0,
+			overallRisk: "Medium",
+		}),
+	},
 })
 
 // Utility methods
 const getTrendClass = (trend) => {
-  return trend > 0 ? "positive" : trend < 0 ? "negative" : "neutral"
+	return trend > 0 ? "positive" : trend < 0 ? "negative" : "neutral"
 }
 
 const getRiskLevelClass = (level) => {
-  const classes = {
-    Low: "low-risk",
-    Medium: "medium-risk",
-    High: "high-risk",
-    Critical: "critical-risk",
-  }
-  return classes[level] || "medium-risk"
+	const classes = {
+		Low: "low-risk",
+		Medium: "medium-risk",
+		High: "high-risk",
+		Critical: "critical-risk",
+	}
+	return classes[level] || "medium-risk"
 }
 </script>
 

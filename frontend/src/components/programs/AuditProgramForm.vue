@@ -477,35 +477,35 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { Badge, Button, Dialog, FormControl, TextEditor } from 'frappe-ui'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { useAuditStore } from "@/stores/audit"
+import { Badge, Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-  AlertTriangleIcon,
-  CheckCircle2Icon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ClipboardListIcon,
-  EditIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SaveIcon,
-  TrashIcon,
-  XCircleIcon,
-} from 'lucide-vue-next'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { useAuditStore } from '@/stores/audit'
+	AlertTriangleIcon,
+	CheckCircle2Icon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ClipboardListIcon,
+	EditIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SaveIcon,
+	TrashIcon,
+	XCircleIcon,
+} from "lucide-vue-next"
+import { computed, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  program: { type: Object, default: null },
-  mode: { type: String, default: 'create' },
+	show: { type: Boolean, default: false },
+	program: { type: Object, default: null },
+	mode: { type: String, default: "create" },
 })
 
 // Emit
-const emit = defineEmits(['update:show', 'saved', 'close'])
+const emit = defineEmits(["update:show", "saved", "close"])
 
 // Store
 const auditStore = useAuditStore()
@@ -518,270 +518,301 @@ const lastSaved = ref(null)
 
 // Computed for dialog visibility (to avoid v-model on prop)
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (value) => emit('update:show', value),
+	get: () => props.show,
+	set: (value) => emit("update:show", value),
 })
 
 // Form data
 const form = ref(getDefaultForm())
 
 function getDefaultForm() {
-  return {
-    program_id: '',
-    program_name: '',
-    audit_type: '',
-    is_template: false,
-    engagement_reference: '',
-    program_objectives: '',
-    program_procedures: [],
-    risk_areas: [],
-  }
+	return {
+		program_id: "",
+		program_name: "",
+		audit_type: "",
+		is_template: false,
+		engagement_reference: "",
+		program_objectives: "",
+		program_procedures: [],
+		risk_areas: [],
+	}
 }
 
 // Sections
 const sections = [
-  { id: 'basic', title: 'Basic Information', description: 'Program ID and type' },
-  { id: 'objectives', title: 'Program Objectives', description: 'Define objectives' },
-  { id: 'procedures', title: 'Audit Procedures', description: 'Detailed procedures' },
-  { id: 'risks', title: 'Risk Areas', description: 'Key risk areas' },
-  { id: 'review', title: 'Review & Submit', description: 'Review and submit' },
+	{
+		id: "basic",
+		title: "Basic Information",
+		description: "Program ID and type",
+	},
+	{
+		id: "objectives",
+		title: "Program Objectives",
+		description: "Define objectives",
+	},
+	{
+		id: "procedures",
+		title: "Audit Procedures",
+		description: "Detailed procedures",
+	},
+	{ id: "risks", title: "Risk Areas", description: "Key risk areas" },
+	{ id: "review", title: "Review & Submit", description: "Review and submit" },
 ]
 
 // Options
 const auditTypeOptions = [
-  { label: 'Financial', value: 'Financial' },
-  { label: 'Operational', value: 'Operational' },
-  { label: 'Compliance', value: 'Compliance' },
-  { label: 'IT', value: 'IT' },
-  { label: 'Inventory', value: 'Inventory' },
-  { label: 'Cash', value: 'Cash' },
-  { label: 'Sales', value: 'Sales' },
-  { label: 'Procurement', value: 'Procurement' },
+	{ label: "Financial", value: "Financial" },
+	{ label: "Operational", value: "Operational" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "IT", value: "IT" },
+	{ label: "Inventory", value: "Inventory" },
+	{ label: "Cash", value: "Cash" },
+	{ label: "Sales", value: "Sales" },
+	{ label: "Procurement", value: "Procurement" },
 ]
 
 const procedureTypeOptions = [
-  { label: 'Inquiry', value: 'Inquiry' },
-  { label: 'Observation', value: 'Observation' },
-  { label: 'Inspection', value: 'Inspection' },
-  { label: 'Re-performance', value: 'Re-performance' },
-  { label: 'Analytical', value: 'Analytical' },
-  { label: 'Confirmation', value: 'Confirmation' },
-  { label: 'Computation', value: 'Computation' },
+	{ label: "Inquiry", value: "Inquiry" },
+	{ label: "Observation", value: "Observation" },
+	{ label: "Inspection", value: "Inspection" },
+	{ label: "Re-performance", value: "Re-performance" },
+	{ label: "Analytical", value: "Analytical" },
+	{ label: "Confirmation", value: "Confirmation" },
+	{ label: "Computation", value: "Computation" },
 ]
 
 const procedureStatusOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Not Applicable', value: 'Not Applicable' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Not Applicable", value: "Not Applicable" },
 ]
 
 const assertionOptions = [
-  { label: 'Existence', value: 'Existence' },
-  { label: 'Completeness', value: 'Completeness' },
-  { label: 'Accuracy', value: 'Accuracy' },
-  { label: 'Valuation', value: 'Valuation' },
-  { label: 'Rights', value: 'Rights' },
-  { label: 'Presentation', value: 'Presentation' },
-  { label: 'Occurrence', value: 'Occurrence' },
-  { label: 'Cutoff', value: 'Cutoff' },
+	{ label: "Existence", value: "Existence" },
+	{ label: "Completeness", value: "Completeness" },
+	{ label: "Accuracy", value: "Accuracy" },
+	{ label: "Valuation", value: "Valuation" },
+	{ label: "Rights", value: "Rights" },
+	{ label: "Presentation", value: "Presentation" },
+	{ label: "Occurrence", value: "Occurrence" },
+	{ label: "Cutoff", value: "Cutoff" },
 ]
 
 const samplingMethodOptions = [
-  { label: 'Random', value: 'Random' },
-  { label: 'Systematic', value: 'Systematic' },
-  { label: 'Judgmental', value: 'Judgmental' },
-  { label: '100%', value: '100%' },
-  { label: 'Other', value: 'Other' },
+	{ label: "Random", value: "Random" },
+	{ label: "Systematic", value: "Systematic" },
+	{ label: "Judgmental", value: "Judgmental" },
+	{ label: "100%", value: "100%" },
+	{ label: "Other", value: "Other" },
 ]
 
 const riskRatingOptions = [
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 // Watch for program changes
-watch(() => props.program, (newProgram) => {
-  if (newProgram) {
-    form.value = {
-      ...getDefaultForm(),
-      ...newProgram,
-      program_procedures: newProgram.program_procedures || [],
-      risk_areas: newProgram.risk_areas || [],
-    }
-  } else {
-    form.value = getDefaultForm()
-  }
-  currentSection.value = 0
-}, { immediate: true })
+watch(
+	() => props.program,
+	(newProgram) => {
+		if (newProgram) {
+			form.value = {
+				...getDefaultForm(),
+				...newProgram,
+				program_procedures: newProgram.program_procedures || [],
+				risk_areas: newProgram.risk_areas || [],
+			}
+		} else {
+			form.value = getDefaultForm()
+		}
+		currentSection.value = 0
+	},
+	{ immediate: true },
+)
 
-watch(() => props.show, (newShow) => {
-  if (!newShow) {
-    currentSection.value = 0
-    lastSaved.value = null
-  }
-})
+watch(
+	() => props.show,
+	(newShow) => {
+		if (!newShow) {
+			currentSection.value = 0
+			lastSaved.value = null
+		}
+	},
+)
 
 // Computed
 const overallProgress = computed(() => {
-  let completed = 0
-  if (form.value.program_id && form.value.program_name && form.value.audit_type) completed += 25
-  if (form.value.program_objectives) completed += 25
-  if (form.value.program_procedures?.length > 0) completed += 25
-  completed += 25 // Review section always counts
-  return completed
+	let completed = 0
+	if (form.value.program_id && form.value.program_name && form.value.audit_type)
+		completed += 25
+	if (form.value.program_objectives) completed += 25
+	if (form.value.program_procedures?.length > 0) completed += 25
+	completed += 25 // Review section always counts
+	return completed
 })
 
 const isFormValid = computed(() => {
-  return form.value.program_id &&
-    form.value.program_name &&
-    form.value.audit_type &&
-    form.value.program_objectives &&
-    form.value.program_procedures?.length > 0
+	return (
+		form.value.program_id &&
+		form.value.program_name &&
+		form.value.audit_type &&
+		form.value.program_objectives &&
+		form.value.program_procedures?.length > 0
+	)
 })
 
 const validationChecks = computed(() => [
-  { label: 'Program ID is set', valid: !!form.value.program_id },
-  { label: 'Program Name is set', valid: !!form.value.program_name },
-  { label: 'Audit Type is selected', valid: !!form.value.audit_type },
-  { label: 'Objectives are defined', valid: !!form.value.program_objectives },
-  { label: 'At least one procedure is added', valid: form.value.program_procedures?.length > 0 },
+	{ label: "Program ID is set", valid: !!form.value.program_id },
+	{ label: "Program Name is set", valid: !!form.value.program_name },
+	{ label: "Audit Type is selected", valid: !!form.value.audit_type },
+	{ label: "Objectives are defined", valid: !!form.value.program_objectives },
+	{
+		label: "At least one procedure is added",
+		valid: form.value.program_procedures?.length > 0,
+	},
 ])
 
 // Methods
 const isSectionComplete = (sectionId) => {
-  switch (sectionId) {
-    case 'basic':
-      return form.value.program_id && form.value.program_name && form.value.audit_type
-    case 'objectives':
-      return !!form.value.program_objectives
-    case 'procedures':
-      return form.value.program_procedures?.length > 0
-    case 'risks':
-      return true // Optional
-    case 'review':
-      return true
-    default:
-      return false
-  }
+	switch (sectionId) {
+		case "basic":
+			return (
+				form.value.program_id &&
+				form.value.program_name &&
+				form.value.audit_type
+			)
+		case "objectives":
+			return !!form.value.program_objectives
+		case "procedures":
+			return form.value.program_procedures?.length > 0
+		case "risks":
+			return true // Optional
+		case "review":
+			return true
+		default:
+			return false
+	}
 }
 
 const getSectionStatusClass = (sectionId) => {
-  if (isSectionComplete(sectionId)) {
-    return 'bg-green-500 text-white'
-  }
-  return 'bg-gray-300 text-gray-600'
+	if (isSectionComplete(sectionId)) {
+		return "bg-green-500 text-white"
+	}
+	return "bg-gray-300 text-gray-600"
 }
 
 const goToSection = (index) => {
-  currentSection.value = index
+	currentSection.value = index
 }
 
 const previousSection = () => {
-  if (currentSection.value > 0) {
-    currentSection.value--
-  }
+	if (currentSection.value > 0) {
+		currentSection.value--
+	}
 }
 
 const nextSection = () => {
-  if (currentSection.value < sections.length - 1) {
-    currentSection.value++
-  }
+	if (currentSection.value < sections.length - 1) {
+		currentSection.value++
+	}
 }
 
 const generateProgramId = () => {
-  const year = new Date().getFullYear()
-  const type = form.value.audit_type
-    ? form.value.audit_type.substring(0, 3).toUpperCase()
-    : 'AUD'
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  form.value.program_id = `${type}-${year}-${random}`
+	const year = new Date().getFullYear()
+	const type = form.value.audit_type
+		? form.value.audit_type.substring(0, 3).toUpperCase()
+		: "AUD"
+	const random = Math.floor(Math.random() * 1000)
+		.toString()
+		.padStart(3, "0")
+	form.value.program_id = `${type}-${year}-${random}`
 }
 
 const addProcedure = () => {
-  const count = form.value.program_procedures?.length || 0
-  form.value.program_procedures.push({
-    procedure_no: `P${(count + 1).toString().padStart(3, '0')}`,
-    procedure_section: '',
-    procedure_description: '',
-    procedure_type: '',
-    control_objective: '',
-    assertion: '',
-    sample_size: 0,
-    sampling_method: '',
-    assigned_to: '',
-    budgeted_hours: 0,
-    actual_hours: 0,
-    status: 'Not Started',
-    completion_date: '',
-    working_paper_reference: '',
-    findings_count: 0,
-    conclusion: '',
-    notes: '',
-  })
+	const count = form.value.program_procedures?.length || 0
+	form.value.program_procedures.push({
+		procedure_no: `P${(count + 1).toString().padStart(3, "0")}`,
+		procedure_section: "",
+		procedure_description: "",
+		procedure_type: "",
+		control_objective: "",
+		assertion: "",
+		sample_size: 0,
+		sampling_method: "",
+		assigned_to: "",
+		budgeted_hours: 0,
+		actual_hours: 0,
+		status: "Not Started",
+		completion_date: "",
+		working_paper_reference: "",
+		findings_count: 0,
+		conclusion: "",
+		notes: "",
+	})
 }
 
 const removeProcedure = (index) => {
-  form.value.program_procedures.splice(index, 1)
+	form.value.program_procedures.splice(index, 1)
 }
 
 const editProcedure = (index) => {
-  // Scroll to procedure or show modal - for now just focus
-  console.log('Edit procedure', index)
+	// Scroll to procedure or show modal - for now just focus
+	console.log("Edit procedure", index)
 }
 
 const addRiskArea = () => {
-  form.value.risk_areas.push({
-    risk_description: '',
-    risk_rating: '',
-    procedures_addressing_risk: '',
-  })
+	form.value.risk_areas.push({
+		risk_description: "",
+		risk_rating: "",
+		procedures_addressing_risk: "",
+	})
 }
 
 const removeRiskArea = (index) => {
-  form.value.risk_areas.splice(index, 1)
+	form.value.risk_areas.splice(index, 1)
 }
 
 const getRiskBadgeVariant = (rating) => {
-  const variants = {
-    'High': 'subtle',
-    'Medium': 'subtle',
-    'Low': 'subtle',
-  }
-  return variants[rating] || 'subtle'
+	const variants = {
+		High: "subtle",
+		Medium: "subtle",
+		Low: "subtle",
+	}
+	return variants[rating] || "subtle"
 }
 
 const saveDraft = async () => {
-  saving.value = true
-  try {
-    if (props.mode === 'edit' && props.program?.name) {
-      await auditStore.updateAuditProgram(props.program.name, form.value)
-    } else {
-      await auditStore.createAuditProgram(form.value)
-    }
-    lastSaved.value = new Date().toLocaleTimeString()
-  } catch (error) {
-    console.error('Error saving draft:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		if (props.mode === "edit" && props.program?.name) {
+			await auditStore.updateAuditProgram(props.program.name, form.value)
+		} else {
+			await auditStore.createAuditProgram(form.value)
+		}
+		lastSaved.value = new Date().toLocaleTimeString()
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		saving.value = false
+	}
 }
 
 const submitForm = async () => {
-  submitting.value = true
-  try {
-    if (props.mode === 'edit' && props.program?.name) {
-      await auditStore.updateAuditProgram(props.program.name, form.value)
-    } else {
-      await auditStore.createAuditProgram(form.value)
-    }
-    emit('saved')
-    emit('update:show', false)
-  } catch (error) {
-    console.error('Error submitting form:', error)
-  } finally {
-    submitting.value = false
-  }
+	submitting.value = true
+	try {
+		if (props.mode === "edit" && props.program?.name) {
+			await auditStore.updateAuditProgram(props.program.name, form.value)
+		} else {
+			await auditStore.createAuditProgram(form.value)
+		}
+		emit("saved")
+		emit("update:show", false)
+	} catch (error) {
+		console.error("Error submitting form:", error)
+	} finally {
+		submitting.value = false
+	}
 }
 </script>

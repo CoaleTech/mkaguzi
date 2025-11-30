@@ -17,6 +17,8 @@
 
       <!-- Header Actions -->
       <div class="flex items-center space-x-4">
+
+
         <!-- Notifications Bell -->
         <Button variant="ghost" @click="toggleNotifications">
           <BellIcon class="h-5 w-5" />
@@ -521,6 +523,8 @@
             </div>
           </div>
 
+
+
           <!-- Settings -->
           <div class="nav-group">
             <div
@@ -623,6 +627,7 @@ import {
 	HistoryIcon,
 	HomeIcon,
 	LayoutDashboardIcon,
+	MessageCircleIcon,
 	MoonIcon,
 	PackageIcon,
 	PlayCircleIcon,
@@ -646,6 +651,7 @@ const router = useRouter()
 const isSidebarCollapsed = ref(false)
 const isDarkTheme = ref(false)
 const notificationCount = ref(3)
+
 const expandedGroups = ref({
 	auditPlanning: true,
 	auditExecution: false,
@@ -654,6 +660,7 @@ const expandedGroups = ref({
 	compliance: false,
 	reports: false,
 	inventoryAudit: false,
+
 	settings: false,
 })
 

@@ -112,81 +112,81 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  CheckCircle2Icon,
-  ClipboardListIcon,
-  UsersIcon,
-  CalendarIcon,
-  ClockIcon,
-} from 'lucide-vue-next'
+	CalendarIcon,
+	CheckCircle2Icon,
+	ClipboardListIcon,
+	ClockIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      total: 0,
-      active: 0,
-      draft: 0,
-      approved: 0,
-      completed: 0,
-      plannedAudits: 0,
-      avgUtilization: 0,
-      upcoming: 0,
-      totalDays: 0,
-      byQuarter: { q1: 0, q2: 0, q3: 0, q4: 0 },
-    }),
-  },
-  showDetails: {
-    type: Boolean,
-    default: true,
-  },
+	stats: {
+		type: Object,
+		default: () => ({
+			total: 0,
+			active: 0,
+			draft: 0,
+			approved: 0,
+			completed: 0,
+			plannedAudits: 0,
+			avgUtilization: 0,
+			upcoming: 0,
+			totalDays: 0,
+			byQuarter: { q1: 0, q2: 0, q3: 0, q4: 0 },
+		}),
+	},
+	showDetails: {
+		type: Boolean,
+		default: true,
+	},
 })
 
 // Computed
 const activePercentage = computed(() => {
-  if (!props.stats.total) return 0
-  return Math.round((props.stats.active / props.stats.total) * 100)
+	if (!props.stats.total) return 0
+	return Math.round((props.stats.active / props.stats.total) * 100)
 })
 
 const statusDistribution = computed(() => {
-  const total = props.stats.total || 1
-  return [
-    { 
-      label: 'Draft', 
-      count: props.stats.draft || 0, 
-      percentage: ((props.stats.draft || 0) / total) * 100,
-      color: 'bg-gray-400'
-    },
-    { 
-      label: 'Approved', 
-      count: props.stats.approved || 0, 
-      percentage: ((props.stats.approved || 0) / total) * 100,
-      color: 'bg-blue-500'
-    },
-    { 
-      label: 'Active', 
-      count: props.stats.active || 0, 
-      percentage: ((props.stats.active || 0) / total) * 100,
-      color: 'bg-green-500'
-    },
-    { 
-      label: 'Completed', 
-      count: props.stats.completed || 0, 
-      percentage: ((props.stats.completed || 0) / total) * 100,
-      color: 'bg-purple-500'
-    },
-  ]
+	const total = props.stats.total || 1
+	return [
+		{
+			label: "Draft",
+			count: props.stats.draft || 0,
+			percentage: ((props.stats.draft || 0) / total) * 100,
+			color: "bg-gray-400",
+		},
+		{
+			label: "Approved",
+			count: props.stats.approved || 0,
+			percentage: ((props.stats.approved || 0) / total) * 100,
+			color: "bg-blue-500",
+		},
+		{
+			label: "Active",
+			count: props.stats.active || 0,
+			percentage: ((props.stats.active || 0) / total) * 100,
+			color: "bg-green-500",
+		},
+		{
+			label: "Completed",
+			count: props.stats.completed || 0,
+			percentage: ((props.stats.completed || 0) / total) * 100,
+			color: "bg-purple-500",
+		},
+	]
 })
 
 const quarterlyData = computed(() => {
-  const q = props.stats.byQuarter || { q1: 0, q2: 0, q3: 0, q4: 0 }
-  return [
-    { label: 'Q1', count: q.q1, color: 'text-blue-600' },
-    { label: 'Q2', count: q.q2, color: 'text-green-600' },
-    { label: 'Q3', count: q.q3, color: 'text-amber-600' },
-    { label: 'Q4', count: q.q4, color: 'text-purple-600' },
-  ]
+	const q = props.stats.byQuarter || { q1: 0, q2: 0, q3: 0, q4: 0 }
+	return [
+		{ label: "Q1", count: q.q1, color: "text-blue-600" },
+		{ label: "Q2", count: q.q2, color: "text-green-600" },
+		{ label: "Q3", count: q.q3, color: "text-amber-600" },
+		{ label: "Q4", count: q.q4, color: "text-purple-600" },
+	]
 })
 </script>

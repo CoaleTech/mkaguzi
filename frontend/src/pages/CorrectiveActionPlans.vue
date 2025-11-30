@@ -208,31 +208,31 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, reactive } from 'vue'
-import { Badge, Button, Dialog, Dropdown, createResource } from 'frappe-ui'
+import { DataTable } from "@/components/Common"
+import ActionFilters from "@/components/actions/ActionFilters.vue"
+import ActionStats from "@/components/actions/ActionStats.vue"
+import CorrectiveActionForm from "@/components/actions/CorrectiveActionForm.vue"
+import { Badge, Button, Dialog, Dropdown, createResource } from "frappe-ui"
 import {
-  BarChart3Icon,
-  CalendarIcon,
-  ClipboardCheckIcon,
-  ClipboardXIcon,
-  EditIcon,
-  EyeIcon,
-  FileTextIcon,
-  FlagIcon,
-  LoaderIcon,
-  MoreHorizontalIcon,
-  PauseCircleIcon,
-  PlayCircleIcon,
-  PlusIcon,
-  TrashIcon,
-  XCircleIcon,
-  CheckCircleIcon,
-} from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
-import { DataTable } from '@/components/Common'
-import ActionStats from '@/components/actions/ActionStats.vue'
-import ActionFilters from '@/components/actions/ActionFilters.vue'
-import CorrectiveActionForm from '@/components/actions/CorrectiveActionForm.vue'
+	BarChart3Icon,
+	CalendarIcon,
+	CheckCircleIcon,
+	ClipboardCheckIcon,
+	ClipboardXIcon,
+	EditIcon,
+	EyeIcon,
+	FileTextIcon,
+	FlagIcon,
+	LoaderIcon,
+	MoreHorizontalIcon,
+	PauseCircleIcon,
+	PlayCircleIcon,
+	PlusIcon,
+	TrashIcon,
+	XCircleIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, reactive, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 
@@ -243,363 +243,419 @@ const showStatsDetails = ref(false)
 const showFormModal = ref(false)
 const showDeleteDialog = ref(false)
 const selectedAction = ref(null)
-const formMode = ref('create')
+const formMode = ref("create")
 const deleting = ref(false)
 const planToDelete = ref(null)
 
 const filters = reactive({
-  search: '',
-  status: '',
-  priority: '',
-  dueRange: '',
-  responsiblePerson: '',
+	search: "",
+	status: "",
+	priority: "",
+	dueRange: "",
+	responsiblePerson: "",
 })
 
 // Columns
 const columns = [
-  { key: 'plan_id', label: 'Plan ID', sortable: true, width: '120px' },
-  { key: 'title', label: 'Title', sortable: true },
-  { key: 'status', label: 'Status', sortable: true, width: '130px' },
-  { key: 'priority', label: 'Priority', sortable: true, width: '100px' },
-  { key: 'responsible_person', label: 'Responsible', sortable: true, width: '160px' },
-  { key: 'completion_percentage', label: 'Progress', sortable: true, width: '140px' },
-  { key: 'target_completion_date', label: 'Due Date', sortable: true, width: '150px' },
-  { key: 'actions', label: 'Actions', width: '120px' },
+	{ key: "plan_id", label: "Plan ID", sortable: true, width: "120px" },
+	{ key: "title", label: "Title", sortable: true },
+	{ key: "status", label: "Status", sortable: true, width: "130px" },
+	{ key: "priority", label: "Priority", sortable: true, width: "100px" },
+	{
+		key: "responsible_person",
+		label: "Responsible",
+		sortable: true,
+		width: "160px",
+	},
+	{
+		key: "completion_percentage",
+		label: "Progress",
+		sortable: true,
+		width: "140px",
+	},
+	{
+		key: "target_completion_date",
+		label: "Due Date",
+		sortable: true,
+		width: "150px",
+	},
+	{ key: "actions", label: "Actions", width: "120px" },
 ]
 
 // Computed
 const hasFilters = computed(() => {
-  return filters.search || filters.status || filters.priority || filters.dueRange || filters.responsiblePerson
+	return (
+		filters.search ||
+		filters.status ||
+		filters.priority ||
+		filters.dueRange ||
+		filters.responsiblePerson
+	)
 })
 
 const filteredPlans = computed(() => {
-  let result = [...plans.value]
+	let result = [...plans.value]
 
-  if (filters.search) {
-    const search = filters.search.toLowerCase()
-    result = result.filter(p =>
-      p.plan_id?.toLowerCase().includes(search) ||
-      p.title?.toLowerCase().includes(search) ||
-      p.audit_finding?.toLowerCase().includes(search)
-    )
-  }
+	if (filters.search) {
+		const search = filters.search.toLowerCase()
+		result = result.filter(
+			(p) =>
+				p.plan_id?.toLowerCase().includes(search) ||
+				p.title?.toLowerCase().includes(search) ||
+				p.audit_finding?.toLowerCase().includes(search),
+		)
+	}
 
-  if (filters.status) {
-    result = result.filter(p => p.status === filters.status)
-  }
+	if (filters.status) {
+		result = result.filter((p) => p.status === filters.status)
+	}
 
-  if (filters.priority) {
-    result = result.filter(p => p.priority === filters.priority)
-  }
+	if (filters.priority) {
+		result = result.filter((p) => p.priority === filters.priority)
+	}
 
-  if (filters.responsiblePerson) {
-    result = result.filter(p => p.responsible_person === filters.responsiblePerson)
-  }
+	if (filters.responsiblePerson) {
+		result = result.filter(
+			(p) => p.responsible_person === filters.responsiblePerson,
+		)
+	}
 
-  if (filters.dueRange) {
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+	if (filters.dueRange) {
+		const now = new Date()
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-    result = result.filter(p => {
-      if (!p.target_completion_date) return filters.dueRange === 'later'
-      const dueDate = new Date(p.target_completion_date)
+		result = result.filter((p) => {
+			if (!p.target_completion_date) return filters.dueRange === "later"
+			const dueDate = new Date(p.target_completion_date)
 
-      switch (filters.dueRange) {
-        case 'overdue':
-          return dueDate < today && p.status !== 'Completed' && p.status !== 'Cancelled'
-        case 'today':
-          return dueDate.toDateString() === today.toDateString()
-        case 'this_week':
-          const weekEnd = new Date(today)
-          weekEnd.setDate(today.getDate() + 7)
-          return dueDate >= today && dueDate <= weekEnd
-        case 'this_month':
-          return dueDate.getMonth() === today.getMonth() && dueDate.getFullYear() === today.getFullYear()
-        case 'later':
-          const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1)
-          return dueDate >= nextMonth
-        default:
-          return true
-      }
-    })
-  }
+			switch (filters.dueRange) {
+				case "overdue":
+					return (
+						dueDate < today &&
+						p.status !== "Completed" &&
+						p.status !== "Cancelled"
+					)
+				case "today":
+					return dueDate.toDateString() === today.toDateString()
+				case "this_week":
+					const weekEnd = new Date(today)
+					weekEnd.setDate(today.getDate() + 7)
+					return dueDate >= today && dueDate <= weekEnd
+				case "this_month":
+					return (
+						dueDate.getMonth() === today.getMonth() &&
+						dueDate.getFullYear() === today.getFullYear()
+					)
+				case "later":
+					const nextMonth = new Date(
+						today.getFullYear(),
+						today.getMonth() + 1,
+						1,
+					)
+					return dueDate >= nextMonth
+				default:
+					return true
+			}
+		})
+	}
 
-  return result
+	return result
 })
 
 const stats = computed(() => {
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const weekEnd = new Date(today)
-  weekEnd.setDate(today.getDate() + 7)
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+	const now = new Date()
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+	const weekEnd = new Date(today)
+	weekEnd.setDate(today.getDate() + 7)
+	const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0)
 
-  const total = plans.value.length
-  const inProgress = plans.value.filter(p => p.status === 'In Progress').length
-  const completed = plans.value.filter(p => p.status === 'Completed').length
-  const overdue = plans.value.filter(p => {
-    return p.target_completion_date &&
-      new Date(p.target_completion_date) < today &&
-      p.status !== 'Completed' &&
-      p.status !== 'Cancelled'
-  }).length
+	const total = plans.value.length
+	const inProgress = plans.value.filter(
+		(p) => p.status === "In Progress",
+	).length
+	const completed = plans.value.filter((p) => p.status === "Completed").length
+	const overdue = plans.value.filter((p) => {
+		return (
+			p.target_completion_date &&
+			new Date(p.target_completion_date) < today &&
+			p.status !== "Completed" &&
+			p.status !== "Cancelled"
+		)
+	}).length
 
-  const dueThisWeek = plans.value.filter(p => {
-    if (!p.target_completion_date || p.status === 'Completed') return false
-    const dueDate = new Date(p.target_completion_date)
-    return dueDate >= today && dueDate <= weekEnd
-  }).length
+	const dueThisWeek = plans.value.filter((p) => {
+		if (!p.target_completion_date || p.status === "Completed") return false
+		const dueDate = new Date(p.target_completion_date)
+		return dueDate >= today && dueDate <= weekEnd
+	}).length
 
-  const dueThisMonth = plans.value.filter(p => {
-    if (!p.target_completion_date || p.status === 'Completed') return false
-    const dueDate = new Date(p.target_completion_date)
-    return dueDate >= today && dueDate <= monthEnd
-  }).length
+	const dueThisMonth = plans.value.filter((p) => {
+		if (!p.target_completion_date || p.status === "Completed") return false
+		const dueDate = new Date(p.target_completion_date)
+		return dueDate >= today && dueDate <= monthEnd
+	}).length
 
-  const dueLater = plans.value.filter(p => {
-    if (!p.target_completion_date || p.status === 'Completed') return false
-    const dueDate = new Date(p.target_completion_date)
-    return dueDate > monthEnd
-  }).length
+	const dueLater = plans.value.filter((p) => {
+		if (!p.target_completion_date || p.status === "Completed") return false
+		const dueDate = new Date(p.target_completion_date)
+		return dueDate > monthEnd
+	}).length
 
-  // Calculate average progress
-  const plansWithProgress = plans.value.filter(p => p.completion_percentage != null)
-  const avgProgress = plansWithProgress.length > 0
-    ? Math.round(plansWithProgress.reduce((sum, p) => sum + (p.completion_percentage || 0), 0) / plansWithProgress.length)
-    : 0
+	// Calculate average progress
+	const plansWithProgress = plans.value.filter(
+		(p) => p.completion_percentage != null,
+	)
+	const avgProgress =
+		plansWithProgress.length > 0
+			? Math.round(
+					plansWithProgress.reduce(
+						(sum, p) => sum + (p.completion_percentage || 0),
+						0,
+					) / plansWithProgress.length,
+				)
+			: 0
 
-  // Group by status
-  const byStatus = {}
-  plans.value.forEach(p => {
-    const status = p.status || 'Draft'
-    byStatus[status] = (byStatus[status] || 0) + 1
-  })
+	// Group by status
+	const byStatus = {}
+	plans.value.forEach((p) => {
+		const status = p.status || "Draft"
+		byStatus[status] = (byStatus[status] || 0) + 1
+	})
 
-  // Group by priority
-  const byPriority = {}
-  plans.value.forEach(p => {
-    const priority = p.priority || 'Medium'
-    byPriority[priority] = (byPriority[priority] || 0) + 1
-  })
+	// Group by priority
+	const byPriority = {}
+	plans.value.forEach((p) => {
+		const priority = p.priority || "Medium"
+		byPriority[priority] = (byPriority[priority] || 0) + 1
+	})
 
-  return {
-    total,
-    inProgress,
-    completed,
-    overdue,
-    avgProgress,
-    dueThisWeek,
-    dueThisMonth,
-    dueLater,
-    byStatus,
-    byPriority,
-  }
+	return {
+		total,
+		inProgress,
+		completed,
+		overdue,
+		avgProgress,
+		dueThisWeek,
+		dueThisMonth,
+		dueLater,
+		byStatus,
+		byPriority,
+	}
 })
 
 // Methods
 const fetchPlans = async () => {
-  loading.value = true
-  try {
-    const response = await createResource({
-      url: 'frappe.client.get_list',
-      params: {
-        doctype: 'Corrective Action Plan',
-        fields: [
-          'name',
-          'plan_id',
-          'audit_finding',
-          'title',
-          'status',
-          'priority',
-          'start_date',
-          'target_completion_date',
-          'actual_completion_date',
-          'responsible_person',
-          'responsible_department',
-          'overall_progress',
-          'completion_percentage',
-          'last_progress_update',
-          'creation',
-          'modified',
-        ],
-        limit_page_length: 0,
-        order_by: 'creation desc',
-      },
-    }).fetch()
-    plans.value = response || []
-  } catch (error) {
-    console.error('Error loading corrective action plans:', error)
-    plans.value = []
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const response = await createResource({
+			url: "frappe.client.get_list",
+			params: {
+				doctype: "Corrective Action Plan",
+				fields: [
+					"name",
+					"plan_id",
+					"audit_finding",
+					"title",
+					"status",
+					"priority",
+					"start_date",
+					"target_completion_date",
+					"actual_completion_date",
+					"responsible_person",
+					"responsible_department",
+					"overall_progress",
+					"completion_percentage",
+					"last_progress_update",
+					"creation",
+					"modified",
+				],
+				limit_page_length: 0,
+				order_by: "creation desc",
+			},
+		}).fetch()
+		plans.value = response || []
+	} catch (error) {
+		console.error("Error loading corrective action plans:", error)
+		plans.value = []
+	} finally {
+		loading.value = false
+	}
 }
 
 const getStatusVariant = (status) => {
-  const variants = {
-    'Draft': 'subtle',
-    'Approved': 'subtle',
-    'In Progress': 'subtle',
-    'On Hold': 'subtle',
-    'Completed': 'subtle',
-    'Cancelled': 'subtle',
-  }
-  return variants[status] || 'subtle'
+	const variants = {
+		Draft: "subtle",
+		Approved: "subtle",
+		"In Progress": "subtle",
+		"On Hold": "subtle",
+		Completed: "subtle",
+		Cancelled: "subtle",
+	}
+	return variants[status] || "subtle"
 }
 
 const getStatusIcon = (status) => {
-  const icons = {
-    'Draft': FileTextIcon,
-    'Approved': CheckCircleIcon,
-    'In Progress': PlayCircleIcon,
-    'On Hold': PauseCircleIcon,
-    'Completed': CheckCircleIcon,
-    'Cancelled': XCircleIcon,
-  }
-  return icons[status] || FileTextIcon
+	const icons = {
+		Draft: FileTextIcon,
+		Approved: CheckCircleIcon,
+		"In Progress": PlayCircleIcon,
+		"On Hold": PauseCircleIcon,
+		Completed: CheckCircleIcon,
+		Cancelled: XCircleIcon,
+	}
+	return icons[status] || FileTextIcon
 }
 
 const getPriorityVariant = (priority) => {
-  return 'subtle'
+	return "subtle"
 }
 
 const getProgressColor = (percentage) => {
-  if (percentage >= 80) return 'bg-green-500'
-  if (percentage >= 50) return 'bg-blue-500'
-  if (percentage >= 25) return 'bg-amber-500'
-  return 'bg-gray-400'
+	if (percentage >= 80) return "bg-green-500"
+	if (percentage >= 50) return "bg-blue-500"
+	if (percentage >= 25) return "bg-amber-500"
+	return "bg-gray-400"
 }
 
 const getDueDateClass = (row) => {
-  if (!row.target_completion_date) return 'text-gray-500'
-  if (row.status === 'Completed' || row.status === 'Cancelled') return 'text-gray-500'
-  
-  const now = new Date()
-  const dueDate = new Date(row.target_completion_date)
-  const diffDays = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24))
+	if (!row.target_completion_date) return "text-gray-500"
+	if (row.status === "Completed" || row.status === "Cancelled")
+		return "text-gray-500"
 
-  if (diffDays < 0) return 'text-red-600 font-medium'
-  if (diffDays <= 7) return 'text-amber-600 font-medium'
-  return 'text-gray-700'
+	const now = new Date()
+	const dueDate = new Date(row.target_completion_date)
+	const diffDays = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24))
+
+	if (diffDays < 0) return "text-red-600 font-medium"
+	if (diffDays <= 7) return "text-amber-600 font-medium"
+	return "text-gray-700"
 }
 
 const isOverdue = (row) => {
-  if (!row.target_completion_date) return false
-  if (row.status === 'Completed' || row.status === 'Cancelled') return false
-  return new Date(row.target_completion_date) < new Date()
+	if (!row.target_completion_date) return false
+	if (row.status === "Completed" || row.status === "Cancelled") return false
+	return new Date(row.target_completion_date) < new Date()
 }
 
 const formatDate = (date) => {
-  if (!date) return 'Not set'
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+	if (!date) return "Not set"
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 const getInitials = (name) => {
-  if (!name) return '?'
-  return name.split('@')[0].split('.').map(n => n.charAt(0).toUpperCase()).slice(0, 2).join('')
+	if (!name) return "?"
+	return name
+		.split("@")[0]
+		.split(".")
+		.map((n) => n.charAt(0).toUpperCase())
+		.slice(0, 2)
+		.join("")
 }
 
 const formatUserName = (email) => {
-  if (!email) return 'Unassigned'
-  return email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+	if (!email) return "Unassigned"
+	return email
+		.split("@")[0]
+		.replace(/\./g, " ")
+		.replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 const getRowActions = (row) => {
-  return [
-    {
-      label: 'View Details',
-      icon: EyeIcon,
-      onClick: () => viewPlan(row),
-    },
-    {
-      label: 'Edit Plan',
-      icon: EditIcon,
-      onClick: () => editPlan(row),
-    },
-    {
-      label: 'Add Milestone',
-      icon: FlagIcon,
-      onClick: () => addMilestone(row),
-    },
-    {
-      label: 'Delete',
-      icon: TrashIcon,
-      onClick: () => deletePlan(row),
-    },
-  ]
+	return [
+		{
+			label: "View Details",
+			icon: EyeIcon,
+			onClick: () => viewPlan(row),
+		},
+		{
+			label: "Edit Plan",
+			icon: EditIcon,
+			onClick: () => editPlan(row),
+		},
+		{
+			label: "Add Milestone",
+			icon: FlagIcon,
+			onClick: () => addMilestone(row),
+		},
+		{
+			label: "Delete",
+			icon: TrashIcon,
+			onClick: () => deletePlan(row),
+		},
+	]
 }
 
 const openCreateModal = () => {
-  selectedAction.value = null
-  formMode.value = 'create'
-  showFormModal.value = true
+	selectedAction.value = null
+	formMode.value = "create"
+	showFormModal.value = true
 }
 
 const closeFormModal = () => {
-  showFormModal.value = false
-  selectedAction.value = null
+	showFormModal.value = false
+	selectedAction.value = null
 }
 
 const viewPlan = (row) => {
-  router.push(`/corrective-actions/${row.name}`)
+	router.push(`/corrective-actions/${row.name}`)
 }
 
 const editPlan = (row) => {
-  selectedAction.value = row
-  formMode.value = 'edit'
-  showFormModal.value = true
+	selectedAction.value = row
+	formMode.value = "edit"
+	showFormModal.value = true
 }
 
 const addMilestone = (row) => {
-  selectedAction.value = row
-  formMode.value = 'edit'
-  showFormModal.value = true
-  // Could auto-navigate to milestones section
+	selectedAction.value = row
+	formMode.value = "edit"
+	showFormModal.value = true
+	// Could auto-navigate to milestones section
 }
 
 const deletePlan = (row) => {
-  planToDelete.value = row
-  showDeleteDialog.value = true
+	planToDelete.value = row
+	showDeleteDialog.value = true
 }
 
 const confirmDelete = async () => {
-  if (!planToDelete.value) return
-  
-  deleting.value = true
-  try {
-    await createResource({
-      url: 'frappe.client.delete',
-      params: {
-        doctype: 'Corrective Action Plan',
-        name: planToDelete.value.name,
-      },
-    }).fetch()
-    await fetchPlans()
-    showDeleteDialog.value = false
-  } catch (error) {
-    console.error('Error deleting plan:', error)
-  } finally {
-    deleting.value = false
-    planToDelete.value = null
-  }
+	if (!planToDelete.value) return
+
+	deleting.value = true
+	try {
+		await createResource({
+			url: "frappe.client.delete",
+			params: {
+				doctype: "Corrective Action Plan",
+				name: planToDelete.value.name,
+			},
+		}).fetch()
+		await fetchPlans()
+		showDeleteDialog.value = false
+	} catch (error) {
+		console.error("Error deleting plan:", error)
+	} finally {
+		deleting.value = false
+		planToDelete.value = null
+	}
 }
 
 const onPlanSaved = () => {
-  fetchPlans()
-  closeFormModal()
+	fetchPlans()
+	closeFormModal()
 }
 
 const exportPlans = () => {
-  // Export functionality
-  console.log('Exporting plans...')
+	// Export functionality
+	console.log("Exporting plans...")
 }
 
 // Lifecycle
 onMounted(() => {
-  fetchPlans()
+	fetchPlans()
 })
 </script>

@@ -79,29 +79,29 @@
 
 <script setup>
 import {
-  AlertTriangleIcon,
-  BarChartIcon,
-  CalendarIcon,
-  ClockIcon,
-  PlayIcon,
+	AlertTriangleIcon,
+	BarChartIcon,
+	CalendarIcon,
+	ClockIcon,
+	PlayIcon,
 } from "lucide-vue-next"
 
 // Props
 defineProps({
-  stats: {
-    type: Object,
-    required: true,
-    validator: (stats) => {
-      return (
-        typeof stats === 'object' &&
-        typeof stats.totalScheduled === 'number' &&
-        typeof stats.inProgress === 'number' &&
-        typeof stats.upcoming === 'number' &&
-        typeof stats.averageProgress === 'number' &&
-        typeof stats.overdue === 'number' &&
-        typeof stats.totalCapacity === 'number'
-      )
-    }
-  }
+	stats: {
+		type: Object,
+		required: true,
+		validator: (stats) => {
+			return (
+				typeof stats === "object" &&
+				typeof stats.totalScheduled === "number" &&
+				typeof stats.inProgress === "number" &&
+				typeof stats.upcoming === "number" &&
+				typeof stats.averageProgress === "number" &&
+				typeof stats.overdue === "number" &&
+				typeof stats.totalCapacity === "number"
+			)
+		},
+	},
 })
 </script>

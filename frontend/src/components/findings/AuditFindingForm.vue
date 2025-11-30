@@ -720,48 +720,48 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { Dialog, Button, FormControl, TextEditor } from 'frappe-ui'
-import ChildTable from '@/components/Common/ChildTable.vue'
-import InlineChildTable from '@/components/Common/InlineChildTable.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import { useMultiSectionForm } from '@/composables/useMultiSectionForm'
+import ChildTable from "@/components/Common/ChildTable.vue"
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import { useMultiSectionForm } from "@/composables/useMultiSectionForm"
+import { Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-  FileTextIcon as DocumentTextIcon,
-  ClipboardListIcon as ClipboardDocumentListIcon,
-  SearchIcon as DocumentMagnifyingGlassIcon,
-  MessageCircleIcon as ChatBubbleLeftRightIcon,
-  ClipboardCheckIcon as ClipboardDocumentCheckIcon,
-  RefreshCwIcon as ArrowPathIcon,
-  ShieldCheckIcon,
-  FileCheck2Icon as DocumentCheckIcon,
-  CheckCircle2Icon as CheckCircleIcon,
-  AlertCircleIcon as ExclamationCircleIcon,
-  CloudIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusIcon,
-} from 'lucide-vue-next'
+	RefreshCwIcon as ArrowPathIcon,
+	MessageCircleIcon as ChatBubbleLeftRightIcon,
+	CheckCircle2Icon as CheckCircleIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ClipboardCheckIcon as ClipboardDocumentCheckIcon,
+	ClipboardListIcon as ClipboardDocumentListIcon,
+	CloudIcon,
+	FileCheck2Icon as DocumentCheckIcon,
+	SearchIcon as DocumentMagnifyingGlassIcon,
+	FileTextIcon as DocumentTextIcon,
+	AlertCircleIcon as ExclamationCircleIcon,
+	PlusIcon,
+	ShieldCheckIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, reactive, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  finding: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	finding: {
+		type: Object,
+		default: null,
+	},
 })
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'saved', 'close'])
+const emit = defineEmits(["update:modelValue", "saved", "close"])
 
 // Dialog visibility
 const showDialog = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const isEditing = computed(() => !!props.finding?.name)
@@ -770,196 +770,210 @@ const lastSaved = ref(null)
 
 // Section definitions
 const sections = {
-  basic: { label: 'Basic Information', icon: DocumentTextIcon },
-  details: { label: 'Finding Details', icon: ClipboardDocumentListIcon },
-  evidence: { label: 'Evidence & Recommendation', icon: DocumentMagnifyingGlassIcon },
-  response: { label: 'Management Response', icon: ChatBubbleLeftRightIcon },
-  action: { label: 'Corrective Action Plan', icon: ClipboardDocumentCheckIcon },
-  followup: { label: 'Follow-up & Status', icon: ArrowPathIcon },
-  verification: { label: 'Verification', icon: ShieldCheckIcon },
-  closure: { label: 'Closure & Reporting', icon: DocumentCheckIcon },
+	basic: { label: "Basic Information", icon: DocumentTextIcon },
+	details: { label: "Finding Details", icon: ClipboardDocumentListIcon },
+	evidence: {
+		label: "Evidence & Recommendation",
+		icon: DocumentMagnifyingGlassIcon,
+	},
+	response: { label: "Management Response", icon: ChatBubbleLeftRightIcon },
+	action: { label: "Corrective Action Plan", icon: ClipboardDocumentCheckIcon },
+	followup: { label: "Follow-up & Status", icon: ArrowPathIcon },
+	verification: { label: "Verification", icon: ShieldCheckIcon },
+	closure: { label: "Closure & Reporting", icon: DocumentCheckIcon },
 }
 
 // Section field mappings for validation
 const sectionFields = {
-  basic: ['finding_id', 'engagement_reference', 'finding_title', 'finding_category'],
-  details: ['condition', 'criteria'],
-  evidence: ['recommendation'],
-  response: [],
-  action: [],
-  followup: ['finding_status'],
-  verification: [],
-  closure: [],
+	basic: [
+		"finding_id",
+		"engagement_reference",
+		"finding_title",
+		"finding_category",
+	],
+	details: ["condition", "criteria"],
+	evidence: ["recommendation"],
+	response: [],
+	action: [],
+	followup: ["finding_status"],
+	verification: [],
+	closure: [],
 }
 
 // Use multi-section form composable
 const {
-  activeSection,
-  formProgress,
-  setActiveSection,
-  getSectionStatus,
-  previousSection: prevSection,
-  nextSection: nxtSection,
-  validateForm,
-  prepareFormData,
+	activeSection,
+	formProgress,
+	setActiveSection,
+	getSectionStatus,
+	previousSection: prevSection,
+	nextSection: nxtSection,
+	validateForm,
+	prepareFormData,
 } = useMultiSectionForm(sections, sectionFields)
 
 // Form data with all fields
 const formData = reactive({
-  // Basic Information
-  finding_id: '',
-  engagement_reference: '',
-  finding_title: '',
-  finding_category: '',
-  risk_rating: '',
-  business_impact_rating: '',
-  date_identified: '',
-  source_document: '',
-  affected_locations: [],
+	// Basic Information
+	finding_id: "",
+	engagement_reference: "",
+	finding_title: "",
+	finding_category: "",
+	risk_rating: "",
+	business_impact_rating: "",
+	date_identified: "",
+	source_document: "",
+	affected_locations: [],
 
-  // Finding Details
-  condition: '',
-  criteria: '',
-  cause: '',
-  effect: '',
+	// Finding Details
+	condition: "",
+	criteria: "",
+	cause: "",
+	effect: "",
 
-  // Evidence & Recommendation
-  evidence: [],
-  sample_size: null,
-  exceptions_found: null,
-  recommendation: '',
+	// Evidence & Recommendation
+	evidence: [],
+	sample_size: null,
+	exceptions_found: null,
+	recommendation: "",
 
-  // Management Response
-  management_agrees: null,
-  management_comments: '',
-  response_date: '',
-  management_response_by: '',
-  management_response_date: '',
+	// Management Response
+	management_agrees: null,
+	management_comments: "",
+	response_date: "",
+	management_response_by: "",
+	management_response_date: "",
 
-  // Corrective Action Plan
-  action_plan_description: '',
-  responsible_person: '',
-  target_date: '',
-  revised_target_date: '',
-  priority: '',
-  milestones: [],
+	// Corrective Action Plan
+	action_plan_description: "",
+	responsible_person: "",
+	target_date: "",
+	revised_target_date: "",
+	priority: "",
+	milestones: [],
 
-  // Follow-up & Status
-  finding_status: 'Open',
-  status_date: '',
-  status_history: [],
-  follow_up_required: 0,
-  follow_up_frequency: '',
-  next_follow_up_date: '',
-  follow_up_history: [],
+	// Follow-up & Status
+	finding_status: "Open",
+	status_date: "",
+	status_history: [],
+	follow_up_required: 0,
+	follow_up_frequency: "",
+	next_follow_up_date: "",
+	follow_up_history: [],
 
-  // Verification
-  verification_date: '',
-  verified_by: '',
-  verification_method: '',
-  verification_status: '',
-  verification_results: '',
+	// Verification
+	verification_date: "",
+	verified_by: "",
+	verification_method: "",
+	verification_status: "",
+	verification_results: "",
 
-  // Closure & Reporting
-  closure_date: '',
-  closed_by: '',
-  closure_reason: '',
-  final_disposition: '',
-  closure_notes: '',
-  include_in_report: false,
-  reported_to_management: false,
-  reported_to_audit_committee: false,
-  reported_to_board: false,
-  report_reference: '',
+	// Closure & Reporting
+	closure_date: "",
+	closed_by: "",
+	closure_reason: "",
+	final_disposition: "",
+	closure_notes: "",
+	include_in_report: false,
+	reported_to_management: false,
+	reported_to_audit_committee: false,
+	reported_to_board: false,
+	report_reference: "",
 
-  // Related Findings
-  related_findings: [],
-  repeat_finding: 0,
-  previous_finding_reference: '',
+	// Related Findings
+	related_findings: [],
+	repeat_finding: 0,
+	previous_finding_reference: "",
 })
 
 // Options for dropdowns
 const categoryOptions = [
-  { label: 'Control Weakness', value: 'Control Weakness' },
-  { label: 'Process Inefficiency', value: 'Process Inefficiency' },
-  { label: 'Compliance Gap', value: 'Compliance Gap' },
-  { label: 'Policy Violation', value: 'Policy Violation' },
-  { label: 'Documentation Issue', value: 'Documentation Issue' },
-  { label: 'Fraud Indicator', value: 'Fraud Indicator' },
-  { label: 'IT/System Issue', value: 'IT/System Issue' },
-  { label: 'Operational Risk', value: 'Operational Risk' },
+	{ label: "Control Weakness", value: "Control Weakness" },
+	{ label: "Process Inefficiency", value: "Process Inefficiency" },
+	{ label: "Compliance Gap", value: "Compliance Gap" },
+	{ label: "Policy Violation", value: "Policy Violation" },
+	{ label: "Documentation Issue", value: "Documentation Issue" },
+	{ label: "Fraud Indicator", value: "Fraud Indicator" },
+	{ label: "IT/System Issue", value: "IT/System Issue" },
+	{ label: "Operational Risk", value: "Operational Risk" },
 ]
 
 const riskRatingOptions = [
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const impactOptions = [
-  { label: 'Severe', value: 'Severe' },
-  { label: 'Major', value: 'Major' },
-  { label: 'Moderate', value: 'Moderate' },
-  { label: 'Minor', value: 'Minor' },
-  { label: 'Insignificant', value: 'Insignificant' },
+	{ label: "Severe", value: "Severe" },
+	{ label: "Major", value: "Major" },
+	{ label: "Moderate", value: "Moderate" },
+	{ label: "Minor", value: "Minor" },
+	{ label: "Insignificant", value: "Insignificant" },
 ]
 
 const statusOptions = [
-  { label: 'Open', value: 'Open' },
-  { label: 'Action in Progress', value: 'Action in Progress' },
-  { label: 'Pending Verification', value: 'Pending Verification' },
-  { label: 'Closed', value: 'Closed' },
-  { label: 'Accepted as Risk', value: 'Accepted as Risk' },
-  { label: 'Management Override', value: 'Management Override' },
+	{ label: "Open", value: "Open" },
+	{ label: "Action in Progress", value: "Action in Progress" },
+	{ label: "Pending Verification", value: "Pending Verification" },
+	{ label: "Closed", value: "Closed" },
+	{ label: "Accepted as Risk", value: "Accepted as Risk" },
+	{ label: "Management Override", value: "Management Override" },
 ]
 
 const priorityOptions = [
-  { label: 'Urgent', value: 'Urgent' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Urgent", value: "Urgent" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const frequencyOptions = [
-  { label: 'Weekly', value: 'Weekly' },
-  { label: 'Bi-weekly', value: 'Bi-weekly' },
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Semi-annually', value: 'Semi-annually' },
-  { label: 'Annually', value: 'Annually' },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Bi-weekly", value: "Bi-weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Semi-annually", value: "Semi-annually" },
+	{ label: "Annually", value: "Annually" },
 ]
 
 const verificationMethodOptions = [
-  { label: 'Document Review', value: 'Document Review' },
-  { label: 'Re-testing', value: 'Re-testing' },
-  { label: 'Observation', value: 'Observation' },
-  { label: 'Interview', value: 'Interview' },
-  { label: 'Walkthrough', value: 'Walkthrough' },
-  { label: 'Data Analysis', value: 'Data Analysis' },
+	{ label: "Document Review", value: "Document Review" },
+	{ label: "Re-testing", value: "Re-testing" },
+	{ label: "Observation", value: "Observation" },
+	{ label: "Interview", value: "Interview" },
+	{ label: "Walkthrough", value: "Walkthrough" },
+	{ label: "Data Analysis", value: "Data Analysis" },
 ]
 
 const verificationStatusOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Verified - Effective', value: 'Verified - Effective' },
-  { label: 'Verified - Partially Effective', value: 'Verified - Partially Effective' },
-  { label: 'Verified - Not Effective', value: 'Verified - Not Effective' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Verified - Effective", value: "Verified - Effective" },
+	{
+		label: "Verified - Partially Effective",
+		value: "Verified - Partially Effective",
+	},
+	{ label: "Verified - Not Effective", value: "Verified - Not Effective" },
 ]
 
 const closureReasonOptions = [
-  { label: 'Corrective Action Implemented', value: 'Corrective Action Implemented' },
-  { label: 'Risk Accepted', value: 'Risk Accepted' },
-  { label: 'Duplicate Finding', value: 'Duplicate Finding' },
-  { label: 'No Longer Applicable', value: 'No Longer Applicable' },
-  { label: 'Management Override', value: 'Management Override' },
+	{
+		label: "Corrective Action Implemented",
+		value: "Corrective Action Implemented",
+	},
+	{ label: "Risk Accepted", value: "Risk Accepted" },
+	{ label: "Duplicate Finding", value: "Duplicate Finding" },
+	{ label: "No Longer Applicable", value: "No Longer Applicable" },
+	{ label: "Management Override", value: "Management Override" },
 ]
 
 const dispositionOptions = [
-  { label: 'Resolved', value: 'Resolved' },
-  { label: 'Partially Resolved', value: 'Partially Resolved' },
-  { label: 'Transferred', value: 'Transferred' },
-  { label: 'Deferred', value: 'Deferred' },
+	{ label: "Resolved", value: "Resolved" },
+	{ label: "Partially Resolved", value: "Partially Resolved" },
+	{ label: "Transferred", value: "Transferred" },
+	{ label: "Deferred", value: "Deferred" },
 ]
 
 // Placeholder options - would be fetched from API
@@ -971,226 +985,314 @@ const findingOptions = ref([])
 
 // Affected Locations (simple - inline)
 const affectedLocationColumns = [
-  { key: 'location', label: 'Location', fieldType: 'text', required: true, width: '200px' },
-  { key: 'extent', label: 'Extent/Notes', fieldType: 'text', width: '300px' },
+	{
+		key: "location",
+		label: "Location",
+		fieldType: "text",
+		required: true,
+		width: "200px",
+	},
+	{ key: "extent", label: "Extent/Notes", fieldType: "text", width: "300px" },
 ]
 
 // Evidence (complex - modal)
 const evidenceColumns = [
-  { key: 'evidence_type', label: 'Type', width: '120px' },
-  { key: 'description', label: 'Description', width: '250px' },
-  { key: 'source', label: 'Source', width: '150px' },
+	{ key: "evidence_type", label: "Type", width: "120px" },
+	{ key: "description", label: "Description", width: "250px" },
+	{ key: "source", label: "Source", width: "150px" },
 ]
 
 const evidenceFields = [
-  { key: 'evidence_type', label: 'Evidence Type', type: 'select', required: true, options: [
-    { label: 'Document', value: 'Document' },
-    { label: 'Photo', value: 'Photo' },
-    { label: 'Data Analysis', value: 'Data Analysis' },
-    { label: 'Interview', value: 'Interview' },
-    { label: 'Observation', value: 'Observation' },
-    { label: 'Confirmation', value: 'Confirmation' },
-  ]},
-  { key: 'description', label: 'Description', type: 'text', required: true },
-  { key: 'file', label: 'Attachment', type: 'attach' },
-  { key: 'source', label: 'Source', type: 'text' },
-  { key: 'reference', label: 'Reference', type: 'text' },
+	{
+		key: "evidence_type",
+		label: "Evidence Type",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Document", value: "Document" },
+			{ label: "Photo", value: "Photo" },
+			{ label: "Data Analysis", value: "Data Analysis" },
+			{ label: "Interview", value: "Interview" },
+			{ label: "Observation", value: "Observation" },
+			{ label: "Confirmation", value: "Confirmation" },
+		],
+	},
+	{ key: "description", label: "Description", type: "text", required: true },
+	{ key: "file", label: "Attachment", type: "attach" },
+	{ key: "source", label: "Source", type: "text" },
+	{ key: "reference", label: "Reference", type: "text" },
 ]
 
 // Milestones (modal)
 const milestoneColumns = [
-  { key: 'milestone_description', label: 'Description', width: '250px' },
-  { key: 'due_date', label: 'Due Date', width: '120px' },
-  { key: 'status', label: 'Status', width: '120px', component: 'Badge' },
+	{ key: "milestone_description", label: "Description", width: "250px" },
+	{ key: "due_date", label: "Due Date", width: "120px" },
+	{ key: "status", label: "Status", width: "120px", component: "Badge" },
 ]
 
 const milestoneFields = [
-  { key: 'milestone_description', label: 'Milestone Description', type: 'text', required: true },
-  { key: 'due_date', label: 'Due Date', type: 'date', required: true },
-  { key: 'status', label: 'Status', type: 'select', required: true, options: [
-    { label: 'Not Started', value: 'Not Started' },
-    { label: 'In Progress', value: 'In Progress' },
-    { label: 'Completed', value: 'Completed' },
-    { label: 'Delayed', value: 'Delayed' },
-  ]},
-  { key: 'completion_date', label: 'Completion Date', type: 'date' },
-  { key: 'notes', label: 'Notes', type: 'textarea' },
+	{
+		key: "milestone_description",
+		label: "Milestone Description",
+		type: "text",
+		required: true,
+	},
+	{ key: "due_date", label: "Due Date", type: "date", required: true },
+	{
+		key: "status",
+		label: "Status",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Not Started", value: "Not Started" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Delayed", value: "Delayed" },
+		],
+	},
+	{ key: "completion_date", label: "Completion Date", type: "date" },
+	{ key: "notes", label: "Notes", type: "textarea" },
 ]
 
 // Status History (modal, read-mostly)
 const statusHistoryColumns = [
-  { key: 'previous_status', label: 'From', width: '120px' },
-  { key: 'new_status', label: 'To', width: '120px' },
-  { key: 'changed_on', label: 'Changed On', width: '150px' },
-  { key: 'changed_by', label: 'Changed By', width: '150px' },
+	{ key: "previous_status", label: "From", width: "120px" },
+	{ key: "new_status", label: "To", width: "120px" },
+	{ key: "changed_on", label: "Changed On", width: "150px" },
+	{ key: "changed_by", label: "Changed By", width: "150px" },
 ]
 
 const statusHistoryFields = [
-  { key: 'previous_status', label: 'Previous Status', type: 'select', options: statusOptions },
-  { key: 'new_status', label: 'New Status', type: 'select', required: true, options: statusOptions },
-  { key: 'changed_on', label: 'Changed On', type: 'datetime', required: true },
-  { key: 'changed_by', label: 'Changed By', type: 'link', doctype: 'User', required: true },
-  { key: 'reason', label: 'Reason', type: 'textarea' },
+	{
+		key: "previous_status",
+		label: "Previous Status",
+		type: "select",
+		options: statusOptions,
+	},
+	{
+		key: "new_status",
+		label: "New Status",
+		type: "select",
+		required: true,
+		options: statusOptions,
+	},
+	{ key: "changed_on", label: "Changed On", type: "datetime", required: true },
+	{
+		key: "changed_by",
+		label: "Changed By",
+		type: "link",
+		doctype: "User",
+		required: true,
+	},
+	{ key: "reason", label: "Reason", type: "textarea" },
 ]
 
 // Follow-up History (modal)
 const followUpHistoryColumns = [
-  { key: 'follow_up_date', label: 'Date', width: '100px' },
-  { key: 'follow_up_type', label: 'Type', width: '150px' },
-  { key: 'follow_up_by', label: 'By', width: '150px' },
-  { key: 'status', label: 'Status', width: '100px', component: 'Badge' },
+	{ key: "follow_up_date", label: "Date", width: "100px" },
+	{ key: "follow_up_type", label: "Type", width: "150px" },
+	{ key: "follow_up_by", label: "By", width: "150px" },
+	{ key: "status", label: "Status", width: "100px", component: "Badge" },
 ]
 
 const followUpHistoryFields = [
-  { key: 'follow_up_date', label: 'Follow-up Date', type: 'date', required: true },
-  { key: 'follow_up_type', label: 'Type', type: 'select', required: true, options: [
-    { label: 'Status Check', value: 'Status Check' },
-    { label: 'Progress Review', value: 'Progress Review' },
-    { label: 'Implementation Verification', value: 'Implementation Verification' },
-    { label: 'Effectiveness Assessment', value: 'Effectiveness Assessment' },
-    { label: 'Closure Review', value: 'Closure Review' },
-  ]},
-  { key: 'follow_up_by', label: 'Follow-up By', type: 'link', doctype: 'User', required: true },
-  { key: 'findings', label: 'Findings/Observations', type: 'textarea' },
-  { key: 'actions_taken', label: 'Actions Taken', type: 'textarea' },
-  { key: 'next_follow_up_date', label: 'Next Follow-up Date', type: 'date' },
-  { key: 'status', label: 'Status', type: 'select', required: true, options: [
-    { label: 'Open', value: 'Open' },
-    { label: 'In Progress', value: 'In Progress' },
-    { label: 'Completed', value: 'Completed' },
-    { label: 'Overdue', value: 'Overdue' },
-  ]},
+	{
+		key: "follow_up_date",
+		label: "Follow-up Date",
+		type: "date",
+		required: true,
+	},
+	{
+		key: "follow_up_type",
+		label: "Type",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Status Check", value: "Status Check" },
+			{ label: "Progress Review", value: "Progress Review" },
+			{
+				label: "Implementation Verification",
+				value: "Implementation Verification",
+			},
+			{ label: "Effectiveness Assessment", value: "Effectiveness Assessment" },
+			{ label: "Closure Review", value: "Closure Review" },
+		],
+	},
+	{
+		key: "follow_up_by",
+		label: "Follow-up By",
+		type: "link",
+		doctype: "User",
+		required: true,
+	},
+	{ key: "findings", label: "Findings/Observations", type: "textarea" },
+	{ key: "actions_taken", label: "Actions Taken", type: "textarea" },
+	{ key: "next_follow_up_date", label: "Next Follow-up Date", type: "date" },
+	{
+		key: "status",
+		label: "Status",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Open", value: "Open" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Overdue", value: "Overdue" },
+		],
+	},
 ]
 
 // Related Findings (modal)
 const relatedFindingColumns = [
-  { key: 'related_finding', label: 'Related Finding', width: '200px' },
-  { key: 'relationship_type', label: 'Relationship', width: '150px' },
+	{ key: "related_finding", label: "Related Finding", width: "200px" },
+	{ key: "relationship_type", label: "Relationship", width: "150px" },
 ]
 
 const relatedFindingFields = [
-  { key: 'related_finding', label: 'Related Finding', type: 'link', doctype: 'Audit Finding', required: true },
-  { key: 'relationship_type', label: 'Relationship Type', type: 'select', required: true, options: [
-    { label: 'Duplicate', value: 'Duplicate' },
-    { label: 'Similar Issue', value: 'Similar Issue' },
-    { label: 'Root Cause', value: 'Root Cause' },
-    { label: 'Contributing Factor', value: 'Contributing Factor' },
-    { label: 'Follow-up Action', value: 'Follow-up Action' },
-    { label: 'Related Control', value: 'Related Control' },
-  ]},
-  { key: 'description', label: 'Description', type: 'textarea' },
+	{
+		key: "related_finding",
+		label: "Related Finding",
+		type: "link",
+		doctype: "Audit Finding",
+		required: true,
+	},
+	{
+		key: "relationship_type",
+		label: "Relationship Type",
+		type: "select",
+		required: true,
+		options: [
+			{ label: "Duplicate", value: "Duplicate" },
+			{ label: "Similar Issue", value: "Similar Issue" },
+			{ label: "Root Cause", value: "Root Cause" },
+			{ label: "Contributing Factor", value: "Contributing Factor" },
+			{ label: "Follow-up Action", value: "Follow-up Action" },
+			{ label: "Related Control", value: "Related Control" },
+		],
+	},
+	{ key: "description", label: "Description", type: "textarea" },
 ]
 
 // Navigation methods
 const previousSection = () => {
-  const keys = Object.keys(sections)
-  const currentIndex = keys.indexOf(activeSection.value)
-  if (currentIndex > 0) {
-    setActiveSection(keys[currentIndex - 1])
-  }
+	const keys = Object.keys(sections)
+	const currentIndex = keys.indexOf(activeSection.value)
+	if (currentIndex > 0) {
+		setActiveSection(keys[currentIndex - 1])
+	}
 }
 
 const nextSection = () => {
-  const keys = Object.keys(sections)
-  const currentIndex = keys.indexOf(activeSection.value)
-  if (currentIndex < keys.length - 1) {
-    setActiveSection(keys[currentIndex + 1])
-  }
+	const keys = Object.keys(sections)
+	const currentIndex = keys.indexOf(activeSection.value)
+	if (currentIndex < keys.length - 1) {
+		setActiveSection(keys[currentIndex + 1])
+	}
 }
 
 // Time formatting helper
 const formatTimeAgo = (date) => {
-  if (!date) return ''
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000)
-  if (seconds < 60) return 'just now'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
+	if (!date) return ""
+	const seconds = Math.floor((new Date() - new Date(date)) / 1000)
+	if (seconds < 60) return "just now"
+	const minutes = Math.floor(seconds / 60)
+	if (minutes < 60) return `${minutes}m ago`
+	const hours = Math.floor(minutes / 60)
+	if (hours < 24) return `${hours}h ago`
+	const days = Math.floor(hours / 24)
+	return `${days}d ago`
 }
 
 // Draft save
 const saveDraft = async () => {
-  try {
-    // Auto-save logic would go here
-    lastSaved.value = new Date()
-    // Could emit a draft-saved event or call API
-  } catch (error) {
-    console.error('Failed to save draft:', error)
-  }
+	try {
+		// Auto-save logic would go here
+		lastSaved.value = new Date()
+		// Could emit a draft-saved event or call API
+	} catch (error) {
+		console.error("Failed to save draft:", error)
+	}
 }
 
 // Submit form
 const submitForm = async () => {
-  const validation = validateForm(formData)
-  if (!validation.isValid) {
-    // Show validation errors
-    console.error('Validation errors:', validation.errors)
-    // Navigate to first section with errors
-    if (validation.errors.length > 0) {
-      const firstErrorSection = Object.keys(sectionFields).find(section =>
-        sectionFields[section].some(field => validation.errors.includes(field))
-      )
-      if (firstErrorSection) {
-        setActiveSection(firstErrorSection)
-      }
-    }
-    return
-  }
+	const validation = validateForm(formData)
+	if (!validation.isValid) {
+		// Show validation errors
+		console.error("Validation errors:", validation.errors)
+		// Navigate to first section with errors
+		if (validation.errors.length > 0) {
+			const firstErrorSection = Object.keys(sectionFields).find((section) =>
+				sectionFields[section].some((field) =>
+					validation.errors.includes(field),
+				),
+			)
+			if (firstErrorSection) {
+				setActiveSection(firstErrorSection)
+			}
+		}
+		return
+	}
 
-  saving.value = true
-  try {
-    const data = prepareFormData(formData, {
-      evidence: 'Finding Evidence',
-      affected_locations: 'Finding Affected Location',
-      milestones: 'Finding Action Milestone',
-      status_history: 'Finding Status Change',
-      follow_up_history: 'Finding Follow-up Activity',
-      related_findings: 'Finding Related Finding',
-    })
+	saving.value = true
+	try {
+		const data = prepareFormData(formData, {
+			evidence: "Finding Evidence",
+			affected_locations: "Finding Affected Location",
+			milestones: "Finding Action Milestone",
+			status_history: "Finding Status Change",
+			follow_up_history: "Finding Follow-up Activity",
+			related_findings: "Finding Related Finding",
+		})
 
-    // API call would go here
-    // await createResource('Audit Finding').setValue.submit(data)
+		// API call would go here
+		// await createResource('Audit Finding').setValue.submit(data)
 
-    emit('saved', data)
-    closeDialog()
-  } catch (error) {
-    console.error('Failed to save finding:', error)
-  } finally {
-    saving.value = false
-  }
+		emit("saved", data)
+		closeDialog()
+	} catch (error) {
+		console.error("Failed to save finding:", error)
+	} finally {
+		saving.value = false
+	}
 }
 
 // Close dialog
 const closeDialog = () => {
-  showDialog.value = false
-  emit('close')
+	showDialog.value = false
+	emit("close")
 }
 
 // Watch for finding prop changes (editing mode)
-watch(() => props.finding, (newFinding) => {
-  if (newFinding) {
-    Object.keys(formData).forEach(key => {
-      if (newFinding[key] !== undefined) {
-        formData[key] = newFinding[key]
-      }
-    })
-  }
-}, { immediate: true, deep: true })
+watch(
+	() => props.finding,
+	(newFinding) => {
+		if (newFinding) {
+			Object.keys(formData).forEach((key) => {
+				if (newFinding[key] !== undefined) {
+					formData[key] = newFinding[key]
+				}
+			})
+		}
+	},
+	{ immediate: true, deep: true },
+)
 
 // Watch formData for auto-save
-watch(formData, () => {
-  // Debounced auto-save could be implemented here
-}, { deep: true })
+watch(
+	formData,
+	() => {
+		// Debounced auto-save could be implemented here
+	},
+	{ deep: true },
+)
 
 // Lifecycle
 onMounted(() => {
-  // Fetch options data
-  // fetchEngagements()
-  // fetchUsers()
-  // fetchFindings()
+	// Fetch options data
+	// fetchEngagements()
+	// fetchUsers()
+	// fetchFindings()
 })
 </script>
 

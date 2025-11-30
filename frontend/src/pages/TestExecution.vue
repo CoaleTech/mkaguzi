@@ -395,7 +395,7 @@ const executions = computed(() => {
 		filteredExecutions = filteredExecutions.filter(
 			(e) =>
 				e.execution_name?.toLowerCase().includes(search) ||
-				e.execution_id?.toLowerCase().includes(search)
+				e.execution_id?.toLowerCase().includes(search),
 		)
 	}
 
@@ -452,7 +452,7 @@ const handleExecutionSaved = async (executionData) => {
 		if (selectedExecutionForEdit.value?.name) {
 			await testExecutionStore.updateTestExecution(
 				selectedExecutionForEdit.value.name,
-				executionData
+				executionData,
 			)
 		} else {
 			await testExecutionStore.createTestExecution(executionData)

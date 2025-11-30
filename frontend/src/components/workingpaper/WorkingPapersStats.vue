@@ -93,74 +93,74 @@
 
 <script setup>
 import {
-  AlertTriangleIcon,
-  BarChart3Icon,
-  BarChartIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  FileTextIcon,
+	AlertTriangleIcon,
+	BarChart3Icon,
+	BarChartIcon,
+	CheckCircleIcon,
+	ClockIcon,
+	FileTextIcon,
 } from "lucide-vue-next"
 import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  workingPapers: {
-    type: Array,
-    default: () => [],
-  },
+	workingPapers: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 // Computed properties
 const totalWorkingPapers = computed(() => props.workingPapers.length)
 
 const reviewCompleteCount = computed(
-  () =>
-    props.workingPapers.filter(
-      (paper) => paper.review_status === "Review Complete",
-    ).length,
+	() =>
+		props.workingPapers.filter(
+			(paper) => paper.review_status === "Review Complete",
+		).length,
 )
 
 const underReviewCount = computed(
-  () =>
-    props.workingPapers.filter(
-      (paper) => paper.review_status === "Under Review",
-    ).length,
+	() =>
+		props.workingPapers.filter(
+			(paper) => paper.review_status === "Under Review",
+		).length,
 )
 
 const revisionRequiredCount = computed(
-  () =>
-    props.workingPapers.filter(
-      (paper) => paper.review_status === "Revision Required",
-    ).length,
+	() =>
+		props.workingPapers.filter(
+			(paper) => paper.review_status === "Revision Required",
+		).length,
 )
 
 const averageReviewTime = computed(() => {
-  const reviewedPapers = props.workingPapers.filter(
-    (paper) => paper.review_date && paper.preparation_date,
-  )
-  if (reviewedPapers.length === 0) return 0
+	const reviewedPapers = props.workingPapers.filter(
+		(paper) => paper.review_date && paper.preparation_date,
+	)
+	if (reviewedPapers.length === 0) return 0
 
-  const totalDays = reviewedPapers.reduce((sum, paper) => {
-    const prepDate = new Date(paper.preparation_date)
-    const reviewDate = new Date(paper.review_date)
-    const diffTime = Math.abs(reviewDate - prepDate)
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return sum + diffDays
-  }, 0)
+	const totalDays = reviewedPapers.reduce((sum, paper) => {
+		const prepDate = new Date(paper.preparation_date)
+		const reviewDate = new Date(paper.review_date)
+		const diffTime = Math.abs(reviewDate - prepDate)
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+		return sum + diffDays
+	}, 0)
 
-  return Math.round(totalDays / reviewedPapers.length)
+	return Math.round(totalDays / reviewedPapers.length)
 })
 
 const averageQualityScore = computed(() => {
-  const scoredPapers = props.workingPapers.filter(
-    (paper) => paper.quality_score,
-  )
-  if (scoredPapers.length === 0) return 0
+	const scoredPapers = props.workingPapers.filter(
+		(paper) => paper.quality_score,
+	)
+	if (scoredPapers.length === 0) return 0
 
-  const totalScore = scoredPapers.reduce(
-    (sum, paper) => sum + (paper.quality_score || 0),
-    0,
-  )
-  return Math.round(totalScore / scoredPapers.length)
+	const totalScore = scoredPapers.reduce(
+		(sum, paper) => sum + (paper.quality_score || 0),
+		0,
+	)
+	return Math.round(totalScore / scoredPapers.length)
 })
 </script>

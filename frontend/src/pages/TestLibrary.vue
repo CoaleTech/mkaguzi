@@ -349,11 +349,11 @@ const getExecutionStatusColor = (result) => {
 }
 
 const handleStatsFilter = (filterKey, filterValue) => {
-	if (filterKey === 'status') {
+	if (filterKey === "status") {
 		selectedStatus.value = filterValue
-	} else if (filterKey === 'test_type') {
+	} else if (filterKey === "test_type") {
 		selectedTestType.value = filterValue
-	} else if (filterKey === 'test_logic_type') {
+	} else if (filterKey === "test_logic_type") {
 		selectedTestType.value = filterValue
 	}
 	activeFilter.value = filterValue

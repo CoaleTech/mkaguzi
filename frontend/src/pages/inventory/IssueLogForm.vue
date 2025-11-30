@@ -252,11 +252,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save } from 'lucide-vue-next'
+import { Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Save } from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -268,239 +268,239 @@ const sessionOptions = ref([])
 const varianceCaseOptions = ref([])
 const auditPlanOptions = ref([])
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  issue_type: '',
-  severity: 'Medium',
-  priority: 'Medium',
-  status: 'Open',
-  reported_by: '',
-  assigned_to: '',
-  reported_date: new Date().toISOString().split('T')[0],
-  due_date: '',
-  description: '',
-  location: '',
-  item_code: '',
-  quantity_affected: 0,
-  stock_take_session: '',
-  variance_case: '',
-  audit_plan: '',
-  resolution: '',
-  resolved_by: '',
-  resolved_date: '',
-  notes: ''
+	issue_type: "",
+	severity: "Medium",
+	priority: "Medium",
+	status: "Open",
+	reported_by: "",
+	assigned_to: "",
+	reported_date: new Date().toISOString().split("T")[0],
+	due_date: "",
+	description: "",
+	location: "",
+	item_code: "",
+	quantity_affected: 0,
+	stock_take_session: "",
+	variance_case: "",
+	audit_plan: "",
+	resolution: "",
+	resolved_by: "",
+	resolved_date: "",
+	notes: "",
 })
 
 onMounted(async () => {
-  await Promise.all([
-    loadUsers(),
-    loadItems(),
-    loadSessions(),
-    loadVarianceCases(),
-    loadAuditPlans()
-  ])
+	await Promise.all([
+		loadUsers(),
+		loadItems(),
+		loadSessions(),
+		loadVarianceCases(),
+		loadAuditPlans(),
+	])
 
-  if (isEdit.value) {
-    await loadIssue()
-  }
+	if (isEdit.value) {
+		await loadIssue()
+	}
 
-  // Set current user as reported_by if not editing
-  if (!isEdit.value && !form.value.reported_by) {
-    form.value.reported_by = frappe.session.user
-  }
+	// Set current user as reported_by if not editing
+	if (!isEdit.value && !form.value.reported_by) {
+		form.value.reported_by = frappe.session.user
+	}
 })
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 async function loadItems() {
-  try {
-    const items = await call('frappe.client.get_list', {
-      doctype: 'Item',
-      fields: ['name', 'item_name'],
-      limit_page_length: 0
-    })
-    itemOptions.value = items.map(i => ({
-      label: `${i.name} - ${i.item_name}`,
-      value: i.name
-    }))
-  } catch (error) {
-    console.error('Error loading items:', error)
-  }
+	try {
+		const items = await call("frappe.client.get_list", {
+			doctype: "Item",
+			fields: ["name", "item_name"],
+			limit_page_length: 0,
+		})
+		itemOptions.value = items.map((i) => ({
+			label: `${i.name} - ${i.item_name}`,
+			value: i.name,
+		}))
+	} catch (error) {
+		console.error("Error loading items:", error)
+	}
 }
 
 async function loadSessions() {
-  try {
-    const sessions = await call('frappe.client.get_list', {
-      doctype: 'Stock Take Session',
-      fields: ['name', 'title'],
-      limit_page_length: 0
-    })
-    sessionOptions.value = sessions.map(s => ({
-      label: s.title || s.name,
-      value: s.name
-    }))
-  } catch (error) {
-    console.error('Error loading sessions:', error)
-  }
+	try {
+		const sessions = await call("frappe.client.get_list", {
+			doctype: "Stock Take Session",
+			fields: ["name", "title"],
+			limit_page_length: 0,
+		})
+		sessionOptions.value = sessions.map((s) => ({
+			label: s.title || s.name,
+			value: s.name,
+		}))
+	} catch (error) {
+		console.error("Error loading sessions:", error)
+	}
 }
 
 async function loadVarianceCases() {
-  try {
-    const cases = await call('frappe.client.get_list', {
-      doctype: 'Variance Case',
-      fields: ['name', 'title'],
-      limit_page_length: 0
-    })
-    varianceCaseOptions.value = cases.map(c => ({
-      label: c.title || c.name,
-      value: c.name
-    }))
-  } catch (error) {
-    console.error('Error loading variance cases:', error)
-  }
+	try {
+		const cases = await call("frappe.client.get_list", {
+			doctype: "Variance Case",
+			fields: ["name", "title"],
+			limit_page_length: 0,
+		})
+		varianceCaseOptions.value = cases.map((c) => ({
+			label: c.title || c.name,
+			value: c.name,
+		}))
+	} catch (error) {
+		console.error("Error loading variance cases:", error)
+	}
 }
 
 async function loadAuditPlans() {
-  try {
-    const plans = await call('frappe.client.get_list', {
-      doctype: 'Audit Plan',
-      fields: ['name', 'title'],
-      limit_page_length: 0
-    })
-    auditPlanOptions.value = plans.map(p => ({
-      label: p.title || p.name,
-      value: p.name
-    }))
-  } catch (error) {
-    console.error('Error loading audit plans:', error)
-  }
+	try {
+		const plans = await call("frappe.client.get_list", {
+			doctype: "Audit Plan",
+			fields: ["name", "title"],
+			limit_page_length: 0,
+		})
+		auditPlanOptions.value = plans.map((p) => ({
+			label: p.title || p.name,
+			value: p.name,
+		}))
+	} catch (error) {
+		console.error("Error loading audit plans:", error)
+	}
 }
 
 async function loadIssue() {
-  try {
-    const issue = await call('frappe.client.get', {
-      doctype: 'Issue Log',
-      name: route.params.id
-    })
+	try {
+		const issue = await call("frappe.client.get", {
+			doctype: "Issue Log",
+			name: route.params.id,
+		})
 
-    form.value = {
-      issue_type: issue.issue_type || '',
-      severity: issue.severity || 'Medium',
-      priority: issue.priority || 'Medium',
-      status: issue.status || 'Open',
-      reported_by: issue.reported_by || '',
-      assigned_to: issue.assigned_to || '',
-      reported_date: issue.reported_date || '',
-      due_date: issue.due_date || '',
-      description: issue.description || '',
-      location: issue.location || '',
-      item_code: issue.item_code || '',
-      quantity_affected: issue.quantity_affected || 0,
-      stock_take_session: issue.stock_take_session || '',
-      variance_case: issue.variance_case || '',
-      audit_plan: issue.audit_plan || '',
-      resolution: issue.resolution || '',
-      resolved_by: issue.resolved_by || '',
-      resolved_date: issue.resolved_date || '',
-      notes: issue.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading issue:', error)
-  }
+		form.value = {
+			issue_type: issue.issue_type || "",
+			severity: issue.severity || "Medium",
+			priority: issue.priority || "Medium",
+			status: issue.status || "Open",
+			reported_by: issue.reported_by || "",
+			assigned_to: issue.assigned_to || "",
+			reported_date: issue.reported_date || "",
+			due_date: issue.due_date || "",
+			description: issue.description || "",
+			location: issue.location || "",
+			item_code: issue.item_code || "",
+			quantity_affected: issue.quantity_affected || 0,
+			stock_take_session: issue.stock_take_session || "",
+			variance_case: issue.variance_case || "",
+			audit_plan: issue.audit_plan || "",
+			resolution: issue.resolution || "",
+			resolved_by: issue.resolved_by || "",
+			resolved_date: issue.resolved_date || "",
+			notes: issue.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading issue:", error)
+	}
 }
 
 async function saveIssue() {
-  // Validate required fields
-  if (!form.value.issue_type) {
-    alert('Issue type is required')
-    return
-  }
-  if (!form.value.description) {
-    alert('Description is required')
-    return
-  }
+	// Validate required fields
+	if (!form.value.issue_type) {
+		alert("Issue type is required")
+		return
+	}
+	if (!form.value.description) {
+		alert("Description is required")
+		return
+	}
 
-  saving.value = true
+	saving.value = true
 
-  try {
-    if (isEdit.value) {
-      // Update existing
-      await call('frappe.client.set_value', {
-        doctype: 'Issue Log',
-        name: route.params.id,
-        fieldname: form.value
-      })
-      router.push(`/inventory-audit/issues/${route.params.id}`)
-    } else {
-      // Create new
-      const result = await call('frappe.client.insert', {
-        doc: {
-          doctype: 'Issue Log',
-          ...form.value
-        }
-      })
-      router.push(`/inventory-audit/issues/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving issue:', error)
-    alert('Error saving issue: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	try {
+		if (isEdit.value) {
+			// Update existing
+			await call("frappe.client.set_value", {
+				doctype: "Issue Log",
+				name: route.params.id,
+				fieldname: form.value,
+			})
+			router.push(`/inventory-audit/issues/${route.params.id}`)
+		} else {
+			// Create new
+			const result = await call("frappe.client.insert", {
+				doc: {
+					doctype: "Issue Log",
+					...form.value,
+				},
+			})
+			router.push(`/inventory-audit/issues/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving issue:", error)
+		alert("Error saving issue: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/issues/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/issues')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/issues/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/issues")
+	}
 }
 
 // Options
 const issueTypeOptions = [
-  { label: 'Stock Discrepancy', value: 'Stock Discrepancy' },
-  { label: 'Quality Issue', value: 'Quality Issue' },
-  { label: 'Documentation Error', value: 'Documentation Error' },
-  { label: 'Process Violation', value: 'Process Violation' },
-  { label: 'System Error', value: 'System Error' },
-  { label: 'Other', value: 'Other' }
+	{ label: "Stock Discrepancy", value: "Stock Discrepancy" },
+	{ label: "Quality Issue", value: "Quality Issue" },
+	{ label: "Documentation Error", value: "Documentation Error" },
+	{ label: "Process Violation", value: "Process Violation" },
+	{ label: "System Error", value: "System Error" },
+	{ label: "Other", value: "Other" },
 ]
 
 const severityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' }
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const priorityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Urgent', value: 'Urgent' }
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Urgent", value: "Urgent" },
 ]
 
 const statusOptions = [
-  { label: 'Open', value: 'Open' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Resolved', value: 'Resolved' },
-  { label: 'Closed', value: 'Closed' }
+	{ label: "Open", value: "Open" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Resolved", value: "Resolved" },
+	{ label: "Closed", value: "Closed" },
 ]
 </script>

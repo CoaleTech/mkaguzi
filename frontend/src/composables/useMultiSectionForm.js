@@ -132,9 +132,7 @@ export function useMultiSectionForm(options = {}) {
 	 * Check if current section is first
 	 */
 	const isFirstSection = computed(() => {
-		return (
-			sections.findIndex((s) => s.id === activeSection.value) === 0
-		)
+		return sections.findIndex((s) => s.id === activeSection.value) === 0
 	})
 
 	/**

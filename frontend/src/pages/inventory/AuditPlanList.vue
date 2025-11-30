@@ -183,21 +183,29 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { RefreshCw, Plus, Calendar, Target, MapPin, User, ClipboardList } from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button } from "frappe-ui"
+import {
+	Calendar,
+	ClipboardList,
+	MapPin,
+	Plus,
+	RefreshCw,
+	Target,
+	User,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
 
 const loading = ref(false)
 const filters = ref({
-  status: '',
-  audit_period: '',
-  branch: '',
-  warehouse: ''
+	status: "",
+	audit_period: "",
+	branch: "",
+	warehouse: "",
 })
 
 const plans = computed(() => store.plans)
@@ -207,66 +215,79 @@ const pageSize = computed(() => store.plansPageSize)
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 const avgCompliance = computed(() => {
-  const plansWithScore = plans.value.filter(p => p.compliance_score)
-  if (plansWithScore.length === 0) return 0
-  return Math.round(plansWithScore.reduce((sum, p) => sum + p.compliance_score, 0) / plansWithScore.length)
+	const plansWithScore = plans.value.filter((p) => p.compliance_score)
+	if (plansWithScore.length === 0) return 0
+	return Math.round(
+		plansWithScore.reduce((sum, p) => sum + p.compliance_score, 0) /
+			plansWithScore.length,
+	)
 })
 
 onMounted(async () => {
-  await loadPlans()
+	await loadPlans()
 })
 
 async function loadPlans() {
-  loading.value = true
-  try {
-    const filterObj = { ...filters.value }
-    Object.keys(filterObj).forEach(key => {
-      if (!filterObj[key]) delete filterObj[key]
-    })
-    await store.loadPlans(filterObj, currentPage.value, pageSize.value)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const filterObj = { ...filters.value }
+		Object.keys(filterObj).forEach((key) => {
+			if (!filterObj[key]) delete filterObj[key]
+		})
+		await store.loadPlans(filterObj, currentPage.value, pageSize.value)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  filters.value = { status: '', audit_period: '', branch: '', warehouse: '' }
-  await loadPlans()
+	filters.value = { status: "", audit_period: "", branch: "", warehouse: "" }
+	await loadPlans()
 }
 
 let loadTimeout = null
 function debouncedLoad() {
-  clearTimeout(loadTimeout)
-  loadTimeout = setTimeout(() => loadPlans(), 300)
+	clearTimeout(loadTimeout)
+	loadTimeout = setTimeout(() => loadPlans(), 300)
 }
 
 async function changePage(page) {
-  await store.loadPlans(filters.value, page, pageSize.value)
+	await store.loadPlans(filters.value, page, pageSize.value)
 }
 
 function createPlan() {
-  router.push('/inventory-audit/plans/new')
+	router.push("/inventory-audit/plans/new")
 }
 
 function viewPlan(name) {
-  router.push(`/inventory-audit/plans/${name}`)
+	router.push(`/inventory-audit/plans/${name}`)
 }
 
 function getStatusVariant(status) {
-  const variants = { 'Planned': 'blue', 'In Progress': 'yellow', 'Completed': 'green', 'On Hold': 'gray', 'Cancelled': 'red' }
-  return variants[status] || 'gray'
+	const variants = {
+		Planned: "blue",
+		"In Progress": "yellow",
+		Completed: "green",
+		"On Hold": "gray",
+		Cancelled: "red",
+	}
+	return variants[status] || "gray"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 function isDueSoon(date) {
-  if (!date) return false
-  const due = new Date(date)
-  const now = new Date()
-  const diff = (due - now) / (1000 * 60 * 60 * 24)
-  return diff <= 7 && diff >= 0
+	if (!date) return false
+	const due = new Date(date)
+	const now = new Date()
+	const diff = (due - now) / (1000 * 60 * 60 * 24)
+	return diff <= 7 && diff >= 0
 }
 </script>

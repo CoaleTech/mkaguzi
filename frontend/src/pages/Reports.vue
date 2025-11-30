@@ -226,6 +226,7 @@
 </template>
 
 <script setup>
+import ReportsStats from "@/components/reports/ReportsStats.vue"
 import { Badge, Button, Dialog, FormControl } from "frappe-ui"
 import {
 	BarChart3,
@@ -238,7 +239,6 @@ import {
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useReportsStore } from "../stores/reports"
-import ReportsStats from "@/components/reports/ReportsStats.vue"
 
 // Store
 const reportsStore = useReportsStore()

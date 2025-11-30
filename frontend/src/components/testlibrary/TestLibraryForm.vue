@@ -695,36 +695,36 @@ def execute(data, params):
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Dialog, Button, FormControl, TextEditor, Select } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Button, Dialog, FormControl, Select, TextEditor } from "frappe-ui"
 import {
-  Info,
-  Database,
-  FileCode,
-  Target,
-  SlidersHorizontal,
-  Activity,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Plus,
-  Trash2,
-  AlertCircle,
-} from 'lucide-vue-next'
+	Activity,
+	AlertCircle,
+	CheckCircle2,
+	ChevronLeft,
+	ChevronRight,
+	Database,
+	FileCode,
+	Info,
+	Plus,
+	Save,
+	SlidersHorizontal,
+	Target,
+	Trash2,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  test: { type: Object, default: null },
+	show: { type: Boolean, default: false },
+	test: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:show', 'saved'])
+const emit = defineEmits(["update:show", "saved"])
 
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (val) => emit('update:show', val),
+	get: () => props.show,
+	set: (val) => emit("update:show", val),
 })
 
 const isEditMode = computed(() => !!props.test?.name)
@@ -733,289 +733,319 @@ const currentSectionIndex = ref(0)
 
 // Section definitions
 const sections = [
-  { id: 'basic', title: 'Basic Information', icon: Info, description: 'Test identification and classification' },
-  { id: 'data', title: 'Data Source', icon: Database, description: 'Define data requirements and filters' },
-  { id: 'logic', title: 'Test Logic', icon: FileCode, description: 'Configure SQL query or Python script' },
-  { id: 'results', title: 'Expected Results', icon: Target, description: 'Define expected outcomes and interpretations' },
-  { id: 'thresholds', title: 'Thresholds', icon: SlidersHorizontal, description: 'Set warning and critical thresholds' },
-  { id: 'status', title: 'Status & Usage', icon: Activity, description: 'Status, versioning, and usage tracking' },
+	{
+		id: "basic",
+		title: "Basic Information",
+		icon: Info,
+		description: "Test identification and classification",
+	},
+	{
+		id: "data",
+		title: "Data Source",
+		icon: Database,
+		description: "Define data requirements and filters",
+	},
+	{
+		id: "logic",
+		title: "Test Logic",
+		icon: FileCode,
+		description: "Configure SQL query or Python script",
+	},
+	{
+		id: "results",
+		title: "Expected Results",
+		icon: Target,
+		description: "Define expected outcomes and interpretations",
+	},
+	{
+		id: "thresholds",
+		title: "Thresholds",
+		icon: SlidersHorizontal,
+		description: "Set warning and critical thresholds",
+	},
+	{
+		id: "status",
+		title: "Status & Usage",
+		icon: Activity,
+		description: "Status, versioning, and usage tracking",
+	},
 ]
 
 // Form data
 const formData = reactive({
-  // Basic Info
-  test_id: '',
-  test_name: '',
-  test_category: '',
-  sub_category: '',
-  test_type: '',
-  risk_area: '',
-  description: '',
-  objective: '',
-  // Data Source
-  data_source: '',
-  data_doctype: '',
-  required_data_fields: [],
-  data_filters: [],
-  // Test Logic
-  test_logic_type: '',
-  sql_query: '',
-  python_script: '',
-  builtin_function: '',
-  test_parameters: [],
-  // Expected Results
-  expected_result: '',
-  interpretation_guide: '',
-  expected_results: [],
-  // Thresholds
-  threshold_settings: [],
-  // Status
-  status: 'Active',
-  version: '1.0.0',
-  last_updated: '',
-  created_by: '',
-  reviewed_by: '',
-  usage_count: 0,
-  success_rate: 0,
-  last_execution: '',
-  notes: '',
+	// Basic Info
+	test_id: "",
+	test_name: "",
+	test_category: "",
+	sub_category: "",
+	test_type: "",
+	risk_area: "",
+	description: "",
+	objective: "",
+	// Data Source
+	data_source: "",
+	data_doctype: "",
+	required_data_fields: [],
+	data_filters: [],
+	// Test Logic
+	test_logic_type: "",
+	sql_query: "",
+	python_script: "",
+	builtin_function: "",
+	test_parameters: [],
+	// Expected Results
+	expected_result: "",
+	interpretation_guide: "",
+	expected_results: [],
+	// Thresholds
+	threshold_settings: [],
+	// Status
+	status: "Active",
+	version: "1.0.0",
+	last_updated: "",
+	created_by: "",
+	reviewed_by: "",
+	usage_count: 0,
+	success_rate: 0,
+	last_execution: "",
+	notes: "",
 })
 
 // Options
 const categoryOptions = [
-  { label: 'Duplicate Detection', value: 'Duplicate Detection' },
-  { label: 'Outlier Analysis', value: 'Outlier Analysis' },
-  { label: 'Trend Analysis', value: 'Trend Analysis' },
-  { label: 'Ratio Analysis', value: 'Ratio Analysis' },
-  { label: 'Completeness Check', value: 'Completeness Check' },
-  { label: 'Validity Check', value: 'Validity Check' },
-  { label: 'Accuracy Check', value: 'Accuracy Check' },
-  { label: 'Timeliness Check', value: 'Timeliness Check' },
-  { label: 'Consistency Check', value: 'Consistency Check' },
-  { label: 'Custom Analysis', value: 'Custom Analysis' },
+	{ label: "Duplicate Detection", value: "Duplicate Detection" },
+	{ label: "Outlier Analysis", value: "Outlier Analysis" },
+	{ label: "Trend Analysis", value: "Trend Analysis" },
+	{ label: "Ratio Analysis", value: "Ratio Analysis" },
+	{ label: "Completeness Check", value: "Completeness Check" },
+	{ label: "Validity Check", value: "Validity Check" },
+	{ label: "Accuracy Check", value: "Accuracy Check" },
+	{ label: "Timeliness Check", value: "Timeliness Check" },
+	{ label: "Consistency Check", value: "Consistency Check" },
+	{ label: "Custom Analysis", value: "Custom Analysis" },
 ]
 
 const testTypeOptions = [
-  { label: 'Substantive', value: 'Substantive' },
-  { label: 'Controls', value: 'Controls' },
-  { label: 'Analytical', value: 'Analytical' },
-  { label: 'Compliance', value: 'Compliance' },
+	{ label: "Substantive", value: "Substantive" },
+	{ label: "Controls", value: "Controls" },
+	{ label: "Analytical", value: "Analytical" },
+	{ label: "Compliance", value: "Compliance" },
 ]
 
 const logicTypeOptions = [
-  { label: 'SQL Query', value: 'SQL Query' },
-  { label: 'Python Script', value: 'Python Script' },
-  { label: 'Built-in Function', value: 'Built-in Function' },
+	{ label: "SQL Query", value: "SQL Query" },
+	{ label: "Python Script", value: "Python Script" },
+	{ label: "Built-in Function", value: "Built-in Function" },
 ]
 
 const statusOptions = [
-  { label: 'Active', value: 'Active' },
-  { label: 'Inactive', value: 'Inactive' },
-  { label: 'Under Review', value: 'Under Review' },
+	{ label: "Active", value: "Active" },
+	{ label: "Inactive", value: "Inactive" },
+	{ label: "Under Review", value: "Under Review" },
 ]
 
 const fieldTypeOptions = [
-  { label: 'Data', value: 'Data' },
-  { label: 'Int', value: 'Int' },
-  { label: 'Float', value: 'Float' },
-  { label: 'Currency', value: 'Currency' },
-  { label: 'Date', value: 'Date' },
-  { label: 'Datetime', value: 'Datetime' },
-  { label: 'Link', value: 'Link' },
-  { label: 'Select', value: 'Select' },
+	{ label: "Data", value: "Data" },
+	{ label: "Int", value: "Int" },
+	{ label: "Float", value: "Float" },
+	{ label: "Currency", value: "Currency" },
+	{ label: "Date", value: "Date" },
+	{ label: "Datetime", value: "Datetime" },
+	{ label: "Link", value: "Link" },
+	{ label: "Select", value: "Select" },
 ]
 
 const operatorOptions = [
-  { label: 'Equals (=)', value: '=' },
-  { label: 'Not Equals (!=)', value: '!=' },
-  { label: 'Greater Than (>)', value: '>' },
-  { label: 'Less Than (<)', value: '<' },
-  { label: 'Like', value: 'like' },
-  { label: 'In', value: 'in' },
-  { label: 'Between', value: 'between' },
+	{ label: "Equals (=)", value: "=" },
+	{ label: "Not Equals (!=)", value: "!=" },
+	{ label: "Greater Than (>)", value: ">" },
+	{ label: "Less Than (<)", value: "<" },
+	{ label: "Like", value: "like" },
+	{ label: "In", value: "in" },
+	{ label: "Between", value: "between" },
 ]
 
 const parameterTypeOptions = [
-  { label: 'String', value: 'String' },
-  { label: 'Integer', value: 'Integer' },
-  { label: 'Float', value: 'Float' },
-  { label: 'Date', value: 'Date' },
-  { label: 'Boolean', value: 'Boolean' },
-  { label: 'List', value: 'List' },
+	{ label: "String", value: "String" },
+	{ label: "Integer", value: "Integer" },
+	{ label: "Float", value: "Float" },
+	{ label: "Date", value: "Date" },
+	{ label: "Boolean", value: "Boolean" },
+	{ label: "List", value: "List" },
 ]
 
 const resultStatusOptions = [
-  { label: 'Pass', value: 'Pass' },
-  { label: 'Fail', value: 'Fail' },
-  { label: 'Warning', value: 'Warning' },
+	{ label: "Pass", value: "Pass" },
+	{ label: "Fail", value: "Fail" },
+	{ label: "Warning", value: "Warning" },
 ]
 
 const severityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' },
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const thresholdOperatorOptions = [
-  { label: 'Greater Than (>)', value: '>' },
-  { label: 'Greater Than or Equal (>=)', value: '>=' },
-  { label: 'Less Than (<)', value: '<' },
-  { label: 'Less Than or Equal (<=)', value: '<=' },
-  { label: 'Equals (=)', value: '=' },
-  { label: 'Not Equals (!=)', value: '!=' },
+	{ label: "Greater Than (>)", value: ">" },
+	{ label: "Greater Than or Equal (>=)", value: ">=" },
+	{ label: "Less Than (<)", value: "<" },
+	{ label: "Less Than or Equal (<=)", value: "<=" },
+	{ label: "Equals (=)", value: "=" },
+	{ label: "Not Equals (!=)", value: "!=" },
 ]
 
 // Watch for test prop changes
 watch(
-  () => props.test,
-  (newTest) => {
-    if (newTest) {
-      Object.keys(formData).forEach((key) => {
-        if (newTest[key] !== undefined) {
-          formData[key] = newTest[key]
-        }
-      })
-    } else {
-      resetForm()
-    }
-  },
-  { immediate: true }
+	() => props.test,
+	(newTest) => {
+		if (newTest) {
+			Object.keys(formData).forEach((key) => {
+				if (newTest[key] !== undefined) {
+					formData[key] = newTest[key]
+				}
+			})
+		} else {
+			resetForm()
+		}
+	},
+	{ immediate: true },
 )
 
 // Section validation
 const sectionValidation = computed(() => [
-  !!(formData.test_name && formData.test_category), // Basic Info
-  true, // Data Source - optional
-  !!formData.test_logic_type, // Test Logic
-  true, // Expected Results - optional
-  true, // Thresholds - optional
-  !!formData.status, // Status
+	!!(formData.test_name && formData.test_category), // Basic Info
+	true, // Data Source - optional
+	!!formData.test_logic_type, // Test Logic
+	true, // Expected Results - optional
+	true, // Thresholds - optional
+	!!formData.status, // Status
 ])
 
-const completedSections = computed(() =>
-  sectionValidation.value.filter(Boolean).length
+const completedSections = computed(
+	() => sectionValidation.value.filter(Boolean).length,
 )
 
 const progressPercentage = computed(() =>
-  Math.round((completedSections.value / sections.length) * 100)
+	Math.round((completedSections.value / sections.length) * 100),
 )
 
 function isSectionComplete(index) {
-  return sectionValidation.value[index]
+	return sectionValidation.value[index]
 }
 
 function getSectionStatusClass(index) {
-  if (currentSectionIndex.value === index) return 'text-blue-600'
-  if (isSectionComplete(index)) return 'text-green-500'
-  return 'text-gray-400'
+	if (currentSectionIndex.value === index) return "text-blue-600"
+	if (isSectionComplete(index)) return "text-green-500"
+	return "text-gray-400"
 }
 
 function goToSection(index) {
-  currentSectionIndex.value = index
+	currentSectionIndex.value = index
 }
 
 function nextSection() {
-  if (currentSectionIndex.value < sections.length - 1) {
-    currentSectionIndex.value++
-  }
+	if (currentSectionIndex.value < sections.length - 1) {
+		currentSectionIndex.value++
+	}
 }
 
 function previousSection() {
-  if (currentSectionIndex.value > 0) {
-    currentSectionIndex.value--
-  }
+	if (currentSectionIndex.value > 0) {
+		currentSectionIndex.value--
+	}
 }
 
 // Child table management
 function addRequiredField() {
-  formData.required_data_fields.push({
-    field_name: '',
-    field_type: 'Data',
-    is_required: true,
-    description: '',
-  })
+	formData.required_data_fields.push({
+		field_name: "",
+		field_type: "Data",
+		is_required: true,
+		description: "",
+	})
 }
 
 function removeRequiredField(index) {
-  formData.required_data_fields.splice(index, 1)
+	formData.required_data_fields.splice(index, 1)
 }
 
 function addDataFilter() {
-  formData.data_filters.push({
-    filter_field: '',
-    operator: '=',
-    default_value: '',
-    is_dynamic: false,
-  })
+	formData.data_filters.push({
+		filter_field: "",
+		operator: "=",
+		default_value: "",
+		is_dynamic: false,
+	})
 }
 
 function removeDataFilter(index) {
-  formData.data_filters.splice(index, 1)
+	formData.data_filters.splice(index, 1)
 }
 
 function addTestParameter() {
-  formData.test_parameters.push({
-    parameter_name: '',
-    parameter_type: 'String',
-    default_value: '',
-    description: '',
-  })
+	formData.test_parameters.push({
+		parameter_name: "",
+		parameter_type: "String",
+		default_value: "",
+		description: "",
+	})
 }
 
 function removeTestParameter(index) {
-  formData.test_parameters.splice(index, 1)
+	formData.test_parameters.splice(index, 1)
 }
 
 function addExpectedResult() {
-  formData.expected_results.push({
-    condition: '',
-    result_status: 'Pass',
-    severity: 'Low',
-    action_required: '',
-  })
+	formData.expected_results.push({
+		condition: "",
+		result_status: "Pass",
+		severity: "Low",
+		action_required: "",
+	})
 }
 
 function removeExpectedResult(index) {
-  formData.expected_results.splice(index, 1)
+	formData.expected_results.splice(index, 1)
 }
 
 function addThreshold() {
-  formData.threshold_settings.push({
-    metric_name: '',
-    operator: '>',
-    warning_threshold: null,
-    critical_threshold: null,
-    description: '',
-  })
+	formData.threshold_settings.push({
+		metric_name: "",
+		operator: ">",
+		warning_threshold: null,
+		critical_threshold: null,
+		description: "",
+	})
 }
 
 function removeThreshold(index) {
-  formData.threshold_settings.splice(index, 1)
+	formData.threshold_settings.splice(index, 1)
 }
 
 // Helper functions
 function formatSQL() {
-  // Basic SQL formatting
-  if (formData.sql_query) {
-    formData.sql_query = formData.sql_query
-      .replace(/\bSELECT\b/gi, '\nSELECT')
-      .replace(/\bFROM\b/gi, '\nFROM')
-      .replace(/\bWHERE\b/gi, '\nWHERE')
-      .replace(/\bAND\b/gi, '\n  AND')
-      .replace(/\bOR\b/gi, '\n  OR')
-      .replace(/\bGROUP BY\b/gi, '\nGROUP BY')
-      .replace(/\bORDER BY\b/gi, '\nORDER BY')
-      .replace(/\bHAVING\b/gi, '\nHAVING')
-      .replace(/\bLEFT JOIN\b/gi, '\nLEFT JOIN')
-      .replace(/\bRIGHT JOIN\b/gi, '\nRIGHT JOIN')
-      .replace(/\bINNER JOIN\b/gi, '\nINNER JOIN')
-      .trim()
-  }
+	// Basic SQL formatting
+	if (formData.sql_query) {
+		formData.sql_query = formData.sql_query
+			.replace(/\bSELECT\b/gi, "\nSELECT")
+			.replace(/\bFROM\b/gi, "\nFROM")
+			.replace(/\bWHERE\b/gi, "\nWHERE")
+			.replace(/\bAND\b/gi, "\n  AND")
+			.replace(/\bOR\b/gi, "\n  OR")
+			.replace(/\bGROUP BY\b/gi, "\nGROUP BY")
+			.replace(/\bORDER BY\b/gi, "\nORDER BY")
+			.replace(/\bHAVING\b/gi, "\nHAVING")
+			.replace(/\bLEFT JOIN\b/gi, "\nLEFT JOIN")
+			.replace(/\bRIGHT JOIN\b/gi, "\nRIGHT JOIN")
+			.replace(/\bINNER JOIN\b/gi, "\nINNER JOIN")
+			.trim()
+	}
 }
 
 function insertTemplate() {
-  formData.python_script = `def execute(data, params):
+	formData.python_script = `def execute(data, params):
     '''
     Execute the audit test logic.
     
@@ -1063,36 +1093,36 @@ def some_condition(record):
 }
 
 function resetForm() {
-  Object.keys(formData).forEach((key) => {
-    if (Array.isArray(formData[key])) {
-      formData[key] = []
-    } else if (typeof formData[key] === 'number') {
-      formData[key] = 0
-    } else {
-      formData[key] = ''
-    }
-  })
-  formData.status = 'Active'
-  formData.version = '1.0.0'
-  currentSectionIndex.value = 0
+	Object.keys(formData).forEach((key) => {
+		if (Array.isArray(formData[key])) {
+			formData[key] = []
+		} else if (typeof formData[key] === "number") {
+			formData[key] = 0
+		} else {
+			formData[key] = ""
+		}
+	})
+	formData.status = "Active"
+	formData.version = "1.0.0"
+	currentSectionIndex.value = 0
 }
 
 function closeDialog() {
-  emit('update:show', false)
-  resetForm()
+	emit("update:show", false)
+	resetForm()
 }
 
 async function saveTest() {
-  saving.value = true
-  try {
-    // Save logic would go here
-    console.log('Saving test:', formData)
-    emit('saved', { ...formData })
-    closeDialog()
-  } catch (error) {
-    console.error('Error saving test:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		// Save logic would go here
+		console.log("Saving test:", formData)
+		emit("saved", { ...formData })
+		closeDialog()
+	} catch (error) {
+		console.error("Error saving test:", error)
+	} finally {
+		saving.value = false
+	}
 }
 </script>

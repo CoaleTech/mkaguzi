@@ -1083,7 +1083,10 @@ const handleFormSubmit = async (formData) => {
 		if (formMode.value === "create") {
 			await auditStore.createRiskAssessment(formData)
 		} else {
-			await auditStore.updateRiskAssessment(editingAssessment.value.name, formData)
+			await auditStore.updateRiskAssessment(
+				editingAssessment.value.name,
+				formData,
+			)
 		}
 		showFormModal.value = false
 		await refreshData()

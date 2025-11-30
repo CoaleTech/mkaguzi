@@ -126,71 +126,70 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { Badge, Button, Dialog } from 'frappe-ui'
-import { EditIcon, PlusIcon, TrashIcon } from 'lucide-vue-next'
+import { Badge, Button, Dialog } from "frappe-ui"
+import { EditIcon, PlusIcon, TrashIcon } from "lucide-vue-next"
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  modalTitle: {
-    type: String,
-    required: true
-  },
-  columns: {
-    type: Array,
-    required: true,
-    validator: (columns) => {
-      return columns.every(col =>
-        typeof col === 'object' && 'key' in col && 'label' in col
-      )
-    }
-  },
-  formFields: {
-    type: Array,
-    required: true,
-    validator: (fields) => {
-      return fields.every(field =>
-        typeof field === 'object' &&
-        'name' in field &&
-        'component' in field
-      )
-    }
-  },
-  validate: {
-    type: Function,
-    default: null
-  },
-  emptyMessage: {
-    type: String,
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  modalSize: {
-    type: String,
-    default: 'xl'
-  }
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
+	title: {
+		type: String,
+		required: true,
+	},
+	modalTitle: {
+		type: String,
+		required: true,
+	},
+	columns: {
+		type: Array,
+		required: true,
+		validator: (columns) => {
+			return columns.every(
+				(col) => typeof col === "object" && "key" in col && "label" in col,
+			)
+		},
+	},
+	formFields: {
+		type: Array,
+		required: true,
+		validator: (fields) => {
+			return fields.every(
+				(field) =>
+					typeof field === "object" && "name" in field && "component" in field,
+			)
+		},
+	},
+	validate: {
+		type: Function,
+		default: null,
+	},
+	emptyMessage: {
+		type: String,
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	modalSize: {
+		type: String,
+		default: "xl",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'row-change'])
+const emit = defineEmits(["update:modelValue", "row-change"])
 
 const rows = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+	get: () => props.modelValue,
+	set: (val) => emit("update:modelValue", val),
 })
 
 // Filter out hidden fields from form display
 const visibleFormFields = computed(() => {
-  return props.formFields.filter(field => field.props?.type !== 'hidden')
+	return props.formFields.filter((field) => field.props?.type !== "hidden")
 })
 
 const showModal = ref(false)
@@ -202,144 +201,149 @@ const errors = ref({})
  * Initialize form data with default values from field configuration
  */
 const initializeFormData = () => {
-  const data = {}
-  props.formFields.forEach(field => {
-    data[field.name] = field.defaultValue !== undefined ? field.defaultValue : ''
-  })
-  return data
+	const data = {}
+	props.formFields.forEach((field) => {
+		data[field.name] =
+			field.defaultValue !== undefined ? field.defaultValue : ""
+	})
+	return data
 }
 
 /**
  * Add new row - open modal with empty form
  */
 const addRow = () => {
-  editingIndex.value = null
-  formData.value = initializeFormData()
-  errors.value = {}
-  showModal.value = true
+	editingIndex.value = null
+	formData.value = initializeFormData()
+	errors.value = {}
+	showModal.value = true
 }
 
 /**
  * Edit existing row - open modal with row data
  */
 const editRow = (index, row) => {
-  editingIndex.value = index
-  formData.value = { ...row }
-  errors.value = {}
-  showModal.value = true
+	editingIndex.value = index
+	formData.value = { ...row }
+	errors.value = {}
+	showModal.value = true
 }
 
 /**
  * Save row (create or update)
  */
 const saveRow = () => {
-  // Validate if validator is provided
-  if (props.validate) {
-    const validationErrors = props.validate(formData.value)
-    if (validationErrors) {
-      errors.value = validationErrors
-      return
-    }
-  }
+	// Validate if validator is provided
+	if (props.validate) {
+		const validationErrors = props.validate(formData.value)
+		if (validationErrors) {
+			errors.value = validationErrors
+			return
+		}
+	}
 
-  // Clear errors
-  errors.value = {}
+	// Clear errors
+	errors.value = {}
 
-  // Update or add row
-  const updatedRows = [...rows.value]
-  if (editingIndex.value !== null) {
-    // Update existing
-    updatedRows[editingIndex.value] = { ...formData.value }
-  } else {
-    // Add new
-    updatedRows.push({ ...formData.value })
-  }
+	// Update or add row
+	const updatedRows = [...rows.value]
+	if (editingIndex.value !== null) {
+		// Update existing
+		updatedRows[editingIndex.value] = { ...formData.value }
+	} else {
+		// Add new
+		updatedRows.push({ ...formData.value })
+	}
 
-  rows.value = updatedRows
-  emit('row-change', formData.value)
-  showModal.value = false
+	rows.value = updatedRows
+	emit("row-change", formData.value)
+	showModal.value = false
 }
 
 /**
  * Delete row with confirmation
  */
 const deleteRow = (index) => {
-  if (confirm(`Are you sure you want to delete this ${props.modalTitle.toLowerCase()}?`)) {
-    const updatedRows = [...rows.value]
-    updatedRows.splice(index, 1)
-    rows.value = updatedRows
-  }
+	if (
+		confirm(
+			`Are you sure you want to delete this ${props.modalTitle.toLowerCase()}?`,
+		)
+	) {
+		const updatedRows = [...rows.value]
+		updatedRows.splice(index, 1)
+		rows.value = updatedRows
+	}
 }
 
 /**
  * Close modal without saving
  */
 const closeModal = () => {
-  showModal.value = false
-  errors.value = {}
+	showModal.value = false
+	errors.value = {}
 }
 
 /**
  * Handle field change events (for auto-population)
  */
 const handleFieldChange = (field, event) => {
-  // Handle auto-population for Link fields
-  if (field.autoPopulate && event && event.relatedData) {
-    Object.entries(field.autoPopulate).forEach(([sourceField, targetField]) => {
-      if (event.relatedData[sourceField] !== undefined) {
-        formData.value[targetField] = event.relatedData[sourceField]
-      }
-    })
-  }
+	// Handle auto-population for Link fields
+	if (field.autoPopulate && event && event.relatedData) {
+		Object.entries(field.autoPopulate).forEach(([sourceField, targetField]) => {
+			if (event.relatedData[sourceField] !== undefined) {
+				formData.value[targetField] = event.relatedData[sourceField]
+			}
+		})
+	}
 }
 
 /**
  * Format cell value based on column configuration
  */
 const formatCellValue = (value, column) => {
-  if (value === null || value === undefined || value === '') {
-    return '-'
-  }
+	if (value === null || value === undefined || value === "") {
+		return "-"
+	}
 
-  if (column.format) {
-    return column.format(value)
-  }
+	if (column.format) {
+		return column.format(value)
+	}
 
-  if (column.type === 'currency') {
-    return `$${parseFloat(value).toFixed(2)}`
-  }
+	if (column.type === "currency") {
+		return `$${Number.parseFloat(value).toFixed(2)}`
+	}
 
-  if (column.type === 'percent') {
-    return `${parseFloat(value).toFixed(1)}%`
-  }
+	if (column.type === "percent") {
+		return `${Number.parseFloat(value).toFixed(1)}%`
+	}
 
-  if (column.type === 'number') {
-    return parseFloat(value).toFixed(2)
-  }
+	if (column.type === "number") {
+		return Number.parseFloat(value).toFixed(2)
+	}
 
-  if (column.type === 'boolean') {
-    return value ? 'Yes' : 'No'
-  }
+	if (column.type === "boolean") {
+		return value ? "Yes" : "No"
+	}
 
-  return value
+	return value
 }
 
 /**
  * Get badge theme based on value
  */
 const getBadgeTheme = (value) => {
-  const lowerValue = String(value).toLowerCase()
+	const lowerValue = String(value).toLowerCase()
 
-  if (lowerValue.includes('completed') || lowerValue.includes('active')) {
-    return 'green'
-  }
-  if (lowerValue.includes('pending') || lowerValue.includes('assigned')) {
-    return 'blue'
-  }
-  if (lowerValue.includes('removed') || lowerValue.includes('rejected')) {
-    return 'red'
-  }
-  return 'gray'
+	if (lowerValue.includes("completed") || lowerValue.includes("active")) {
+		return "green"
+	}
+	if (lowerValue.includes("pending") || lowerValue.includes("assigned")) {
+		return "blue"
+	}
+	if (lowerValue.includes("removed") || lowerValue.includes("rejected")) {
+		return "red"
+	}
+	return "gray"
 }
 </script>
 

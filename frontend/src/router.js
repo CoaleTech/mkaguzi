@@ -31,28 +31,30 @@ import TestLibrary from "@/pages/TestLibrary.vue"
 import UserManagement from "@/pages/UserManagement.vue"
 import WorkingPapers from "@/pages/WorkingPapers.vue"
 
-// Inventory Audit Pages
-import InventoryAuditDashboard from "@/pages/inventory/InventoryAuditDashboard.vue"
-import InventoryItemMaster from "@/pages/inventory/InventoryItemMaster.vue"
-import InventoryAuditSettings from "@/pages/inventory/InventoryAuditSettings.vue"
-import AuditPlanList from "@/pages/inventory/AuditPlanList.vue"
 import AuditPlanDetail from "@/pages/inventory/AuditPlanDetail.vue"
 import AuditPlanForm from "@/pages/inventory/AuditPlanForm.vue"
-import StockTakeSessionList from "@/pages/inventory/StockTakeSessionList.vue"
-import StockTakeSessionDetail from "@/pages/inventory/StockTakeSessionDetail.vue"
-import StockTakeSessionForm from "@/pages/inventory/StockTakeSessionForm.vue"
-import VarianceCaseList from "@/pages/inventory/VarianceCaseList.vue"
-import VarianceCaseDetail from "@/pages/inventory/VarianceCaseDetail.vue"
-import VarianceCaseForm from "@/pages/inventory/VarianceCaseForm.vue"
-import StockTakeList from "@/pages/inventory/StockTakeList.vue"
-import StockTakeDetail from "@/pages/inventory/StockTakeDetail.vue"
-import StockTakeForm from "@/pages/inventory/StockTakeForm.vue"
-import IssueLogList from "@/pages/inventory/IssueLogList.vue"
-import IssueLogDetail from "@/pages/inventory/IssueLogDetail.vue"
-import IssueLogForm from "@/pages/inventory/IssueLogForm.vue"
-import ComplianceScorecardList from "@/pages/inventory/ComplianceScorecardList.vue"
+import AuditPlanList from "@/pages/inventory/AuditPlanList.vue"
 import ComplianceScorecardDetail from "@/pages/inventory/ComplianceScorecardDetail.vue"
 import ComplianceScorecardForm from "@/pages/inventory/ComplianceScorecardForm.vue"
+import ComplianceScorecardList from "@/pages/inventory/ComplianceScorecardList.vue"
+// Inventory Audit Pages
+import InventoryAuditDashboard from "@/pages/inventory/InventoryAuditDashboard.vue"
+import InventoryAuditSettings from "@/pages/inventory/InventoryAuditSettings.vue"
+import InventoryItemMaster from "@/pages/inventory/InventoryItemMaster.vue"
+import IssueLogDetail from "@/pages/inventory/IssueLogDetail.vue"
+import IssueLogForm from "@/pages/inventory/IssueLogForm.vue"
+import IssueLogList from "@/pages/inventory/IssueLogList.vue"
+import StockTakeDetail from "@/pages/inventory/StockTakeDetail.vue"
+import StockTakeForm from "@/pages/inventory/StockTakeForm.vue"
+import StockTakeList from "@/pages/inventory/StockTakeList.vue"
+import StockTakeSessionDetail from "@/pages/inventory/StockTakeSessionDetail.vue"
+import StockTakeSessionForm from "@/pages/inventory/StockTakeSessionForm.vue"
+import StockTakeSessionList from "@/pages/inventory/StockTakeSessionList.vue"
+import VarianceCaseDetail from "@/pages/inventory/VarianceCaseDetail.vue"
+import VarianceCaseForm from "@/pages/inventory/VarianceCaseForm.vue"
+import VarianceCaseList from "@/pages/inventory/VarianceCaseList.vue"
+
+
 
 // Error pages
 import NotFound from "@/pages/NotFound.vue"
@@ -409,6 +411,8 @@ const routes = [
 					breadcrumb: "Board Reports",
 				},
 			},
+
+
 
 			// Settings
 			{

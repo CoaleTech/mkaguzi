@@ -594,337 +594,337 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Dialog, FormControl, Button, Badge, Select } from 'frappe-ui'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import LinkField from '@/components/Common/fields/LinkField.vue'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, Dialog, FormControl, Select } from "frappe-ui"
 import {
-  FileText,
-  ClipboardList,
-  BarChart3,
-  Bell,
-  UserCheck,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Plus,
-  Edit,
-  Trash2,
-  AlertTriangle,
-  FileEdit,
-  Eye,
-} from 'lucide-vue-next'
+	AlertTriangle,
+	BarChart3,
+	Bell,
+	CheckCircle,
+	ChevronLeft,
+	ChevronRight,
+	ClipboardList,
+	Edit,
+	Eye,
+	FileEdit,
+	FileText,
+	Plus,
+	Save,
+	Trash2,
+	UserCheck,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  checklist: { type: Object, default: null },
+	show: { type: Boolean, default: false },
+	checklist: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:show', 'saved'])
+const emit = defineEmits(["update:show", "saved"])
 
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (val) => emit('update:show', val),
+	get: () => props.show,
+	set: (val) => emit("update:show", val),
 })
 
 const isEditing = computed(() => !!props.checklist?.name)
 const saving = ref(false)
-const activeSection = ref('basic')
+const activeSection = ref("basic")
 const showItemModal = ref(false)
 const editingItem = ref(null)
 const editingItemIndex = ref(-1)
 
 const sections = [
-  { id: 'basic', label: 'Basic Info', icon: FileText },
-  { id: 'items', label: 'Checklist Items', icon: ClipboardList },
-  { id: 'summary', label: 'Summary', icon: BarChart3 },
-  { id: 'alerts', label: 'Alerts', icon: Bell },
-  { id: 'approval', label: 'Approval', icon: UserCheck },
+	{ id: "basic", label: "Basic Info", icon: FileText },
+	{ id: "items", label: "Checklist Items", icon: ClipboardList },
+	{ id: "summary", label: "Summary", icon: BarChart3 },
+	{ id: "alerts", label: "Alerts", icon: Bell },
+	{ id: "approval", label: "Approval", icon: UserCheck },
 ]
 
 const form = reactive({
-  checklist_id: '',
-  compliance_period: '',
-  period_type: '',
-  period_month: '',
-  fiscal_year: '',
-  checklist_items: [],
-  total_requirements: 0,
-  completed_requirements: 0,
-  overdue_requirements: 0,
-  completion_percent: 0,
-  alerts: [],
-  prepared_by: '',
-  reviewed_by: '',
-  approved_by: '',
+	checklist_id: "",
+	compliance_period: "",
+	period_type: "",
+	period_month: "",
+	fiscal_year: "",
+	checklist_items: [],
+	total_requirements: 0,
+	completed_requirements: 0,
+	overdue_requirements: 0,
+	completion_percent: 0,
+	alerts: [],
+	prepared_by: "",
+	reviewed_by: "",
+	approved_by: "",
 })
 
 const periodTypeOptions = [
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Annual', value: 'Annual' },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Annual", value: "Annual" },
 ]
 
 const itemStatusOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Filed', value: 'Filed' },
-  { label: 'Overdue', value: 'Overdue' },
-  { label: 'Not Applicable', value: 'Not Applicable' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Filed", value: "Filed" },
+	{ label: "Overdue", value: "Overdue" },
+	{ label: "Not Applicable", value: "Not Applicable" },
 ]
 
 const verificationStatusOptions = [
-  { label: 'Not Verified', value: 'Not Verified' },
-  { label: 'Verified', value: 'Verified' },
-  { label: 'Issues Found', value: 'Issues Found' },
+	{ label: "Not Verified", value: "Not Verified" },
+	{ label: "Verified", value: "Verified" },
+	{ label: "Issues Found", value: "Issues Found" },
 ]
 
 const alertTypeOptions = [
-  { label: 'Due Soon', value: 'Due Soon' },
-  { label: 'Overdue', value: 'Overdue' },
-  { label: 'Missing Data', value: 'Missing Data' },
+	{ label: "Due Soon", value: "Due Soon" },
+	{ label: "Overdue", value: "Overdue" },
+	{ label: "Missing Data", value: "Missing Data" },
 ]
 
 const severityOptions = [
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 // Watch for checklist changes (edit mode)
 watch(
-  () => props.checklist,
-  (newChecklist) => {
-    if (newChecklist) {
-      Object.keys(form).forEach((key) => {
-        if (newChecklist[key] !== undefined) {
-          form[key] = newChecklist[key]
-        }
-      })
-    }
-  },
-  { immediate: true }
+	() => props.checklist,
+	(newChecklist) => {
+		if (newChecklist) {
+			Object.keys(form).forEach((key) => {
+				if (newChecklist[key] !== undefined) {
+					form[key] = newChecklist[key]
+				}
+			})
+		}
+	},
+	{ immediate: true },
 )
 
 // Reset form when dialog opens
 watch(
-  () => props.show,
-  (newShow) => {
-    if (newShow && !props.checklist) {
-      Object.keys(form).forEach((key) => {
-        if (key === 'checklist_items' || key === 'alerts') {
-          form[key] = []
-        } else if (typeof form[key] === 'number') {
-          form[key] = 0
-        } else {
-          form[key] = ''
-        }
-      })
-      activeSection.value = 'basic'
-    }
-  }
+	() => props.show,
+	(newShow) => {
+		if (newShow && !props.checklist) {
+			Object.keys(form).forEach((key) => {
+				if (key === "checklist_items" || key === "alerts") {
+					form[key] = []
+				} else if (typeof form[key] === "number") {
+					form[key] = 0
+				} else {
+					form[key] = ""
+				}
+			})
+			activeSection.value = "basic"
+		}
+	},
 )
 
 // Recalculate summary when items change
 watch(
-  () => form.checklist_items,
-  () => {
-    calculateSummary()
-  },
-  { deep: true }
+	() => form.checklist_items,
+	() => {
+		calculateSummary()
+	},
+	{ deep: true },
 )
 
 function calculateSummary() {
-  const items = form.checklist_items || []
-  form.total_requirements = items.length
-  form.completed_requirements = items.filter((i) =>
-    ['Completed', 'Filed'].includes(i.status)
-  ).length
-  form.overdue_requirements = items.filter((i) => i.status === 'Overdue').length
-  form.completion_percent =
-    items.length > 0
-      ? Math.round((form.completed_requirements / items.length) * 100)
-      : 0
+	const items = form.checklist_items || []
+	form.total_requirements = items.length
+	form.completed_requirements = items.filter((i) =>
+		["Completed", "Filed"].includes(i.status),
+	).length
+	form.overdue_requirements = items.filter((i) => i.status === "Overdue").length
+	form.completion_percent =
+		items.length > 0
+			? Math.round((form.completed_requirements / items.length) * 100)
+			: 0
 }
 
 const statusBreakdown = computed(() => {
-  const items = form.checklist_items || []
-  const total = items.length || 1
+	const items = form.checklist_items || []
+	const total = items.length || 1
 
-  const statuses = [
-    { label: 'Not Started', color: 'bg-gray-400' },
-    { label: 'In Progress', color: 'bg-blue-500' },
-    { label: 'Completed', color: 'bg-green-500' },
-    { label: 'Filed', color: 'bg-purple-500' },
-    { label: 'Overdue', color: 'bg-red-500' },
-    { label: 'Not Applicable', color: 'bg-gray-300' },
-  ]
+	const statuses = [
+		{ label: "Not Started", color: "bg-gray-400" },
+		{ label: "In Progress", color: "bg-blue-500" },
+		{ label: "Completed", color: "bg-green-500" },
+		{ label: "Filed", color: "bg-purple-500" },
+		{ label: "Overdue", color: "bg-red-500" },
+		{ label: "Not Applicable", color: "bg-gray-300" },
+	]
 
-  return statuses.map((s) => {
-    const count = items.filter((i) => i.status === s.label).length
-    return {
-      ...s,
-      count,
-      percentage: Math.round((count / total) * 100),
-    }
-  })
+	return statuses.map((s) => {
+		const count = items.filter((i) => i.status === s.label).length
+		return {
+			...s,
+			count,
+			percentage: Math.round((count / total) * 100),
+		}
+	})
 })
 
 // Checklist item management
 function addChecklistItem() {
-  form.checklist_items.push({
-    requirement: '',
-    regulatory_body: '',
-    description: '',
-    due_date: '',
-    status: 'Not Started',
-    completion_date: '',
-    completed_by: '',
-    reference_no: '',
-    amount_paid: 0,
-    payment_date: '',
-    payment_reference: '',
-    supporting_documents: '',
-    notes: '',
-    verification_status: 'Not Verified',
-    verified_by: '',
-    verification_date: '',
-    verification_notes: '',
-  })
+	form.checklist_items.push({
+		requirement: "",
+		regulatory_body: "",
+		description: "",
+		due_date: "",
+		status: "Not Started",
+		completion_date: "",
+		completed_by: "",
+		reference_no: "",
+		amount_paid: 0,
+		payment_date: "",
+		payment_reference: "",
+		supporting_documents: "",
+		notes: "",
+		verification_status: "Not Verified",
+		verified_by: "",
+		verification_date: "",
+		verification_notes: "",
+	})
 }
 
 function editChecklistItem(index) {
-  editingItemIndex.value = index
-  editingItem.value = { ...form.checklist_items[index] }
-  showItemModal.value = true
+	editingItemIndex.value = index
+	editingItem.value = { ...form.checklist_items[index] }
+	showItemModal.value = true
 }
 
 function saveItemEdit() {
-  if (editingItemIndex.value >= 0 && editingItem.value) {
-    form.checklist_items[editingItemIndex.value] = { ...editingItem.value }
-  }
-  showItemModal.value = false
-  editingItem.value = null
-  editingItemIndex.value = -1
+	if (editingItemIndex.value >= 0 && editingItem.value) {
+		form.checklist_items[editingItemIndex.value] = { ...editingItem.value }
+	}
+	showItemModal.value = false
+	editingItem.value = null
+	editingItemIndex.value = -1
 }
 
 function removeChecklistItem(index) {
-  form.checklist_items.splice(index, 1)
+	form.checklist_items.splice(index, 1)
 }
 
 // Alert management
 function addAlert() {
-  form.alerts.push({
-    requirement: '',
-    alert_type: '',
-    alert_message: '',
-    severity: 'Medium',
-  })
+	form.alerts.push({
+		requirement: "",
+		alert_type: "",
+		alert_message: "",
+		severity: "Medium",
+	})
 }
 
 function removeAlert(index) {
-  form.alerts.splice(index, 1)
+	form.alerts.splice(index, 1)
 }
 
 // Section navigation
 const sectionIndex = computed(() =>
-  sections.findIndex((s) => s.id === activeSection.value)
+	sections.findIndex((s) => s.id === activeSection.value),
 )
 
 function nextSection() {
-  if (sectionIndex.value < sections.length - 1) {
-    activeSection.value = sections[sectionIndex.value + 1].id
-  }
+	if (sectionIndex.value < sections.length - 1) {
+		activeSection.value = sections[sectionIndex.value + 1].id
+	}
 }
 
 function previousSection() {
-  if (sectionIndex.value > 0) {
-    activeSection.value = sections[sectionIndex.value - 1].id
-  }
+	if (sectionIndex.value > 0) {
+		activeSection.value = sections[sectionIndex.value - 1].id
+	}
 }
 
 // Section completion check
 function isSectionComplete(sectionId) {
-  switch (sectionId) {
-    case 'basic':
-      return !!form.checklist_id && !!form.period_type
-    case 'items':
-      return form.checklist_items?.length > 0
-    case 'summary':
-      return true
-    case 'alerts':
-      return true
-    case 'approval':
-      return !!form.approved_by
-    default:
-      return false
-  }
+	switch (sectionId) {
+		case "basic":
+			return !!form.checklist_id && !!form.period_type
+		case "items":
+			return form.checklist_items?.length > 0
+		case "summary":
+			return true
+		case "alerts":
+			return true
+		case "approval":
+			return !!form.approved_by
+		default:
+			return false
+	}
 }
 
 const completionPercentage = computed(() => {
-  const completed = sections.filter((s) => isSectionComplete(s.id)).length
-  return Math.round((completed / sections.length) * 100)
+	const completed = sections.filter((s) => isSectionComplete(s.id)).length
+	return Math.round((completed / sections.length) * 100)
 })
 
 // Helpers
 function getCompletionTheme(percent) {
-  if (percent >= 90) return 'green'
-  if (percent >= 70) return 'blue'
-  if (percent >= 50) return 'orange'
-  return 'red'
+	if (percent >= 90) return "green"
+	if (percent >= 70) return "blue"
+	if (percent >= 50) return "orange"
+	return "red"
 }
 
 function getCompletionBarClass(percent) {
-  if (percent >= 90) return 'bg-green-500'
-  if (percent >= 70) return 'bg-blue-500'
-  if (percent >= 50) return 'bg-orange-500'
-  return 'bg-red-500'
+	if (percent >= 90) return "bg-green-500"
+	if (percent >= 70) return "bg-blue-500"
+	if (percent >= 50) return "bg-orange-500"
+	return "bg-red-500"
 }
 
 function getAlertBorderClass(severity) {
-  const classes = {
-    Critical: 'border-red-200 bg-red-50',
-    High: 'border-orange-200 bg-orange-50',
-    Medium: 'border-yellow-200 bg-yellow-50',
-    Low: 'border-blue-200 bg-blue-50',
-  }
-  return classes[severity] || 'border-gray-200'
+	const classes = {
+		Critical: "border-red-200 bg-red-50",
+		High: "border-orange-200 bg-orange-50",
+		Medium: "border-yellow-200 bg-yellow-50",
+		Low: "border-blue-200 bg-blue-50",
+	}
+	return classes[severity] || "border-gray-200"
 }
 
 function getAlertIconBgClass(severity) {
-  const classes = {
-    Critical: 'bg-red-100',
-    High: 'bg-orange-100',
-    Medium: 'bg-yellow-100',
-    Low: 'bg-blue-100',
-  }
-  return classes[severity] || 'bg-gray-100'
+	const classes = {
+		Critical: "bg-red-100",
+		High: "bg-orange-100",
+		Medium: "bg-yellow-100",
+		Low: "bg-blue-100",
+	}
+	return classes[severity] || "bg-gray-100"
 }
 
 function getAlertIconClass(severity) {
-  const classes = {
-    Critical: 'text-red-600',
-    High: 'text-orange-600',
-    Medium: 'text-yellow-600',
-    Low: 'text-blue-600',
-  }
-  return classes[severity] || 'text-gray-600'
+	const classes = {
+		Critical: "text-red-600",
+		High: "text-orange-600",
+		Medium: "text-yellow-600",
+		Low: "text-blue-600",
+	}
+	return classes[severity] || "text-gray-600"
 }
 
 async function saveChecklist() {
-  saving.value = true
-  try {
-    // API call would go here
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    emit('saved', { ...form })
-    dialogVisible.value = false
-  } catch (error) {
-    console.error('Failed to save checklist:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		// API call would go here
+		await new Promise((resolve) => setTimeout(resolve, 1000))
+		emit("saved", { ...form })
+		dialogVisible.value = false
+	} catch (error) {
+		console.error("Failed to save checklist:", error)
+	} finally {
+		saving.value = false
+	}
 }
 </script>

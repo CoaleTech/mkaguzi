@@ -24,62 +24,66 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import {
-  FileTextIcon,
-  TargetIcon,
-  SettingsIcon,
-  CalendarIcon,
-  UsersIcon,
-  BookUserIcon,
-  DatabaseIcon,
-  FolderIcon,
-} from 'lucide-vue-next'
+	BookUserIcon,
+	CalendarIcon,
+	DatabaseIcon,
+	FileTextIcon,
+	FolderIcon,
+	SettingsIcon,
+	TargetIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    default: ''
-  },
-  icon: {
-    type: String,
-    default: 'file-text'
-  },
-  step: {
-    type: [String, Number],
-    default: null
-  },
-  color: {
-    type: String,
-    default: 'green'
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		default: "",
+	},
+	icon: {
+		type: String,
+		default: "file-text",
+	},
+	step: {
+		type: [String, Number],
+		default: null,
+	},
+	color: {
+		type: String,
+		default: "green",
+	},
 })
 
 const iconMap = {
-  'file-text': FileTextIcon,
-  'target': TargetIcon,
-  'settings': SettingsIcon,
-  'calendar': CalendarIcon,
-  'users': UsersIcon,
-  'book-user': BookUserIcon,
-  'database': DatabaseIcon,
-  'folder': FolderIcon,
+	"file-text": FileTextIcon,
+	target: TargetIcon,
+	settings: SettingsIcon,
+	calendar: CalendarIcon,
+	users: UsersIcon,
+	"book-user": BookUserIcon,
+	database: DatabaseIcon,
+	folder: FolderIcon,
 }
 
 const iconComponent = computed(() => iconMap[props.icon] || FileTextIcon)
 
 const colorMap = {
-  green: { bg: 'bg-green-100', icon: 'text-green-600' },
-  blue: { bg: 'bg-blue-100', icon: 'text-blue-600' },
-  purple: { bg: 'bg-purple-100', icon: 'text-purple-600' },
-  amber: { bg: 'bg-amber-100', icon: 'text-amber-600' },
-  red: { bg: 'bg-red-100', icon: 'text-red-600' },
+	green: { bg: "bg-green-100", icon: "text-green-600" },
+	blue: { bg: "bg-blue-100", icon: "text-blue-600" },
+	purple: { bg: "bg-purple-100", icon: "text-purple-600" },
+	amber: { bg: "bg-amber-100", icon: "text-amber-600" },
+	red: { bg: "bg-red-100", icon: "text-red-600" },
 }
 
-const bgColorClass = computed(() => colorMap[props.color]?.bg || colorMap.green.bg)
-const iconColorClass = computed(() => colorMap[props.color]?.icon || colorMap.green.icon)
+const bgColorClass = computed(
+	() => colorMap[props.color]?.bg || colorMap.green.bg,
+)
+const iconColorClass = computed(
+	() => colorMap[props.color]?.icon || colorMap.green.icon,
+)
 </script>

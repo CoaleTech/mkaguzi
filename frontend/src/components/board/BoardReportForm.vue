@@ -62,35 +62,35 @@
 import { FormControl } from "frappe-ui"
 
 const props = defineProps({
-  formData: {
-    type: Object,
-    required: true,
-    default: () => ({
-      title: "",
-      period: "",
-      type: "Comprehensive",
-      presentationDate: "",
-      focusAreas: "",
-      notes: "",
-    })
-  }
+	formData: {
+		type: Object,
+		required: true,
+		default: () => ({
+			title: "",
+			period: "",
+			type: "Comprehensive",
+			presentationDate: "",
+			focusAreas: "",
+			notes: "",
+		}),
+	},
 })
 
 // Options
 const periodOptions = [
-  { label: "Q1 2025", value: "Q1 2025" },
-  { label: "Q2 2025", value: "Q2 2025" },
-  { label: "Q3 2025", value: "Q3 2025" },
-  { label: "Q4 2025", value: "Q4 2025" },
-  { label: "Annual 2025", value: "Annual 2025" },
-  { label: "Q1 2026", value: "Q1 2026" },
+	{ label: "Q1 2025", value: "Q1 2025" },
+	{ label: "Q2 2025", value: "Q2 2025" },
+	{ label: "Q3 2025", value: "Q3 2025" },
+	{ label: "Q4 2025", value: "Q4 2025" },
+	{ label: "Annual 2025", value: "Annual 2025" },
+	{ label: "Q1 2026", value: "Q1 2026" },
 ]
 
 const reportTypeOptions = [
-  { label: "Comprehensive", value: "Comprehensive" },
-  { label: "Financial Focus", value: "Financial Focus" },
-  { label: "Risk & Compliance", value: "Risk & Compliance" },
-  { label: "Operational Review", value: "Operational Review" },
+	{ label: "Comprehensive", value: "Comprehensive" },
+	{ label: "Financial Focus", value: "Financial Focus" },
+	{ label: "Risk & Compliance", value: "Risk & Compliance" },
+	{ label: "Operational Review", value: "Operational Review" },
 ]
 </script>
 

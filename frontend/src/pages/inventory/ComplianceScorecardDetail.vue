@@ -256,17 +256,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import {
-  ArrowLeft,
-  Edit,
-  FileText,
-  Copy,
-  Download
-} from 'lucide-vue-next'
+import { Badge, Button } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Copy, Download, Edit, FileText } from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -274,91 +268,106 @@ const router = useRouter()
 const scorecard = ref({})
 
 const totalChecks = computed(() => {
-  return scorecard.value.compliance_categories?.reduce((sum, cat) => sum + (cat.total_checks || 0), 0) || 0
+	return (
+		scorecard.value.compliance_categories?.reduce(
+			(sum, cat) => sum + (cat.total_checks || 0),
+			0,
+		) || 0
+	)
 })
 
 const passedChecks = computed(() => {
-  return scorecard.value.compliance_categories?.reduce((sum, cat) => sum + (cat.passed_checks || 0), 0) || 0
+	return (
+		scorecard.value.compliance_categories?.reduce(
+			(sum, cat) => sum + (cat.passed_checks || 0),
+			0,
+		) || 0
+	)
 })
 
 const failedChecks = computed(() => {
-  return scorecard.value.compliance_categories?.reduce((sum, cat) => sum + (cat.failed_checks || 0), 0) || 0
+	return (
+		scorecard.value.compliance_categories?.reduce(
+			(sum, cat) => sum + (cat.failed_checks || 0),
+			0,
+		) || 0
+	)
 })
 
 onMounted(async () => {
-  await loadScorecard()
+	await loadScorecard()
 })
 
 async function loadScorecard() {
-  try {
-    const result = await call('frappe.client.get', {
-      doctype: 'Compliance Scorecard',
-      name: route.params.id
-    })
-    scorecard.value = result
-  } catch (error) {
-    console.error('Error loading scorecard:', error)
-  }
+	try {
+		const result = await call("frappe.client.get", {
+			doctype: "Compliance Scorecard",
+			name: route.params.id,
+		})
+		scorecard.value = result
+	} catch (error) {
+		console.error("Error loading scorecard:", error)
+	}
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    'Draft': 'outline',
-    'In Progress': 'secondary',
-    'Completed': 'solid',
-    'Approved': 'solid'
-  }
-  return variants[status] || 'outline'
+	const variants = {
+		Draft: "outline",
+		"In Progress": "secondary",
+		Completed: "solid",
+		Approved: "solid",
+	}
+	return variants[status] || "outline"
 }
 
 function getScoreVariant(score) {
-  if (score >= 90) return 'solid'
-  if (score >= 70) return 'secondary'
-  if (score >= 50) return 'outline'
-  return 'destructive'
+	if (score >= 90) return "solid"
+	if (score >= 70) return "secondary"
+	if (score >= 50) return "outline"
+	return "destructive"
 }
 
 function getScoreLabel(score) {
-  if (score >= 90) return 'Excellent'
-  if (score >= 80) return 'Good'
-  if (score >= 70) return 'Satisfactory'
-  if (score >= 60) return 'Needs Improvement'
-  return 'Poor'
+	if (score >= 90) return "Excellent"
+	if (score >= 80) return "Good"
+	if (score >= 70) return "Satisfactory"
+	if (score >= 60) return "Needs Improvement"
+	return "Poor"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString()
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString()
 }
 
 function formatDateTime(dateTime) {
-  if (!dateTime) return '-'
-  return new Date(dateTime).toLocaleString()
+	if (!dateTime) return "-"
+	return new Date(dateTime).toLocaleString()
 }
 
 function goBack() {
-  router.push('/inventory-audit/scorecards')
+	router.push("/inventory-audit/scorecards")
 }
 
 function editScorecard() {
-  router.push(`/inventory-audit/scorecards/${route.params.id}/edit`)
+	router.push(`/inventory-audit/scorecards/${route.params.id}/edit`)
 }
 
 function generateReport() {
-  // TODO: Implement report generation
-  alert('Report generation feature coming soon!')
+	// TODO: Implement report generation
+	alert("Report generation feature coming soon!")
 }
 
 function duplicateScorecard() {
-  router.push(`/inventory-audit/scorecards/new?duplicate=${route.params.id}`)
+	router.push(`/inventory-audit/scorecards/new?duplicate=${route.params.id}`)
 }
 
 function exportData() {
-  // TODO: Implement data export
-  alert('Data export feature coming soon!')
+	// TODO: Implement data export
+	alert("Data export feature coming soon!")
 }
 
 function goToAuditPlan(planId) {
-  router.push(`/inventory-audit/plans/${planId}`)
+	router.push(`/inventory-audit/plans/${planId}`)
 }
 </script>

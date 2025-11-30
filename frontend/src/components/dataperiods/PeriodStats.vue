@@ -131,150 +131,208 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  Calendar,
-  CalendarCheck,
-  Lock,
-  Archive,
-  Unlock,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  XCircle,
-} from 'lucide-vue-next'
+	AlertTriangle,
+	Archive,
+	Calendar,
+	CalendarCheck,
+	CheckCircle,
+	Clock,
+	Lock,
+	Unlock,
+	XCircle,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  periods: { type: Array, default: () => [] },
-  activeFilter: { type: String, default: '' },
+	periods: { type: Array, default: () => [] },
+	activeFilter: { type: String, default: "" },
 })
 
-defineEmits(['filter', 'select'])
+defineEmits(["filter", "select"])
 
 // Stats cards
 const statsCards = computed(() => {
-  const periods = props.periods
-  const total = periods.length
-  const open = periods.filter((p) => p.status === 'Open').length
-  const locked = periods.filter((p) => p.status === 'Locked').length
-  const closed = periods.filter((p) => p.status === 'Closed').length
-  const archived = periods.filter((p) => p.status === 'Archived').length
+	const periods = props.periods
+	const total = periods.length
+	const open = periods.filter((p) => p.status === "Open").length
+	const locked = periods.filter((p) => p.status === "Locked").length
+	const closed = periods.filter((p) => p.status === "Closed").length
+	const archived = periods.filter((p) => p.status === "Archived").length
 
-  return [
-    { label: 'Total Periods', value: total, icon: Calendar, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', filterKey: null, filterValue: null },
-    { label: 'Open', value: open, icon: Unlock, bgColor: 'bg-green-100', iconColor: 'text-green-600', filterKey: 'status', filterValue: 'Open', active: props.activeFilter === 'Open' },
-    { label: 'Locked', value: locked, icon: Lock, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', filterKey: 'status', filterValue: 'Locked', active: props.activeFilter === 'Locked' },
-    { label: 'Closed', value: closed, icon: CalendarCheck, bgColor: 'bg-gray-100', iconColor: 'text-gray-600', filterKey: 'status', filterValue: 'Closed', active: props.activeFilter === 'Closed' },
-    { label: 'Archived', value: archived, icon: Archive, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', filterKey: 'status', filterValue: 'Archived', active: props.activeFilter === 'Archived' },
-  ]
+	return [
+		{
+			label: "Total Periods",
+			value: total,
+			icon: Calendar,
+			bgColor: "bg-blue-100",
+			iconColor: "text-blue-600",
+			filterKey: null,
+			filterValue: null,
+		},
+		{
+			label: "Open",
+			value: open,
+			icon: Unlock,
+			bgColor: "bg-green-100",
+			iconColor: "text-green-600",
+			filterKey: "status",
+			filterValue: "Open",
+			active: props.activeFilter === "Open",
+		},
+		{
+			label: "Locked",
+			value: locked,
+			icon: Lock,
+			bgColor: "bg-yellow-100",
+			iconColor: "text-yellow-600",
+			filterKey: "status",
+			filterValue: "Locked",
+			active: props.activeFilter === "Locked",
+		},
+		{
+			label: "Closed",
+			value: closed,
+			icon: CalendarCheck,
+			bgColor: "bg-gray-100",
+			iconColor: "text-gray-600",
+			filterKey: "status",
+			filterValue: "Closed",
+			active: props.activeFilter === "Closed",
+		},
+		{
+			label: "Archived",
+			value: archived,
+			icon: Archive,
+			bgColor: "bg-purple-100",
+			iconColor: "text-purple-600",
+			filterKey: "status",
+			filterValue: "Archived",
+			active: props.activeFilter === "Archived",
+		},
+	]
 })
 
 // Period type distribution
 const periodTypeDistribution = computed(() => {
-  const periods = props.periods
-  const types = ['Month', 'Quarter', 'Half-Year', 'Year', 'Custom']
-  const colors = {
-    Month: 'bg-blue-500',
-    Quarter: 'bg-green-500',
-    'Half-Year': 'bg-purple-500',
-    Year: 'bg-orange-500',
-    Custom: 'bg-gray-500',
-  }
+	const periods = props.periods
+	const types = ["Month", "Quarter", "Half-Year", "Year", "Custom"]
+	const colors = {
+		Month: "bg-blue-500",
+		Quarter: "bg-green-500",
+		"Half-Year": "bg-purple-500",
+		Year: "bg-orange-500",
+		Custom: "bg-gray-500",
+	}
 
-  return types.map((name) => ({
-    name,
-    count: periods.filter((p) => p.period_type === name).length,
-    dotColor: colors[name] || 'bg-gray-400',
-  })).filter((t) => t.count > 0)
+	return types
+		.map((name) => ({
+			name,
+			count: periods.filter((p) => p.period_type === name).length,
+			dotColor: colors[name] || "bg-gray-400",
+		}))
+		.filter((t) => t.count > 0)
 })
 
 // Data quality averages
 const avgDataQuality = computed(() => {
-  const periods = props.periods.filter((p) => p.data_quality_score)
-  if (!periods.length) return 0
-  return Math.round(periods.reduce((sum, p) => sum + p.data_quality_score, 0) / periods.length)
+	const periods = props.periods.filter((p) => p.data_quality_score)
+	if (!periods.length) return 0
+	return Math.round(
+		periods.reduce((sum, p) => sum + p.data_quality_score, 0) / periods.length,
+	)
 })
 
 const avgCompleteness = computed(() => {
-  const periods = props.periods.filter((p) => p.data_completeness_score)
-  if (!periods.length) return 0
-  return Math.round(periods.reduce((sum, p) => sum + p.data_completeness_score, 0) / periods.length)
+	const periods = props.periods.filter((p) => p.data_completeness_score)
+	if (!periods.length) return 0
+	return Math.round(
+		periods.reduce((sum, p) => sum + p.data_completeness_score, 0) /
+			periods.length,
+	)
 })
 
 const avgQualityColor = computed(() => {
-  const score = avgDataQuality.value
-  if (score >= 80) return '#22C55E'
-  if (score >= 60) return '#F59E0B'
-  return '#EF4444'
+	const score = avgDataQuality.value
+	if (score >= 80) return "#22C55E"
+	if (score >= 60) return "#F59E0B"
+	return "#EF4444"
 })
 
 // Reconciliation distribution
 const reconciliationDistribution = computed(() => {
-  const periods = props.periods
+	const periods = props.periods
 
-  return [
-    {
-      name: 'Completed',
-      count: periods.filter((p) => p.reconciliation_status === 'Completed').length,
-      icon: CheckCircle,
-      iconColor: 'text-green-600',
-      theme: 'green',
-    },
-    {
-      name: 'In Progress',
-      count: periods.filter((p) => p.reconciliation_status === 'In Progress').length,
-      icon: Clock,
-      iconColor: 'text-blue-600',
-      theme: 'blue',
-    },
-    {
-      name: 'Not Started',
-      count: periods.filter((p) => p.reconciliation_status === 'Not Started').length,
-      icon: AlertTriangle,
-      iconColor: 'text-yellow-600',
-      theme: 'orange',
-    },
-    {
-      name: 'Issues Found',
-      count: periods.filter((p) => p.reconciliation_status === 'Issues Found').length,
-      icon: XCircle,
-      iconColor: 'text-red-600',
-      theme: 'red',
-    },
-  ].filter((s) => s.count > 0)
+	return [
+		{
+			name: "Completed",
+			count: periods.filter((p) => p.reconciliation_status === "Completed")
+				.length,
+			icon: CheckCircle,
+			iconColor: "text-green-600",
+			theme: "green",
+		},
+		{
+			name: "In Progress",
+			count: periods.filter((p) => p.reconciliation_status === "In Progress")
+				.length,
+			icon: Clock,
+			iconColor: "text-blue-600",
+			theme: "blue",
+		},
+		{
+			name: "Not Started",
+			count: periods.filter((p) => p.reconciliation_status === "Not Started")
+				.length,
+			icon: AlertTriangle,
+			iconColor: "text-yellow-600",
+			theme: "orange",
+		},
+		{
+			name: "Issues Found",
+			count: periods.filter((p) => p.reconciliation_status === "Issues Found")
+				.length,
+			icon: XCircle,
+			iconColor: "text-red-600",
+			theme: "red",
+		},
+	].filter((s) => s.count > 0)
 })
 
 // Sorted periods for timeline
 const sortedPeriods = computed(() => {
-  return [...props.periods]
-    .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
-    .slice(0, 8)
+	return [...props.periods]
+		.sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
+		.slice(0, 8)
 })
 
 // Helper functions
 function formatDate(date) {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+	if (!date) return ""
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		year: "numeric",
+	})
 }
 
 function getStatusTheme(status) {
-  const themes = {
-    Open: 'green',
-    Locked: 'orange',
-    Closed: 'gray',
-    Archived: 'blue',
-  }
-  return themes[status] || 'gray'
+	const themes = {
+		Open: "green",
+		Locked: "orange",
+		Closed: "gray",
+		Archived: "blue",
+	}
+	return themes[status] || "gray"
 }
 
 function getStatusBgClass(status) {
-  const classes = {
-    Open: 'bg-green-50 border-green-200',
-    Locked: 'bg-yellow-50 border-yellow-200',
-    Closed: 'bg-gray-50 border-gray-200',
-    Archived: 'bg-purple-50 border-purple-200',
-  }
-  return classes[status] || 'bg-gray-50 border-gray-200'
+	const classes = {
+		Open: "bg-green-50 border-green-200",
+		Locked: "bg-yellow-50 border-yellow-200",
+		Closed: "bg-gray-50 border-gray-200",
+		Archived: "bg-purple-50 border-purple-200",
+	}
+	return classes[status] || "bg-gray-50 border-gray-200"
 }
 </script>

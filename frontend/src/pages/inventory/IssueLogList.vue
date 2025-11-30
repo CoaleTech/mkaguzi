@@ -195,11 +195,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { RefreshCw, Plus, Tag, MapPin, Package, User, Calendar, AlertTriangle, CheckCircle } from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button } from "frappe-ui"
+import {
+	AlertTriangle,
+	Calendar,
+	CheckCircle,
+	MapPin,
+	Package,
+	Plus,
+	RefreshCw,
+	Tag,
+	User,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
@@ -207,10 +217,10 @@ const store = useInventoryAuditStore()
 const loading = ref(false)
 const showSlaBreached = ref(false)
 const filters = ref({
-  status: '',
-  priority: '',
-  issue_type: '',
-  assigned_to: ''
+	status: "",
+	priority: "",
+	issue_type: "",
+	assigned_to: "",
 })
 
 const issues = computed(() => store.issues)
@@ -220,63 +230,77 @@ const pageSize = computed(() => store.issuesPageSize)
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 onMounted(async () => {
-  await loadIssues()
+	await loadIssues()
 })
 
 async function loadIssues() {
-  loading.value = true
-  try {
-    const filterObj = { ...filters.value }
-    Object.keys(filterObj).forEach(key => {
-      if (!filterObj[key]) delete filterObj[key]
-    })
-    await store.loadIssues(filterObj, currentPage.value, pageSize.value)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const filterObj = { ...filters.value }
+		Object.keys(filterObj).forEach((key) => {
+			if (!filterObj[key]) delete filterObj[key]
+		})
+		await store.loadIssues(filterObj, currentPage.value, pageSize.value)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  filters.value = { status: '', priority: '', issue_type: '', assigned_to: '' }
-  showSlaBreached.value = false
-  await loadIssues()
+	filters.value = { status: "", priority: "", issue_type: "", assigned_to: "" }
+	showSlaBreached.value = false
+	await loadIssues()
 }
 
 let loadTimeout = null
 function debouncedLoad() {
-  clearTimeout(loadTimeout)
-  loadTimeout = setTimeout(() => loadIssues(), 300)
+	clearTimeout(loadTimeout)
+	loadTimeout = setTimeout(() => loadIssues(), 300)
 }
 
 async function changePage(page) {
-  await store.loadIssues(filters.value, page, pageSize.value)
+	await store.loadIssues(filters.value, page, pageSize.value)
 }
 
 function createIssue() {
-  router.push('/inventory-audit/issues/new')
+	router.push("/inventory-audit/issues/new")
 }
 
 function viewIssue(name) {
-  router.push(`/inventory-audit/issues/${name}`)
+	router.push(`/inventory-audit/issues/${name}`)
 }
 
 function getStatusVariant(status) {
-  const variants = { 'Open': 'yellow', 'In Progress': 'blue', 'Resolved': 'green', 'Closed': 'gray' }
-  return variants[status] || 'gray'
+	const variants = {
+		Open: "yellow",
+		"In Progress": "blue",
+		Resolved: "green",
+		Closed: "gray",
+	}
+	return variants[status] || "gray"
 }
 
 function getPriorityVariant(priority) {
-  const variants = { 'Critical': 'red', 'High': 'orange', 'Medium': 'yellow', 'Low': 'blue' }
-  return variants[priority] || 'gray'
+	const variants = {
+		Critical: "red",
+		High: "orange",
+		Medium: "yellow",
+		Low: "blue",
+	}
+	return variants[priority] || "gray"
 }
 
 function getSLAColor(issue) {
-  if (issue.is_sla_breached) return 'text-red-600'
-  return 'text-gray-900'
+	if (issue.is_sla_breached) return "text-red-600"
+	return "text-gray-900"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 </script>

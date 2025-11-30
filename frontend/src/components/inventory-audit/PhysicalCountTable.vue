@@ -220,167 +220,178 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Button, Badge } from 'frappe-ui'
-import { Plus, Trash2, Package, Calculator, AlertTriangle } from 'lucide-vue-next'
+import { Badge, Button } from "frappe-ui"
+import {
+	AlertTriangle,
+	Calculator,
+	Package,
+	Plus,
+	Trash2,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  readonly: {
-    type: Boolean,
-    default: false
-  },
-  title: {
-    type: String,
-    default: 'Count Items'
-  },
-  materialityThreshold: {
-    type: Object,
-    default: () => ({
-      qty: 0,
-      amount: 0,
-      percent: 5
-    })
-  },
-  valuationRates: {
-    type: Object,
-    default: () => ({})
-  }
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
+	readonly: {
+		type: Boolean,
+		default: false,
+	},
+	title: {
+		type: String,
+		default: "Count Items",
+	},
+	materialityThreshold: {
+		type: Object,
+		default: () => ({
+			qty: 0,
+			amount: 0,
+			percent: 5,
+		}),
+	},
+	valuationRates: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const items = computed({
-  get: () => props.modelValue || [],
-  set: (val) => emit('update:modelValue', val)
+	get: () => props.modelValue || [],
+	set: (val) => emit("update:modelValue", val),
 })
 
 const varianceCount = computed(() => {
-  return items.value.filter(i => i.variance_qty && i.variance_qty !== 0).length
+	return items.value.filter((i) => i.variance_qty && i.variance_qty !== 0)
+		.length
 })
 
 const noVarianceCount = computed(() => {
-  return items.value.filter(i => !i.variance_qty || i.variance_qty === 0).length
+	return items.value.filter((i) => !i.variance_qty || i.variance_qty === 0)
+		.length
 })
 
 const materialCount = computed(() => {
-  return items.value.filter(i => i.is_material).length
+	return items.value.filter((i) => i.is_material).length
 })
 
 const totalVarianceQty = computed(() => {
-  return items.value.reduce((sum, item) => sum + (item.variance_qty || 0), 0)
+	return items.value.reduce((sum, item) => sum + (item.variance_qty || 0), 0)
 })
 
 const totalVarianceValue = computed(() => {
-  return items.value.reduce((sum, item) => sum + (item.variance_value || 0), 0)
+	return items.value.reduce((sum, item) => sum + (item.variance_value || 0), 0)
 })
 
 function addItem() {
-  const newItems = [...items.value, {
-    item_code: '',
-    item_description: '',
-    barcode: '',
-    batch_no: '',
-    serial_no: '',
-    system_qty: 0,
-    counted_qty: 0,
-    variance_qty: 0,
-    variance_percent: 0,
-    variance_value: 0,
-    is_material: false,
-    condition: '',
-    photo_attachment: '',
-    remarks: ''
-  }]
-  emit('update:modelValue', newItems)
+	const newItems = [
+		...items.value,
+		{
+			item_code: "",
+			item_description: "",
+			barcode: "",
+			batch_no: "",
+			serial_no: "",
+			system_qty: 0,
+			counted_qty: 0,
+			variance_qty: 0,
+			variance_percent: 0,
+			variance_value: 0,
+			is_material: false,
+			condition: "",
+			photo_attachment: "",
+			remarks: "",
+		},
+	]
+	emit("update:modelValue", newItems)
 }
 
 function removeItem(index) {
-  const newItems = items.value.filter((_, i) => i !== index)
-  emit('update:modelValue', newItems)
+	const newItems = items.value.filter((_, i) => i !== index)
+	emit("update:modelValue", newItems)
 }
 
 function calculateVariance(index) {
-  const newItems = [...items.value]
-  const item = newItems[index]
-  
-  const systemQty = item.system_qty || 0
-  const countedQty = item.counted_qty || 0
-  
-  item.variance_qty = countedQty - systemQty
-  
-  if (systemQty !== 0) {
-    item.variance_percent = ((countedQty - systemQty) / systemQty) * 100
-  } else {
-    item.variance_percent = countedQty !== 0 ? 100 : 0
-  }
-  
-  // Calculate variance value if we have valuation rate
-  const rate = props.valuationRates[item.item_code] || 0
-  item.variance_value = item.variance_qty * rate
-  
-  // Check materiality
-  item.is_material = checkMateriality(item)
-  
-  emit('update:modelValue', newItems)
+	const newItems = [...items.value]
+	const item = newItems[index]
+
+	const systemQty = item.system_qty || 0
+	const countedQty = item.counted_qty || 0
+
+	item.variance_qty = countedQty - systemQty
+
+	if (systemQty !== 0) {
+		item.variance_percent = ((countedQty - systemQty) / systemQty) * 100
+	} else {
+		item.variance_percent = countedQty !== 0 ? 100 : 0
+	}
+
+	// Calculate variance value if we have valuation rate
+	const rate = props.valuationRates[item.item_code] || 0
+	item.variance_value = item.variance_qty * rate
+
+	// Check materiality
+	item.is_material = checkMateriality(item)
+
+	emit("update:modelValue", newItems)
 }
 
 function calculateAllVariances() {
-  items.value.forEach((_, index) => calculateVariance(index))
+	items.value.forEach((_, index) => calculateVariance(index))
 }
 
 function checkMateriality(item) {
-  const { qty, amount, percent } = props.materialityThreshold
-  
-  if (qty && Math.abs(item.variance_qty || 0) >= qty) return true
-  if (amount && Math.abs(item.variance_value || 0) >= amount) return true
-  if (percent && Math.abs(item.variance_percent || 0) >= percent) return true
-  
-  return false
+	const { qty, amount, percent } = props.materialityThreshold
+
+	if (qty && Math.abs(item.variance_qty || 0) >= qty) return true
+	if (amount && Math.abs(item.variance_value || 0) >= amount) return true
+	if (percent && Math.abs(item.variance_percent || 0) >= percent) return true
+
+	return false
 }
 
 function getRowClass(item) {
-  if (item.is_material) return 'bg-red-50'
-  if (item.variance_qty && item.variance_qty !== 0) return 'bg-yellow-50'
-  return ''
+	if (item.is_material) return "bg-red-50"
+	if (item.variance_qty && item.variance_qty !== 0) return "bg-yellow-50"
+	return ""
 }
 
 function getVarianceClass(value) {
-  if (!value || value === 0) return 'text-gray-600'
-  return value > 0 ? 'text-green-600' : 'text-red-600'
+	if (!value || value === 0) return "text-gray-600"
+	return value > 0 ? "text-green-600" : "text-red-600"
 }
 
 function getConditionVariant(condition) {
-  const variants = {
-    'Good': 'green',
-    'Damaged': 'red',
-    'Expired': 'red',
-    'Misplaced': 'yellow',
-    'Zero Stock': 'gray',
-    'Not Found': 'red'
-  }
-  return variants[condition] || 'gray'
+	const variants = {
+		Good: "green",
+		Damaged: "red",
+		Expired: "red",
+		Misplaced: "yellow",
+		"Zero Stock": "gray",
+		"Not Found": "red",
+	}
+	return variants[condition] || "gray"
 }
 
 function formatNumber(num) {
-  if (num === null || num === undefined) return '-'
-  return new Intl.NumberFormat().format(num)
+	if (num === null || num === undefined) return "-"
+	return new Intl.NumberFormat().format(num)
 }
 
 function formatPercent(num) {
-  if (num === null || num === undefined) return '-'
-  return `${num.toFixed(1)}%`
+	if (num === null || num === undefined) return "-"
+	return `${num.toFixed(1)}%`
 }
 
 function formatCurrency(amount) {
-  if (amount === null || amount === undefined) return '-'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES',
-    minimumFractionDigits: 0
-  }).format(amount)
+	if (amount === null || amount === undefined) return "-"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount)
 }
 </script>

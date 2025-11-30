@@ -130,81 +130,81 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch } from 'vue'
-import { FormControl, Select, Button, Badge } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { Search, X, RefreshCw, Plus } from 'lucide-vue-next'
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { Badge, Button, FormControl, Select } from "frappe-ui"
+import { Plus, RefreshCw, Search, X } from "lucide-vue-next"
+import { computed, reactive, watch } from "vue"
 
 const props = defineProps({
-  filters: {
-    type: Object,
-    default: () => ({}),
-  },
+	filters: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:filters', 'refresh', 'create'])
+const emit = defineEmits(["update:filters", "refresh", "create"])
 
 const localFilters = reactive({
-  search: '',
-  periodType: '',
-  fiscalYear: '',
-  status: '',
-  reconciliation: '',
+	search: "",
+	periodType: "",
+	fiscalYear: "",
+	status: "",
+	reconciliation: "",
 })
 
 // Watch for external filter changes
 watch(
-  () => props.filters,
-  (newFilters) => {
-    if (newFilters) {
-      Object.assign(localFilters, newFilters)
-    }
-  },
-  { immediate: true, deep: true }
+	() => props.filters,
+	(newFilters) => {
+		if (newFilters) {
+			Object.assign(localFilters, newFilters)
+		}
+	},
+	{ immediate: true, deep: true },
 )
 
 const periodTypeOptions = [
-  { label: 'All Types', value: '' },
-  { label: 'Month', value: 'Month' },
-  { label: 'Quarter', value: 'Quarter' },
-  { label: 'Half-Year', value: 'Half-Year' },
-  { label: 'Year', value: 'Year' },
-  { label: 'Custom', value: 'Custom' },
+	{ label: "All Types", value: "" },
+	{ label: "Month", value: "Month" },
+	{ label: "Quarter", value: "Quarter" },
+	{ label: "Half-Year", value: "Half-Year" },
+	{ label: "Year", value: "Year" },
+	{ label: "Custom", value: "Custom" },
 ]
 
 const statusOptions = [
-  { label: 'All Status', value: '' },
-  { label: 'Open', value: 'Open' },
-  { label: 'Locked', value: 'Locked' },
-  { label: 'Closed', value: 'Closed' },
-  { label: 'Archived', value: 'Archived' },
+	{ label: "All Status", value: "" },
+	{ label: "Open", value: "Open" },
+	{ label: "Locked", value: "Locked" },
+	{ label: "Closed", value: "Closed" },
+	{ label: "Archived", value: "Archived" },
 ]
 
 const reconciliationOptions = [
-  { label: 'All', value: '' },
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Issues Found', value: 'Issues Found' },
+	{ label: "All", value: "" },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Issues Found", value: "Issues Found" },
 ]
 
 const hasActiveFilters = computed(() => {
-  return Object.values(localFilters).some((v) => v !== '')
+	return Object.values(localFilters).some((v) => v !== "")
 })
 
 function emitFilters() {
-  emit('update:filters', { ...localFilters })
+	emit("update:filters", { ...localFilters })
 }
 
 function removeFilter(key) {
-  localFilters[key] = ''
-  emitFilters()
+	localFilters[key] = ""
+	emitFilters()
 }
 
 function clearFilters() {
-  Object.keys(localFilters).forEach((key) => {
-    localFilters[key] = ''
-  })
-  emitFilters()
+	Object.keys(localFilters).forEach((key) => {
+		localFilters[key] = ""
+	})
+	emitFilters()
 }
 </script>

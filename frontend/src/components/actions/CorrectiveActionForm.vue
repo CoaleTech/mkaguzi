@@ -684,34 +684,34 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { Badge, Button, Dialog, FormControl, TextEditor } from 'frappe-ui'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { useCorrectiveActionsStore } from "@/stores/correctiveActions"
+import { Badge, Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-  ArchiveIcon,
-  CheckCircle2Icon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  FlagIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SaveIcon,
-  ShieldCheckIcon,
-  TrashIcon,
-} from 'lucide-vue-next'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { useCorrectiveActionsStore } from '@/stores/correctiveActions'
+	ArchiveIcon,
+	CheckCircle2Icon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	FlagIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SaveIcon,
+	ShieldCheckIcon,
+	TrashIcon,
+} from "lucide-vue-next"
+import { computed, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  action: { type: Object, default: null },
-  mode: { type: String, default: 'create' },
+	show: { type: Boolean, default: false },
+	action: { type: Object, default: null },
+	mode: { type: String, default: "create" },
 })
 
 // Emit
-const emit = defineEmits(['update:show', 'saved', 'close'])
+const emit = defineEmits(["update:show", "saved", "close"])
 
 // Store
 const correctiveActionsStore = useCorrectiveActionsStore()
@@ -724,274 +724,312 @@ const lastSaved = ref(null)
 
 // Computed for dialog visibility (to avoid v-model on prop)
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (value) => emit('update:show', value),
+	get: () => props.show,
+	set: (value) => emit("update:show", value),
 })
 
 // Form data
 const form = ref(getDefaultForm())
 
 function getDefaultForm() {
-  return {
-    plan_id: '',
-    audit_finding: '',
-    title: '',
-    status: 'Draft',
-    priority: 'Medium',
-    start_date: '',
-    target_completion_date: '',
-    actual_completion_date: '',
-    action_description: '',
-    root_cause_analysis: '',
-    expected_outcomes: '',
-    success_criteria: '',
-    responsible_person: '',
-    responsible_department: '',
-    accountable_person: '',
-    supporting_team: '',
-    estimated_cost: 0,
-    actual_cost: 0,
-    resources_required: '',
-    allocated_resources: '',
-    milestones: [],
-    overall_progress: 'Not Started',
-    completion_percentage: 0,
-    last_progress_update: '',
-    progress_notes: '',
-    identified_issues: '',
-    mitigation_actions: '',
-    escalation_required: false,
-    escalation_details: '',
-    verification_required: true,
-    verification_method: '',
-    verification_date: '',
-    verified_by: '',
-    verification_results: '',
-    approval_required: false,
-    approved_by: '',
-    approval_date: '',
-    approval_notes: '',
-    closure_reason: '',
-    closure_notes: '',
-    lessons_learned: '',
-  }
+	return {
+		plan_id: "",
+		audit_finding: "",
+		title: "",
+		status: "Draft",
+		priority: "Medium",
+		start_date: "",
+		target_completion_date: "",
+		actual_completion_date: "",
+		action_description: "",
+		root_cause_analysis: "",
+		expected_outcomes: "",
+		success_criteria: "",
+		responsible_person: "",
+		responsible_department: "",
+		accountable_person: "",
+		supporting_team: "",
+		estimated_cost: 0,
+		actual_cost: 0,
+		resources_required: "",
+		allocated_resources: "",
+		milestones: [],
+		overall_progress: "Not Started",
+		completion_percentage: 0,
+		last_progress_update: "",
+		progress_notes: "",
+		identified_issues: "",
+		mitigation_actions: "",
+		escalation_required: false,
+		escalation_details: "",
+		verification_required: true,
+		verification_method: "",
+		verification_date: "",
+		verified_by: "",
+		verification_results: "",
+		approval_required: false,
+		approved_by: "",
+		approval_date: "",
+		approval_notes: "",
+		closure_reason: "",
+		closure_notes: "",
+		lessons_learned: "",
+	}
 }
 
 // Sections
 const sections = [
-  { id: 'basic', title: 'Basic Information', description: 'Plan ID and status' },
-  { id: 'details', title: 'Plan Details', description: 'Description and analysis' },
-  { id: 'responsibility', title: 'Responsibility', description: 'Assign ownership' },
-  { id: 'resources', title: 'Resources', description: 'Budget allocation' },
-  { id: 'milestones', title: 'Milestones', description: 'Track progress' },
-  { id: 'progress', title: 'Progress Tracking', description: 'Overall progress' },
-  { id: 'issues', title: 'Issues & Risks', description: 'Document issues' },
-  { id: 'closure', title: 'Verification & Closure', description: 'Complete the plan' },
+	{
+		id: "basic",
+		title: "Basic Information",
+		description: "Plan ID and status",
+	},
+	{
+		id: "details",
+		title: "Plan Details",
+		description: "Description and analysis",
+	},
+	{
+		id: "responsibility",
+		title: "Responsibility",
+		description: "Assign ownership",
+	},
+	{ id: "resources", title: "Resources", description: "Budget allocation" },
+	{ id: "milestones", title: "Milestones", description: "Track progress" },
+	{
+		id: "progress",
+		title: "Progress Tracking",
+		description: "Overall progress",
+	},
+	{ id: "issues", title: "Issues & Risks", description: "Document issues" },
+	{
+		id: "closure",
+		title: "Verification & Closure",
+		description: "Complete the plan",
+	},
 ]
 
 // Options
 const statusOptions = [
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'On Hold', value: 'On Hold' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Cancelled', value: 'Cancelled' },
+	{ label: "Draft", value: "Draft" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "On Hold", value: "On Hold" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const priorityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' },
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const milestoneStatusOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Delayed', value: 'Delayed' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Delayed", value: "Delayed" },
 ]
 
 const progressOptions = [
-  { label: 'Not Started', value: 'Not Started' },
-  { label: 'Planning', value: 'Planning' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Review', value: 'Review' },
-  { label: 'Testing', value: 'Testing' },
-  { label: 'Completed', value: 'Completed' },
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "Planning", value: "Planning" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Review", value: "Review" },
+	{ label: "Testing", value: "Testing" },
+	{ label: "Completed", value: "Completed" },
 ]
 
 const verificationMethodOptions = [
-  { label: 'Document Review', value: 'Document Review' },
-  { label: 'Re-testing', value: 'Re-testing' },
-  { label: 'Observation', value: 'Observation' },
-  { label: 'Interview', value: 'Interview' },
-  { label: 'Data Analysis', value: 'Data Analysis' },
-  { label: 'Audit Testing', value: 'Audit Testing' },
+	{ label: "Document Review", value: "Document Review" },
+	{ label: "Re-testing", value: "Re-testing" },
+	{ label: "Observation", value: "Observation" },
+	{ label: "Interview", value: "Interview" },
+	{ label: "Data Analysis", value: "Data Analysis" },
+	{ label: "Audit Testing", value: "Audit Testing" },
 ]
 
 const closureReasonOptions = [
-  { label: 'Successfully Completed', value: 'Successfully Completed' },
-  { label: 'No Longer Applicable', value: 'No Longer Applicable' },
-  { label: 'Alternative Solution', value: 'Alternative Solution' },
-  { label: 'Cancelled by Management', value: 'Cancelled by Management' },
+	{ label: "Successfully Completed", value: "Successfully Completed" },
+	{ label: "No Longer Applicable", value: "No Longer Applicable" },
+	{ label: "Alternative Solution", value: "Alternative Solution" },
+	{ label: "Cancelled by Management", value: "Cancelled by Management" },
 ]
 
 // Watch for action changes
-watch(() => props.action, (newAction) => {
-  if (newAction) {
-    form.value = {
-      ...getDefaultForm(),
-      ...newAction,
-      milestones: newAction.milestones || [],
-    }
-  } else {
-    form.value = getDefaultForm()
-  }
-  currentSection.value = 0
-}, { immediate: true })
+watch(
+	() => props.action,
+	(newAction) => {
+		if (newAction) {
+			form.value = {
+				...getDefaultForm(),
+				...newAction,
+				milestones: newAction.milestones || [],
+			}
+		} else {
+			form.value = getDefaultForm()
+		}
+		currentSection.value = 0
+	},
+	{ immediate: true },
+)
 
-watch(() => props.show, (newShow) => {
-  if (!newShow) {
-    currentSection.value = 0
-    lastSaved.value = null
-  }
-})
+watch(
+	() => props.show,
+	(newShow) => {
+		if (!newShow) {
+			currentSection.value = 0
+			lastSaved.value = null
+		}
+	},
+)
 
 // Computed
 const overallProgress = computed(() => {
-  let completed = 0
-  if (form.value.plan_id && form.value.title && form.value.audit_finding) completed += 15
-  if (form.value.action_description) completed += 15
-  if (form.value.responsible_person && form.value.responsible_department) completed += 15
-  completed += 10 // Resources optional
-  if (form.value.milestones?.length > 0) completed += 15
-  completed += 10 // Progress tracking
-  completed += 10 // Issues & risks optional
-  completed += 10 // Closure
-  return completed
+	let completed = 0
+	if (form.value.plan_id && form.value.title && form.value.audit_finding)
+		completed += 15
+	if (form.value.action_description) completed += 15
+	if (form.value.responsible_person && form.value.responsible_department)
+		completed += 15
+	completed += 10 // Resources optional
+	if (form.value.milestones?.length > 0) completed += 15
+	completed += 10 // Progress tracking
+	completed += 10 // Issues & risks optional
+	completed += 10 // Closure
+	return completed
 })
 
 const isFormValid = computed(() => {
-  return form.value.plan_id &&
-    form.value.audit_finding &&
-    form.value.title &&
-    form.value.status &&
-    form.value.priority &&
-    form.value.target_completion_date &&
-    form.value.action_description &&
-    form.value.responsible_person &&
-    form.value.responsible_department
+	return (
+		form.value.plan_id &&
+		form.value.audit_finding &&
+		form.value.title &&
+		form.value.status &&
+		form.value.priority &&
+		form.value.target_completion_date &&
+		form.value.action_description &&
+		form.value.responsible_person &&
+		form.value.responsible_department
+	)
 })
 
 // Methods
 const isSectionComplete = (sectionId) => {
-  switch (sectionId) {
-    case 'basic':
-      return form.value.plan_id && form.value.title && form.value.audit_finding && form.value.target_completion_date
-    case 'details':
-      return !!form.value.action_description
-    case 'responsibility':
-      return form.value.responsible_person && form.value.responsible_department
-    case 'resources':
-      return true // Optional
-    case 'milestones':
-      return form.value.milestones?.length > 0
-    case 'progress':
-      return true // Optional
-    case 'issues':
-      return true // Optional
-    case 'closure':
-      return true // Optional until closure
-    default:
-      return false
-  }
+	switch (sectionId) {
+		case "basic":
+			return (
+				form.value.plan_id &&
+				form.value.title &&
+				form.value.audit_finding &&
+				form.value.target_completion_date
+			)
+		case "details":
+			return !!form.value.action_description
+		case "responsibility":
+			return form.value.responsible_person && form.value.responsible_department
+		case "resources":
+			return true // Optional
+		case "milestones":
+			return form.value.milestones?.length > 0
+		case "progress":
+			return true // Optional
+		case "issues":
+			return true // Optional
+		case "closure":
+			return true // Optional until closure
+		default:
+			return false
+	}
 }
 
 const getSectionStatusClass = (sectionId) => {
-  if (isSectionComplete(sectionId)) {
-    return 'bg-green-500 text-white'
-  }
-  return 'bg-gray-300 text-gray-600'
+	if (isSectionComplete(sectionId)) {
+		return "bg-green-500 text-white"
+	}
+	return "bg-gray-300 text-gray-600"
 }
 
 const goToSection = (index) => {
-  currentSection.value = index
+	currentSection.value = index
 }
 
 const previousSection = () => {
-  if (currentSection.value > 0) {
-    currentSection.value--
-  }
+	if (currentSection.value > 0) {
+		currentSection.value--
+	}
 }
 
 const nextSection = () => {
-  if (currentSection.value < sections.length - 1) {
-    currentSection.value++
-  }
+	if (currentSection.value < sections.length - 1) {
+		currentSection.value++
+	}
 }
 
 const generatePlanId = () => {
-  const year = new Date().getFullYear()
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  form.value.plan_id = `CAP-${year}-${random}`
+	const year = new Date().getFullYear()
+	const random = Math.floor(Math.random() * 1000)
+		.toString()
+		.padStart(3, "0")
+	form.value.plan_id = `CAP-${year}-${random}`
 }
 
 const addMilestone = () => {
-  form.value.milestones.push({
-    milestone_description: '',
-    due_date: '',
-    status: 'Not Started',
-    completion_date: '',
-    notes: '',
-  })
+	form.value.milestones.push({
+		milestone_description: "",
+		due_date: "",
+		status: "Not Started",
+		completion_date: "",
+		notes: "",
+	})
 }
 
 const removeMilestone = (index) => {
-  form.value.milestones.splice(index, 1)
+	form.value.milestones.splice(index, 1)
 }
 
 const getMilestoneStatusVariant = (status) => {
-  const variants = {
-    'Not Started': 'subtle',
-    'In Progress': 'subtle',
-    'Completed': 'subtle',
-    'Delayed': 'subtle',
-  }
-  return variants[status] || 'subtle'
+	const variants = {
+		"Not Started": "subtle",
+		"In Progress": "subtle",
+		Completed: "subtle",
+		Delayed: "subtle",
+	}
+	return variants[status] || "subtle"
 }
 
 const saveDraft = async () => {
-  saving.value = true
-  try {
-    if (props.mode === 'edit' && props.action?.name) {
-      await correctiveActionsStore.updateAction(props.action.name, form.value)
-    } else {
-      await correctiveActionsStore.createAction(form.value)
-    }
-    lastSaved.value = new Date().toLocaleTimeString()
-  } catch (error) {
-    console.error('Error saving draft:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		if (props.mode === "edit" && props.action?.name) {
+			await correctiveActionsStore.updateAction(props.action.name, form.value)
+		} else {
+			await correctiveActionsStore.createAction(form.value)
+		}
+		lastSaved.value = new Date().toLocaleTimeString()
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		saving.value = false
+	}
 }
 
 const submitForm = async () => {
-  submitting.value = true
-  try {
-    if (props.mode === 'edit' && props.action?.name) {
-      await correctiveActionsStore.updateAction(props.action.name, form.value)
-    } else {
-      await correctiveActionsStore.createAction(form.value)
-    }
-    emit('saved')
-    emit('update:show', false)
-  } catch (error) {
-    console.error('Error submitting form:', error)
-  } finally {
-    submitting.value = false
-  }
+	submitting.value = true
+	try {
+		if (props.mode === "edit" && props.action?.name) {
+			await correctiveActionsStore.updateAction(props.action.name, form.value)
+		} else {
+			await correctiveActionsStore.createAction(form.value)
+		}
+		emit("saved")
+		emit("update:show", false)
+	} catch (error) {
+		console.error("Error submitting form:", error)
+	} finally {
+		submitting.value = false
+	}
 }
 </script>

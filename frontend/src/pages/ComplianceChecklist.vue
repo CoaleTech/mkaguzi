@@ -138,13 +138,7 @@ import ChecklistStats from "@/components/checklist/ChecklistStats.vue"
 import ComplianceChecklistForm from "@/components/checklist/ComplianceChecklistForm.vue"
 import { useComplianceStore } from "@/stores/compliance"
 import { Badge, Button } from "frappe-ui"
-import {
-	Edit,
-	Eye,
-	FileText,
-	Plus,
-	RefreshCw,
-} from "lucide-vue-next"
+import { Edit, Eye, FileText, Plus, RefreshCw } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 
 // Store
@@ -157,7 +151,9 @@ const selectedChecklist = ref(null)
 
 // Store bindings
 const loading = computed(() => complianceStore.loading)
-const complianceChecklists = computed(() => complianceStore.complianceChecklists)
+const complianceChecklists = computed(
+	() => complianceStore.complianceChecklists,
+)
 const checklistSummary = computed(() => complianceStore.checklistSummary)
 
 // Filter bindings
@@ -171,17 +167,23 @@ const selectedAlertLevel = ref("")
 const stats = computed(() => {
 	const checklists = complianceChecklists.value
 	const total = checklists.length
-	const completed = checklists.filter(c => c.completion_percent === 100).length
-	const overdue = checklists.filter(c => (c.overdue_requirements || 0) > 0).length
-	const inProgress = checklists.filter(c => c.completion_percent > 0 && c.completion_percent < 100).length
-	const alerts = checklists.filter(c => (c.alerts?.length || 0) > 0).length
+	const completed = checklists.filter(
+		(c) => c.completion_percent === 100,
+	).length
+	const overdue = checklists.filter(
+		(c) => (c.overdue_requirements || 0) > 0,
+	).length
+	const inProgress = checklists.filter(
+		(c) => c.completion_percent > 0 && c.completion_percent < 100,
+	).length
+	const alerts = checklists.filter((c) => (c.alerts?.length || 0) > 0).length
 
 	return {
 		total,
 		completed,
 		overdue,
 		inProgress,
-		alerts
+		alerts,
 	}
 })
 
@@ -198,7 +200,9 @@ const createChecklist = () => {
 
 const viewChecklist = async (checklist) => {
 	try {
-		selectedChecklist.value = await complianceStore.getChecklistDetails(checklist.name)
+		selectedChecklist.value = await complianceStore.getChecklistDetails(
+			checklist.name,
+		)
 		isEditMode.value = true
 		showFormDialog.value = true
 	} catch (error) {
@@ -208,7 +212,9 @@ const viewChecklist = async (checklist) => {
 
 const editChecklist = async (checklist) => {
 	try {
-		selectedChecklist.value = await complianceStore.getChecklistDetails(checklist.name)
+		selectedChecklist.value = await complianceStore.getChecklistDetails(
+			checklist.name,
+		)
 		isEditMode.value = true
 		showFormDialog.value = true
 	} catch (error) {

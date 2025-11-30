@@ -79,24 +79,24 @@
 
 <script setup>
 import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  BarChart3Icon,
-  CheckCircleIcon,
-  FileTextIcon,
+	AlertCircleIcon,
+	AlertTriangleIcon,
+	BarChart3Icon,
+	CheckCircleIcon,
+	FileTextIcon,
 } from "lucide-vue-next"
 
 defineProps({
-  stats: {
-    type: Object,
-    required: true,
-    default: () => ({
-      total: 0,
-      criticalRisks: 0,
-      highRisks: 0,
-      approved: 0,
-      averageRiskScore: 0,
-    }),
-  },
+	stats: {
+		type: Object,
+		required: true,
+		default: () => ({
+			total: 0,
+			criticalRisks: 0,
+			highRisks: 0,
+			approved: 0,
+			averageRiskScore: 0,
+		}),
+	},
 })
 </script>

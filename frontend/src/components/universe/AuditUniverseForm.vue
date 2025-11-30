@@ -663,32 +663,32 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { Badge, Button, Dialog, FormControl, TextEditor } from 'frappe-ui'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import { useAuditStore } from "@/stores/audit"
+import { Badge, Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-  AlertTriangleIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SaveIcon,
-  ShieldIcon,
-  TrashIcon,
-} from 'lucide-vue-next'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import { useAuditStore } from '@/stores/audit'
+	AlertTriangleIcon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SaveIcon,
+	ShieldIcon,
+	TrashIcon,
+} from "lucide-vue-next"
+import { computed, ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  entity: { type: Object, default: null },
-  mode: { type: String, default: 'create' },
+	show: { type: Boolean, default: false },
+	entity: { type: Object, default: null },
+	mode: { type: String, default: "create" },
 })
 
 // Emit
-const emit = defineEmits(['update:show', 'saved', 'close'])
+const emit = defineEmits(["update:show", "saved", "close"])
 
 // Store
 const auditStore = useAuditStore()
@@ -701,363 +701,392 @@ const lastSaved = ref(null)
 
 // Computed for dialog visibility
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (value) => emit('update:show', value),
+	get: () => props.show,
+	set: (value) => emit("update:show", value),
 })
 
 // Form data
 const form = ref(getDefaultForm())
 
 function getDefaultForm() {
-  return {
-    universe_id: '',
-    auditable_entity: '',
-    entity_type: 'Process',
-    department: '',
-    location: '',
-    description: '',
-    process_owner: '',
-    is_active: true,
-    inherent_risk_rating: 'Medium',
-    inherent_risk_score: 0,
-    control_environment_rating: 'Adequate',
-    control_effectiveness_score: 0,
-    residual_risk_rating: '',
-    residual_risk_score: 0,
-    risk_factors: [],
-    key_controls: [],
-    audit_frequency: 'Annual',
-    last_audit_date: '',
-    last_audit_reference: '',
-    last_audit_opinion: '',
-    next_scheduled_audit: '',
-    mandatory_audit: false,
-    regulatory_reference: '',
-    bc_data_sources: [],
-    notes: '',
-  }
+	return {
+		universe_id: "",
+		auditable_entity: "",
+		entity_type: "Process",
+		department: "",
+		location: "",
+		description: "",
+		process_owner: "",
+		is_active: true,
+		inherent_risk_rating: "Medium",
+		inherent_risk_score: 0,
+		control_environment_rating: "Adequate",
+		control_effectiveness_score: 0,
+		residual_risk_rating: "",
+		residual_risk_score: 0,
+		risk_factors: [],
+		key_controls: [],
+		audit_frequency: "Annual",
+		last_audit_date: "",
+		last_audit_reference: "",
+		last_audit_opinion: "",
+		next_scheduled_audit: "",
+		mandatory_audit: false,
+		regulatory_reference: "",
+		bc_data_sources: [],
+		notes: "",
+	}
 }
 
 // Sections
 const sections = [
-  { id: 'basic', title: 'Basic Information', description: 'Entity details' },
-  { id: 'risk', title: 'Risk Assessment', description: 'Risk ratings' },
-  { id: 'factors', title: 'Risk Factors', description: 'Identified risks' },
-  { id: 'controls', title: 'Key Controls', description: 'Mitigating controls' },
-  { id: 'planning', title: 'Audit Planning', description: 'Scheduling' },
-  { id: 'notes', title: 'Additional Info', description: 'Notes & references' },
+	{ id: "basic", title: "Basic Information", description: "Entity details" },
+	{ id: "risk", title: "Risk Assessment", description: "Risk ratings" },
+	{ id: "factors", title: "Risk Factors", description: "Identified risks" },
+	{ id: "controls", title: "Key Controls", description: "Mitigating controls" },
+	{ id: "planning", title: "Audit Planning", description: "Scheduling" },
+	{ id: "notes", title: "Additional Info", description: "Notes & references" },
 ]
 
 // Options
 const entityTypeOptions = [
-  { label: 'Process', value: 'Process' },
-  { label: 'Function', value: 'Function' },
-  { label: 'Department', value: 'Department' },
-  { label: 'Location', value: 'Location' },
-  { label: 'System', value: 'System' },
-  { label: 'Compliance Area', value: 'Compliance Area' },
+	{ label: "Process", value: "Process" },
+	{ label: "Function", value: "Function" },
+	{ label: "Department", value: "Department" },
+	{ label: "Location", value: "Location" },
+	{ label: "System", value: "System" },
+	{ label: "Compliance Area", value: "Compliance Area" },
 ]
 
 const locationOptions = [
-  { label: 'Head Office', value: 'Head Office' },
-  { label: 'Branch 1', value: 'Branch 1' },
-  { label: 'Branch 2', value: 'Branch 2' },
-  { label: 'Warehouse', value: 'Warehouse' },
-  { label: 'All', value: 'All' },
+	{ label: "Head Office", value: "Head Office" },
+	{ label: "Branch 1", value: "Branch 1" },
+	{ label: "Branch 2", value: "Branch 2" },
+	{ label: "Warehouse", value: "Warehouse" },
+	{ label: "All", value: "All" },
 ]
 
 const riskRatingOptions = [
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const controlEnvironmentOptions = [
-  { label: 'Strong', value: 'Strong' },
-  { label: 'Adequate', value: 'Adequate' },
-  { label: 'Weak', value: 'Weak' },
-  { label: 'Not Assessed', value: 'Not Assessed' },
+	{ label: "Strong", value: "Strong" },
+	{ label: "Adequate", value: "Adequate" },
+	{ label: "Weak", value: "Weak" },
+	{ label: "Not Assessed", value: "Not Assessed" },
 ]
 
 const riskCategoryOptions = [
-  { label: 'Financial', value: 'Financial' },
-  { label: 'Operational', value: 'Operational' },
-  { label: 'Compliance', value: 'Compliance' },
-  { label: 'Strategic', value: 'Strategic' },
-  { label: 'Reputational', value: 'Reputational' },
-  { label: 'Technology', value: 'Technology' },
-  { label: 'Human Resources', value: 'Human Resources' },
+	{ label: "Financial", value: "Financial" },
+	{ label: "Operational", value: "Operational" },
+	{ label: "Compliance", value: "Compliance" },
+	{ label: "Strategic", value: "Strategic" },
+	{ label: "Reputational", value: "Reputational" },
+	{ label: "Technology", value: "Technology" },
+	{ label: "Human Resources", value: "Human Resources" },
 ]
 
 const impactOptions = [
-  { label: 'Critical', value: 'Critical' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Critical", value: "Critical" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const likelihoodOptions = [
-  { label: 'Very High', value: 'Very High' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+	{ label: "Very High", value: "Very High" },
+	{ label: "High", value: "High" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "Low", value: "Low" },
 ]
 
 const mitigationStatusOptions = [
-  { label: 'Not Mitigated', value: 'Not Mitigated' },
-  { label: 'Partially Mitigated', value: 'Partially Mitigated' },
-  { label: 'Fully Mitigated', value: 'Fully Mitigated' },
-  { label: 'Accepted', value: 'Accepted' },
+	{ label: "Not Mitigated", value: "Not Mitigated" },
+	{ label: "Partially Mitigated", value: "Partially Mitigated" },
+	{ label: "Fully Mitigated", value: "Fully Mitigated" },
+	{ label: "Accepted", value: "Accepted" },
 ]
 
 const controlTypeOptions = [
-  { label: 'Preventive', value: 'Preventive' },
-  { label: 'Detective', value: 'Detective' },
-  { label: 'Corrective', value: 'Corrective' },
-  { label: 'Directive', value: 'Directive' },
+	{ label: "Preventive", value: "Preventive" },
+	{ label: "Detective", value: "Detective" },
+	{ label: "Corrective", value: "Corrective" },
+	{ label: "Directive", value: "Directive" },
 ]
 
 const controlFrequencyOptions = [
-  { label: 'Continuous', value: 'Continuous' },
-  { label: 'Daily', value: 'Daily' },
-  { label: 'Weekly', value: 'Weekly' },
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Annually', value: 'Annually' },
-  { label: 'Ad-hoc', value: 'Ad-hoc' },
+	{ label: "Continuous", value: "Continuous" },
+	{ label: "Daily", value: "Daily" },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Annually", value: "Annually" },
+	{ label: "Ad-hoc", value: "Ad-hoc" },
 ]
 
 const controlEffectivenessOptions = [
-  { label: 'Very Effective', value: 'Very Effective' },
-  { label: 'Effective', value: 'Effective' },
-  { label: 'Partially Effective', value: 'Partially Effective' },
-  { label: 'Ineffective', value: 'Ineffective' },
+	{ label: "Very Effective", value: "Very Effective" },
+	{ label: "Effective", value: "Effective" },
+	{ label: "Partially Effective", value: "Partially Effective" },
+	{ label: "Ineffective", value: "Ineffective" },
 ]
 
 const auditFrequencyOptions = [
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Semi-Annual', value: 'Semi-Annual' },
-  { label: 'Annual', value: 'Annual' },
-  { label: 'Bi-Annual', value: 'Bi-Annual' },
-  { label: 'Tri-Annual', value: 'Tri-Annual' },
-  { label: 'As Needed', value: 'As Needed' },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Bi-Annual", value: "Bi-Annual" },
+	{ label: "Tri-Annual", value: "Tri-Annual" },
+	{ label: "As Needed", value: "As Needed" },
 ]
 
 const auditOpinionOptions = [
-  { label: 'Satisfactory', value: 'Satisfactory' },
-  { label: 'Needs Improvement', value: 'Needs Improvement' },
-  { label: 'Unsatisfactory', value: 'Unsatisfactory' },
+	{ label: "Satisfactory", value: "Satisfactory" },
+	{ label: "Needs Improvement", value: "Needs Improvement" },
+	{ label: "Unsatisfactory", value: "Unsatisfactory" },
 ]
 
 // Watch for entity changes
-watch(() => props.entity, (newEntity) => {
-  if (newEntity) {
-    form.value = {
-      ...getDefaultForm(),
-      ...newEntity,
-      risk_factors: newEntity.risk_factors || [],
-      key_controls: newEntity.key_controls || [],
-      bc_data_sources: newEntity.bc_data_sources || [],
-    }
-  } else {
-    form.value = getDefaultForm()
-  }
-  currentSection.value = 0
-}, { immediate: true })
+watch(
+	() => props.entity,
+	(newEntity) => {
+		if (newEntity) {
+			form.value = {
+				...getDefaultForm(),
+				...newEntity,
+				risk_factors: newEntity.risk_factors || [],
+				key_controls: newEntity.key_controls || [],
+				bc_data_sources: newEntity.bc_data_sources || [],
+			}
+		} else {
+			form.value = getDefaultForm()
+		}
+		currentSection.value = 0
+	},
+	{ immediate: true },
+)
 
-watch(() => props.show, (newShow) => {
-  if (!newShow) {
-    currentSection.value = 0
-    lastSaved.value = null
-  }
-})
+watch(
+	() => props.show,
+	(newShow) => {
+		if (!newShow) {
+			currentSection.value = 0
+			lastSaved.value = null
+		}
+	},
+)
 
 // Auto-calculate residual risk
-watch([() => form.value.inherent_risk_score, () => form.value.control_effectiveness_score], () => {
-  const inherent = form.value.inherent_risk_score || 0
-  const control = form.value.control_effectiveness_score || 0
-  form.value.residual_risk_score = Math.max(0, inherent - (inherent * control / 100))
-  
-  // Determine rating based on score
-  if (form.value.residual_risk_score >= 75) {
-    form.value.residual_risk_rating = 'Critical'
-  } else if (form.value.residual_risk_score >= 50) {
-    form.value.residual_risk_rating = 'High'
-  } else if (form.value.residual_risk_score >= 25) {
-    form.value.residual_risk_rating = 'Medium'
-  } else {
-    form.value.residual_risk_rating = 'Low'
-  }
-})
+watch(
+	[
+		() => form.value.inherent_risk_score,
+		() => form.value.control_effectiveness_score,
+	],
+	() => {
+		const inherent = form.value.inherent_risk_score || 0
+		const control = form.value.control_effectiveness_score || 0
+		form.value.residual_risk_score = Math.max(
+			0,
+			inherent - (inherent * control) / 100,
+		)
+
+		// Determine rating based on score
+		if (form.value.residual_risk_score >= 75) {
+			form.value.residual_risk_rating = "Critical"
+		} else if (form.value.residual_risk_score >= 50) {
+			form.value.residual_risk_rating = "High"
+		} else if (form.value.residual_risk_score >= 25) {
+			form.value.residual_risk_rating = "Medium"
+		} else {
+			form.value.residual_risk_rating = "Low"
+		}
+	},
+)
 
 // Computed
 const overallProgress = computed(() => {
-  let completed = 0
-  if (form.value.universe_id && form.value.auditable_entity && form.value.entity_type) completed += 20
-  if (form.value.inherent_risk_rating) completed += 20
-  if (form.value.risk_factors?.length > 0) completed += 20
-  if (form.value.key_controls?.length > 0) completed += 20
-  if (form.value.audit_frequency) completed += 20
-  return completed
+	let completed = 0
+	if (
+		form.value.universe_id &&
+		form.value.auditable_entity &&
+		form.value.entity_type
+	)
+		completed += 20
+	if (form.value.inherent_risk_rating) completed += 20
+	if (form.value.risk_factors?.length > 0) completed += 20
+	if (form.value.key_controls?.length > 0) completed += 20
+	if (form.value.audit_frequency) completed += 20
+	return completed
 })
 
 const isFormValid = computed(() => {
-  return form.value.universe_id &&
-    form.value.auditable_entity &&
-    form.value.entity_type &&
-    form.value.inherent_risk_rating
+	return (
+		form.value.universe_id &&
+		form.value.auditable_entity &&
+		form.value.entity_type &&
+		form.value.inherent_risk_rating
+	)
 })
 
 // Methods
 const isSectionComplete = (sectionId) => {
-  switch (sectionId) {
-    case 'basic':
-      return form.value.universe_id && form.value.auditable_entity && form.value.entity_type
-    case 'risk':
-      return !!form.value.inherent_risk_rating
-    case 'factors':
-      return form.value.risk_factors?.length > 0
-    case 'controls':
-      return form.value.key_controls?.length > 0
-    case 'planning':
-      return !!form.value.audit_frequency
-    case 'notes':
-      return true
-    default:
-      return false
-  }
+	switch (sectionId) {
+		case "basic":
+			return (
+				form.value.universe_id &&
+				form.value.auditable_entity &&
+				form.value.entity_type
+			)
+		case "risk":
+			return !!form.value.inherent_risk_rating
+		case "factors":
+			return form.value.risk_factors?.length > 0
+		case "controls":
+			return form.value.key_controls?.length > 0
+		case "planning":
+			return !!form.value.audit_frequency
+		case "notes":
+			return true
+		default:
+			return false
+	}
 }
 
 const getSectionStatusClass = (sectionId) => {
-  if (isSectionComplete(sectionId)) {
-    return 'bg-green-500 text-white'
-  }
-  return 'bg-gray-300 text-gray-600'
+	if (isSectionComplete(sectionId)) {
+		return "bg-green-500 text-white"
+	}
+	return "bg-gray-300 text-gray-600"
 }
 
 const goToSection = (index) => {
-  currentSection.value = index
+	currentSection.value = index
 }
 
 const previousSection = () => {
-  if (currentSection.value > 0) {
-    currentSection.value--
-  }
+	if (currentSection.value > 0) {
+		currentSection.value--
+	}
 }
 
 const nextSection = () => {
-  if (currentSection.value < sections.length - 1) {
-    currentSection.value++
-  }
+	if (currentSection.value < sections.length - 1) {
+		currentSection.value++
+	}
 }
 
 const generateUniverseId = () => {
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  form.value.universe_id = `AUE-${random}`
+	const random = Math.floor(Math.random() * 1000)
+		.toString()
+		.padStart(3, "0")
+	form.value.universe_id = `AUE-${random}`
 }
 
 const addRiskFactor = () => {
-  form.value.risk_factors.push({
-    risk_category: 'Operational',
-    risk_description: '',
-    risk_impact: 'Medium',
-    risk_likelihood: 'Medium',
-    risk_weight: 0,
-    mitigation_status: 'Not Mitigated',
-  })
+	form.value.risk_factors.push({
+		risk_category: "Operational",
+		risk_description: "",
+		risk_impact: "Medium",
+		risk_likelihood: "Medium",
+		risk_weight: 0,
+		mitigation_status: "Not Mitigated",
+	})
 }
 
 const removeRiskFactor = (index) => {
-  form.value.risk_factors.splice(index, 1)
+	form.value.risk_factors.splice(index, 1)
 }
 
 const addKeyControl = () => {
-  form.value.key_controls.push({
-    control_id: '',
-    control_description: '',
-    control_type: 'Preventive',
-    control_owner: '',
-    control_frequency: 'Monthly',
-    control_effectiveness: 'Effective',
-    last_tested_date: '',
-    next_test_date: '',
-  })
+	form.value.key_controls.push({
+		control_id: "",
+		control_description: "",
+		control_type: "Preventive",
+		control_owner: "",
+		control_frequency: "Monthly",
+		control_effectiveness: "Effective",
+		last_tested_date: "",
+		next_test_date: "",
+	})
 }
 
 const removeKeyControl = (index) => {
-  form.value.key_controls.splice(index, 1)
+	form.value.key_controls.splice(index, 1)
 }
 
 const getRiskScoreColor = (score) => {
-  if (score >= 75) return 'text-red-600'
-  if (score >= 50) return 'text-orange-600'
-  if (score >= 25) return 'text-amber-600'
-  return 'text-green-600'
+	if (score >= 75) return "text-red-600"
+	if (score >= 50) return "text-orange-600"
+	if (score >= 25) return "text-amber-600"
+	return "text-green-600"
 }
 
 const getRiskBadgeVariant = (impact) => {
-  const variants = {
-    'Critical': 'subtle',
-    'High': 'subtle',
-    'Medium': 'subtle',
-    'Low': 'subtle',
-  }
-  return variants[impact] || 'subtle'
+	const variants = {
+		Critical: "subtle",
+		High: "subtle",
+		Medium: "subtle",
+		Low: "subtle",
+	}
+	return variants[impact] || "subtle"
 }
 
 const getControlEffectivenessVariant = (effectiveness) => {
-  return 'subtle'
+	return "subtle"
 }
 
 const getOpinionVariant = (opinion) => {
-  const variants = {
-    'Satisfactory': 'subtle',
-    'Needs Improvement': 'subtle',
-    'Unsatisfactory': 'subtle',
-  }
-  return variants[opinion] || 'subtle'
+	const variants = {
+		Satisfactory: "subtle",
+		"Needs Improvement": "subtle",
+		Unsatisfactory: "subtle",
+	}
+	return variants[opinion] || "subtle"
 }
 
 const formatDate = (date) => {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+	if (!date) return ""
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 const saveDraft = async () => {
-  saving.value = true
-  try {
-    if (props.mode === 'edit' && props.entity?.name) {
-      await auditStore.updateAuditUniverse(props.entity.name, form.value)
-    } else {
-      await auditStore.createAuditUniverse(form.value)
-    }
-    lastSaved.value = new Date().toLocaleTimeString()
-  } catch (error) {
-    console.error('Error saving draft:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		if (props.mode === "edit" && props.entity?.name) {
+			await auditStore.updateAuditUniverse(props.entity.name, form.value)
+		} else {
+			await auditStore.createAuditUniverse(form.value)
+		}
+		lastSaved.value = new Date().toLocaleTimeString()
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		saving.value = false
+	}
 }
 
 const submitForm = async () => {
-  submitting.value = true
-  try {
-    if (props.mode === 'edit' && props.entity?.name) {
-      await auditStore.updateAuditUniverse(props.entity.name, form.value)
-    } else {
-      await auditStore.createAuditUniverse(form.value)
-    }
-    emit('saved')
-    emit('update:show', false)
-  } catch (error) {
-    console.error('Error submitting form:', error)
-  } finally {
-    submitting.value = false
-  }
+	submitting.value = true
+	try {
+		if (props.mode === "edit" && props.entity?.name) {
+			await auditStore.updateAuditUniverse(props.entity.name, form.value)
+		} else {
+			await auditStore.createAuditUniverse(form.value)
+		}
+		emit("saved")
+		emit("update:show", false)
+	} catch (error) {
+		console.error("Error submitting form:", error)
+	} finally {
+		submitting.value = false
+	}
 }
 </script>

@@ -122,94 +122,116 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Button } from 'frappe-ui'
-import { CheckCircle, Circle } from 'lucide-vue-next'
+import { Button } from "frappe-ui"
+import { CheckCircle, Circle } from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  signoffs: {
-    type: Object,
-    required: true,
-    default: () => ({
-      team_signoff: false,
-      team_signoff_by: null,
-      team_signoff_date: null,
-      supervisor_signoff: false,
-      supervisor_signoff_by: null,
-      supervisor_signoff_date: null,
-      auditor_signoff: false,
-      auditor_signoff_by: null,
-      auditor_signoff_date: null
-    })
-  },
-  readonly: {
-    type: Boolean,
-    default: false
-  },
-  title: {
-    type: String,
-    default: 'Signoff Status'
-  },
-  signingOff: {
-    type: String,
-    default: null
-  },
-  userRoles: {
-    type: Array,
-    default: () => []
-  }
+	signoffs: {
+		type: Object,
+		required: true,
+		default: () => ({
+			team_signoff: false,
+			team_signoff_by: null,
+			team_signoff_date: null,
+			supervisor_signoff: false,
+			supervisor_signoff_by: null,
+			supervisor_signoff_date: null,
+			auditor_signoff: false,
+			auditor_signoff_by: null,
+			auditor_signoff_date: null,
+		}),
+	},
+	readonly: {
+		type: Boolean,
+		default: false,
+	},
+	title: {
+		type: String,
+		default: "Signoff Status",
+	},
+	signingOff: {
+		type: String,
+		default: null,
+	},
+	userRoles: {
+		type: Array,
+		default: () => [],
+	},
 })
 
-defineEmits(['signoff'])
+defineEmits(["signoff"])
 
 const completedCount = computed(() => {
-  let count = 0
-  if (props.signoffs.team_signoff) count++
-  if (props.signoffs.supervisor_signoff) count++
-  if (props.signoffs.auditor_signoff) count++
-  return count
+	let count = 0
+	if (props.signoffs.team_signoff) count++
+	if (props.signoffs.supervisor_signoff) count++
+	if (props.signoffs.auditor_signoff) count++
+	return count
 })
 
 const progressBarClass = computed(() => {
-  if (completedCount.value === 3) return 'bg-green-500'
-  if (completedCount.value >= 1) return 'bg-yellow-500'
-  return 'bg-gray-300'
+	if (completedCount.value === 3) return "bg-green-500"
+	if (completedCount.value >= 1) return "bg-yellow-500"
+	return "bg-gray-300"
 })
 
 function getSignoffClass(role) {
-  const signoff = props.signoffs[`${role}_signoff`]
-  if (signoff) return 'border-green-200 bg-green-50'
-  
-  // Check if this is the next pending signoff
-  if (role === 'team' && !props.signoffs.team_signoff) return 'border-yellow-200 bg-yellow-50'
-  if (role === 'supervisor' && props.signoffs.team_signoff && !props.signoffs.supervisor_signoff) return 'border-yellow-200 bg-yellow-50'
-  if (role === 'auditor' && props.signoffs.supervisor_signoff && !props.signoffs.auditor_signoff) return 'border-yellow-200 bg-yellow-50'
-  
-  return 'border-gray-200 bg-gray-50'
+	const signoff = props.signoffs[`${role}_signoff`]
+	if (signoff) return "border-green-200 bg-green-50"
+
+	// Check if this is the next pending signoff
+	if (role === "team" && !props.signoffs.team_signoff)
+		return "border-yellow-200 bg-yellow-50"
+	if (
+		role === "supervisor" &&
+		props.signoffs.team_signoff &&
+		!props.signoffs.supervisor_signoff
+	)
+		return "border-yellow-200 bg-yellow-50"
+	if (
+		role === "auditor" &&
+		props.signoffs.supervisor_signoff &&
+		!props.signoffs.auditor_signoff
+	)
+		return "border-yellow-200 bg-yellow-50"
+
+	return "border-gray-200 bg-gray-50"
 }
 
 function canSignoff(role) {
-  // Check user roles - this can be customized based on your role structure
-  if (role === 'team') {
-    return props.userRoles.includes('Counter') || props.userRoles.includes('Team Lead') || props.userRoles.includes('System Manager')
-  }
-  if (role === 'supervisor') {
-    return props.userRoles.includes('Supervisor') || props.userRoles.includes('System Manager')
-  }
-  if (role === 'auditor') {
-    return props.userRoles.includes('Internal Auditor') || props.userRoles.includes('Auditor') || props.userRoles.includes('System Manager')
-  }
-  return false
+	// Check user roles - this can be customized based on your role structure
+	if (role === "team") {
+		return (
+			props.userRoles.includes("Counter") ||
+			props.userRoles.includes("Team Lead") ||
+			props.userRoles.includes("System Manager")
+		)
+	}
+	if (role === "supervisor") {
+		return (
+			props.userRoles.includes("Supervisor") ||
+			props.userRoles.includes("System Manager")
+		)
+	}
+	if (role === "auditor") {
+		return (
+			props.userRoles.includes("Internal Auditor") ||
+			props.userRoles.includes("Auditor") ||
+			props.userRoles.includes("System Manager")
+		)
+	}
+	return false
 }
 
 function formatDate(date) {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+	if (!date) return ""
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
 }
 </script>
 

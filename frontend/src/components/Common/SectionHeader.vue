@@ -24,92 +24,96 @@
 </template>
 
 <script setup>
-import { computed, markRaw } from 'vue'
 import {
-  FileTextIcon,
-  TargetIcon,
-  SettingsIcon,
-  CalendarIcon,
-  UsersIcon,
-  BookUserIcon,
-  DatabaseIcon,
-  FolderIcon,
-  SearchIcon,
-  MessageCircleIcon,
-  ClipboardCheckIcon,
-  RefreshCwIcon,
-  ShieldCheckIcon,
-  FileCheck2Icon,
-  ClipboardListIcon,
-  AlertTriangleIcon,
-} from 'lucide-vue-next'
+	AlertTriangleIcon,
+	BookUserIcon,
+	CalendarIcon,
+	ClipboardCheckIcon,
+	ClipboardListIcon,
+	DatabaseIcon,
+	FileCheck2Icon,
+	FileTextIcon,
+	FolderIcon,
+	MessageCircleIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	SettingsIcon,
+	ShieldCheckIcon,
+	TargetIcon,
+	UsersIcon,
+} from "lucide-vue-next"
+import { computed, markRaw } from "vue"
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    default: ''
-  },
-  icon: {
-    type: [String, Object],
-    default: 'file-text'
-  },
-  step: {
-    type: [String, Number],
-    default: null
-  },
-  totalSteps: {
-    type: [String, Number],
-    default: 8
-  },
-  color: {
-    type: String,
-    default: 'blue'
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		default: "",
+	},
+	icon: {
+		type: [String, Object],
+		default: "file-text",
+	},
+	step: {
+		type: [String, Number],
+		default: null,
+	},
+	totalSteps: {
+		type: [String, Number],
+		default: 8,
+	},
+	color: {
+		type: String,
+		default: "blue",
+	},
 })
 
 const iconMap = {
-  'file-text': FileTextIcon,
-  'target': TargetIcon,
-  'settings': SettingsIcon,
-  'calendar': CalendarIcon,
-  'users': UsersIcon,
-  'book-user': BookUserIcon,
-  'database': DatabaseIcon,
-  'folder': FolderIcon,
-  'search': SearchIcon,
-  'message-circle': MessageCircleIcon,
-  'clipboard-check': ClipboardCheckIcon,
-  'refresh-cw': RefreshCwIcon,
-  'shield-check': ShieldCheckIcon,
-  'file-check': FileCheck2Icon,
-  'clipboard-list': ClipboardListIcon,
-  'alert-triangle': AlertTriangleIcon,
+	"file-text": FileTextIcon,
+	target: TargetIcon,
+	settings: SettingsIcon,
+	calendar: CalendarIcon,
+	users: UsersIcon,
+	"book-user": BookUserIcon,
+	database: DatabaseIcon,
+	folder: FolderIcon,
+	search: SearchIcon,
+	"message-circle": MessageCircleIcon,
+	"clipboard-check": ClipboardCheckIcon,
+	"refresh-cw": RefreshCwIcon,
+	"shield-check": ShieldCheckIcon,
+	"file-check": FileCheck2Icon,
+	"clipboard-list": ClipboardListIcon,
+	"alert-triangle": AlertTriangleIcon,
 }
 
 const iconComponent = computed(() => {
-  // If icon is passed as component object, use it directly
-  if (typeof props.icon === 'object') {
-    return markRaw(props.icon)
-  }
-  // Otherwise look up by string name
-  return iconMap[props.icon] || FileTextIcon
+	// If icon is passed as component object, use it directly
+	if (typeof props.icon === "object") {
+		return markRaw(props.icon)
+	}
+	// Otherwise look up by string name
+	return iconMap[props.icon] || FileTextIcon
 })
 
 const colorMap = {
-  green: { bg: 'bg-green-100', icon: 'text-green-600' },
-  blue: { bg: 'bg-blue-100', icon: 'text-blue-600' },
-  purple: { bg: 'bg-purple-100', icon: 'text-purple-600' },
-  amber: { bg: 'bg-amber-100', icon: 'text-amber-600' },
-  red: { bg: 'bg-red-100', icon: 'text-red-600' },
-  yellow: { bg: 'bg-yellow-100', icon: 'text-yellow-600' },
-  orange: { bg: 'bg-orange-100', icon: 'text-orange-600' },
-  gray: { bg: 'bg-gray-100', icon: 'text-gray-600' },
+	green: { bg: "bg-green-100", icon: "text-green-600" },
+	blue: { bg: "bg-blue-100", icon: "text-blue-600" },
+	purple: { bg: "bg-purple-100", icon: "text-purple-600" },
+	amber: { bg: "bg-amber-100", icon: "text-amber-600" },
+	red: { bg: "bg-red-100", icon: "text-red-600" },
+	yellow: { bg: "bg-yellow-100", icon: "text-yellow-600" },
+	orange: { bg: "bg-orange-100", icon: "text-orange-600" },
+	gray: { bg: "bg-gray-100", icon: "text-gray-600" },
 }
 
-const bgColorClass = computed(() => colorMap[props.color]?.bg || colorMap.blue.bg)
-const iconColorClass = computed(() => colorMap[props.color]?.icon || colorMap.blue.icon)
+const bgColorClass = computed(
+	() => colorMap[props.color]?.bg || colorMap.blue.bg,
+)
+const iconColorClass = computed(
+	() => colorMap[props.color]?.icon || colorMap.blue.icon,
+)
 </script>

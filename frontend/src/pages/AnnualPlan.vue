@@ -474,35 +474,35 @@
 </template>
 
 <script setup>
-import { Badge, Button, Dialog } from 'frappe-ui'
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { Badge, Button, Dialog } from "frappe-ui"
 import {
-  CalendarIcon,
-  DownloadIcon,
-  FileTextIcon,
-  BarChart3Icon,
-  RefreshCwIcon,
-  PlusIcon,
-  ArrowUpDownIcon,
-  EyeIcon,
-  EditIcon,
-  CopyIcon,
-  TrashIcon,
-  SearchIcon,
-  LayersIcon,
-  ClipboardListIcon,
-  BuildingIcon,
-  ShieldCheckIcon,
-} from 'lucide-vue-next'
+	ArrowUpDownIcon,
+	BarChart3Icon,
+	BuildingIcon,
+	CalendarIcon,
+	ClipboardListIcon,
+	CopyIcon,
+	DownloadIcon,
+	EditIcon,
+	EyeIcon,
+	FileTextIcon,
+	LayersIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	ShieldCheckIcon,
+	TrashIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
+import AnnualPlanForm from "@/components/annualplan/AnnualPlanForm.vue"
+import PlanFilters from "@/components/annualplan/PlanFilters.vue"
 // Import components
-import PlanStats from '@/components/annualplan/PlanStats.vue'
-import PlanFilters from '@/components/annualplan/PlanFilters.vue'
-import AnnualPlanForm from '@/components/annualplan/AnnualPlanForm.vue'
+import PlanStats from "@/components/annualplan/PlanStats.vue"
 
 // Store
-import { useAuditStore } from '@/stores/audit'
+import { useAuditStore } from "@/stores/audit"
 
 const router = useRouter()
 const auditStore = useAuditStore()
@@ -516,327 +516,362 @@ const showBulkModal = ref(false)
 const showCapacityModal = ref(false)
 const showStatsDetails = ref(true)
 const selectedPlan = ref(null)
-const formMode = ref('create')
+const formMode = ref("create")
 
 // Filter state
-const searchQuery = ref('')
-const statusFilter = ref('')
-const yearFilter = ref('')
-const periodFilter = ref('')
-const viewMode = ref('table')
+const searchQuery = ref("")
+const statusFilter = ref("")
+const yearFilter = ref("")
+const periodFilter = ref("")
+const viewMode = ref("table")
 const selectedPlans = ref([])
-const sortField = ref('plan_year')
-const sortDirection = ref('desc')
+const sortField = ref("plan_year")
+const sortDirection = ref("desc")
 
 // Computed
 const annualPlans = computed(() => auditStore.annualPlans || [])
 
 const planStats = computed(() => {
-  const plans = annualPlans.value
-  const active = plans.filter(p => p.status === 'Active').length
-  const draft = plans.filter(p => p.status === 'Draft').length
-  const approved = plans.filter(p => p.status === 'Approved').length
-  const completed = plans.filter(p => p.status === 'Completed').length
-  
-  const plannedAudits = plans.reduce((sum, p) => sum + (p.planned_audits?.length || 0), 0)
-  const totalDays = plans.reduce((sum, p) => sum + (p.total_planned_days || 0), 0)
-  
-  const activePlans = plans.filter(p => ['Active', 'Approved'].includes(p.status))
-  const avgUtilization = activePlans.length > 0
-    ? Math.round(activePlans.reduce((sum, p) => sum + (p.utilization_percentage || 0), 0) / activePlans.length)
-    : 0
+	const plans = annualPlans.value
+	const active = plans.filter((p) => p.status === "Active").length
+	const draft = plans.filter((p) => p.status === "Draft").length
+	const approved = plans.filter((p) => p.status === "Approved").length
+	const completed = plans.filter((p) => p.status === "Completed").length
 
-  // Count upcoming audits (next 30 days)
-  const today = new Date()
-  const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
-  let upcoming = 0
-  plans.forEach(plan => {
-    (plan.planned_audits || []).forEach(audit => {
-      if (audit.planned_start_date) {
-        const startDate = new Date(audit.planned_start_date)
-        if (startDate >= today && startDate <= thirtyDaysLater) {
-          upcoming++
-        }
-      }
-    })
-  })
+	const plannedAudits = plans.reduce(
+		(sum, p) => sum + (p.planned_audits?.length || 0),
+		0,
+	)
+	const totalDays = plans.reduce(
+		(sum, p) => sum + (p.total_planned_days || 0),
+		0,
+	)
 
-  return {
-    total: plans.length,
-    active,
-    draft,
-    approved,
-    completed,
-    plannedAudits,
-    avgUtilization,
-    upcoming,
-    totalDays,
-    byQuarter: { q1: 0, q2: 0, q3: 0, q4: 0 },
-  }
+	const activePlans = plans.filter((p) =>
+		["Active", "Approved"].includes(p.status),
+	)
+	const avgUtilization =
+		activePlans.length > 0
+			? Math.round(
+					activePlans.reduce(
+						(sum, p) => sum + (p.utilization_percentage || 0),
+						0,
+					) / activePlans.length,
+				)
+			: 0
+
+	// Count upcoming audits (next 30 days)
+	const today = new Date()
+	const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+	let upcoming = 0
+	plans.forEach((plan) => {
+		;(plan.planned_audits || []).forEach((audit) => {
+			if (audit.planned_start_date) {
+				const startDate = new Date(audit.planned_start_date)
+				if (startDate >= today && startDate <= thirtyDaysLater) {
+					upcoming++
+				}
+			}
+		})
+	})
+
+	return {
+		total: plans.length,
+		active,
+		draft,
+		approved,
+		completed,
+		plannedAudits,
+		avgUtilization,
+		upcoming,
+		totalDays,
+		byQuarter: { q1: 0, q2: 0, q3: 0, q4: 0 },
+	}
 })
 
 const filteredPlans = computed(() => {
-  let filtered = [...annualPlans.value]
+	let filtered = [...annualPlans.value]
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(plan =>
-      plan.plan_id?.toLowerCase().includes(query) ||
-      plan.status?.toLowerCase().includes(query) ||
-      plan.plan_objectives?.toLowerCase().includes(query)
-    )
-  }
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase()
+		filtered = filtered.filter(
+			(plan) =>
+				plan.plan_id?.toLowerCase().includes(query) ||
+				plan.status?.toLowerCase().includes(query) ||
+				plan.plan_objectives?.toLowerCase().includes(query),
+		)
+	}
 
-  if (statusFilter.value) {
-    filtered = filtered.filter(plan => plan.status === statusFilter.value)
-  }
+	if (statusFilter.value) {
+		filtered = filtered.filter((plan) => plan.status === statusFilter.value)
+	}
 
-  if (yearFilter.value) {
-    filtered = filtered.filter(plan => plan.plan_year?.toString() === yearFilter.value.toString())
-  }
+	if (yearFilter.value) {
+		filtered = filtered.filter(
+			(plan) => plan.plan_year?.toString() === yearFilter.value.toString(),
+		)
+	}
 
-  if (periodFilter.value) {
-    filtered = filtered.filter(plan => plan.plan_period === periodFilter.value)
-  }
+	if (periodFilter.value) {
+		filtered = filtered.filter(
+			(plan) => plan.plan_period === periodFilter.value,
+		)
+	}
 
-  filtered.sort((a, b) => {
-    const aVal = a[sortField.value] || ''
-    const bVal = b[sortField.value] || ''
-    if (sortDirection.value === 'asc') {
-      return aVal > bVal ? 1 : -1
-    }
-    return aVal < bVal ? 1 : -1
-  })
+	filtered.sort((a, b) => {
+		const aVal = a[sortField.value] || ""
+		const bVal = b[sortField.value] || ""
+		if (sortDirection.value === "asc") {
+			return aVal > bVal ? 1 : -1
+		}
+		return aVal < bVal ? 1 : -1
+	})
 
-  return filtered
+	return filtered
 })
 
 // Capacity data
 const capacityData = computed(() => {
-  return [
-    { name: 'Financial Audits', utilization: 78 },
-    { name: 'Operational Audits', utilization: 65 },
-    { name: 'Compliance Audits', utilization: 82 },
-    { name: 'IT Audits', utilization: 45 },
-    { name: 'Special Reviews', utilization: 30 },
-  ]
+	return [
+		{ name: "Financial Audits", utilization: 78 },
+		{ name: "Operational Audits", utilization: 65 },
+		{ name: "Compliance Audits", utilization: 82 },
+		{ name: "IT Audits", utilization: 45 },
+		{ name: "Special Reviews", utilization: 30 },
+	]
 })
 
 const totalCapacity = computed(() => {
-  return annualPlans.value.reduce((sum, p) => sum + (p.total_available_days || 0), 0) || 1000
+	return (
+		annualPlans.value.reduce(
+			(sum, p) => sum + (p.total_available_days || 0),
+			0,
+		) || 1000
+	)
 })
 
 const allocatedCapacity = computed(() => {
-  return annualPlans.value.reduce((sum, p) => sum + (p.total_planned_days || 0), 0)
+	return annualPlans.value.reduce(
+		(sum, p) => sum + (p.total_planned_days || 0),
+		0,
+	)
 })
 
 // Plan templates
 const planTemplates = [
-  {
-    id: 'standard',
-    name: 'Standard Annual Plan',
-    description: 'Comprehensive annual audit plan template',
-    icon: CalendarIcon,
-  },
-  {
-    id: 'financial',
-    name: 'Financial Focus',
-    description: 'Emphasis on financial audits and controls',
-    icon: ClipboardListIcon,
-  },
-  {
-    id: 'compliance',
-    name: 'Compliance-Driven',
-    description: 'Focus on regulatory compliance audits',
-    icon: ShieldCheckIcon,
-  },
-  {
-    id: 'operational',
-    name: 'Operational Excellence',
-    description: 'Emphasis on operational efficiency audits',
-    icon: BuildingIcon,
-  },
+	{
+		id: "standard",
+		name: "Standard Annual Plan",
+		description: "Comprehensive annual audit plan template",
+		icon: CalendarIcon,
+	},
+	{
+		id: "financial",
+		name: "Financial Focus",
+		description: "Emphasis on financial audits and controls",
+		icon: ClipboardListIcon,
+	},
+	{
+		id: "compliance",
+		name: "Compliance-Driven",
+		description: "Focus on regulatory compliance audits",
+		icon: ShieldCheckIcon,
+	},
+	{
+		id: "operational",
+		name: "Operational Excellence",
+		description: "Emphasis on operational efficiency audits",
+		icon: BuildingIcon,
+	},
 ]
 
 // Methods
 const refreshData = async () => {
-  loading.value = true
-  try {
-    await Promise.all([
-      auditStore.fetchAnnualPlans(),
-      auditStore.fetchAuditUniverse(),
-    ])
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		await Promise.all([
+			auditStore.fetchAnnualPlans(),
+			auditStore.fetchAuditUniverse(),
+		])
+	} finally {
+		loading.value = false
+	}
 }
 
 const openCreateForm = () => {
-  selectedPlan.value = null
-  formMode.value = 'create'
-  showFormModal.value = true
+	selectedPlan.value = null
+	formMode.value = "create"
+	showFormModal.value = true
 }
 
 const openEditForm = async (plan) => {
-  selectedPlan.value = plan
-  formMode.value = 'edit'
-  showFormModal.value = true
+	selectedPlan.value = plan
+	formMode.value = "edit"
+	showFormModal.value = true
 }
 
 const viewPlan = (plan) => {
-  router.push(`/audit-planning/annual-plan/${plan.name}`)
+	router.push(`/audit-planning/annual-plan/${plan.name}`)
 }
 
 const duplicatePlan = async (plan) => {
-  try {
-    const planDetails = await auditStore.fetchAnnualPlanDetails(plan.name)
-    if (planDetails) {
-      selectedPlan.value = {
-        ...planDetails,
-        plan_id: `${planDetails.plan_id}_copy`,
-        status: 'Draft',
-        name: null,
-      }
-      formMode.value = 'create'
-      showFormModal.value = true
-    }
-  } catch (error) {
-    console.error('Error duplicating plan:', error)
-  }
+	try {
+		const planDetails = await auditStore.fetchAnnualPlanDetails(plan.name)
+		if (planDetails) {
+			selectedPlan.value = {
+				...planDetails,
+				plan_id: `${planDetails.plan_id}_copy`,
+				status: "Draft",
+				name: null,
+			}
+			formMode.value = "create"
+			showFormModal.value = true
+		}
+	} catch (error) {
+		console.error("Error duplicating plan:", error)
+	}
 }
 
 const deletePlan = async (plan) => {
-  if (confirm(`Are you sure you want to delete ${plan.plan_id}?`)) {
-    try {
-      await auditStore.deleteAnnualPlan(plan.name)
-      await refreshData()
-    } catch (error) {
-      console.error('Error deleting plan:', error)
-    }
-  }
+	if (confirm(`Are you sure you want to delete ${plan.plan_id}?`)) {
+		try {
+			await auditStore.deleteAnnualPlan(plan.name)
+			await refreshData()
+		} catch (error) {
+			console.error("Error deleting plan:", error)
+		}
+	}
 }
 
 const handleFormSaved = async () => {
-  showFormModal.value = false
-  selectedPlan.value = null
-  await refreshData()
+	showFormModal.value = false
+	selectedPlan.value = null
+	await refreshData()
 }
 
 const handleFormClose = () => {
-  showFormModal.value = false
-  selectedPlan.value = null
+	showFormModal.value = false
+	selectedPlan.value = null
 }
 
 const applyTemplate = (template) => {
-  selectedPlan.value = { template: template.id }
-  formMode.value = 'create'
-  showTemplateModal.value = false
-  showFormModal.value = true
+	selectedPlan.value = { template: template.id }
+	formMode.value = "create"
+	showTemplateModal.value = false
+	showFormModal.value = true
 }
 
 // Utility methods
 const getStatusVariant = (status) => {
-  const variants = {
-    'Draft': 'subtle',
-    'Pending Approval': 'warning',
-    'Approved': 'success',
-    'Active': 'info',
-    'Completed': 'success',
-    'Cancelled': 'subtle',
-  }
-  return variants[status] || 'subtle'
+	const variants = {
+		Draft: "subtle",
+		"Pending Approval": "warning",
+		Approved: "success",
+		Active: "info",
+		Completed: "success",
+		Cancelled: "subtle",
+	}
+	return variants[status] || "subtle"
 }
 
 const getPlanProgress = (plan) => {
-  return Math.min(plan.utilization_percentage || 0, 100)
+	return Math.min(plan.utilization_percentage || 0, 100)
 }
 
 const getUtilizationColor = (utilization) => {
-  if (utilization >= 90) return 'bg-red-500'
-  if (utilization >= 75) return 'bg-amber-500'
-  if (utilization >= 50) return 'bg-green-500'
-  return 'bg-blue-500'
+	if (utilization >= 90) return "bg-red-500"
+	if (utilization >= 75) return "bg-amber-500"
+	if (utilization >= 50) return "bg-green-500"
+	return "bg-blue-500"
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+	if (!dateString) return ""
+	return new Date(dateString).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 // Selection methods
 const togglePlanSelection = (planName) => {
-  const index = selectedPlans.value.indexOf(planName)
-  if (index > -1) {
-    selectedPlans.value.splice(index, 1)
-  } else {
-    selectedPlans.value.push(planName)
-  }
+	const index = selectedPlans.value.indexOf(planName)
+	if (index > -1) {
+		selectedPlans.value.splice(index, 1)
+	} else {
+		selectedPlans.value.push(planName)
+	}
 }
 
 const selectAllPlans = () => {
-  if (selectedPlans.value.length === filteredPlans.value.length) {
-    selectedPlans.value = []
-  } else {
-    selectedPlans.value = filteredPlans.value.map(plan => plan.name)
-  }
+	if (selectedPlans.value.length === filteredPlans.value.length) {
+		selectedPlans.value = []
+	} else {
+		selectedPlans.value = filteredPlans.value.map((plan) => plan.name)
+	}
 }
 
 const sortBy = (field) => {
-  if (sortField.value === field) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortField.value = field
-    sortDirection.value = 'asc'
-  }
+	if (sortField.value === field) {
+		sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc"
+	} else {
+		sortField.value = field
+		sortDirection.value = "asc"
+	}
 }
 
 const clearFilters = () => {
-  searchQuery.value = ''
-  statusFilter.value = ''
-  yearFilter.value = ''
-  periodFilter.value = ''
-  selectedPlans.value = []
+	searchQuery.value = ""
+	statusFilter.value = ""
+	yearFilter.value = ""
+	periodFilter.value = ""
+	selectedPlans.value = []
 }
 
 // Export & Bulk actions
 const exportPlans = async () => {
-  exporting.value = true
-  try {
-    console.log('Exporting plans...', selectedPlans.value.length || filteredPlans.value.length, 'plans')
-  } finally {
-    exporting.value = false
-  }
+	exporting.value = true
+	try {
+		console.log(
+			"Exporting plans...",
+			selectedPlans.value.length || filteredPlans.value.length,
+			"plans",
+		)
+	} finally {
+		exporting.value = false
+	}
 }
 
 const bulkUpdateStatus = () => {
-  console.log('Bulk update status for:', selectedPlans.value)
-  showBulkModal.value = false
+	console.log("Bulk update status for:", selectedPlans.value)
+	showBulkModal.value = false
 }
 
 const bulkExport = () => {
-  console.log('Bulk export for:', selectedPlans.value)
-  showBulkModal.value = false
+	console.log("Bulk export for:", selectedPlans.value)
+	showBulkModal.value = false
 }
 
 const bulkDuplicate = () => {
-  console.log('Bulk duplicate for:', selectedPlans.value)
-  showBulkModal.value = false
+	console.log("Bulk duplicate for:", selectedPlans.value)
+	showBulkModal.value = false
 }
 
 const bulkDelete = () => {
-  if (confirm(`Are you sure you want to delete ${selectedPlans.value.length} plan(s)?`)) {
-    console.log('Bulk delete for:', selectedPlans.value)
-    showBulkModal.value = false
-    selectedPlans.value = []
-  }
+	if (
+		confirm(
+			`Are you sure you want to delete ${selectedPlans.value.length} plan(s)?`,
+		)
+	) {
+		console.log("Bulk delete for:", selectedPlans.value)
+		showBulkModal.value = false
+		selectedPlans.value = []
+	}
 }
 
 // Lifecycle
 onMounted(async () => {
-  await refreshData()
+	await refreshData()
 })
 </script>

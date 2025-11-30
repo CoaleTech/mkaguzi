@@ -113,8 +113,8 @@
 <script setup>
 import { DataTable } from "@/components/Common"
 import AuditFindingForm from "@/components/findings/AuditFindingForm.vue"
-import FindingsStats from "@/components/findings/FindingsStats.vue"
 import FindingsFilters from "@/components/findings/FindingsFilters.vue"
+import FindingsStats from "@/components/findings/FindingsStats.vue"
 import { useAuditStore } from "@/stores/audit"
 import { Badge, Button } from "frappe-ui"
 import { createResource } from "frappe-ui"
@@ -126,7 +126,7 @@ import {
 	PlusIcon,
 	TrashIcon,
 } from "lucide-vue-next"
-import { computed, onMounted, ref, reactive, watch } from "vue"
+import { computed, onMounted, reactive, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
@@ -137,15 +137,15 @@ const loading = ref(false)
 const showFormDialog = ref(false)
 const selectedFinding = ref(null)
 const filters = reactive({
-	search: '',
-	status: '',
-	category: '',
-	riskRating: '',
-	engagement: '',
-	dateFrom: '',
-	dateTo: '',
-	responsiblePerson: '',
-	followUpRequired: '',
+	search: "",
+	status: "",
+	category: "",
+	riskRating: "",
+	engagement: "",
+	dateFrom: "",
+	dateTo: "",
+	responsiblePerson: "",
+	followUpRequired: "",
 	overdueOnly: false,
 	repeatFindingsOnly: false,
 	includeInReport: false,
@@ -161,49 +161,51 @@ const findings = computed(() => auditStore.findings)
 // Filtered findings based on active filters
 const filteredFindings = computed(() => {
 	let result = [...findings.value]
-	
+
 	// Search filter
 	if (filters.search) {
 		const search = filters.search.toLowerCase()
-		result = result.filter(f =>
-			f.finding_id?.toLowerCase().includes(search) ||
-			f.finding_title?.toLowerCase().includes(search) ||
-			f.condition?.toLowerCase().includes(search)
+		result = result.filter(
+			(f) =>
+				f.finding_id?.toLowerCase().includes(search) ||
+				f.finding_title?.toLowerCase().includes(search) ||
+				f.condition?.toLowerCase().includes(search),
 		)
 	}
-	
+
 	// Status filter
 	if (filters.status) {
-		result = result.filter(f => f.finding_status === filters.status)
+		result = result.filter((f) => f.finding_status === filters.status)
 	}
-	
+
 	// Category filter
 	if (filters.category) {
-		result = result.filter(f => f.finding_category === filters.category)
+		result = result.filter((f) => f.finding_category === filters.category)
 	}
-	
+
 	// Risk rating filter
 	if (filters.riskRating) {
-		result = result.filter(f => f.risk_rating === filters.riskRating)
+		result = result.filter((f) => f.risk_rating === filters.riskRating)
 	}
-	
+
 	// Engagement filter
 	if (filters.engagement) {
-		result = result.filter(f => f.engagement_reference === filters.engagement)
+		result = result.filter((f) => f.engagement_reference === filters.engagement)
 	}
-	
+
 	// Overdue filter
 	if (filters.overdueOnly) {
-		result = result.filter(f =>
-			isOverdue(f.target_completion_date) && f.finding_status !== 'Closed'
+		result = result.filter(
+			(f) =>
+				isOverdue(f.target_completion_date) && f.finding_status !== "Closed",
 		)
 	}
-	
+
 	// Repeat findings filter
 	if (filters.repeatFindingsOnly) {
-		result = result.filter(f => f.repeat_finding)
+		result = result.filter((f) => f.repeat_finding)
 	}
-	
+
 	return result
 })
 
@@ -212,33 +214,35 @@ const findingsStats = computed(() => {
 	const all = findings.value
 	const today = new Date()
 	const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-	
-	const open = all.filter(f => f.finding_status === 'Open')
-	const inProgress = all.filter(f => f.finding_status === 'Action in Progress')
-	const pendingVerification = all.filter(f => f.finding_status === 'Pending Verification')
-	const closed = all.filter(f => f.finding_status === 'Closed')
-	
+
+	const open = all.filter((f) => f.finding_status === "Open")
+	const inProgress = all.filter(
+		(f) => f.finding_status === "Action in Progress",
+	)
+	const pendingVerification = all.filter(
+		(f) => f.finding_status === "Pending Verification",
+	)
+	const closed = all.filter((f) => f.finding_status === "Closed")
+
 	// Overdue calculation
-	const overdue = all.filter(f => 
-		f.finding_status !== 'Closed' && isOverdue(f.target_completion_date)
+	const overdue = all.filter(
+		(f) => f.finding_status !== "Closed" && isOverdue(f.target_completion_date),
 	)
-	
+
 	// This month
-	const createdThisMonth = all.filter(f => 
-		new Date(f.creation) >= thisMonth
-	)
-	
+	const createdThisMonth = all.filter((f) => new Date(f.creation) >= thisMonth)
+
 	// By severity
 	const bySeverity = {
-		critical: open.filter(f => f.risk_rating === 'Critical').length,
-		high: open.filter(f => f.risk_rating === 'High').length,
-		medium: open.filter(f => f.risk_rating === 'Medium').length,
-		low: open.filter(f => f.risk_rating === 'Low').length,
+		critical: open.filter((f) => f.risk_rating === "Critical").length,
+		high: open.filter((f) => f.risk_rating === "High").length,
+		medium: open.filter((f) => f.risk_rating === "Medium").length,
+		low: open.filter((f) => f.risk_rating === "Low").length,
 	}
-	
+
 	// Aging calculation for open findings
-	const aging = calculateAging(all.filter(f => f.finding_status !== 'Closed'))
-	
+	const aging = calculateAging(all.filter((f) => f.finding_status !== "Closed"))
+
 	return {
 		total: all.length,
 		thisMonth: createdThisMonth.length,
@@ -247,7 +251,8 @@ const findingsStats = computed(() => {
 		inProgress: inProgress.length,
 		pendingVerification: pendingVerification.length,
 		closed: closed.length,
-		closureRate: all.length > 0 ? Math.round((closed.length / all.length) * 100) : 0,
+		closureRate:
+			all.length > 0 ? Math.round((closed.length / all.length) * 100) : 0,
 		bySeverity,
 		aging,
 	}
@@ -283,17 +288,17 @@ const columns = [
 const calculateAging = (openFindings) => {
 	const today = new Date()
 	const aging = { days0to30: 0, days31to60: 0, days61to90: 0, days90plus: 0 }
-	
-	openFindings.forEach(f => {
+
+	openFindings.forEach((f) => {
 		const created = new Date(f.creation)
 		const days = Math.floor((today - created) / (1000 * 60 * 60 * 24))
-		
+
 		if (days <= 30) aging.days0to30++
 		else if (days <= 60) aging.days31to60++
 		else if (days <= 90) aging.days61to90++
 		else aging.days90plus++
 	})
-	
+
 	return aging
 }
 
@@ -303,11 +308,11 @@ const isOverdue = (dateStr) => {
 }
 
 const formatDate = (dateStr) => {
-	if (!dateStr) return '-'
-	return new Date(dateStr).toLocaleDateString('en-US', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric'
+	if (!dateStr) return "-"
+	return new Date(dateStr).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
 	})
 }
 
@@ -342,7 +347,7 @@ const fetchFindings = async () => {
 				order_by: "creation desc",
 			},
 		}).fetch()
-		
+
 		auditStore.setFindings(response || [])
 	} catch (error) {
 		console.error("Error loading findings:", error)
@@ -363,14 +368,14 @@ const fetchOptions = async () => {
 				limit_page_length: 500,
 			},
 		}).fetch()
-		engagementOptions.value = (engagements || []).map(e => ({
+		engagementOptions.value = (engagements || []).map((e) => ({
 			label: e.engagement_title || e.name,
-			value: e.name
+			value: e.name,
 		}))
 	} catch (error) {
 		console.error("Error loading engagements:", error)
 	}
-	
+
 	// Fetch user options
 	try {
 		const users = await createResource({
@@ -382,9 +387,9 @@ const fetchOptions = async () => {
 				limit_page_length: 500,
 			},
 		}).fetch()
-		userOptions.value = (users || []).map(u => ({
+		userOptions.value = (users || []).map((u) => ({
 			label: u.full_name || u.name,
-			value: u.name
+			value: u.name,
 		}))
 	} catch (error) {
 		console.error("Error loading users:", error)
@@ -438,7 +443,7 @@ const deleteFinding = (finding) => {
 
 const exportFindings = () => {
 	// Export logic will be implemented
-	console.log('Exporting findings...')
+	console.log("Exporting findings...")
 }
 
 const handleFindingSaved = async (data) => {

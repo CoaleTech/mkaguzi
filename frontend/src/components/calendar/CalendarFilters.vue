@@ -104,84 +104,88 @@
 
 <script setup>
 import { Button, Select } from "frappe-ui"
-import { ref, watch } from "vue"
 import {
-  BarChart3Icon,
-  CalendarIcon,
-  LayersIcon,
-  SearchIcon,
-  TableIcon,
+	BarChart3Icon,
+	CalendarIcon,
+	LayersIcon,
+	SearchIcon,
+	TableIcon,
 } from "lucide-vue-next"
+import { ref, watch } from "vue"
 
 // Props
 const props = defineProps({
-  filters: {
-    type: Object,
-    required: true,
-    validator: (filters) => {
-      return (
-        typeof filters === 'object' &&
-        typeof filters.searchQuery === 'string' &&
-        typeof filters.statusFilter === 'string' &&
-        typeof filters.typeFilter === 'string' &&
-        typeof filters.universeFilter === 'string'
-      )
-    }
-  },
-  statusOptions: {
-    type: Array,
-    required: true
-  },
-  auditTypeOptions: {
-    type: Array,
-    required: true
-  },
-  universeOptions: {
-    type: Array,
-    required: true
-  },
-  selectedCount: {
-    type: Number,
-    default: 0
-  },
-  filteredCount: {
-    type: Number,
-    required: true
-  },
-  totalCount: {
-    type: Number,
-    required: true
-  },
-  viewMode: {
-    type: String,
-    required: true,
-    validator: (value) => ['calendar', 'list'].includes(value)
-  }
+	filters: {
+		type: Object,
+		required: true,
+		validator: (filters) => {
+			return (
+				typeof filters === "object" &&
+				typeof filters.searchQuery === "string" &&
+				typeof filters.statusFilter === "string" &&
+				typeof filters.typeFilter === "string" &&
+				typeof filters.universeFilter === "string"
+			)
+		},
+	},
+	statusOptions: {
+		type: Array,
+		required: true,
+	},
+	auditTypeOptions: {
+		type: Array,
+		required: true,
+	},
+	universeOptions: {
+		type: Array,
+		required: true,
+	},
+	selectedCount: {
+		type: Number,
+		default: 0,
+	},
+	filteredCount: {
+		type: Number,
+		required: true,
+	},
+	totalCount: {
+		type: Number,
+		required: true,
+	},
+	viewMode: {
+		type: String,
+		required: true,
+		validator: (value) => ["calendar", "list"].includes(value),
+	},
 })
 
 // Emits
 const emit = defineEmits([
-  'update:filters',
-  'bulk-actions',
-  'capacity-planning',
-  'toggle-view'
+	"update:filters",
+	"bulk-actions",
+	"capacity-planning",
+	"toggle-view",
 ])
 
 // Reactive local filters
 const localFilters = ref({
-  searchQuery: '',
-  statusFilter: '',
-  typeFilter: '',
-  universeFilter: ''
+	searchQuery: "",
+	statusFilter: "",
+	typeFilter: "",
+	universeFilter: "",
 })
 
 // Watch for prop changes to sync local filters
-watch(() => props.filters, (newFilters) => {
-  localFilters.value = { ...newFilters }
-}, { immediate: true, deep: true })
+watch(
+	() => props.filters,
+	(newFilters) => {
+		localFilters.value = { ...newFilters }
+	},
+	{ immediate: true, deep: true },
+)
 
 // Methods
 const handleFilterChange = () => {
-  emit('update:filters', { ...localFilters.value })
+	emit("update:filters", { ...localFilters.value })
 }
 </script>

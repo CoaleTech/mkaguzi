@@ -199,11 +199,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { RefreshCw, Package, Target, User, AlertTriangle, CheckCircle } from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button } from "frappe-ui"
+import {
+	AlertTriangle,
+	CheckCircle,
+	Package,
+	RefreshCw,
+	Target,
+	User,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
@@ -211,10 +218,10 @@ const store = useInventoryAuditStore()
 const loading = ref(false)
 const showSlaBreached = ref(false)
 const filters = ref({
-  status: '',
-  priority: '',
-  root_cause: '',
-  investigator: ''
+	status: "",
+	priority: "",
+	root_cause: "",
+	investigator: "",
 })
 
 const cases = computed(() => store.varianceCases)
@@ -224,77 +231,92 @@ const pageSize = computed(() => store.varianceCasesPageSize)
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 const totalVarianceValue = computed(() => {
-  return cases.value.reduce((sum, c) => sum + Math.abs(c.variance_value || 0), 0)
+	return cases.value.reduce(
+		(sum, c) => sum + Math.abs(c.variance_value || 0),
+		0,
+	)
 })
 
 onMounted(async () => {
-  await loadCases()
+	await loadCases()
 })
 
 async function loadCases() {
-  loading.value = true
-  try {
-    const filterObj = { ...filters.value }
-    Object.keys(filterObj).forEach(key => {
-      if (!filterObj[key]) delete filterObj[key]
-    })
-    await store.loadVarianceCases(filterObj, currentPage.value, pageSize.value)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const filterObj = { ...filters.value }
+		Object.keys(filterObj).forEach((key) => {
+			if (!filterObj[key]) delete filterObj[key]
+		})
+		await store.loadVarianceCases(filterObj, currentPage.value, pageSize.value)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  filters.value = { status: '', priority: '', root_cause: '', investigator: '' }
-  showSlaBreached.value = false
-  await loadCases()
+	filters.value = { status: "", priority: "", root_cause: "", investigator: "" }
+	showSlaBreached.value = false
+	await loadCases()
 }
 
 let loadTimeout = null
 function debouncedLoad() {
-  clearTimeout(loadTimeout)
-  loadTimeout = setTimeout(() => loadCases(), 300)
+	clearTimeout(loadTimeout)
+	loadTimeout = setTimeout(() => loadCases(), 300)
 }
 
 async function changePage(page) {
-  await store.loadVarianceCases(filters.value, page, pageSize.value)
+	await store.loadVarianceCases(filters.value, page, pageSize.value)
 }
 
 function viewCase(name) {
-  router.push(`/inventory-audit/variance-cases/${name}`)
+	router.push(`/inventory-audit/variance-cases/${name}`)
 }
 
 function getStatusVariant(status) {
-  const variants = { 
-    'New': 'blue', 
-    'Under Investigation': 'yellow', 
-    'Resolution Proposed': 'orange',
-    'Resolved': 'green', 
-    'Closed': 'gray',
-    'No Variance': 'gray'
-  }
-  return variants[status] || 'gray'
+	const variants = {
+		New: "blue",
+		"Under Investigation": "yellow",
+		"Resolution Proposed": "orange",
+		Resolved: "green",
+		Closed: "gray",
+		"No Variance": "gray",
+	}
+	return variants[status] || "gray"
 }
 
 function getPriorityVariant(priority) {
-  const variants = { 'Critical': 'red', 'High': 'orange', 'Medium': 'yellow', 'Low': 'blue' }
-  return variants[priority] || 'gray'
+	const variants = {
+		Critical: "red",
+		High: "orange",
+		Medium: "yellow",
+		Low: "blue",
+	}
+	return variants[priority] || "gray"
 }
 
 function getSLAColor(vc) {
-  if (vc.is_sla_breached) return 'text-red-600'
-  if (vc.sla_days_remaining !== undefined && vc.sla_days_remaining <= 2) return 'text-orange-600'
-  return 'text-gray-900'
+	if (vc.is_sla_breached) return "text-red-600"
+	if (vc.sla_days_remaining !== undefined && vc.sla_days_remaining <= 2)
+		return "text-orange-600"
+	return "text-gray-900"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency', currency: 'KES', minimumFractionDigits: 0
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount || 0)
 }
 </script>

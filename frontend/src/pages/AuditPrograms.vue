@@ -419,409 +419,459 @@
 </template>
 
 <script setup>
-import { Badge, Button, Dialog } from 'frappe-ui'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { Badge, Button, Dialog } from "frappe-ui"
 import {
-  CheckCircle2Icon,
-  CopyIcon,
-  DownloadIcon,
-  EditIcon,
-  EyeIcon,
-  FileTextIcon,
-  LayersIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  TrashIcon,
-  XCircleIcon,
-  XIcon,
-} from 'lucide-vue-next'
+	CheckCircle2Icon,
+	CopyIcon,
+	DownloadIcon,
+	EditIcon,
+	EyeIcon,
+	FileTextIcon,
+	LayersIcon,
+	PlusIcon,
+	RefreshCwIcon,
+	SearchIcon,
+	TrashIcon,
+	XCircleIcon,
+	XIcon,
+} from "lucide-vue-next"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 
+import AuditProgramForm from "@/components/programs/AuditProgramForm.vue"
+import ProgramFilters from "@/components/programs/ProgramFilters.vue"
 // Import components
-import ProgramStats from '@/components/programs/ProgramStats.vue'
-import ProgramFilters from '@/components/programs/ProgramFilters.vue'
-import AuditProgramForm from '@/components/programs/AuditProgramForm.vue'
+import ProgramStats from "@/components/programs/ProgramStats.vue"
 
 // Store
-import { useAuditStore } from '@/stores/audit'
+import { useAuditStore } from "@/stores/audit"
 
 const auditStore = useAuditStore()
 
 // State
 const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
+const errorMessage = ref("")
+const successMessage = ref("")
 const showFormModal = ref(false)
 const showViewModal = ref(false)
 const showTemplateModal = ref(false)
 const showStatsDetails = ref(true)
 const selectedProgram = ref(null)
 const viewingProgram = ref(null)
-const formMode = ref('create')
+const formMode = ref("create")
 
 // Filter state
-const searchQuery = ref('')
-const filterType = ref('')
-const filterTemplate = ref('')
-const filterStatus = ref('')
-const viewMode = ref('table')
+const searchQuery = ref("")
+const filterType = ref("")
+const filterTemplate = ref("")
+const filterStatus = ref("")
+const viewMode = ref("table")
 const selectedPrograms = ref([])
 
 // Computed
 const auditPrograms = computed(() => auditStore.auditPrograms || [])
 
 const templatePrograms = computed(() => {
-  return auditPrograms.value.filter(p => p.is_template)
+	return auditPrograms.value.filter((p) => p.is_template)
 })
 
 const programStats = computed(() => {
-  const programs = auditPrograms.value
-  const templates = programs.filter(p => p.is_template).length
-  const active = programs.filter(p => !p.is_template && (p.completion_percent || 0) < 100).length
-  
-  const nonTemplates = programs.filter(p => !p.is_template)
-  const avgCompletion = nonTemplates.length > 0
-    ? Math.round(nonTemplates.reduce((sum, p) => sum + (p.completion_percent || 0), 0) / nonTemplates.length)
-    : 0
-  
-  const totalProcedures = programs.reduce((sum, p) => sum + (p.total_procedures || 0), 0)
-  const completedProcedures = programs.reduce((sum, p) => sum + (p.completed_procedures || 0), 0)
-  
-  // Count overdue
-  const now = new Date()
-  const overdue = programs.filter(p => {
-    if (p.is_template) return false
-    if (!p.modified) return false
-    const lastModified = new Date(p.modified)
-    const daysSinceModified = (now - lastModified) / (1000 * 60 * 60 * 24)
-    return daysSinceModified > 30 && (p.completion_percent || 0) < 100
-  }).length
+	const programs = auditPrograms.value
+	const templates = programs.filter((p) => p.is_template).length
+	const active = programs.filter(
+		(p) => !p.is_template && (p.completion_percent || 0) < 100,
+	).length
 
-  // By type
-  const byType = {}
-  programs.forEach(p => {
-    if (p.audit_type) {
-      byType[p.audit_type] = (byType[p.audit_type] || 0) + 1
-    }
-  })
+	const nonTemplates = programs.filter((p) => !p.is_template)
+	const avgCompletion =
+		nonTemplates.length > 0
+			? Math.round(
+					nonTemplates.reduce(
+						(sum, p) => sum + (p.completion_percent || 0),
+						0,
+					) / nonTemplates.length,
+				)
+			: 0
 
-  return {
-    total: programs.length,
-    templates,
-    active,
-    avgCompletion,
-    totalProcedures,
-    completedProcedures,
-    overdue,
-    byType,
-  }
+	const totalProcedures = programs.reduce(
+		(sum, p) => sum + (p.total_procedures || 0),
+		0,
+	)
+	const completedProcedures = programs.reduce(
+		(sum, p) => sum + (p.completed_procedures || 0),
+		0,
+	)
+
+	// Count overdue
+	const now = new Date()
+	const overdue = programs.filter((p) => {
+		if (p.is_template) return false
+		if (!p.modified) return false
+		const lastModified = new Date(p.modified)
+		const daysSinceModified = (now - lastModified) / (1000 * 60 * 60 * 24)
+		return daysSinceModified > 30 && (p.completion_percent || 0) < 100
+	}).length
+
+	// By type
+	const byType = {}
+	programs.forEach((p) => {
+		if (p.audit_type) {
+			byType[p.audit_type] = (byType[p.audit_type] || 0) + 1
+		}
+	})
+
+	return {
+		total: programs.length,
+		templates,
+		active,
+		avgCompletion,
+		totalProcedures,
+		completedProcedures,
+		overdue,
+		byType,
+	}
 })
 
 const filteredPrograms = computed(() => {
-  let filtered = [...auditPrograms.value]
+	let filtered = [...auditPrograms.value]
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(p =>
-      p.program_id?.toLowerCase().includes(query) ||
-      p.program_name?.toLowerCase().includes(query) ||
-      p.audit_type?.toLowerCase().includes(query)
-    )
-  }
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase()
+		filtered = filtered.filter(
+			(p) =>
+				p.program_id?.toLowerCase().includes(query) ||
+				p.program_name?.toLowerCase().includes(query) ||
+				p.audit_type?.toLowerCase().includes(query),
+		)
+	}
 
-  if (filterType.value) {
-    filtered = filtered.filter(p => p.audit_type === filterType.value)
-  }
+	if (filterType.value) {
+		filtered = filtered.filter((p) => p.audit_type === filterType.value)
+	}
 
-  if (filterTemplate.value === 'templates') {
-    filtered = filtered.filter(p => p.is_template)
-  } else if (filterTemplate.value === 'programs') {
-    filtered = filtered.filter(p => !p.is_template)
-  }
+	if (filterTemplate.value === "templates") {
+		filtered = filtered.filter((p) => p.is_template)
+	} else if (filterTemplate.value === "programs") {
+		filtered = filtered.filter((p) => !p.is_template)
+	}
 
-  if (filterStatus.value === 'not_started') {
-    filtered = filtered.filter(p => !p.is_template && (p.completion_percent || 0) === 0)
-  } else if (filterStatus.value === 'in_progress') {
-    filtered = filtered.filter(p => !p.is_template && (p.completion_percent || 0) > 0 && (p.completion_percent || 0) < 100)
-  } else if (filterStatus.value === 'completed') {
-    filtered = filtered.filter(p => !p.is_template && (p.completion_percent || 0) >= 100)
-  }
+	if (filterStatus.value === "not_started") {
+		filtered = filtered.filter(
+			(p) => !p.is_template && (p.completion_percent || 0) === 0,
+		)
+	} else if (filterStatus.value === "in_progress") {
+		filtered = filtered.filter(
+			(p) =>
+				!p.is_template &&
+				(p.completion_percent || 0) > 0 &&
+				(p.completion_percent || 0) < 100,
+		)
+	} else if (filterStatus.value === "completed") {
+		filtered = filtered.filter(
+			(p) => !p.is_template && (p.completion_percent || 0) >= 100,
+		)
+	}
 
-  return filtered
+	return filtered
 })
 
 // Methods
 const refreshData = async () => {
-  loading.value = true
-  errorMessage.value = ''
-  try {
-    await auditStore.fetchAuditPrograms()
-  } catch (error) {
-    console.error('Error refreshing data:', error)
-    errorMessage.value = 'Failed to refresh data. Please try again.'
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	errorMessage.value = ""
+	try {
+		await auditStore.fetchAuditPrograms()
+	} catch (error) {
+		console.error("Error refreshing data:", error)
+		errorMessage.value = "Failed to refresh data. Please try again."
+	} finally {
+		loading.value = false
+	}
 }
 
 const openCreateForm = () => {
-  selectedProgram.value = null
-  formMode.value = 'create'
-  showFormModal.value = true
+	selectedProgram.value = null
+	formMode.value = "create"
+	showFormModal.value = true
 }
 
 const openEditForm = async (program) => {
-  try {
-    const details = await auditStore.fetchAuditProgramDetails(program.name)
-    selectedProgram.value = details || program
-    formMode.value = 'edit'
-    showFormModal.value = true
-  } catch (error) {
-    console.error('Error fetching program details:', error)
-    selectedProgram.value = program
-    formMode.value = 'edit'
-    showFormModal.value = true
-  }
+	try {
+		const details = await auditStore.fetchAuditProgramDetails(program.name)
+		selectedProgram.value = details || program
+		formMode.value = "edit"
+		showFormModal.value = true
+	} catch (error) {
+		console.error("Error fetching program details:", error)
+		selectedProgram.value = program
+		formMode.value = "edit"
+		showFormModal.value = true
+	}
 }
 
 const viewProgram = async (program) => {
-  try {
-    const details = await auditStore.fetchAuditProgramDetails(program.name)
-    viewingProgram.value = details || program
-    showViewModal.value = true
-  } catch (error) {
-    console.error('Error fetching program details:', error)
-    viewingProgram.value = program
-    showViewModal.value = true
-  }
+	try {
+		const details = await auditStore.fetchAuditProgramDetails(program.name)
+		viewingProgram.value = details || program
+		showViewModal.value = true
+	} catch (error) {
+		console.error("Error fetching program details:", error)
+		viewingProgram.value = program
+		showViewModal.value = true
+	}
 }
 
 const duplicateProgram = async (program) => {
-  try {
-    const details = await auditStore.fetchAuditProgramDetails(program.name)
-    if (details) {
-      selectedProgram.value = {
-        ...details,
-        program_id: `${details.program_id}_copy`,
-        program_name: `${details.program_name} (Copy)`,
-        is_template: false,
-        name: null,
-      }
-      formMode.value = 'create'
-      showFormModal.value = true
-    }
-  } catch (error) {
-    console.error('Error duplicating program:', error)
-  }
+	try {
+		const details = await auditStore.fetchAuditProgramDetails(program.name)
+		if (details) {
+			selectedProgram.value = {
+				...details,
+				program_id: `${details.program_id}_copy`,
+				program_name: `${details.program_name} (Copy)`,
+				is_template: false,
+				name: null,
+			}
+			formMode.value = "create"
+			showFormModal.value = true
+		}
+	} catch (error) {
+		console.error("Error duplicating program:", error)
+	}
 }
 
 const deleteProgram = async (program) => {
-  if (!confirm(`Are you sure you want to delete "${program.program_name}"?`)) return
-  
-  try {
-    await auditStore.deleteAuditProgram(program.name)
-    successMessage.value = 'Program deleted successfully'
-    await refreshData()
-    setTimeout(() => { successMessage.value = '' }, 3000)
-  } catch (error) {
-    console.error('Error deleting program:', error)
-    errorMessage.value = 'Failed to delete program. Please try again.'
-  }
+	if (!confirm(`Are you sure you want to delete "${program.program_name}"?`))
+		return
+
+	try {
+		await auditStore.deleteAuditProgram(program.name)
+		successMessage.value = "Program deleted successfully"
+		await refreshData()
+		setTimeout(() => {
+			successMessage.value = ""
+		}, 3000)
+	} catch (error) {
+		console.error("Error deleting program:", error)
+		errorMessage.value = "Failed to delete program. Please try again."
+	}
 }
 
 const handleFormSaved = async () => {
-  showFormModal.value = false
-  selectedProgram.value = null
-  successMessage.value = formMode.value === 'edit' ? 'Program updated successfully' : 'Program created successfully'
-  await refreshData()
-  setTimeout(() => { successMessage.value = '' }, 3000)
+	showFormModal.value = false
+	selectedProgram.value = null
+	successMessage.value =
+		formMode.value === "edit"
+			? "Program updated successfully"
+			: "Program created successfully"
+	await refreshData()
+	setTimeout(() => {
+		successMessage.value = ""
+	}, 3000)
 }
 
 const handleFormClose = () => {
-  showFormModal.value = false
-  selectedProgram.value = null
+	showFormModal.value = false
+	selectedProgram.value = null
 }
 
 const createFromTemplate = () => {
-  showTemplateModal.value = true
+	showTemplateModal.value = true
 }
 
 const useTemplate = async (template) => {
-  try {
-    const details = await auditStore.fetchAuditProgramDetails(template.name)
-    if (details) {
-      selectedProgram.value = {
-        ...details,
-        program_id: '',
-        program_name: '',
-        is_template: false,
-        engagement_reference: '',
-        name: null,
-      }
-      formMode.value = 'create'
-      showTemplateModal.value = false
-      showFormModal.value = true
-    }
-  } catch (error) {
-    console.error('Error using template:', error)
-  }
+	try {
+		const details = await auditStore.fetchAuditProgramDetails(template.name)
+		if (details) {
+			selectedProgram.value = {
+				...details,
+				program_id: "",
+				program_name: "",
+				is_template: false,
+				engagement_reference: "",
+				name: null,
+			}
+			formMode.value = "create"
+			showTemplateModal.value = false
+			showFormModal.value = true
+		}
+	} catch (error) {
+		console.error("Error using template:", error)
+	}
 }
 
 // Utility methods
 const getTypeVariant = (type) => {
-  const variants = {
-    'Financial': 'subtle',
-    'Operational': 'subtle',
-    'Compliance': 'subtle',
-    'IT': 'subtle',
-    'Inventory': 'subtle',
-    'Cash': 'subtle',
-    'Sales': 'subtle',
-    'Procurement': 'subtle',
-  }
-  return variants[type] || 'subtle'
+	const variants = {
+		Financial: "subtle",
+		Operational: "subtle",
+		Compliance: "subtle",
+		IT: "subtle",
+		Inventory: "subtle",
+		Cash: "subtle",
+		Sales: "subtle",
+		Procurement: "subtle",
+	}
+	return variants[type] || "subtle"
 }
 
 const getProgressBarColor = (percentage) => {
-  if (percentage >= 100) return 'bg-green-500'
-  if (percentage >= 75) return 'bg-blue-500'
-  if (percentage >= 50) return 'bg-yellow-500'
-  if (percentage >= 25) return 'bg-orange-500'
-  return 'bg-red-500'
+	if (percentage >= 100) return "bg-green-500"
+	if (percentage >= 75) return "bg-blue-500"
+	if (percentage >= 50) return "bg-yellow-500"
+	if (percentage >= 25) return "bg-orange-500"
+	return "bg-red-500"
 }
 
 const getRiskVariant = (riskRating) => {
-  const variants = {
-    'Low': 'subtle',
-    'Medium': 'subtle',
-    'High': 'subtle',
-  }
-  return variants[riskRating] || 'subtle'
+	const variants = {
+		Low: "subtle",
+		Medium: "subtle",
+		High: "subtle",
+	}
+	return variants[riskRating] || "subtle"
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+	if (!dateString) return ""
+	return new Date(dateString).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 // Selection methods
 const toggleProgramSelection = (programId) => {
-  const index = selectedPrograms.value.indexOf(programId)
-  if (index > -1) {
-    selectedPrograms.value.splice(index, 1)
-  } else {
-    selectedPrograms.value.push(programId)
-  }
+	const index = selectedPrograms.value.indexOf(programId)
+	if (index > -1) {
+		selectedPrograms.value.splice(index, 1)
+	} else {
+		selectedPrograms.value.push(programId)
+	}
 }
 
 const toggleSelectAll = () => {
-  if (selectedPrograms.value.length === filteredPrograms.value.length) {
-    selectedPrograms.value = []
-  } else {
-    selectedPrograms.value = filteredPrograms.value.map(p => p.name)
-  }
+	if (selectedPrograms.value.length === filteredPrograms.value.length) {
+		selectedPrograms.value = []
+	} else {
+		selectedPrograms.value = filteredPrograms.value.map((p) => p.name)
+	}
 }
 
 const clearSelection = () => {
-  selectedPrograms.value = []
+	selectedPrograms.value = []
 }
 
 const clearFilters = () => {
-  searchQuery.value = ''
-  filterType.value = ''
-  filterTemplate.value = ''
-  filterStatus.value = ''
+	searchQuery.value = ""
+	filterType.value = ""
+	filterTemplate.value = ""
+	filterStatus.value = ""
 }
 
 // Bulk actions
 const bulkCreateTemplates = async () => {
-  if (selectedPrograms.value.length === 0) return
-  const count = selectedPrograms.value.length
-  if (!confirm(`Create templates for ${count} selected program${count > 1 ? 's' : ''}?`)) return
-  
-  // Implementation would create templates
-  successMessage.value = `Created templates for ${count} program${count > 1 ? 's' : ''}`
-  selectedPrograms.value = []
-  setTimeout(() => { successMessage.value = '' }, 3000)
+	if (selectedPrograms.value.length === 0) return
+	const count = selectedPrograms.value.length
+	if (
+		!confirm(
+			`Create templates for ${count} selected program${count > 1 ? "s" : ""}?`,
+		)
+	)
+		return
+
+	// Implementation would create templates
+	successMessage.value = `Created templates for ${count} program${count > 1 ? "s" : ""}`
+	selectedPrograms.value = []
+	setTimeout(() => {
+		successMessage.value = ""
+	}, 3000)
 }
 
 const bulkDeletePrograms = async () => {
-  if (selectedPrograms.value.length === 0) return
-  const count = selectedPrograms.value.length
-  if (!confirm(`Are you sure you want to delete ${count} program${count > 1 ? 's' : ''}?`)) return
-  
-  try {
-    for (const programId of selectedPrograms.value) {
-      await auditStore.deleteAuditProgram(programId)
-    }
-    selectedPrograms.value = []
-    successMessage.value = `Deleted ${count} program${count > 1 ? 's' : ''}`
-    await refreshData()
-    setTimeout(() => { successMessage.value = '' }, 3000)
-  } catch (error) {
-    console.error('Error deleting programs:', error)
-    errorMessage.value = 'Failed to delete some programs. Please try again.'
-  }
+	if (selectedPrograms.value.length === 0) return
+	const count = selectedPrograms.value.length
+	if (
+		!confirm(
+			`Are you sure you want to delete ${count} program${count > 1 ? "s" : ""}?`,
+		)
+	)
+		return
+
+	try {
+		for (const programId of selectedPrograms.value) {
+			await auditStore.deleteAuditProgram(programId)
+		}
+		selectedPrograms.value = []
+		successMessage.value = `Deleted ${count} program${count > 1 ? "s" : ""}`
+		await refreshData()
+		setTimeout(() => {
+			successMessage.value = ""
+		}, 3000)
+	} catch (error) {
+		console.error("Error deleting programs:", error)
+		errorMessage.value = "Failed to delete some programs. Please try again."
+	}
 }
 
 const exportPrograms = () => {
-  const data = filteredPrograms.value.map(p => ({
-    'Program ID': p.program_id,
-    'Program Name': p.program_name,
-    'Audit Type': p.audit_type,
-    'Is Template': p.is_template ? 'Yes' : 'No',
-    'Completion %': p.completion_percent || 0,
-    'Procedures': p.total_procedures || 0,
-    'Completed': p.completed_procedures || 0,
-    'Modified': formatDate(p.modified),
-  }))
+	const data = filteredPrograms.value.map((p) => ({
+		"Program ID": p.program_id,
+		"Program Name": p.program_name,
+		"Audit Type": p.audit_type,
+		"Is Template": p.is_template ? "Yes" : "No",
+		"Completion %": p.completion_percent || 0,
+		Procedures: p.total_procedures || 0,
+		Completed: p.completed_procedures || 0,
+		Modified: formatDate(p.modified),
+	}))
 
-  const csv = [
-    Object.keys(data[0] || {}).join(','),
-    ...data.map(row => Object.values(row).map(val => `"${val}"`).join(','))
-  ].join('\n')
+	const csv = [
+		Object.keys(data[0] || {}).join(","),
+		...data.map((row) =>
+			Object.values(row)
+				.map((val) => `"${val}"`)
+				.join(","),
+		),
+	].join("\n")
 
-  const blob = new Blob([csv], { type: 'text/csv' })
-  const url = window.URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `audit-programs-${new Date().toISOString().split('T')[0]}.csv`
-  a.click()
-  window.URL.revokeObjectURL(url)
+	const blob = new Blob([csv], { type: "text/csv" })
+	const url = window.URL.createObjectURL(blob)
+	const a = document.createElement("a")
+	a.href = url
+	a.download = `audit-programs-${new Date().toISOString().split("T")[0]}.csv`
+	a.click()
+	window.URL.revokeObjectURL(url)
 }
 
 // Keyboard shortcuts
 const handleKeydown = (event) => {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
-    event.preventDefault()
-    openCreateForm()
-  }
-  if (event.key === 'Escape') {
-    if (showFormModal.value) {
-      showFormModal.value = false
-      selectedProgram.value = null
-    } else if (showViewModal.value) {
-      showViewModal.value = false
-    }
-  }
+	if ((event.ctrlKey || event.metaKey) && event.key === "n") {
+		event.preventDefault()
+		openCreateForm()
+	}
+	if (event.key === "Escape") {
+		if (showFormModal.value) {
+			showFormModal.value = false
+			selectedProgram.value = null
+		} else if (showViewModal.value) {
+			showViewModal.value = false
+		}
+	}
 }
 
 // Watchers
 watch(filteredPrograms, () => {
-  selectedPrograms.value = []
+	selectedPrograms.value = []
 })
 
 // Lifecycle
 onMounted(async () => {
-  await refreshData()
-  document.addEventListener('keydown', handleKeydown)
+	await refreshData()
+	document.addEventListener("keydown", handleKeydown)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
+	document.removeEventListener("keydown", handleKeydown)
 })
 </script>

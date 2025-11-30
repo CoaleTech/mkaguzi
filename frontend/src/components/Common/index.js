@@ -1,5 +1,6 @@
 export { default as ApprovalWorkflow } from "./ApprovalWorkflow.vue"
 export { default as Breadcrumbs } from "./Breadcrumbs.vue"
+export { default as Button } from "./Button.vue"
 export { default as ChildTable } from "./ChildTable.vue"
 export { default as DataTable } from "./DataTable.vue"
 export { default as DynamicForm } from "./DynamicForm.vue"

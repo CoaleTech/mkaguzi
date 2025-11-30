@@ -230,3 +230,61 @@ def get_finding_summary(engagement=None):
 		summary["by_category"][category] = summary["by_category"].get(category, 0) + 1
 
 	return summary
+
+@frappe.whitelist()
+def get_open_findings():
+	"""Get open findings for chat room creation"""
+	try:
+		# Get open findings that can be associated with chat rooms
+		findings = frappe.get_all("Audit Finding",
+			filters={
+				"finding_status": ["in", ["Open", "Action in Progress", "Pending Verification"]],
+				"docstatus": ["!=", 2]  # Not cancelled
+			},
+			fields=[
+				"name",
+				"finding_id",
+				"finding_title",
+				"engagement_reference",
+				"finding_status",
+				"risk_rating",
+				"responsible_person",
+				"responsible_department",
+				"target_completion_date",
+				"overdue_days"
+			],
+			order_by="creation desc",
+			limit=100
+		)
+
+		# Format findings for the frontend
+		formatted_findings = []
+		for finding in findings:
+			formatted_findings.append({
+				"name": finding.name,
+				"finding_id": finding.finding_id,
+				"title": finding.finding_title,
+				"engagement": finding.engagement_reference,
+				"status": finding.finding_status,
+				"risk_rating": finding.risk_rating,
+				"responsible_person": finding.responsible_person,
+				"responsible_department": finding.responsible_department,
+				"target_completion_date": finding.target_completion_date,
+				"overdue_days": finding.overdue_days or 0,
+				"display_name": f"{finding.finding_id}: {finding.finding_title}",
+				"is_overdue": (finding.overdue_days or 0) > 0
+			})
+
+		return {
+			"success": True,
+			"findings": formatted_findings,
+			"total_count": len(formatted_findings)
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Failed to get open findings: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e),
+			"findings": []
+		}

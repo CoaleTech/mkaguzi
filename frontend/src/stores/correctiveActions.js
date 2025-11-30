@@ -27,7 +27,7 @@ export const useCorrectiveActionsStore = defineStore("correctiveActions", {
 					(a) =>
 						a.plan_id?.toLowerCase().includes(search) ||
 						a.title?.toLowerCase().includes(search) ||
-						a.audit_finding?.toLowerCase().includes(search)
+						a.audit_finding?.toLowerCase().includes(search),
 				)
 			}
 
@@ -43,7 +43,9 @@ export const useCorrectiveActionsStore = defineStore("correctiveActions", {
 				const now = new Date()
 				const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 				const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-				const monthFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+				const monthFromNow = new Date(
+					today.getTime() + 30 * 24 * 60 * 60 * 1000,
+				)
 
 				filtered = filtered.filter((a) => {
 					if (!a.target_completion_date) return false
@@ -69,7 +71,7 @@ export const useCorrectiveActionsStore = defineStore("correctiveActions", {
 			if (state.filters.responsiblePerson) {
 				const search = state.filters.responsiblePerson.toLowerCase()
 				filtered = filtered.filter((a) =>
-					a.responsible_person?.toLowerCase().includes(search)
+					a.responsible_person?.toLowerCase().includes(search),
 				)
 			}
 
@@ -78,8 +80,12 @@ export const useCorrectiveActionsStore = defineStore("correctiveActions", {
 
 		stats: (state) => {
 			const total = state.actions.length
-			const inProgress = state.actions.filter((a) => a.status === "In Progress").length
-			const completed = state.actions.filter((a) => a.status === "Completed").length
+			const inProgress = state.actions.filter(
+				(a) => a.status === "In Progress",
+			).length
+			const completed = state.actions.filter(
+				(a) => a.status === "Completed",
+			).length
 
 			const now = new Date()
 			const overdue = state.actions.filter((a) => {
@@ -87,9 +93,15 @@ export const useCorrectiveActionsStore = defineStore("correctiveActions", {
 				return new Date(a.target_completion_date) < now
 			}).length
 
-			const avgProgress = total > 0
-				? Math.round(state.actions.reduce((sum, a) => sum + (a.completion_percentage || 0), 0) / total)
-				: 0
+			const avgProgress =
+				total > 0
+					? Math.round(
+							state.actions.reduce(
+								(sum, a) => sum + (a.completion_percentage || 0),
+								0,
+							) / total,
+						)
+					: 0
 
 			// Status distribution
 			const statusDistribution = {

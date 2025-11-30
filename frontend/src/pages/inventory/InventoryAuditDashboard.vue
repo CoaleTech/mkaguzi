@@ -298,14 +298,25 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { 
-  RefreshCw, Plus, ClipboardList, Package, AlertTriangle, TrendingUp,
-  Calendar, MapPin, Hash, DollarSign, Target, CheckCircle, BarChart2
-} from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button } from "frappe-ui"
+import {
+	AlertTriangle,
+	BarChart2,
+	Calendar,
+	CheckCircle,
+	ClipboardList,
+	DollarSign,
+	Hash,
+	MapPin,
+	Package,
+	Plus,
+	RefreshCw,
+	Target,
+	TrendingUp,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
@@ -319,113 +330,113 @@ const openVarianceCases = computed(() => store.getOpenVarianceCases.slice(0, 5))
 const scorecards = computed(() => store.scorecards)
 
 onMounted(async () => {
-  await refreshData()
+	await refreshData()
 })
 
 async function refreshData() {
-  loading.value = true
-  try {
-    await store.loadAllData()
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		await store.loadAllData()
+	} finally {
+		loading.value = false
+	}
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    'Planned': 'blue',
-    'In Progress': 'yellow',
-    'Completed': 'green',
-    'On Hold': 'gray',
-    'Cancelled': 'red',
-    'New': 'blue',
-    'Under Investigation': 'yellow',
-    'Resolution Proposed': 'orange',
-    'Resolved': 'green',
-    'Closed': 'gray'
-  }
-  return variants[status] || 'gray'
+	const variants = {
+		Planned: "blue",
+		"In Progress": "yellow",
+		Completed: "green",
+		"On Hold": "gray",
+		Cancelled: "red",
+		New: "blue",
+		"Under Investigation": "yellow",
+		"Resolution Proposed": "orange",
+		Resolved: "green",
+		Closed: "gray",
+	}
+	return variants[status] || "gray"
 }
 
 function getPriorityVariant(priority) {
-  const variants = {
-    'Critical': 'red',
-    'High': 'orange',
-    'Medium': 'yellow',
-    'Low': 'blue'
-  }
-  return variants[priority] || 'gray'
+	const variants = {
+		Critical: "red",
+		High: "orange",
+		Medium: "yellow",
+		Low: "blue",
+	}
+	return variants[priority] || "gray"
 }
 
 function getScoreColor(score) {
-  if (score >= 90) return 'bg-green-500'
-  if (score >= 70) return 'bg-yellow-500'
-  if (score >= 50) return 'bg-orange-500'
-  return 'bg-red-500'
+	if (score >= 90) return "bg-green-500"
+	if (score >= 70) return "bg-yellow-500"
+	if (score >= 50) return "bg-orange-500"
+	return "bg-red-500"
 }
 
 function getGradeTextColor(grade) {
-  const colors = {
-    'A': 'text-green-600',
-    'B': 'text-blue-600',
-    'C': 'text-yellow-600',
-    'D': 'text-orange-600',
-    'F': 'text-red-600'
-  }
-  return colors[grade] || 'text-gray-600'
+	const colors = {
+		A: "text-green-600",
+		B: "text-blue-600",
+		C: "text-yellow-600",
+		D: "text-orange-600",
+		F: "text-red-600",
+	}
+	return colors[grade] || "text-gray-600"
 }
 
 function formatNumber(num) {
-  return new Intl.NumberFormat().format(num || 0)
+	return new Intl.NumberFormat().format(num || 0)
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'KES',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0,
+	}).format(amount || 0)
 }
 
 // Navigation
 function navigateToPlans() {
-  router.push('/inventory-audit/plans')
+	router.push("/inventory-audit/plans")
 }
 
 function navigateToSessions() {
-  router.push('/inventory-audit/sessions')
+	router.push("/inventory-audit/sessions")
 }
 
 function navigateToVarianceCases() {
-  router.push('/inventory-audit/variance-cases')
+	router.push("/inventory-audit/variance-cases")
 }
 
 function navigateToScorecards() {
-  router.push('/inventory-audit/scorecards')
+	router.push("/inventory-audit/scorecards")
 }
 
 function navigateToIssues() {
-  router.push('/inventory-audit/issues')
+	router.push("/inventory-audit/issues")
 }
 
 function navigateToItems() {
-  router.push('/inventory-audit/items')
+	router.push("/inventory-audit/items")
 }
 
 function viewPlan(name) {
-  router.push(`/inventory-audit/plans/${name}`)
+	router.push(`/inventory-audit/plans/${name}`)
 }
 
 function viewSession(name) {
-  router.push(`/inventory-audit/sessions/${name}`)
+	router.push(`/inventory-audit/sessions/${name}`)
 }
 
 function viewVarianceCase(name) {
-  router.push(`/inventory-audit/variance-cases/${name}`)
+	router.push(`/inventory-audit/variance-cases/${name}`)
 }
 
 function viewScorecard(name) {
-  router.push(`/inventory-audit/scorecards/${name}`)
+	router.push(`/inventory-audit/scorecards/${name}`)
 }
 </script>

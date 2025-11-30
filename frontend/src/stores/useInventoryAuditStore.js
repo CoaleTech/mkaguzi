@@ -1,5 +1,5 @@
+import { call, createResource } from "frappe-ui"
 import { defineStore } from "pinia"
-import { createResource, call } from "frappe-ui"
 
 export const useInventoryAuditStore = defineStore("inventoryAudit", {
 	state: () => ({
@@ -64,7 +64,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			variance_cases: { total: 0, open: 0, sla_breached: 0 },
 			issues: { total: 0, open: 0 },
 			items: { total: 0, active: 0 },
-			avg_compliance_score: 0
+			avg_compliance_score: 0,
 		},
 		dashboardLoading: false,
 
@@ -75,7 +75,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			varianceCases: {},
 			returnAudits: {},
 			issues: {},
-			items: {}
+			items: {},
 		},
 
 		// UI State
@@ -89,7 +89,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			{ value: "Weekly", label: "Weekly" },
 			{ value: "Monthly", label: "Monthly" },
 			{ value: "Quarterly", label: "Quarterly" },
-			{ value: "Ad Hoc", label: "Ad Hoc" }
+			{ value: "Ad Hoc", label: "Ad Hoc" },
 		],
 		auditScopeOptions: [
 			{ value: "Full Warehouse", label: "Full Warehouse" },
@@ -97,13 +97,13 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			{ value: "ABC Class", label: "ABC Class" },
 			{ value: "High Value Items", label: "High Value Items" },
 			{ value: "Fast Moving Items", label: "Fast Moving Items" },
-			{ value: "Random Sample", label: "Random Sample" }
+			{ value: "Random Sample", label: "Random Sample" },
 		],
 		countTypeOptions: [
 			{ value: "Full Physical Count", label: "Full Physical Count" },
 			{ value: "Cycle Count", label: "Cycle Count" },
 			{ value: "Random Sample", label: "Random Sample" },
-			{ value: "Spot Check", label: "Spot Check" }
+			{ value: "Spot Check", label: "Spot Check" },
 		],
 		rootCauseOptions: [
 			{ value: "Miscount", label: "Miscount" },
@@ -115,7 +115,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			{ value: "Wrong Posting", label: "Wrong Posting" },
 			{ value: "Expired/Damaged Stock", label: "Expired/Damaged Stock" },
 			{ value: "System Error", label: "System Error" },
-			{ value: "Data Entry Error", label: "Data Entry Error" }
+			{ value: "Data Entry Error", label: "Data Entry Error" },
 		],
 		issueTypeOptions: [
 			{ value: "Count Discrepancy", label: "Count Discrepancy" },
@@ -127,31 +127,31 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			{ value: "Location Access", label: "Location Access" },
 			{ value: "Item Identification", label: "Item Identification" },
 			{ value: "Condition Issue", label: "Condition Issue" },
-			{ value: "Other", label: "Other" }
+			{ value: "Other", label: "Other" },
 		],
 		statusColors: {
-			"Planned": "blue",
+			Planned: "blue",
 			"In Progress": "yellow",
-			"Completed": "green",
+			Completed: "green",
 			"On Hold": "gray",
-			"Cancelled": "red",
-			"New": "blue",
+			Cancelled: "red",
+			New: "blue",
 			"Under Investigation": "yellow",
 			"Resolution Proposed": "orange",
-			"Resolved": "green",
-			"Closed": "gray",
-			"Open": "yellow",
+			Resolved: "green",
+			Closed: "gray",
+			Open: "yellow",
 			"Pending Approval": "orange",
-			"Approved": "green",
-			"Rejected": "red"
+			Approved: "green",
+			Rejected: "red",
 		},
 		gradeColors: {
-			"A": "green",
-			"B": "blue",
-			"C": "yellow",
-			"D": "orange",
-			"F": "red"
-		}
+			A: "green",
+			B: "blue",
+			C: "yellow",
+			D: "orange",
+			F: "red",
+		},
 	}),
 
 	getters: {
@@ -162,7 +162,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 
 		getActivePlans: (state) => {
 			return state.plans.filter((plan) =>
-				["Planned", "In Progress"].includes(plan.status)
+				["Planned", "In Progress"].includes(plan.status),
 			)
 		},
 
@@ -176,9 +176,12 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 		},
 
 		getPendingSignoffSessions: (state) => {
-			return state.sessions.filter((session) =>
-				session.status === "Completed" &&
-				(!session.team_signoff || !session.supervisor_signoff || !session.auditor_signoff)
+			return state.sessions.filter(
+				(session) =>
+					session.status === "Completed" &&
+					(!session.team_signoff ||
+						!session.supervisor_signoff ||
+						!session.auditor_signoff),
 			)
 		},
 
@@ -189,7 +192,9 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 
 		getOpenVarianceCases: (state) => {
 			return state.varianceCases.filter((vc) =>
-				["New", "Under Investigation", "Resolution Proposed"].includes(vc.status)
+				["New", "Under Investigation", "Resolution Proposed"].includes(
+					vc.status,
+				),
 			)
 		},
 
@@ -204,7 +209,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 
 		getOpenIssues: (state) => {
 			return state.issues.filter((issue) =>
-				["Open", "In Progress"].includes(issue.status)
+				["Open", "In Progress"].includes(issue.status),
 			)
 		},
 
@@ -224,9 +229,11 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				return { avgScore: 0, gradeDistribution: {} }
 			}
 
-			const avgScore = scorecards.reduce((sum, sc) =>
-				sum + (sc.overall_compliance_score || 0), 0
-			) / scorecards.length
+			const avgScore =
+				scorecards.reduce(
+					(sum, sc) => sum + (sc.overall_compliance_score || 0),
+					0,
+				) / scorecards.length
 
 			const gradeDistribution = scorecards.reduce((acc, sc) => {
 				const grade = sc.grade || "N/A"
@@ -235,7 +242,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			}, {})
 
 			return { avgScore: Math.round(avgScore), gradeDistribution }
-		}
+		},
 	},
 
 	actions: {
@@ -246,7 +253,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 
 			try {
 				const result = await call(
-					"mkaguzi.api.inventory_audit.get_inventory_dashboard_stats"
+					"mkaguzi.api.inventory_audit.get_inventory_dashboard_stats",
 				)
 				this.dashboardStats = result
 			} catch (error) {
@@ -268,8 +275,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.items = result.items
 				this.itemsTotalCount = result.total_count
@@ -287,7 +294,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 		async getItemImportTemplate() {
 			try {
 				const result = await call(
-					"mkaguzi.api.inventory_audit.get_item_import_template"
+					"mkaguzi.api.inventory_audit.get_item_import_template",
 				)
 				return result
 			} catch (error) {
@@ -300,7 +307,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				const result = await call(
 					"mkaguzi.api.inventory_audit.import_items_from_csv",
-					{ file_content: JSON.stringify({ content }) }
+					{ file_content: JSON.stringify({ content }) },
 				)
 				// Reload items after import
 				await this.loadItems(this.filters.items)
@@ -322,8 +329,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.plans = result.plans
 				this.plansTotalCount = result.total_count
@@ -343,8 +350,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const doc = await call("frappe.client.insert", {
 					doc: {
 						doctype: "Inventory Audit Plan",
-						...planData
-					}
+						...planData,
+					},
 				})
 				await this.loadPlans(this.filters.plans)
 				return doc
@@ -359,7 +366,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				await call("frappe.client.set_value", {
 					doctype: "Inventory Audit Plan",
 					name: planName,
-					fieldname: updates
+					fieldname: updates,
 				})
 				await this.loadPlans(this.filters.plans)
 			} catch (error) {
@@ -371,11 +378,11 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 		async loadPlanDetail(planName) {
 			this.plansLoading = true
 			this.error = null
-			
+
 			try {
 				const doc = await call("frappe.client.get", {
 					doctype: "Inventory Audit Plan",
-					name: planName
+					name: planName,
 				})
 				this.activePlan = doc
 				return doc
@@ -393,8 +400,15 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const result = await call("frappe.client.get_list", {
 					doctype: "Stock Take Session",
 					filters: { audit_plan: planId },
-					fields: ["name", "session_name", "session_type", "status", "scheduled_date", "warehouse"],
-					order_by: "scheduled_date desc"
+					fields: [
+						"name",
+						"session_name",
+						"session_type",
+						"status",
+						"scheduled_date",
+						"warehouse",
+					],
+					order_by: "scheduled_date desc",
 				})
 				return result
 			} catch (error) {
@@ -414,8 +428,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.sessions = result.sessions
 				this.sessionsTotalCount = result.total_count
@@ -435,8 +449,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const doc = await call("frappe.client.insert", {
 					doc: {
 						doctype: "Stock Take Session",
-						...sessionData
-					}
+						...sessionData,
+					},
 				})
 				await this.loadSessions(this.filters.sessions)
 				return doc
@@ -450,7 +464,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				const result = await call(
 					"mkaguzi.api.inventory_audit.calculate_count_variance",
-					{ session_name: sessionName }
+					{ session_name: sessionName },
 				)
 				await this.loadSessions(this.filters.sessions)
 				return result
@@ -463,11 +477,11 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 		async loadSessionDetail(sessionName) {
 			this.sessionsLoading = true
 			this.error = null
-			
+
 			try {
 				const doc = await call("frappe.client.get", {
 					doctype: "Stock Take Session",
-					name: sessionName
+					name: sessionName,
 				})
 				this.activeSession = doc
 				return doc
@@ -485,7 +499,15 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const result = await call("frappe.client.get_list", {
 					doctype: "Inventory Variance Case",
 					filters: { stock_take_session: sessionName },
-					fields: ["name", "item_code", "item_name", "status", "variance_qty", "variance_value", "priority"]
+					fields: [
+						"name",
+						"item_code",
+						"item_name",
+						"status",
+						"variance_qty",
+						"variance_value",
+						"priority",
+					],
 				})
 				return result
 			} catch (error) {
@@ -505,8 +527,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.varianceCases = result.cases
 				this.varianceCasesTotalCount = result.total_count
@@ -526,7 +548,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				await call("frappe.client.set_value", {
 					doctype: "Variance Reconciliation Case",
 					name: caseName,
-					fieldname: updates
+					fieldname: updates,
 				})
 				await this.loadVarianceCases(this.filters.varianceCases)
 			} catch (error) {
@@ -538,11 +560,11 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 		async loadVarianceCaseDetail(caseName) {
 			this.varianceCasesLoading = true
 			this.error = null
-			
+
 			try {
 				const doc = await call("frappe.client.get", {
 					doctype: "Inventory Variance Case",
-					name: caseName
+					name: caseName,
 				})
 				this.activeVarianceCase = doc
 				return doc
@@ -559,7 +581,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				const result = await call(
 					"mkaguzi.api.inventory_audit.create_variance_case_from_count",
-					{ session_name: sessionName, count_item_idx: countItemIdx }
+					{ session_name: sessionName, count_item_idx: countItemIdx },
 				)
 				return result
 			} catch (error) {
@@ -579,8 +601,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.returnAudits = result.audits
 				this.returnAuditsTotalCount = result.total_count
@@ -600,8 +622,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const doc = await call("frappe.client.insert", {
 					doc: {
 						doctype: "Stock Take Audit",
-						...auditData
-					}
+						...auditData,
+					},
 				})
 				await this.loadStockTakeAudits(this.filters.returnAudits)
 				return doc
@@ -622,8 +644,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					{
 						filters: JSON.stringify(filters),
 						page,
-						page_size: pageSize
-					}
+						page_size: pageSize,
+					},
 				)
 				this.issues = result.issues
 				this.issuesTotalCount = result.total_count
@@ -643,8 +665,8 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				const doc = await call("frappe.client.insert", {
 					doc: {
 						doctype: "Stock Take Issue Log",
-						...issueData
-					}
+						...issueData,
+					},
 				})
 				await this.loadIssues(this.filters.issues)
 				return doc
@@ -662,7 +684,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				this.scorecards = await call(
 					"mkaguzi.api.inventory_audit.get_compliance_scorecards",
-					{ filters: JSON.stringify(filters) }
+					{ filters: JSON.stringify(filters) },
 				)
 			} catch (error) {
 				this.error = `Failed to load scorecards: ${error.message}`
@@ -676,7 +698,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				this.scorecardHistory = await call(
 					"mkaguzi.api.inventory_audit.get_scorecard_history",
-					{ scorecard: scorecardName }
+					{ scorecard: scorecardName },
 				)
 			} catch (error) {
 				this.error = `Failed to load scorecard history: ${error.message}`
@@ -688,7 +710,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 			try {
 				const result = await call(
 					"mkaguzi.api.inventory_audit.recalculate_scorecard",
-					{ audit_plan: planId }
+					{ audit_plan: planId },
 				)
 				await this.loadScorecards()
 				return result
@@ -742,7 +764,7 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 				varianceCases: {},
 				returnAudits: {},
 				issues: {},
-				items: {}
+				items: {},
 			}
 		},
 
@@ -764,13 +786,13 @@ export const useInventoryAuditStore = defineStore("inventoryAudit", {
 					this.loadSessions({}, 1, 10),
 					this.loadVarianceCases({}, 1, 10),
 					this.loadIssues({}, 1, 10),
-					this.loadScorecards()
+					this.loadScorecards(),
 				])
 			} catch (error) {
 				console.error("Error loading all data:", error)
 			} finally {
 				this.isLoading = false
 			}
-		}
-	}
+		},
+	},
 })

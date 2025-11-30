@@ -537,41 +537,48 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { Dialog, Button, FormControl, TextEditor, Select, Badge } from 'frappe-ui'
-import LinkField from '@/components/Common/fields/LinkField.vue'
-import SectionHeader from '@/components/Common/SectionHeader.vue'
+import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
 import {
-  Info,
-  Calendar,
-  SlidersHorizontal,
-  BarChart3,
-  FileText,
-  Gauge,
-  ClipboardList,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Plus,
-  Trash2,
-  Clock,
-  HardDrive,
-  Cpu,
-  Zap,
-  Database,
-} from 'lucide-vue-next'
+	Badge,
+	Button,
+	Dialog,
+	FormControl,
+	Select,
+	TextEditor,
+} from "frappe-ui"
+import {
+	BarChart3,
+	Calendar,
+	CheckCircle2,
+	ChevronLeft,
+	ChevronRight,
+	ClipboardList,
+	Clock,
+	Cpu,
+	Database,
+	FileText,
+	Gauge,
+	HardDrive,
+	Info,
+	Plus,
+	Save,
+	SlidersHorizontal,
+	Trash2,
+	Zap,
+} from "lucide-vue-next"
+import { computed, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  show: { type: Boolean, default: false },
-  execution: { type: Object, default: null },
+	show: { type: Boolean, default: false },
+	execution: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:show', 'saved'])
+const emit = defineEmits(["update:show", "saved"])
 
 const dialogVisible = computed({
-  get: () => props.show,
-  set: (val) => emit('update:show', val),
+	get: () => props.show,
+	set: (val) => emit("update:show", val),
 })
 
 const isEditMode = computed(() => !!props.execution?.name)
@@ -580,263 +587,303 @@ const currentSectionIndex = ref(0)
 
 // Section definitions
 const sections = [
-  { id: 'basic', title: 'Basic Information', icon: Info, description: 'Execution identification and configuration' },
-  { id: 'schedule', title: 'Schedule', icon: Calendar, description: 'Execution timing and progress' },
-  { id: 'parameters', title: 'Parameters', icon: SlidersHorizontal, description: 'Test execution parameters' },
-  { id: 'results', title: 'Results', icon: BarChart3, description: 'Test results and findings' },
-  { id: 'logs', title: 'Logs', icon: FileText, description: 'Execution logs and errors' },
-  { id: 'performance', title: 'Performance', icon: Gauge, description: 'Performance metrics' },
-  { id: 'audit', title: 'Audit Trail', icon: ClipboardList, description: 'Audit information and notes' },
+	{
+		id: "basic",
+		title: "Basic Information",
+		icon: Info,
+		description: "Execution identification and configuration",
+	},
+	{
+		id: "schedule",
+		title: "Schedule",
+		icon: Calendar,
+		description: "Execution timing and progress",
+	},
+	{
+		id: "parameters",
+		title: "Parameters",
+		icon: SlidersHorizontal,
+		description: "Test execution parameters",
+	},
+	{
+		id: "results",
+		title: "Results",
+		icon: BarChart3,
+		description: "Test results and findings",
+	},
+	{
+		id: "logs",
+		title: "Logs",
+		icon: FileText,
+		description: "Execution logs and errors",
+	},
+	{
+		id: "performance",
+		title: "Performance",
+		icon: Gauge,
+		description: "Performance metrics",
+	},
+	{
+		id: "audit",
+		title: "Audit Trail",
+		icon: ClipboardList,
+		description: "Audit information and notes",
+	},
 ]
 
 // Form data
 const formData = reactive({
-  // Basic
-  execution_id: '',
-  execution_name: '',
-  test_library_reference: '',
-  execution_type: 'Manual',
-  priority: 'Medium',
-  status: 'Pending',
-  // Schedule
-  scheduled_start_date: '',
-  scheduled_end_date: '',
-  actual_start_date: '',
-  actual_end_date: '',
-  duration_seconds: 0,
-  progress_percentage: 0,
-  // Parameters
-  execution_parameters: [],
-  // Results
-  test_results: [],
-  result_summary: true,
-  total_tests: 0,
-  passed_tests: 0,
-  failed_tests: 0,
-  warning_tests: 0,
-  total_records_processed: 0,
-  exceptions_found: 0,
-  critical_findings: 0,
-  // Logs
-  execution_logs: [],
-  error_details: '',
-  // Performance
-  performance_metrics: true,
-  execution_time_ms: 0,
-  memory_usage_mb: 0,
-  cpu_usage_percent: 0,
-  records_per_second: 0,
-  queries_executed: 0,
-  // Audit
-  created_by: '',
-  creation_date: '',
-  approved_by: '',
-  approval_date: '',
-  last_modified_by: '',
-  last_modified_date: '',
-  notes: '',
+	// Basic
+	execution_id: "",
+	execution_name: "",
+	test_library_reference: "",
+	execution_type: "Manual",
+	priority: "Medium",
+	status: "Pending",
+	// Schedule
+	scheduled_start_date: "",
+	scheduled_end_date: "",
+	actual_start_date: "",
+	actual_end_date: "",
+	duration_seconds: 0,
+	progress_percentage: 0,
+	// Parameters
+	execution_parameters: [],
+	// Results
+	test_results: [],
+	result_summary: true,
+	total_tests: 0,
+	passed_tests: 0,
+	failed_tests: 0,
+	warning_tests: 0,
+	total_records_processed: 0,
+	exceptions_found: 0,
+	critical_findings: 0,
+	// Logs
+	execution_logs: [],
+	error_details: "",
+	// Performance
+	performance_metrics: true,
+	execution_time_ms: 0,
+	memory_usage_mb: 0,
+	cpu_usage_percent: 0,
+	records_per_second: 0,
+	queries_executed: 0,
+	// Audit
+	created_by: "",
+	creation_date: "",
+	approved_by: "",
+	approval_date: "",
+	last_modified_by: "",
+	last_modified_date: "",
+	notes: "",
 })
 
 // Options
 const executionTypeOptions = [
-  { label: 'Manual', value: 'Manual' },
-  { label: 'Scheduled', value: 'Scheduled' },
-  { label: 'Batch', value: 'Batch' },
-  { label: 'API', value: 'API' },
+	{ label: "Manual", value: "Manual" },
+	{ label: "Scheduled", value: "Scheduled" },
+	{ label: "Batch", value: "Batch" },
+	{ label: "API", value: "API" },
 ]
 
 const priorityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' },
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const statusOptions = [
-  { label: 'Pending', value: 'Pending' },
-  { label: 'Queued', value: 'Queued' },
-  { label: 'Running', value: 'Running' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Failed', value: 'Failed' },
-  { label: 'Cancelled', value: 'Cancelled' },
-  { label: 'Paused', value: 'Paused' },
+	{ label: "Pending", value: "Pending" },
+	{ label: "Queued", value: "Queued" },
+	{ label: "Running", value: "Running" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Failed", value: "Failed" },
+	{ label: "Cancelled", value: "Cancelled" },
+	{ label: "Paused", value: "Paused" },
 ]
 
 const paramTypeOptions = [
-  { label: 'String', value: 'String' },
-  { label: 'Integer', value: 'Integer' },
-  { label: 'Float', value: 'Float' },
-  { label: 'Date', value: 'Date' },
-  { label: 'Boolean', value: 'Boolean' },
+	{ label: "String", value: "String" },
+	{ label: "Integer", value: "Integer" },
+	{ label: "Float", value: "Float" },
+	{ label: "Date", value: "Date" },
+	{ label: "Boolean", value: "Boolean" },
 ]
 
 const resultStatusOptions = [
-  { label: 'Pass', value: 'Pass' },
-  { label: 'Fail', value: 'Fail' },
-  { label: 'Warning', value: 'Warning' },
-  { label: 'Skipped', value: 'Skipped' },
+	{ label: "Pass", value: "Pass" },
+	{ label: "Fail", value: "Fail" },
+	{ label: "Warning", value: "Warning" },
+	{ label: "Skipped", value: "Skipped" },
 ]
 
 // Watch for execution prop changes
 watch(
-  () => props.execution,
-  (newExec) => {
-    if (newExec) {
-      Object.keys(formData).forEach((key) => {
-        if (newExec[key] !== undefined) {
-          formData[key] = newExec[key]
-        }
-      })
-    } else {
-      resetForm()
-    }
-  },
-  { immediate: true }
+	() => props.execution,
+	(newExec) => {
+		if (newExec) {
+			Object.keys(formData).forEach((key) => {
+				if (newExec[key] !== undefined) {
+					formData[key] = newExec[key]
+				}
+			})
+		} else {
+			resetForm()
+		}
+	},
+	{ immediate: true },
 )
 
 // Section validation
 const sectionValidation = computed(() => [
-  !!(formData.execution_name && formData.test_library_reference && formData.execution_type && formData.status),
-  true, // Schedule - optional
-  true, // Parameters - optional
-  true, // Results - read-only mostly
-  true, // Logs - optional
-  true, // Performance - read-only
-  true, // Audit - optional
+	!!(
+		formData.execution_name &&
+		formData.test_library_reference &&
+		formData.execution_type &&
+		formData.status
+	),
+	true, // Schedule - optional
+	true, // Parameters - optional
+	true, // Results - read-only mostly
+	true, // Logs - optional
+	true, // Performance - read-only
+	true, // Audit - optional
 ])
 
-const completedSections = computed(() =>
-  sectionValidation.value.filter(Boolean).length
+const completedSections = computed(
+	() => sectionValidation.value.filter(Boolean).length,
 )
 
 const progressPercentage = computed(() =>
-  Math.round((completedSections.value / sections.length) * 100)
+	Math.round((completedSections.value / sections.length) * 100),
 )
 
 function isSectionComplete(index) {
-  return sectionValidation.value[index]
+	return sectionValidation.value[index]
 }
 
 function getSectionStatusClass(index) {
-  if (currentSectionIndex.value === index) return 'text-blue-600'
-  if (isSectionComplete(index)) return 'text-green-500'
-  return 'text-gray-400'
+	if (currentSectionIndex.value === index) return "text-blue-600"
+	if (isSectionComplete(index)) return "text-green-500"
+	return "text-gray-400"
 }
 
 function goToSection(index) {
-  currentSectionIndex.value = index
+	currentSectionIndex.value = index
 }
 
 function nextSection() {
-  if (currentSectionIndex.value < sections.length - 1) {
-    currentSectionIndex.value++
-  }
+	if (currentSectionIndex.value < sections.length - 1) {
+		currentSectionIndex.value++
+	}
 }
 
 function previousSection() {
-  if (currentSectionIndex.value > 0) {
-    currentSectionIndex.value--
-  }
+	if (currentSectionIndex.value > 0) {
+		currentSectionIndex.value--
+	}
 }
 
 // Helper functions
 function getProgressColor(pct) {
-  if (pct >= 100) return 'bg-green-500'
-  if (pct >= 50) return 'bg-blue-500'
-  if (pct > 0) return 'bg-yellow-500'
-  return 'bg-gray-300'
+	if (pct >= 100) return "bg-green-500"
+	if (pct >= 50) return "bg-blue-500"
+	if (pct > 0) return "bg-yellow-500"
+	return "bg-gray-300"
 }
 
 function getLogLevelTheme(level) {
-  const themes = {
-    INFO: 'blue',
-    WARNING: 'orange',
-    ERROR: 'red',
-    DEBUG: 'gray',
-    SUCCESS: 'green',
-  }
-  return themes[level] || 'gray'
+	const themes = {
+		INFO: "blue",
+		WARNING: "orange",
+		ERROR: "red",
+		DEBUG: "gray",
+		SUCCESS: "green",
+	}
+	return themes[level] || "gray"
 }
 
 function formatDuration(ms) {
-  if (!ms) return '0ms'
-  if (ms < 1000) return `${ms}ms`
-  if (ms < 60000) return `${(ms / 1000).toFixed(2)}s`
-  return `${(ms / 60000).toFixed(2)}m`
+	if (!ms) return "0ms"
+	if (ms < 1000) return `${ms}ms`
+	if (ms < 60000) return `${(ms / 1000).toFixed(2)}s`
+	return `${(ms / 60000).toFixed(2)}m`
 }
 
 // Child table management
 function addParameter() {
-  formData.execution_parameters.push({
-    parameter_name: '',
-    parameter_value: '',
-    parameter_type: 'String',
-    description: '',
-  })
+	formData.execution_parameters.push({
+		parameter_name: "",
+		parameter_value: "",
+		parameter_type: "String",
+		description: "",
+	})
 }
 
 function removeParameter(index) {
-  formData.execution_parameters.splice(index, 1)
+	formData.execution_parameters.splice(index, 1)
 }
 
 function addTestResult() {
-  formData.test_results.push({
-    test_name: '',
-    status: 'Pass',
-    exception_count: 0,
-    message: '',
-  })
+	formData.test_results.push({
+		test_name: "",
+		status: "Pass",
+		exception_count: 0,
+		message: "",
+	})
 }
 
 function removeTestResult(index) {
-  formData.test_results.splice(index, 1)
+	formData.test_results.splice(index, 1)
 }
 
 function addLogEntry() {
-  formData.execution_logs.push({
-    timestamp: new Date().toISOString(),
-    level: 'INFO',
-    message: '',
-  })
+	formData.execution_logs.push({
+		timestamp: new Date().toISOString(),
+		level: "INFO",
+		message: "",
+	})
 }
 
 function removeLogEntry(index) {
-  formData.execution_logs.splice(index, 1)
+	formData.execution_logs.splice(index, 1)
 }
 
 function resetForm() {
-  Object.keys(formData).forEach((key) => {
-    if (Array.isArray(formData[key])) {
-      formData[key] = []
-    } else if (typeof formData[key] === 'number') {
-      formData[key] = 0
-    } else if (typeof formData[key] === 'boolean') {
-      formData[key] = true
-    } else {
-      formData[key] = ''
-    }
-  })
-  formData.execution_type = 'Manual'
-  formData.priority = 'Medium'
-  formData.status = 'Pending'
-  currentSectionIndex.value = 0
+	Object.keys(formData).forEach((key) => {
+		if (Array.isArray(formData[key])) {
+			formData[key] = []
+		} else if (typeof formData[key] === "number") {
+			formData[key] = 0
+		} else if (typeof formData[key] === "boolean") {
+			formData[key] = true
+		} else {
+			formData[key] = ""
+		}
+	})
+	formData.execution_type = "Manual"
+	formData.priority = "Medium"
+	formData.status = "Pending"
+	currentSectionIndex.value = 0
 }
 
 function closeDialog() {
-  emit('update:show', false)
-  resetForm()
+	emit("update:show", false)
+	resetForm()
 }
 
 async function saveExecution() {
-  saving.value = true
-  try {
-    console.log('Saving execution:', formData)
-    emit('saved', { ...formData })
-    closeDialog()
-  } catch (error) {
-    console.error('Error saving execution:', error)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		console.log("Saving execution:", formData)
+		emit("saved", { ...formData })
+		closeDialog()
+	} catch (error) {
+		console.error("Error saving execution:", error)
+	} finally {
+		saving.value = false
+	}
 }
 </script>

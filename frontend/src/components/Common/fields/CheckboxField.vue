@@ -16,36 +16,36 @@
 </template>
 
 <script setup>
-import { Checkbox } from 'frappe-ui'
+import { Checkbox } from "frappe-ui"
 
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  label: {
-    type: String,
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	label: {
+		type: String,
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	error: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const handleChange = (value) => {
-  emit('update:modelValue', value)
-  emit('change', value)
+	emit("update:modelValue", value)
+	emit("change", value)
 }
 </script>
 

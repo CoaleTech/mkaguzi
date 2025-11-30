@@ -56,34 +56,34 @@
 
 <script setup>
 import {
-  BarChart3Icon,
-  CheckCircleIcon,
-  DatabaseIcon,
-  PieChartIcon,
+	BarChart3Icon,
+	CheckCircleIcon,
+	DatabaseIcon,
+	PieChartIcon,
 } from "lucide-vue-next"
 import { computed } from "vue"
 
 // Props
 const props = defineProps({
-  dashboards: {
-    type: Array,
-    default: () => [],
-  },
-  dashboardCharts: {
-    type: Array,
-    default: () => [],
-  },
-  dashboardDataSources: {
-    type: Array,
-    default: () => [],
-  },
+	dashboards: {
+		type: Array,
+		default: () => [],
+	},
+	dashboardCharts: {
+		type: Array,
+		default: () => [],
+	},
+	dashboardDataSources: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 // Computed properties
 const totalDashboards = computed(() => props.dashboards.length)
 
-const activeDashboards = computed(() =>
-  props.dashboards.filter(dashboard => dashboard.is_active).length
+const activeDashboards = computed(
+	() => props.dashboards.filter((dashboard) => dashboard.is_active).length,
 )
 
 const totalCharts = computed(() => props.dashboardCharts.length)

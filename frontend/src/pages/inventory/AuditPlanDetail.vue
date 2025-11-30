@@ -341,16 +341,26 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, Badge, Spinner } from 'frappe-ui'
-import { call } from 'frappe-ui'
+import { TeamMemberTable } from "@/components/inventory-audit"
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button, Spinner } from "frappe-ui"
+import { call } from "frappe-ui"
 import {
-  ArrowLeft, Edit, Download, Play, Plus, Package, ChevronRight,
-  AlertCircle, AlertTriangle, ClipboardList, FileWarning, RefreshCw
-} from 'lucide-vue-next'
-import { TeamMemberTable } from '@/components/inventory-audit'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+	AlertCircle,
+	AlertTriangle,
+	ArrowLeft,
+	ChevronRight,
+	ClipboardList,
+	Download,
+	Edit,
+	FileWarning,
+	Package,
+	Play,
+	Plus,
+	RefreshCw,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -367,204 +377,221 @@ const openIssuesCount = ref(0)
 const planId = computed(() => route.params.id)
 
 onMounted(() => {
-  loadPlan()
+	loadPlan()
 })
 
 async function loadPlan() {
-  loading.value = true
-  error.value = null
-  
-  try {
-    // Load plan details
-    plan.value = await call('frappe.client.get', {
-      doctype: 'Inventory Audit Plan',
-      name: planId.value
-    })
-    
-    // Load related sessions
-    const sessionsResult = await call('frappe.client.get_list', {
-      doctype: 'Stock Take Session',
-      filters: { audit_plan: planId.value },
-      fields: ['name', 'session_title', 'status', 'count_type', 'start_datetime', 'total_items_counted', 'items_with_variance'],
-      order_by: 'creation desc'
-    })
-    sessions.value = sessionsResult || []
-    
-    // Load scorecard
-    const scorecardResult = await call('frappe.client.get_list', {
-      doctype: 'Audit Compliance Scorecard',
-      filters: { audit_plan: planId.value },
-      fields: ['name', 'overall_score', 'grade', 'completion_rate', 'accuracy_score', 'timeliness_score'],
-      limit_page_length: 1
-    })
-    scorecard.value = scorecardResult?.[0] || null
-    
-    // Get variance cases count
-    varianceCasesCount.value = await call('frappe.client.get_count', {
-      doctype: 'Variance Reconciliation Case',
-      filters: { audit_plan: planId.value }
-    })
-    
-    // Get open issues count
-    openIssuesCount.value = await call('frappe.client.get_count', {
-      doctype: 'Stock Take Issue Log',
-      filters: { 
-        audit_plan: planId.value,
-        status: ['in', ['Open', 'In Progress']]
-      }
-    })
-    
-  } catch (e) {
-    console.error('Error loading plan:', e)
-    error.value = e.message || 'Failed to load plan'
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	error.value = null
+
+	try {
+		// Load plan details
+		plan.value = await call("frappe.client.get", {
+			doctype: "Inventory Audit Plan",
+			name: planId.value,
+		})
+
+		// Load related sessions
+		const sessionsResult = await call("frappe.client.get_list", {
+			doctype: "Stock Take Session",
+			filters: { audit_plan: planId.value },
+			fields: [
+				"name",
+				"session_title",
+				"status",
+				"count_type",
+				"start_datetime",
+				"total_items_counted",
+				"items_with_variance",
+			],
+			order_by: "creation desc",
+		})
+		sessions.value = sessionsResult || []
+
+		// Load scorecard
+		const scorecardResult = await call("frappe.client.get_list", {
+			doctype: "Audit Compliance Scorecard",
+			filters: { audit_plan: planId.value },
+			fields: [
+				"name",
+				"overall_score",
+				"grade",
+				"completion_rate",
+				"accuracy_score",
+				"timeliness_score",
+			],
+			limit_page_length: 1,
+		})
+		scorecard.value = scorecardResult?.[0] || null
+
+		// Get variance cases count
+		varianceCasesCount.value = await call("frappe.client.get_count", {
+			doctype: "Variance Reconciliation Case",
+			filters: { audit_plan: planId.value },
+		})
+
+		// Get open issues count
+		openIssuesCount.value = await call("frappe.client.get_count", {
+			doctype: "Stock Take Issue Log",
+			filters: {
+				audit_plan: planId.value,
+				status: ["in", ["Open", "In Progress"]],
+			},
+		})
+	} catch (e) {
+		console.error("Error loading plan:", e)
+		error.value = e.message || "Failed to load plan"
+	} finally {
+		loading.value = false
+	}
 }
 
 // Computed
 const completedSessionsCount = computed(() => {
-  return sessions.value.filter(s => s.status === 'Completed').length
+	return sessions.value.filter((s) => s.status === "Completed").length
 })
 
 const sessionsProgress = computed(() => {
-  if (sessions.value.length === 0) return 0
-  return (completedSessionsCount.value / sessions.value.length) * 100
+	if (sessions.value.length === 0) return 0
+	return (completedSessionsCount.value / sessions.value.length) * 100
 })
 
 const totalItemsCounted = computed(() => {
-  return sessions.value.reduce((sum, s) => sum + (s.total_items_counted || 0), 0)
+	return sessions.value.reduce(
+		(sum, s) => sum + (s.total_items_counted || 0),
+		0,
+	)
 })
 
 // Navigation
 function goBack() {
-  router.push('/inventory-audit/plans')
+	router.push("/inventory-audit/plans")
 }
 
 function editPlan() {
-  router.push(`/inventory-audit/plans/${planId.value}/edit`)
+	router.push(`/inventory-audit/plans/${planId.value}/edit`)
 }
 
 function createSession() {
-  router.push(`/inventory-audit/sessions/new?plan=${planId.value}`)
+	router.push(`/inventory-audit/sessions/new?plan=${planId.value}`)
 }
 
 function viewSession(sessionId) {
-  router.push(`/inventory-audit/sessions/${sessionId}`)
+	router.push(`/inventory-audit/sessions/${sessionId}`)
 }
 
 function viewVarianceCases() {
-  router.push(`/inventory-audit/variance-cases?plan=${planId.value}`)
+	router.push(`/inventory-audit/variance-cases?plan=${planId.value}`)
 }
 
 function viewIssues() {
-  router.push(`/inventory-audit/issues?plan=${planId.value}`)
+	router.push(`/inventory-audit/issues?plan=${planId.value}`)
 }
 
 function viewScorecard() {
-  if (scorecard.value) {
-    router.push(`/inventory-audit/scorecards/${scorecard.value.name}`)
-  }
+	if (scorecard.value) {
+		router.push(`/inventory-audit/scorecards/${scorecard.value.name}`)
+	}
 }
 
 // Actions
 async function startPlan() {
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Inventory Audit Plan',
-      name: planId.value,
-      fieldname: {
-        status: 'In Progress',
-        actual_start_date: new Date().toISOString().split('T')[0]
-      }
-    })
-    await loadPlan()
-  } catch (e) {
-    console.error('Error starting plan:', e)
-  }
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Inventory Audit Plan",
+			name: planId.value,
+			fieldname: {
+				status: "In Progress",
+				actual_start_date: new Date().toISOString().split("T")[0],
+			},
+		})
+		await loadPlan()
+	} catch (e) {
+		console.error("Error starting plan:", e)
+	}
 }
 
 async function recalculateScorecard() {
-  try {
-    await store.recalculateScorecard(planId.value)
-    await loadPlan()
-  } catch (e) {
-    console.error('Error recalculating scorecard:', e)
-  }
+	try {
+		await store.recalculateScorecard(planId.value)
+		await loadPlan()
+	} catch (e) {
+		console.error("Error recalculating scorecard:", e)
+	}
 }
 
 function exportPlan() {
-  // TODO: Implement export
-  console.log('Export plan')
+	// TODO: Implement export
+	console.log("Export plan")
 }
 
 // Helpers
 function getStatusVariant(status) {
-  const variants = {
-    'Planned': 'blue',
-    'In Progress': 'yellow',
-    'Completed': 'green',
-    'Closed': 'gray',
-    'Cancelled': 'red',
-    'Draft': 'gray',
-    'Counting Complete': 'blue',
-    'Pending Review': 'yellow',
-    'Reviewed': 'green'
-  }
-  return variants[status] || 'gray'
+	const variants = {
+		Planned: "blue",
+		"In Progress": "yellow",
+		Completed: "green",
+		Closed: "gray",
+		Cancelled: "red",
+		Draft: "gray",
+		"Counting Complete": "blue",
+		"Pending Review": "yellow",
+		Reviewed: "green",
+	}
+	return variants[status] || "gray"
 }
 
 function getScoreBorderClass(score) {
-  if (score >= 90) return 'border-green-500'
-  if (score >= 70) return 'border-yellow-500'
-  if (score >= 50) return 'border-orange-500'
-  return 'border-red-500'
+	if (score >= 90) return "border-green-500"
+	if (score >= 70) return "border-yellow-500"
+	if (score >= 50) return "border-orange-500"
+	return "border-red-500"
 }
 
 function getScoreTextClass(score) {
-  if (score >= 90) return 'text-green-600'
-  if (score >= 70) return 'text-yellow-600'
-  if (score >= 50) return 'text-orange-600'
-  return 'text-red-600'
+	if (score >= 90) return "text-green-600"
+	if (score >= 70) return "text-yellow-600"
+	if (score >= 50) return "text-orange-600"
+	return "text-red-600"
 }
 
 function getGradeClass(grade) {
-  const classes = {
-    'A': 'text-green-600',
-    'B': 'text-blue-600',
-    'C': 'text-yellow-600',
-    'D': 'text-orange-600',
-    'F': 'text-red-600'
-  }
-  return classes[grade] || 'text-gray-600'
+	const classes = {
+		A: "text-green-600",
+		B: "text-blue-600",
+		C: "text-yellow-600",
+		D: "text-orange-600",
+		F: "text-red-600",
+	}
+	return classes[grade] || "text-gray-600"
 }
 
 function formatDate(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 function formatDateTime(datetime) {
-  if (!datetime) return '-'
-  return new Date(datetime).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+	if (!datetime) return "-"
+	return new Date(datetime).toLocaleString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
 }
 
 function formatCurrency(amount) {
-  if (!amount) return 'KES 0'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES',
-    minimumFractionDigits: 0
-  }).format(amount)
+	if (!amount) return "KES 0"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount)
 }
 </script>

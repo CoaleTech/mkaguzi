@@ -199,157 +199,161 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { Button, FormControl } from 'frappe-ui'
-import { X, Search, Filter } from 'lucide-vue-next'
-import { call } from 'frappe-ui'
+import { Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { Filter, Search, X } from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({})
-  },
-  enabledFilters: {
-    type: Array,
-    default: () => ['status', 'date_range', 'search']
-  },
-  statusOptions: {
-    type: Array,
-    default: () => []
-  }
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
+	enabledFilters: {
+		type: Array,
+		default: () => ["status", "date_range", "search"],
+	},
+	statusOptions: {
+		type: Array,
+		default: () => [],
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'apply', 'clear'])
+const emit = defineEmits(["update:modelValue", "apply", "clear"])
 
 const filters = ref({ ...props.modelValue })
 
 const auditorOptions = ref([])
 
 onMounted(async () => {
-  await loadAuditors()
+	await loadAuditors()
 })
 
 async function loadAuditors() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    auditorOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading auditors:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		auditorOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading auditors:", error)
+	}
 }
 
-watch(() => props.modelValue, (newVal) => {
-  filters.value = { ...newVal }
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		filters.value = { ...newVal }
+	},
+	{ deep: true },
+)
 
 function showFilter(name) {
-  return props.enabledFilters.includes(name)
+	return props.enabledFilters.includes(name)
 }
 
 const hasActiveFilters = computed(() => {
-  return Object.values(filters.value).some(v => v && v !== '')
+	return Object.values(filters.value).some((v) => v && v !== "")
 })
 
 function clearFilters() {
-  filters.value = {}
-  emit('update:modelValue', {})
-  emit('clear')
+	filters.value = {}
+	emit("update:modelValue", {})
+	emit("clear")
 }
 
 function applyFilters() {
-  emit('update:modelValue', { ...filters.value })
-  emit('apply', { ...filters.value })
+	emit("update:modelValue", { ...filters.value })
+	emit("apply", { ...filters.value })
 }
 
 // Static options
 const dateRangeOptions = [
-  { label: 'Today', value: 'today' },
-  { label: 'This Week', value: 'this_week' },
-  { label: 'This Month', value: 'this_month' },
-  { label: 'This Quarter', value: 'this_quarter' },
-  { label: 'This Year', value: 'this_year' },
-  { label: 'Last 7 Days', value: 'last_7_days' },
-  { label: 'Last 30 Days', value: 'last_30_days' },
-  { label: 'Custom', value: 'custom' }
+	{ label: "Today", value: "today" },
+	{ label: "This Week", value: "this_week" },
+	{ label: "This Month", value: "this_month" },
+	{ label: "This Quarter", value: "this_quarter" },
+	{ label: "This Year", value: "this_year" },
+	{ label: "Last 7 Days", value: "last_7_days" },
+	{ label: "Last 30 Days", value: "last_30_days" },
+	{ label: "Custom", value: "custom" },
 ]
 
 const periodOptions = [
-  { label: 'Daily', value: 'Daily' },
-  { label: 'Weekly', value: 'Weekly' },
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Ad Hoc', value: 'Ad Hoc' }
+	{ label: "Daily", value: "Daily" },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Ad Hoc", value: "Ad Hoc" },
 ]
 
 const scopeOptions = [
-  { label: 'Cycle Count', value: 'Cycle Count' },
-  { label: 'Full Count', value: 'Full Count' },
-  { label: 'Sales Returns', value: 'Sales Returns' },
-  { label: 'Damaged Stock', value: 'Damaged Stock' },
-  { label: 'GRN Audit', value: 'GRN Audit' },
-  { label: 'Dispatch Audit', value: 'Dispatch Audit' }
+	{ label: "Cycle Count", value: "Cycle Count" },
+	{ label: "Full Count", value: "Full Count" },
+	{ label: "Sales Returns", value: "Sales Returns" },
+	{ label: "Damaged Stock", value: "Damaged Stock" },
+	{ label: "GRN Audit", value: "GRN Audit" },
+	{ label: "Dispatch Audit", value: "Dispatch Audit" },
 ]
 
 const countTypeOptions = [
-  { label: 'Full Count', value: 'Full Count' },
-  { label: 'Cycle Count', value: 'Cycle Count' },
-  { label: 'Verification', value: 'Verification' },
-  { label: 'Ad Hoc', value: 'Ad Hoc' }
+	{ label: "Full Count", value: "Full Count" },
+	{ label: "Cycle Count", value: "Cycle Count" },
+	{ label: "Verification", value: "Verification" },
+	{ label: "Ad Hoc", value: "Ad Hoc" },
 ]
 
 const rootCauseOptions = [
-  { label: 'Miscount', value: 'Miscount' },
-  { label: 'Theft', value: 'Theft' },
-  { label: 'Misplacement', value: 'Misplacement' },
-  { label: 'Wrong UOM', value: 'Wrong UOM' },
-  { label: 'Unrecorded Sales', value: 'Unrecorded Sales' },
-  { label: 'Unrecorded Receiving', value: 'Unrecorded Receiving' },
-  { label: 'Wrong Posting', value: 'Wrong Posting' },
-  { label: 'Expired/Damaged Stock', value: 'Expired/Damaged Stock' },
-  { label: 'System Error', value: 'System Error' },
-  { label: 'Data Entry Error', value: 'Data Entry Error' }
+	{ label: "Miscount", value: "Miscount" },
+	{ label: "Theft", value: "Theft" },
+	{ label: "Misplacement", value: "Misplacement" },
+	{ label: "Wrong UOM", value: "Wrong UOM" },
+	{ label: "Unrecorded Sales", value: "Unrecorded Sales" },
+	{ label: "Unrecorded Receiving", value: "Unrecorded Receiving" },
+	{ label: "Wrong Posting", value: "Wrong Posting" },
+	{ label: "Expired/Damaged Stock", value: "Expired/Damaged Stock" },
+	{ label: "System Error", value: "System Error" },
+	{ label: "Data Entry Error", value: "Data Entry Error" },
 ]
 
 const issueTypeOptions = [
-  { label: 'Item Not Found', value: 'Item Not Found' },
-  { label: 'Mismatched Bin', value: 'Mismatched Bin' },
-  { label: 'Damaged Stock Unrecorded', value: 'Damaged Stock Unrecorded' },
-  { label: 'Expired Stock', value: 'Expired Stock' },
-  { label: 'Wrong UOM', value: 'Wrong UOM' },
-  { label: 'Missing GRN', value: 'Missing GRN' },
-  { label: 'Phantom Stock', value: 'Phantom Stock' },
-  { label: 'Negative Stock', value: 'Negative Stock' },
-  { label: 'Discrepancy in Transfer', value: 'Discrepancy in Transfer' },
-  { label: 'POS vs Inventory Mismatch', value: 'POS vs Inventory Mismatch' }
+	{ label: "Item Not Found", value: "Item Not Found" },
+	{ label: "Mismatched Bin", value: "Mismatched Bin" },
+	{ label: "Damaged Stock Unrecorded", value: "Damaged Stock Unrecorded" },
+	{ label: "Expired Stock", value: "Expired Stock" },
+	{ label: "Wrong UOM", value: "Wrong UOM" },
+	{ label: "Missing GRN", value: "Missing GRN" },
+	{ label: "Phantom Stock", value: "Phantom Stock" },
+	{ label: "Negative Stock", value: "Negative Stock" },
+	{ label: "Discrepancy in Transfer", value: "Discrepancy in Transfer" },
+	{ label: "POS vs Inventory Mismatch", value: "POS vs Inventory Mismatch" },
 ]
 
 const severityOptions = [
-  { label: 'Low', value: 'Low' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'High', value: 'High' },
-  { label: 'Critical', value: 'Critical' }
+	{ label: "Low", value: "Low" },
+	{ label: "Medium", value: "Medium" },
+	{ label: "High", value: "High" },
+	{ label: "Critical", value: "Critical" },
 ]
 
 const slaStatusOptions = [
-  { label: 'On Track', value: 'on_track' },
-  { label: 'At Risk', value: 'at_risk' },
-  { label: 'Breached', value: 'breached' }
+	{ label: "On Track", value: "on_track" },
+	{ label: "At Risk", value: "at_risk" },
+	{ label: "Breached", value: "breached" },
 ]
 
 const returnReasonOptions = [
-  { label: 'Defective', value: 'Defective' },
-  { label: 'Wrong Item', value: 'Wrong Item' },
-  { label: 'Customer Changed Mind', value: 'Customer Changed Mind' },
-  { label: 'Expired', value: 'Expired' },
-  { label: 'Damaged', value: 'Damaged' },
-  { label: 'Other', value: 'Other' }
+	{ label: "Defective", value: "Defective" },
+	{ label: "Wrong Item", value: "Wrong Item" },
+	{ label: "Customer Changed Mind", value: "Customer Changed Mind" },
+	{ label: "Expired", value: "Expired" },
+	{ label: "Damaged", value: "Damaged" },
+	{ label: "Other", value: "Other" },
 ]
 </script>

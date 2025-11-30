@@ -364,11 +364,19 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl, Dialog } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save, Upload, Plus, Trash2, Check, Download } from 'lucide-vue-next'
+import { Button, Dialog, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import {
+	ArrowLeft,
+	Check,
+	Download,
+	Plus,
+	Save,
+	Trash2,
+	Upload,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -378,370 +386,423 @@ const warehouseOptions = ref([])
 const showImportModal = ref(false)
 const csvPreview = ref([])
 const csvHeaders = ref([])
-const csvContent = ref('')
+const csvContent = ref("")
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  stock_take_type: 'Daily Stock Take',
-  audit_date: new Date().toISOString().split('T')[0],
-  warehouse: '',
-  branch: '',
-  status: 'Draft',
-  stock_take_items: [],
-  notes: ''
+	stock_take_type: "Daily Stock Take",
+	audit_date: new Date().toISOString().split("T")[0],
+	warehouse: "",
+	branch: "",
+	status: "Draft",
+	stock_take_items: [],
+	notes: "",
 })
 
 const resolutionDeadline = computed(() => {
-  if (!form.value.audit_date) return ''
-  const date = new Date(form.value.audit_date)
-  // Different deadlines based on stock take type
-  const days = {
-    'Sales Return': 0, // Same day
-    'Daily Stock Take': 0, // Same day
-    'Weekly Stock Take': 2, // 2 business days
-    'Monthly Stock Take': 5 // 5 business days
-  }[form.value.stock_take_type] || 0
-  date.setDate(date.getDate() + days)
-  return date.toISOString().split('T')[0]
+	if (!form.value.audit_date) return ""
+	const date = new Date(form.value.audit_date)
+	// Different deadlines based on stock take type
+	const days =
+		{
+			"Sales Return": 0, // Same day
+			"Daily Stock Take": 0, // Same day
+			"Weekly Stock Take": 2, // 2 business days
+			"Monthly Stock Take": 5, // 5 business days
+		}[form.value.stock_take_type] || 0
+	date.setDate(date.getDate() + days)
+	return date.toISOString().split("T")[0]
 })
 
 const investigationDeadline = computed(() => {
-  if (!form.value.audit_date) return ''
-  const date = new Date(form.value.audit_date)
-  date.setDate(date.getDate() + 3)
-  return date.toISOString().split('T')[0]
+	if (!form.value.audit_date) return ""
+	const date = new Date(form.value.audit_date)
+	date.setDate(date.getDate() + 3)
+	return date.toISOString().split("T")[0]
 })
 
-const totalSystemQty = computed(() => 
-  form.value.stock_take_items.reduce((sum, item) => sum + (item.system_quantity || 0), 0)
+const totalSystemQty = computed(() =>
+	form.value.stock_take_items.reduce(
+		(sum, item) => sum + (item.system_quantity || 0),
+		0,
+	),
 )
 
-const totalPhysicalQty = computed(() => 
-  form.value.stock_take_items.reduce((sum, item) => sum + (item.physical_quantity || 0), 0)
+const totalPhysicalQty = computed(() =>
+	form.value.stock_take_items.reduce(
+		(sum, item) => sum + (item.physical_quantity || 0),
+		0,
+	),
 )
 
-const totalVariance = computed(() => 
-  form.value.stock_take_items.reduce((sum, item) => sum + (item.variance_quantity || 0), 0)
+const totalVariance = computed(() =>
+	form.value.stock_take_items.reduce(
+		(sum, item) => sum + (item.variance_quantity || 0),
+		0,
+	),
 )
 
-const totalVarianceValue = computed(() => 
-  form.value.stock_take_items.reduce((sum, item) => sum + Math.abs(item.variance_value || 0), 0)
+const totalVarianceValue = computed(() =>
+	form.value.stock_take_items.reduce(
+		(sum, item) => sum + Math.abs(item.variance_value || 0),
+		0,
+	),
 )
 
-const itemsPending = computed(() => 
-  form.value.stock_take_items.filter(i => !i.verification_status || i.verification_status === 'Pending').length
+const itemsPending = computed(
+	() =>
+		form.value.stock_take_items.filter(
+			(i) => !i.verification_status || i.verification_status === "Pending",
+		).length,
 )
 
-const itemsVerified = computed(() => 
-  form.value.stock_take_items.filter(i => i.verification_status === 'Verified-Match').length
+const itemsVerified = computed(
+	() =>
+		form.value.stock_take_items.filter(
+			(i) => i.verification_status === "Verified-Match",
+		).length,
 )
 
-const itemsDiscrepancy = computed(() => 
-  form.value.stock_take_items.filter(i => i.verification_status === 'Verified-Discrepancy').length
+const itemsDiscrepancy = computed(
+	() =>
+		form.value.stock_take_items.filter(
+			(i) => i.verification_status === "Verified-Discrepancy",
+		).length,
 )
 
 onMounted(async () => {
-  await loadWarehouses()
-  if (isEdit.value) {
-    await loadAudit()
-  }
+	await loadWarehouses()
+	if (isEdit.value) {
+		await loadAudit()
+	}
 })
 
 async function loadWarehouses() {
-  try {
-    const warehouses = await call('frappe.client.get_list', {
-      doctype: 'Warehouse Master',
-      filters: { is_active: 1 },
-      fields: ['name', 'warehouse_code', 'warehouse_name', 'branch'],
-      limit_page_length: 0
-    })
-    warehouseOptions.value = warehouses.map(w => ({
-      label: `${w.warehouse_code} - ${w.warehouse_name}`,
-      value: w.name,
-      branch: w.branch
-    }))
-  } catch (error) {
-    console.error('Error loading warehouses:', error)
-    warehouseOptions.value = []
-  }
+	try {
+		const warehouses = await call("frappe.client.get_list", {
+			doctype: "Warehouse Master",
+			filters: { is_active: 1 },
+			fields: ["name", "warehouse_code", "warehouse_name", "branch"],
+			limit_page_length: 0,
+		})
+		warehouseOptions.value = warehouses.map((w) => ({
+			label: `${w.warehouse_code} - ${w.warehouse_name}`,
+			value: w.name,
+			branch: w.branch,
+		}))
+	} catch (error) {
+		console.error("Error loading warehouses:", error)
+		warehouseOptions.value = []
+	}
 }
 
 async function loadAudit() {
-  try {
-    const audit = await call('frappe.client.get', {
-      doctype: 'Stock Take Audit',
-      name: route.params.id
-    })
-    
-    form.value = {
-      stock_take_type: audit.stock_take_type || 'Daily Stock Take',
-      audit_date: audit.audit_date || '',
-      warehouse: audit.warehouse || '',
-      branch: audit.branch || '',
-      status: audit.status || 'Draft',
-      stock_take_items: audit.stock_take_items || [],
-      notes: audit.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading audit:', error)
-  }
+	try {
+		const audit = await call("frappe.client.get", {
+			doctype: "Stock Take Audit",
+			name: route.params.id,
+		})
+
+		form.value = {
+			stock_take_type: audit.stock_take_type || "Daily Stock Take",
+			audit_date: audit.audit_date || "",
+			warehouse: audit.warehouse || "",
+			branch: audit.branch || "",
+			status: audit.status || "Draft",
+			stock_take_items: audit.stock_take_items || [],
+			notes: audit.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading audit:", error)
+	}
 }
 
 function onWarehouseChange() {
-  const wh = warehouseOptions.value.find(w => w.value === form.value.warehouse)
-  if (wh) {
-    form.value.branch = wh.branch
-  }
+	const wh = warehouseOptions.value.find(
+		(w) => w.value === form.value.warehouse,
+	)
+	if (wh) {
+		form.value.branch = wh.branch
+	}
 }
 
 function addItem() {
-  form.value.stock_take_items.push({
-    item_code: '',
-    item_description: '',
-    system_quantity: 0,
-    unit_value: 0,
-    physical_quantity: null,
-    pending_dispatch: 0,
-    variance_quantity: 0,
-    variance_value: 0,
-    reason_provided: '',
-    verification_status: 'Pending',
-    resolution_type: ''
-  })
+	form.value.stock_take_items.push({
+		item_code: "",
+		item_description: "",
+		system_quantity: 0,
+		unit_value: 0,
+		physical_quantity: null,
+		pending_dispatch: 0,
+		variance_quantity: 0,
+		variance_value: 0,
+		reason_provided: "",
+		verification_status: "Pending",
+		resolution_type: "",
+	})
 }
 
 function removeItem(index) {
-  form.value.stock_take_items.splice(index, 1)
+	form.value.stock_take_items.splice(index, 1)
 }
 
 function calculateVariance(index) {
-  const item = form.value.stock_take_items[index]
-  if (item.physical_quantity !== null && item.physical_quantity !== undefined) {
-    // New variance formula: System Qty - Physical Qty - Pending Dispatch
-    item.variance_quantity = (item.system_quantity || 0) - (item.physical_quantity || 0) - (item.pending_dispatch || 0)
-    item.variance_value = item.variance_quantity * (item.unit_value || 0)
-    
-    // Auto-set verification status
-    if (item.variance_quantity === 0) {
-      item.verification_status = 'Verified-Match'
-    } else {
-      item.verification_status = 'Verified-Discrepancy'
-    }
-  }
+	const item = form.value.stock_take_items[index]
+	if (item.physical_quantity !== null && item.physical_quantity !== undefined) {
+		// New variance formula: System Qty - Physical Qty - Pending Dispatch
+		item.variance_quantity =
+			(item.system_quantity || 0) -
+			(item.physical_quantity || 0) -
+			(item.pending_dispatch || 0)
+		item.variance_value = item.variance_quantity * (item.unit_value || 0)
+
+		// Auto-set verification status
+		if (item.variance_quantity === 0) {
+			item.verification_status = "Verified-Match"
+		} else {
+			item.verification_status = "Verified-Discrepancy"
+		}
+	}
 }
 
 function verifyItem(index, match) {
-  const item = form.value.stock_take_items[index]
-  if (match) {
-    item.physical_quantity = item.system_quantity
-    item.pending_dispatch = 0
-    item.variance_quantity = 0
-    item.variance_value = 0
-    item.verification_status = 'Verified-Match'
-  }
+	const item = form.value.stock_take_items[index]
+	if (match) {
+		item.physical_quantity = item.system_quantity
+		item.pending_dispatch = 0
+		item.variance_quantity = 0
+		item.variance_value = 0
+		item.verification_status = "Verified-Match"
+	}
 }
 
 function getRowClass(item) {
-  if (item.verification_status === 'Verified-Match') return 'bg-green-50'
-  if (item.verification_status === 'Verified-Discrepancy') return 'bg-red-50'
-  return ''
+	if (item.verification_status === "Verified-Match") return "bg-green-50"
+	if (item.verification_status === "Verified-Discrepancy") return "bg-red-50"
+	return ""
 }
 
 function getStatusBadgeClass(status) {
-  switch (status) {
-    case 'Verified-Match': return 'bg-green-100 text-green-800'
-    case 'Verified-Discrepancy': return 'bg-red-100 text-red-800'
-    case 'Resolved': return 'bg-blue-100 text-blue-800'
-    default: return 'bg-yellow-100 text-yellow-800'
-  }
+	switch (status) {
+		case "Verified-Match":
+			return "bg-green-100 text-green-800"
+		case "Verified-Discrepancy":
+			return "bg-red-100 text-red-800"
+		case "Resolved":
+			return "bg-blue-100 text-blue-800"
+		default:
+			return "bg-yellow-100 text-yellow-800"
+	}
 }
 
 function onFileSelected(event) {
-  const file = event.target.files[0]
-  if (!file) return
-  
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    csvContent.value = e.target.result
-    parseCSV(csvContent.value)
-  }
-  reader.readAsText(file)
+	const file = event.target.files[0]
+	if (!file) return
+
+	const reader = new FileReader()
+	reader.onload = (e) => {
+		csvContent.value = e.target.result
+		parseCSV(csvContent.value)
+	}
+	reader.readAsText(file)
 }
 
 function parseCSV(content) {
-  const lines = content.split('\n').filter(line => line.trim())
-  if (lines.length < 2) return
-  
-  csvHeaders.value = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
-  csvPreview.value = lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
-    const row = {}
-    csvHeaders.value.forEach((h, i) => {
-      row[h] = values[i] || ''
-    })
-    return row
-  })
+	const lines = content.split("\n").filter((line) => line.trim())
+	if (lines.length < 2) return
+
+	csvHeaders.value = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""))
+	csvPreview.value = lines.slice(1).map((line) => {
+		const values = line.split(",").map((v) => v.trim().replace(/"/g, ""))
+		const row = {}
+		csvHeaders.value.forEach((h, i) => {
+			row[h] = values[i] || ""
+		})
+		return row
+	})
 }
 
 function downloadTemplate() {
-  // Create sample CSV template with expected columns matching the table fields
-  const headers = ['Item Code', 'Description', 'System Qty', 'Item Value', 'Physical Qty', 'Pending Dispatch', 'Reason Provided']
-  const sampleData = [
-    ['ITEM001', 'Sample Item 1', '100', '150.00', '95', '3', 'Items in transit'],
-    ['ITEM002', 'Sample Item 2', '50', '200.00', '52', '0', ''],
-    ['ITEM003', 'Sample Item 3', '75', '75.50', '70', '2', 'Damaged goods']
-  ]
-  
-  // Combine headers and sample data
-  const csvContent = [headers, ...sampleData]
-    .map(row => row.map(cell => `"${cell}"`).join(','))
-    .join('\n')
-  
-  // Create and download the file
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const link = document.createElement('a')
-  const url = URL.createObjectURL(blob)
-  link.setAttribute('href', url)
-  link.setAttribute('download', 'stock_take_template.csv')
-  link.style.visibility = 'hidden'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+	// Create sample CSV template with expected columns matching the table fields
+	const headers = [
+		"Item Code",
+		"Description",
+		"System Qty",
+		"Item Value",
+		"Physical Qty",
+		"Pending Dispatch",
+		"Reason Provided",
+	]
+	const sampleData = [
+		[
+			"ITEM001",
+			"Sample Item 1",
+			"100",
+			"150.00",
+			"95",
+			"3",
+			"Items in transit",
+		],
+		["ITEM002", "Sample Item 2", "50", "200.00", "52", "0", ""],
+		["ITEM003", "Sample Item 3", "75", "75.50", "70", "2", "Damaged goods"],
+	]
+
+	// Combine headers and sample data
+	const csvContent = [headers, ...sampleData]
+		.map((row) => row.map((cell) => `"${cell}"`).join(","))
+		.join("\n")
+
+	// Create and download the file
+	const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+	const link = document.createElement("a")
+	const url = URL.createObjectURL(blob)
+	link.setAttribute("href", url)
+	link.setAttribute("download", "stock_take_template.csv")
+	link.style.visibility = "hidden"
+	document.body.appendChild(link)
+	link.click()
+	document.body.removeChild(link)
 }
 
 function confirmImport() {
-  if (csvPreview.value.length === 0) return
-  
-  // Import items from CSV
-  csvPreview.value.forEach(row => {
-    const item = {
-      item_code: row['Item Code'] || '',
-      item_description: row['Description'] || '',
-      system_quantity: parseFloat(row['System Qty']) || 0,
-      unit_value: parseFloat(row['Item Value']) || 0,
-      physical_quantity: parseFloat(row['Physical Qty']) || null,
-      pending_dispatch: parseFloat(row['Pending Dispatch']) || 0,
-      reason_provided: row['Reason Provided'] || '',
-      variance_quantity: 0,
-      variance_value: 0,
-      verification_status: 'Pending',
-      resolution_type: ''
-    }
-    
-    // Calculate variance if physical quantity is provided
-    if (item.physical_quantity !== null && item.physical_quantity !== undefined) {
-      item.variance_quantity = (item.system_quantity || 0) - (item.physical_quantity || 0) - (item.pending_dispatch || 0)
-      item.variance_value = item.variance_quantity * (item.unit_value || 0)
-      
-      // Auto-set verification status
-      if (item.variance_quantity === 0) {
-        item.verification_status = 'Verified-Match'
-      } else {
-        item.verification_status = 'Verified-Discrepancy'
-      }
-    }
-    
-    form.value.stock_take_items.push(item)
-  })
-  
-  // Close modal and reset
-  showImportModal.value = false
-  csvPreview.value = []
-  csvHeaders.value = []
-  csvContent.value = ''
+	if (csvPreview.value.length === 0) return
+
+	// Import items from CSV
+	csvPreview.value.forEach((row) => {
+		const item = {
+			item_code: row["Item Code"] || "",
+			item_description: row["Description"] || "",
+			system_quantity: Number.parseFloat(row["System Qty"]) || 0,
+			unit_value: Number.parseFloat(row["Item Value"]) || 0,
+			physical_quantity: Number.parseFloat(row["Physical Qty"]) || null,
+			pending_dispatch: Number.parseFloat(row["Pending Dispatch"]) || 0,
+			reason_provided: row["Reason Provided"] || "",
+			variance_quantity: 0,
+			variance_value: 0,
+			verification_status: "Pending",
+			resolution_type: "",
+		}
+
+		// Calculate variance if physical quantity is provided
+		if (
+			item.physical_quantity !== null &&
+			item.physical_quantity !== undefined
+		) {
+			item.variance_quantity =
+				(item.system_quantity || 0) -
+				(item.physical_quantity || 0) -
+				(item.pending_dispatch || 0)
+			item.variance_value = item.variance_quantity * (item.unit_value || 0)
+
+			// Auto-set verification status
+			if (item.variance_quantity === 0) {
+				item.verification_status = "Verified-Match"
+			} else {
+				item.verification_status = "Verified-Discrepancy"
+			}
+		}
+
+		form.value.stock_take_items.push(item)
+	})
+
+	// Close modal and reset
+	showImportModal.value = false
+	csvPreview.value = []
+	csvHeaders.value = []
+	csvContent.value = ""
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined) return 'KES 0'
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES'
-  }).format(value)
+	if (value === null || value === undefined) return "KES 0"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+	}).format(value)
 }
 
 async function saveAudit() {
-  if (!form.value.audit_date) {
-    alert('Stock take date is required')
-    return
-  }
-  if (!form.value.warehouse) {
-    alert('Warehouse is required')
-    return
-  }
+	if (!form.value.audit_date) {
+		alert("Stock take date is required")
+		return
+	}
+	if (!form.value.warehouse) {
+		alert("Warehouse is required")
+		return
+	}
 
-  saving.value = true
-  
-  try {
-    const docData = {
-      doctype: 'Stock Take Audit',
-      stock_take_type: form.value.stock_take_type,
-      audit_date: form.value.audit_date,
-      warehouse: form.value.warehouse,
-      branch: form.value.branch,
-      notes: form.value.notes,
-      stock_take_items: form.value.stock_take_items.map(item => ({
-        item_code: item.item_code,
-        item_description: item.item_description,
-        system_quantity: item.system_quantity,
-        physical_quantity: item.physical_quantity,
-        unit_value: item.unit_value,
-        pending_dispatch: item.pending_dispatch,
-        variance_quantity: item.variance_quantity,
-        variance_value: item.variance_value,
-        reason_provided: item.reason_provided,
-        verification_status: item.verification_status,
-        resolution_type: item.resolution_type
-      }))
-    }
-    
-    if (isEdit.value) {
-      await call('frappe.client.set_value', {
-        doctype: 'Stock Take Audit',
-        name: route.params.id,
-        fieldname: docData
-      })
-      router.push(`/inventory-audit/stock-take/${route.params.id}`)
-    } else {
-      const result = await call('frappe.client.insert', { doc: docData })
-      router.push(`/inventory-audit/stock-take/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving audit:', error)
-    alert('Error saving stock take: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+
+	try {
+		const docData = {
+			doctype: "Stock Take Audit",
+			stock_take_type: form.value.stock_take_type,
+			audit_date: form.value.audit_date,
+			warehouse: form.value.warehouse,
+			branch: form.value.branch,
+			notes: form.value.notes,
+			stock_take_items: form.value.stock_take_items.map((item) => ({
+				item_code: item.item_code,
+				item_description: item.item_description,
+				system_quantity: item.system_quantity,
+				physical_quantity: item.physical_quantity,
+				unit_value: item.unit_value,
+				pending_dispatch: item.pending_dispatch,
+				variance_quantity: item.variance_quantity,
+				variance_value: item.variance_value,
+				reason_provided: item.reason_provided,
+				verification_status: item.verification_status,
+				resolution_type: item.resolution_type,
+			})),
+		}
+
+		if (isEdit.value) {
+			await call("frappe.client.set_value", {
+				doctype: "Stock Take Audit",
+				name: route.params.id,
+				fieldname: docData,
+			})
+			router.push(`/inventory-audit/stock-take/${route.params.id}`)
+		} else {
+			const result = await call("frappe.client.insert", { doc: docData })
+			router.push(`/inventory-audit/stock-take/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving audit:", error)
+		alert("Error saving stock take: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/stock-take/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/stock-take')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/stock-take/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/stock-take")
+	}
 }
 
 const stockTakeTypeOptions = [
-  { label: 'Sales Return', value: 'Sales Return' },
-  { label: 'Daily Stock Take', value: 'Daily Stock Take' },
-  { label: 'Weekly Stock Take', value: 'Weekly Stock Take' },
-  { label: 'Monthly Stock Take', value: 'Monthly Stock Take' }
+	{ label: "Sales Return", value: "Sales Return" },
+	{ label: "Daily Stock Take", value: "Daily Stock Take" },
+	{ label: "Weekly Stock Take", value: "Weekly Stock Take" },
+	{ label: "Monthly Stock Take", value: "Monthly Stock Take" },
 ]
 
 const statusOptions = [
-  { label: 'Draft', value: 'Draft' },
-  { label: 'Physical Count Submitted', value: 'Physical Count Submitted' },
-  { label: 'Analyst Reviewed', value: 'Analyst Reviewed' },
-  { label: 'HOD Approved', value: 'HOD Approved' },
-  { label: 'Under Investigation', value: 'Under Investigation' }
+	{ label: "Draft", value: "Draft" },
+	{ label: "Physical Count Submitted", value: "Physical Count Submitted" },
+	{ label: "Analyst Reviewed", value: "Analyst Reviewed" },
+	{ label: "HOD Approved", value: "HOD Approved" },
+	{ label: "Under Investigation", value: "Under Investigation" },
 ]
 
 const resolutionOptions = [
-  { label: 'Select Resolution...', value: '' },
-  { label: 'Stock Amendment', value: 'Stock Amendment' },
-  { label: 'Charge Staff', value: 'Charge Staff' },
-  { label: 'Write-off', value: 'Write-off' },
-  { label: 'Under Investigation', value: 'Under Investigation' }
+	{ label: "Select Resolution...", value: "" },
+	{ label: "Stock Amendment", value: "Stock Amendment" },
+	{ label: "Charge Staff", value: "Charge Staff" },
+	{ label: "Write-off", value: "Write-off" },
+	{ label: "Under Investigation", value: "Under Investigation" },
 ]
 </script>

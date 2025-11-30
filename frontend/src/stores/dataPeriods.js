@@ -27,7 +27,7 @@ export const useDataPeriodsStore = defineStore("dataPeriods", {
 					(p) =>
 						p.period_name?.toLowerCase().includes(search) ||
 						p.period_id?.toLowerCase().includes(search) ||
-						p.description?.toLowerCase().includes(search)
+						p.description?.toLowerCase().includes(search),
 				)
 			}
 
@@ -37,19 +37,19 @@ export const useDataPeriodsStore = defineStore("dataPeriods", {
 
 			if (state.filters.periodType) {
 				filtered = filtered.filter(
-					(p) => p.period_type === state.filters.periodType
+					(p) => p.period_type === state.filters.periodType,
 				)
 			}
 
 			if (state.filters.fiscalYear) {
 				filtered = filtered.filter(
-					(p) => p.fiscal_year === state.filters.fiscalYear
+					(p) => p.fiscal_year === state.filters.fiscalYear,
 				)
 			}
 
 			if (state.filters.reconciliationStatus) {
 				filtered = filtered.filter(
-					(p) => p.reconciliation_status === state.filters.reconciliationStatus
+					(p) => p.reconciliation_status === state.filters.reconciliationStatus,
 				)
 			}
 
@@ -64,31 +64,32 @@ export const useDataPeriodsStore = defineStore("dataPeriods", {
 
 			// Calculate average data quality and completeness
 			const periodsWithQuality = state.periods.filter(
-				(p) => p.data_quality_score !== null && p.data_quality_score !== undefined
+				(p) =>
+					p.data_quality_score !== null && p.data_quality_score !== undefined,
 			)
 			const avgDataQuality =
 				periodsWithQuality.length > 0
 					? Math.round(
 							periodsWithQuality.reduce(
 								(sum, p) => sum + (p.data_quality_score || 0),
-								0
-							) / periodsWithQuality.length
-					  )
+								0,
+							) / periodsWithQuality.length,
+						)
 					: 0
 
 			const periodsWithCompleteness = state.periods.filter(
 				(p) =>
 					p.data_completeness_score !== null &&
-					p.data_completeness_score !== undefined
+					p.data_completeness_score !== undefined,
 			)
 			const avgCompleteness =
 				periodsWithCompleteness.length > 0
 					? Math.round(
 							periodsWithCompleteness.reduce(
 								(sum, p) => sum + (p.data_completeness_score || 0),
-								0
-							) / periodsWithCompleteness.length
-					  )
+								0,
+							) / periodsWithCompleteness.length,
+						)
 					: 0
 
 			// By fiscal year
@@ -124,7 +125,9 @@ export const useDataPeriodsStore = defineStore("dataPeriods", {
 		},
 
 		fiscalYears: (state) => {
-			const years = new Set(state.periods.map((p) => p.fiscal_year).filter(Boolean))
+			const years = new Set(
+				state.periods.map((p) => p.fiscal_year).filter(Boolean),
+			)
 			return Array.from(years).sort().reverse()
 		},
 	},

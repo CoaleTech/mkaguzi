@@ -335,9 +335,9 @@ import {
 	TrendingUp,
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
-import { useReportsStore } from "../stores/reports"
-import BoardStats from "../components/board/BoardStats.vue"
 import BoardReportForm from "../components/board/BoardReportForm.vue"
+import BoardStats from "../components/board/BoardStats.vue"
+import { useReportsStore } from "../stores/reports"
 
 // Store
 const reportsStore = useReportsStore()
@@ -512,7 +512,7 @@ const viewReport = (report) => {
 }
 
 const viewAllReports = () => {
-	router.push('/reports/board-reports')
+	router.push("/reports/board-reports")
 }
 
 const exportBoardReport = () => {
@@ -526,19 +526,19 @@ const scheduleReport = () => {
 }
 
 const viewRiskDashboard = () => {
-	router.push('/audit-planning/risk-assessment')
+	router.push("/audit-planning/risk-assessment")
 }
 
 const viewFindings = () => {
-	router.push('/findings/list')
+	router.push("/findings/list")
 }
 
 const viewCompliance = () => {
-	router.push('/compliance/requirements')
+	router.push("/compliance/requirements")
 }
 
 const viewRecommendations = () => {
-	router.push('/findings/corrective-actions')
+	router.push("/findings/corrective-actions")
 }
 
 const scheduleMeeting = () => {
@@ -627,7 +627,7 @@ const formatDate = (dateString, format = "medium") => {
 		return date.toLocaleDateString("en-US", {
 			year: "numeric",
 			month: "long",
-			day: "numeric"
+			day: "numeric",
 		})
 	}
 
@@ -635,7 +635,7 @@ const formatDate = (dateString, format = "medium") => {
 	return date.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",
-		day: "numeric"
+		day: "numeric",
 	})
 }
 

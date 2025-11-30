@@ -197,21 +197,28 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Badge } from 'frappe-ui'
-import { RefreshCw, Plus, MapPin, Clock, Package, AlertTriangle } from 'lucide-vue-next'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Badge, Button } from "frappe-ui"
+import {
+	AlertTriangle,
+	Clock,
+	MapPin,
+	Package,
+	Plus,
+	RefreshCw,
+} from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const store = useInventoryAuditStore()
 
 const loading = ref(false)
 const filters = ref({
-  status: '',
-  count_type: '',
-  audit_plan: '',
-  warehouse: ''
+	status: "",
+	count_type: "",
+	audit_plan: "",
+	warehouse: "",
 })
 
 const sessions = computed(() => store.sessions)
@@ -221,81 +228,98 @@ const pageSize = computed(() => store.sessionsPageSize)
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 const pendingSignoffCount = computed(() => {
-  return sessions.value.filter(s => 
-    s.status === 'Completed' && 
-    (!s.team_signoff || !s.supervisor_signoff || !s.auditor_signoff)
-  ).length
+	return sessions.value.filter(
+		(s) =>
+			s.status === "Completed" &&
+			(!s.team_signoff || !s.supervisor_signoff || !s.auditor_signoff),
+	).length
 })
 
 const totalItemsCounted = computed(() => {
-  return sessions.value.reduce((sum, s) => sum + (s.total_items_counted || 0), 0)
+	return sessions.value.reduce(
+		(sum, s) => sum + (s.total_items_counted || 0),
+		0,
+	)
 })
 
 const totalVariances = computed(() => {
-  return sessions.value.reduce((sum, s) => sum + (s.items_with_variance || 0), 0)
+	return sessions.value.reduce(
+		(sum, s) => sum + (s.items_with_variance || 0),
+		0,
+	)
 })
 
 onMounted(async () => {
-  await loadSessions()
+	await loadSessions()
 })
 
 async function loadSessions() {
-  loading.value = true
-  try {
-    const filterObj = { ...filters.value }
-    Object.keys(filterObj).forEach(key => {
-      if (!filterObj[key]) delete filterObj[key]
-    })
-    await store.loadSessions(filterObj, currentPage.value, pageSize.value)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const filterObj = { ...filters.value }
+		Object.keys(filterObj).forEach((key) => {
+			if (!filterObj[key]) delete filterObj[key]
+		})
+		await store.loadSessions(filterObj, currentPage.value, pageSize.value)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  filters.value = { status: '', count_type: '', audit_plan: '', warehouse: '' }
-  await loadSessions()
+	filters.value = { status: "", count_type: "", audit_plan: "", warehouse: "" }
+	await loadSessions()
 }
 
 let loadTimeout = null
 function debouncedLoad() {
-  clearTimeout(loadTimeout)
-  loadTimeout = setTimeout(() => loadSessions(), 300)
+	clearTimeout(loadTimeout)
+	loadTimeout = setTimeout(() => loadSessions(), 300)
 }
 
 async function changePage(page) {
-  await store.loadSessions(filters.value, page, pageSize.value)
+	await store.loadSessions(filters.value, page, pageSize.value)
 }
 
 function createSession() {
-  router.push('/inventory-audit/sessions/new')
+	router.push("/inventory-audit/sessions/new")
 }
 
 function viewSession(name) {
-  router.push(`/inventory-audit/sessions/${name}`)
+	router.push(`/inventory-audit/sessions/${name}`)
 }
 
 function getStatusVariant(status) {
-  const variants = { 'Planned': 'blue', 'In Progress': 'yellow', 'Completed': 'green', 'Cancelled': 'red' }
-  return variants[status] || 'gray'
+	const variants = {
+		Planned: "blue",
+		"In Progress": "yellow",
+		Completed: "green",
+		Cancelled: "red",
+	}
+	return variants[status] || "gray"
 }
 
 function getScoreColor(score) {
-  if (score >= 90) return 'text-green-600'
-  if (score >= 70) return 'text-yellow-600'
-  return 'text-red-600'
+	if (score >= 90) return "text-green-600"
+	if (score >= 70) return "text-yellow-600"
+	return "text-red-600"
 }
 
 function formatDateTime(date) {
-  if (!date) return '-'
-  return new Date(date).toLocaleString('en-US', { 
-    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-  })
+	if (!date) return "-"
+	return new Date(date).toLocaleString("en-US", {
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency', currency: 'KES', minimumFractionDigits: 0
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 0,
+	}).format(amount || 0)
 }
 </script>

@@ -250,13 +250,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save } from 'lucide-vue-next'
-import { TeamMemberTable } from '@/components/inventory-audit'
-import { useInventoryAuditStore } from '@/stores/useInventoryAuditStore'
+import { TeamMemberTable } from "@/components/inventory-audit"
+import { useInventoryAuditStore } from "@/stores/useInventoryAuditStore"
+import { Button, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Save } from "lucide-vue-next"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -265,177 +265,177 @@ const store = useInventoryAuditStore()
 const saving = ref(false)
 const userOptions = ref([])
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  plan_title: '',
-  status: 'Planned',
-  audit_period: 'Monthly',
-  audit_scope: 'Cycle Count',
-  audit_year: new Date().getFullYear(),
-  branch: '',
-  warehouse: '',
-  lead_auditor: '',
-  sampling_strategy: '',
-  materiality_type: 'Combined',
-  materiality_threshold_qty: 0,
-  materiality_threshold_amount: 0,
-  materiality_threshold_percent: 5,
-  planned_start_date: '',
-  planned_end_date: '',
-  sla_days: 7,
-  sla_due_date: '',
-  team_members: [],
-  notes: ''
+	plan_title: "",
+	status: "Planned",
+	audit_period: "Monthly",
+	audit_scope: "Cycle Count",
+	audit_year: new Date().getFullYear(),
+	branch: "",
+	warehouse: "",
+	lead_auditor: "",
+	sampling_strategy: "",
+	materiality_type: "Combined",
+	materiality_threshold_qty: 0,
+	materiality_threshold_amount: 0,
+	materiality_threshold_percent: 5,
+	planned_start_date: "",
+	planned_end_date: "",
+	sla_days: 7,
+	sla_due_date: "",
+	team_members: [],
+	notes: "",
 })
 
 onMounted(async () => {
-  await loadUsers()
-  if (isEdit.value) {
-    await loadPlan()
-  }
+	await loadUsers()
+	if (isEdit.value) {
+		await loadPlan()
+	}
 })
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 async function loadPlan() {
-  try {
-    const plan = await call('frappe.client.get', {
-      doctype: 'Inventory Audit Plan',
-      name: route.params.id
-    })
-    
-    form.value = {
-      plan_title: plan.plan_title || '',
-      status: plan.status || 'Planned',
-      audit_period: plan.audit_period || 'Monthly',
-      audit_scope: plan.audit_scope || 'Cycle Count',
-      audit_year: plan.audit_year || new Date().getFullYear(),
-      branch: plan.branch || '',
-      warehouse: plan.warehouse || '',
-      lead_auditor: plan.lead_auditor || '',
-      sampling_strategy: plan.sampling_strategy || '',
-      materiality_type: plan.materiality_type || 'Combined',
-      materiality_threshold_qty: plan.materiality_threshold_qty || 0,
-      materiality_threshold_amount: plan.materiality_threshold_amount || 0,
-      materiality_threshold_percent: plan.materiality_threshold_percent || 5,
-      planned_start_date: plan.planned_start_date || '',
-      planned_end_date: plan.planned_end_date || '',
-      sla_days: plan.sla_days || 7,
-      sla_due_date: plan.sla_due_date || '',
-      team_members: plan.team_members || [],
-      notes: plan.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading plan:', error)
-  }
+	try {
+		const plan = await call("frappe.client.get", {
+			doctype: "Inventory Audit Plan",
+			name: route.params.id,
+		})
+
+		form.value = {
+			plan_title: plan.plan_title || "",
+			status: plan.status || "Planned",
+			audit_period: plan.audit_period || "Monthly",
+			audit_scope: plan.audit_scope || "Cycle Count",
+			audit_year: plan.audit_year || new Date().getFullYear(),
+			branch: plan.branch || "",
+			warehouse: plan.warehouse || "",
+			lead_auditor: plan.lead_auditor || "",
+			sampling_strategy: plan.sampling_strategy || "",
+			materiality_type: plan.materiality_type || "Combined",
+			materiality_threshold_qty: plan.materiality_threshold_qty || 0,
+			materiality_threshold_amount: plan.materiality_threshold_amount || 0,
+			materiality_threshold_percent: plan.materiality_threshold_percent || 5,
+			planned_start_date: plan.planned_start_date || "",
+			planned_end_date: plan.planned_end_date || "",
+			sla_days: plan.sla_days || 7,
+			sla_due_date: plan.sla_due_date || "",
+			team_members: plan.team_members || [],
+			notes: plan.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading plan:", error)
+	}
 }
 
 async function savePlan() {
-  // Validate required fields
-  if (!form.value.plan_title) {
-    alert('Plan title is required')
-    return
-  }
-  if (!form.value.audit_period) {
-    alert('Audit period is required')
-    return
-  }
-  if (!form.value.audit_scope) {
-    alert('Audit scope is required')
-    return
-  }
+	// Validate required fields
+	if (!form.value.plan_title) {
+		alert("Plan title is required")
+		return
+	}
+	if (!form.value.audit_period) {
+		alert("Audit period is required")
+		return
+	}
+	if (!form.value.audit_scope) {
+		alert("Audit scope is required")
+		return
+	}
 
-  saving.value = true
-  
-  try {
-    if (isEdit.value) {
-      // Update existing
-      await call('frappe.client.set_value', {
-        doctype: 'Inventory Audit Plan',
-        name: route.params.id,
-        fieldname: form.value
-      })
-      router.push(`/inventory-audit/plans/${route.params.id}`)
-    } else {
-      // Create new
-      const result = await call('frappe.client.insert', {
-        doc: {
-          doctype: 'Inventory Audit Plan',
-          ...form.value
-        }
-      })
-      router.push(`/inventory-audit/plans/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving plan:', error)
-    alert('Error saving plan: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+
+	try {
+		if (isEdit.value) {
+			// Update existing
+			await call("frappe.client.set_value", {
+				doctype: "Inventory Audit Plan",
+				name: route.params.id,
+				fieldname: form.value,
+			})
+			router.push(`/inventory-audit/plans/${route.params.id}`)
+		} else {
+			// Create new
+			const result = await call("frappe.client.insert", {
+				doc: {
+					doctype: "Inventory Audit Plan",
+					...form.value,
+				},
+			})
+			router.push(`/inventory-audit/plans/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving plan:", error)
+		alert("Error saving plan: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/plans/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/plans')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/plans/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/plans")
+	}
 }
 
 // Options
 const statusOptions = [
-  { label: 'Planned', value: 'Planned' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Closed', value: 'Closed' },
-  { label: 'Cancelled', value: 'Cancelled' }
+	{ label: "Planned", value: "Planned" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Closed", value: "Closed" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 
 const periodOptions = [
-  { label: 'Daily', value: 'Daily' },
-  { label: 'Weekly', value: 'Weekly' },
-  { label: 'Monthly', value: 'Monthly' },
-  { label: 'Quarterly', value: 'Quarterly' },
-  { label: 'Ad Hoc', value: 'Ad Hoc' }
+	{ label: "Daily", value: "Daily" },
+	{ label: "Weekly", value: "Weekly" },
+	{ label: "Monthly", value: "Monthly" },
+	{ label: "Quarterly", value: "Quarterly" },
+	{ label: "Ad Hoc", value: "Ad Hoc" },
 ]
 
 const scopeOptions = [
-  { label: 'Cycle Count', value: 'Cycle Count' },
-  { label: 'Full Count', value: 'Full Count' },
-  { label: 'Sales Returns', value: 'Sales Returns' },
-  { label: 'Damaged Stock', value: 'Damaged Stock' },
-  { label: 'GRN Audit', value: 'GRN Audit' },
-  { label: 'Dispatch Audit', value: 'Dispatch Audit' }
+	{ label: "Cycle Count", value: "Cycle Count" },
+	{ label: "Full Count", value: "Full Count" },
+	{ label: "Sales Returns", value: "Sales Returns" },
+	{ label: "Damaged Stock", value: "Damaged Stock" },
+	{ label: "GRN Audit", value: "GRN Audit" },
+	{ label: "Dispatch Audit", value: "Dispatch Audit" },
 ]
 
 const samplingOptions = [
-  { label: 'ABC Analysis', value: 'ABC Analysis' },
-  { label: 'Velocity Based', value: 'Velocity Based' },
-  { label: 'Risk Based', value: 'Risk Based' },
-  { label: 'Random', value: 'Random' },
-  { label: 'Full Population', value: 'Full Population' }
+	{ label: "ABC Analysis", value: "ABC Analysis" },
+	{ label: "Velocity Based", value: "Velocity Based" },
+	{ label: "Risk Based", value: "Risk Based" },
+	{ label: "Random", value: "Random" },
+	{ label: "Full Population", value: "Full Population" },
 ]
 
 const materialityTypeOptions = [
-  { label: 'Quantity', value: 'Quantity' },
-  { label: 'Amount', value: 'Amount' },
-  { label: 'Percentage', value: 'Percentage' },
-  { label: 'Combined', value: 'Combined' }
+	{ label: "Quantity", value: "Quantity" },
+	{ label: "Amount", value: "Amount" },
+	{ label: "Percentage", value: "Percentage" },
+	{ label: "Combined", value: "Combined" },
 ]
 </script>

@@ -224,12 +224,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Button, FormControl, Dialog } from 'frappe-ui'
-import { call } from 'frappe-ui'
-import { ArrowLeft, Save, Download, Plus } from 'lucide-vue-next'
-import { PhysicalCountTable } from '@/components/inventory-audit'
+import { PhysicalCountTable } from "@/components/inventory-audit"
+import { Button, Dialog, FormControl } from "frappe-ui"
+import { call } from "frappe-ui"
+import { ArrowLeft, Download, Plus, Save } from "lucide-vue-next"
+import { computed, onMounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
 const router = useRouter()
@@ -240,304 +240,307 @@ const auditPlanOptions = ref([])
 const warehouseOptions = ref([])
 const snapshotOptions = ref([])
 const showSnapshotModal = ref(false)
-const selectedSnapshot = ref('')
+const selectedSnapshot = ref("")
 
-const isEdit = computed(() => route.params.id && route.params.id !== 'new')
+const isEdit = computed(() => route.params.id && route.params.id !== "new")
 
 const form = ref({
-  session_name: '',
-  session_type: 'Cycle Count',
-  status: 'Scheduled',
-  audit_plan: '',
-  scheduled_date: new Date().toISOString().split('T')[0],
-  warehouse: '',
-  zone: '',
-  bin_location: '',
-  assigned_counters: '',
-  supervisor: '',
-  count_items: [],
-  notes: ''
+	session_name: "",
+	session_type: "Cycle Count",
+	status: "Scheduled",
+	audit_plan: "",
+	scheduled_date: new Date().toISOString().split("T")[0],
+	warehouse: "",
+	zone: "",
+	bin_location: "",
+	assigned_counters: "",
+	supervisor: "",
+	count_items: [],
+	notes: "",
 })
 
 onMounted(async () => {
-  await Promise.all([
-    loadUsers(),
-    loadAuditPlans(),
-    loadWarehouses(),
-    loadSnapshots()
-  ])
-  
-  if (isEdit.value) {
-    await loadSession()
-  }
+	await Promise.all([
+		loadUsers(),
+		loadAuditPlans(),
+		loadWarehouses(),
+		loadSnapshots(),
+	])
+
+	if (isEdit.value) {
+		await loadSession()
+	}
 })
 
 // Watch for audit plan selection to inherit warehouse
-watch(() => form.value.audit_plan, async (newPlan) => {
-  if (newPlan && !isEdit.value) {
-    try {
-      const plan = await call('frappe.client.get_value', {
-        doctype: 'Inventory Audit Plan',
-        filters: { name: newPlan },
-        fieldname: ['warehouse']
-      })
-      if (plan.warehouse) {
-        form.value.warehouse = plan.warehouse
-      }
-    } catch (error) {
-      console.error('Error loading plan details:', error)
-    }
-  }
-})
+watch(
+	() => form.value.audit_plan,
+	async (newPlan) => {
+		if (newPlan && !isEdit.value) {
+			try {
+				const plan = await call("frappe.client.get_value", {
+					doctype: "Inventory Audit Plan",
+					filters: { name: newPlan },
+					fieldname: ["warehouse"],
+				})
+				if (plan.warehouse) {
+					form.value.warehouse = plan.warehouse
+				}
+			} catch (error) {
+				console.error("Error loading plan details:", error)
+			}
+		}
+	},
+)
 
 async function loadUsers() {
-  try {
-    const users = await call('frappe.client.get_list', {
-      doctype: 'User',
-      filters: { enabled: 1, user_type: 'System User' },
-      fields: ['name', 'full_name'],
-      limit_page_length: 0
-    })
-    userOptions.value = users.map(u => ({
-      label: u.full_name || u.name,
-      value: u.name
-    }))
-  } catch (error) {
-    console.error('Error loading users:', error)
-  }
+	try {
+		const users = await call("frappe.client.get_list", {
+			doctype: "User",
+			filters: { enabled: 1, user_type: "System User" },
+			fields: ["name", "full_name"],
+			limit_page_length: 0,
+		})
+		userOptions.value = users.map((u) => ({
+			label: u.full_name || u.name,
+			value: u.name,
+		}))
+	} catch (error) {
+		console.error("Error loading users:", error)
+	}
 }
 
 async function loadAuditPlans() {
-  try {
-    const plans = await call('frappe.client.get_list', {
-      doctype: 'Inventory Audit Plan',
-      filters: { status: ['in', ['Planned', 'In Progress']] },
-      fields: ['name', 'plan_title'],
-      limit_page_length: 0
-    })
-    auditPlanOptions.value = plans.map(p => ({
-      label: p.plan_title || p.name,
-      value: p.name
-    }))
-  } catch (error) {
-    console.error('Error loading audit plans:', error)
-  }
+	try {
+		const plans = await call("frappe.client.get_list", {
+			doctype: "Inventory Audit Plan",
+			filters: { status: ["in", ["Planned", "In Progress"]] },
+			fields: ["name", "plan_title"],
+			limit_page_length: 0,
+		})
+		auditPlanOptions.value = plans.map((p) => ({
+			label: p.plan_title || p.name,
+			value: p.name,
+		}))
+	} catch (error) {
+		console.error("Error loading audit plans:", error)
+	}
 }
 
 async function loadWarehouses() {
-  try {
-    const warehouses = await call('frappe.client.get_list', {
-      doctype: 'Warehouse',
-      fields: ['name', 'warehouse_name'],
-      limit_page_length: 0
-    })
-    warehouseOptions.value = warehouses.map(w => ({
-      label: w.warehouse_name || w.name,
-      value: w.name
-    }))
-  } catch (error) {
-    console.error('Error loading warehouses:', error)
-  }
+	try {
+		const warehouses = await call("frappe.client.get_list", {
+			doctype: "Warehouse",
+			fields: ["name", "warehouse_name"],
+			limit_page_length: 0,
+		})
+		warehouseOptions.value = warehouses.map((w) => ({
+			label: w.warehouse_name || w.name,
+			value: w.name,
+		}))
+	} catch (error) {
+		console.error("Error loading warehouses:", error)
+	}
 }
 
 async function loadSnapshots() {
-  try {
-    const snapshots = await call('frappe.client.get_list', {
-      doctype: 'Inventory Snapshot',
-      filters: { status: 'Active' },
-      fields: ['name', 'snapshot_date', 'warehouse'],
-      limit_page_length: 50,
-      order_by: 'snapshot_date desc'
-    })
-    snapshotOptions.value = snapshots.map(s => ({
-      label: `${s.name} - ${s.warehouse} (${s.snapshot_date})`,
-      value: s.name
-    }))
-  } catch (error) {
-    console.error('Error loading snapshots:', error)
-  }
+	try {
+		const snapshots = await call("frappe.client.get_list", {
+			doctype: "Inventory Snapshot",
+			filters: { status: "Active" },
+			fields: ["name", "snapshot_date", "warehouse"],
+			limit_page_length: 50,
+			order_by: "snapshot_date desc",
+		})
+		snapshotOptions.value = snapshots.map((s) => ({
+			label: `${s.name} - ${s.warehouse} (${s.snapshot_date})`,
+			value: s.name,
+		}))
+	} catch (error) {
+		console.error("Error loading snapshots:", error)
+	}
 }
 
 async function loadSession() {
-  try {
-    const session = await call('frappe.client.get', {
-      doctype: 'Stock Take Session',
-      name: route.params.id
-    })
-    
-    form.value = {
-      session_name: session.session_name || '',
-      session_type: session.session_type || 'Cycle Count',
-      status: session.status || 'Scheduled',
-      audit_plan: session.audit_plan || '',
-      scheduled_date: session.scheduled_date || '',
-      warehouse: session.warehouse || '',
-      zone: session.zone || '',
-      bin_location: session.bin_location || '',
-      assigned_counters: session.assigned_counters || '',
-      supervisor: session.supervisor || '',
-      count_items: session.count_items || [],
-      notes: session.notes || ''
-    }
-  } catch (error) {
-    console.error('Error loading session:', error)
-  }
+	try {
+		const session = await call("frappe.client.get", {
+			doctype: "Stock Take Session",
+			name: route.params.id,
+		})
+
+		form.value = {
+			session_name: session.session_name || "",
+			session_type: session.session_type || "Cycle Count",
+			status: session.status || "Scheduled",
+			audit_plan: session.audit_plan || "",
+			scheduled_date: session.scheduled_date || "",
+			warehouse: session.warehouse || "",
+			zone: session.zone || "",
+			bin_location: session.bin_location || "",
+			assigned_counters: session.assigned_counters || "",
+			supervisor: session.supervisor || "",
+			count_items: session.count_items || [],
+			notes: session.notes || "",
+		}
+	} catch (error) {
+		console.error("Error loading session:", error)
+	}
 }
 
 async function saveSession() {
-  // Validate required fields
-  if (!form.value.session_type) {
-    alert('Session type is required')
-    return
-  }
-  if (!form.value.scheduled_date) {
-    alert('Scheduled date is required')
-    return
-  }
+	// Validate required fields
+	if (!form.value.session_type) {
+		alert("Session type is required")
+		return
+	}
+	if (!form.value.scheduled_date) {
+		alert("Scheduled date is required")
+		return
+	}
 
-  saving.value = true
-  
-  try {
-    if (isEdit.value) {
-      // Update existing
-      await call('frappe.client.set_value', {
-        doctype: 'Stock Take Session',
-        name: route.params.id,
-        fieldname: form.value
-      })
-      router.push(`/inventory-audit/sessions/${route.params.id}`)
-    } else {
-      // Create new
-      const result = await call('frappe.client.insert', {
-        doc: {
-          doctype: 'Stock Take Session',
-          ...form.value
-        }
-      })
-      router.push(`/inventory-audit/sessions/${result.name}`)
-    }
-  } catch (error) {
-    console.error('Error saving session:', error)
-    alert('Error saving session: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+
+	try {
+		if (isEdit.value) {
+			// Update existing
+			await call("frappe.client.set_value", {
+				doctype: "Stock Take Session",
+				name: route.params.id,
+				fieldname: form.value,
+			})
+			router.push(`/inventory-audit/sessions/${route.params.id}`)
+		} else {
+			// Create new
+			const result = await call("frappe.client.insert", {
+				doc: {
+					doctype: "Stock Take Session",
+					...form.value,
+				},
+			})
+			router.push(`/inventory-audit/sessions/${result.name}`)
+		}
+	} catch (error) {
+		console.error("Error saving session:", error)
+		alert("Error saving session: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 async function saveAndAddAnother() {
-  if (!form.value.session_type || !form.value.scheduled_date) {
-    alert('Session type and scheduled date are required')
-    return
-  }
+	if (!form.value.session_type || !form.value.scheduled_date) {
+		alert("Session type and scheduled date are required")
+		return
+	}
 
-  saving.value = true
-  
-  try {
-    await call('frappe.client.insert', {
-      doc: {
-        doctype: 'Stock Take Session',
-        ...form.value
-      }
-    })
-    
-    // Reset form for next entry
-    form.value = {
-      session_name: '',
-      session_type: 'Cycle Count',
-      status: 'Scheduled',
-      audit_plan: form.value.audit_plan, // Keep the audit plan
-      scheduled_date: form.value.scheduled_date, // Keep the date
-      warehouse: form.value.warehouse, // Keep warehouse
-      zone: '',
-      bin_location: '',
-      assigned_counters: '',
-      supervisor: '',
-      count_items: [],
-      notes: ''
-    }
-  } catch (error) {
-    console.error('Error saving session:', error)
-    alert('Error saving session: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+
+	try {
+		await call("frappe.client.insert", {
+			doc: {
+				doctype: "Stock Take Session",
+				...form.value,
+			},
+		})
+
+		// Reset form for next entry
+		form.value = {
+			session_name: "",
+			session_type: "Cycle Count",
+			status: "Scheduled",
+			audit_plan: form.value.audit_plan, // Keep the audit plan
+			scheduled_date: form.value.scheduled_date, // Keep the date
+			warehouse: form.value.warehouse, // Keep warehouse
+			zone: "",
+			bin_location: "",
+			assigned_counters: "",
+			supervisor: "",
+			count_items: [],
+			notes: "",
+		}
+	} catch (error) {
+		console.error("Error saving session:", error)
+		alert("Error saving session: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function addItem() {
-  form.value.count_items.push({
-    item_code: '',
-    item_name: '',
-    system_qty: 0,
-    counted_qty: null,
-    variance_qty: 0,
-    variance_value: 0,
-    uom: 'Nos',
-    condition: 'Good',
-    notes: ''
-  })
+	form.value.count_items.push({
+		item_code: "",
+		item_name: "",
+		system_qty: 0,
+		counted_qty: null,
+		variance_qty: 0,
+		variance_value: 0,
+		uom: "Nos",
+		condition: "Good",
+		notes: "",
+	})
 }
 
 function loadFromSnapshot() {
-  showSnapshotModal.value = true
+	showSnapshotModal.value = true
 }
 
 async function confirmLoadSnapshot() {
-  if (!selectedSnapshot.value) return
-  
-  try {
-    const snapshot = await call('frappe.client.get', {
-      doctype: 'Inventory Snapshot',
-      name: selectedSnapshot.value
-    })
-    
-    if (snapshot.items && snapshot.items.length > 0) {
-      form.value.count_items = snapshot.items.map(item => ({
-        item_code: item.item_code,
-        item_name: item.item_name,
-        system_qty: item.qty || 0,
-        counted_qty: null,
-        variance_qty: 0,
-        variance_value: 0,
-        uom: item.uom || 'Nos',
-        condition: 'Good',
-        notes: ''
-      }))
-    }
-    
-    if (snapshot.warehouse) {
-      form.value.warehouse = snapshot.warehouse
-    }
-    
-    showSnapshotModal.value = false
-    selectedSnapshot.value = ''
-  } catch (error) {
-    console.error('Error loading snapshot:', error)
-    alert('Error loading snapshot: ' + error.message)
-  }
+	if (!selectedSnapshot.value) return
+
+	try {
+		const snapshot = await call("frappe.client.get", {
+			doctype: "Inventory Snapshot",
+			name: selectedSnapshot.value,
+		})
+
+		if (snapshot.items && snapshot.items.length > 0) {
+			form.value.count_items = snapshot.items.map((item) => ({
+				item_code: item.item_code,
+				item_name: item.item_name,
+				system_qty: item.qty || 0,
+				counted_qty: null,
+				variance_qty: 0,
+				variance_value: 0,
+				uom: item.uom || "Nos",
+				condition: "Good",
+				notes: "",
+			}))
+		}
+
+		if (snapshot.warehouse) {
+			form.value.warehouse = snapshot.warehouse
+		}
+
+		showSnapshotModal.value = false
+		selectedSnapshot.value = ""
+	} catch (error) {
+		console.error("Error loading snapshot:", error)
+		alert("Error loading snapshot: " + error.message)
+	}
 }
 
 function goBack() {
-  if (isEdit.value) {
-    router.push(`/inventory-audit/sessions/${route.params.id}`)
-  } else {
-    router.push('/inventory-audit/sessions')
-  }
+	if (isEdit.value) {
+		router.push(`/inventory-audit/sessions/${route.params.id}`)
+	} else {
+		router.push("/inventory-audit/sessions")
+	}
 }
 
 // Options
 const sessionTypeOptions = [
-  { label: 'Cycle Count', value: 'Cycle Count' },
-  { label: 'Full Count', value: 'Full Count' },
-  { label: 'Spot Check', value: 'Spot Check' },
-  { label: 'Blind Count', value: 'Blind Count' },
-  { label: 'Verification', value: 'Verification' }
+	{ label: "Cycle Count", value: "Cycle Count" },
+	{ label: "Full Count", value: "Full Count" },
+	{ label: "Spot Check", value: "Spot Check" },
+	{ label: "Blind Count", value: "Blind Count" },
+	{ label: "Verification", value: "Verification" },
 ]
 
 const statusOptions = [
-  { label: 'Scheduled', value: 'Scheduled' },
-  { label: 'In Progress', value: 'In Progress' },
-  { label: 'Pending Review', value: 'Pending Review' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Cancelled', value: 'Cancelled' }
+	{ label: "Scheduled", value: "Scheduled" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Pending Review", value: "Pending Review" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Cancelled", value: "Cancelled" },
 ]
 </script>

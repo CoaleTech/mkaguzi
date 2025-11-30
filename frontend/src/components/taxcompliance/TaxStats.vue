@@ -161,92 +161,118 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Badge } from 'frappe-ui'
+import { Badge } from "frappe-ui"
 import {
-  FileText,
-  Receipt,
-  Briefcase,
-  Building,
-  AlertCircle,
-  DollarSign,
-  Users,
-  Percent,
-  Shield,
-} from 'lucide-vue-next'
+	AlertCircle,
+	Briefcase,
+	Building,
+	DollarSign,
+	FileText,
+	Percent,
+	Receipt,
+	Shield,
+	Users,
+} from "lucide-vue-next"
+import { computed } from "vue"
 
 const props = defineProps({
-  trackers: {
-    type: Array,
-    default: () => [],
-  },
+	trackers: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 const stats = computed(() => {
-  const total = props.trackers.length
+	const total = props.trackers.length
 
-  // Filing counts
-  const vatFiled = props.trackers.filter((t) => t.vat_return_filed).length
-  const payeFiled = props.trackers.filter((t) => t.paye_return_filed).length
-  const whtFiled = props.trackers.filter((t) => t.wht_return_filed).length
-  const nssfFiled = props.trackers.filter((t) => t.nssf_return_filed).length
-  const nhifFiled = props.trackers.filter((t) => t.nhif_return_filed).length
+	// Filing counts
+	const vatFiled = props.trackers.filter((t) => t.vat_return_filed).length
+	const payeFiled = props.trackers.filter((t) => t.paye_return_filed).length
+	const whtFiled = props.trackers.filter((t) => t.wht_return_filed).length
+	const nssfFiled = props.trackers.filter((t) => t.nssf_return_filed).length
+	const nhifFiled = props.trackers.filter((t) => t.nhif_return_filed).length
 
-  // Rates
-  const vatRate = total > 0 ? Math.round((vatFiled / total) * 100) : 0
-  const payeRate = total > 0 ? Math.round((payeFiled / total) * 100) : 0
+	// Rates
+	const vatRate = total > 0 ? Math.round((vatFiled / total) * 100) : 0
+	const payeRate = total > 0 ? Math.round((payeFiled / total) * 100) : 0
 
-  // Financial totals
-  const totalVatPayable = props.trackers.reduce((sum, t) => sum + (t.net_vat_payable || 0), 0)
-  const totalPaye = props.trackers.reduce((sum, t) => sum + (t.total_paye || 0), 0)
-  const totalWht = props.trackers.reduce((sum, t) => sum + (t.total_wht || 0), 0)
-  const totalNssf = props.trackers.reduce((sum, t) => sum + (t.total_nssf || 0), 0)
-  const totalNhif = props.trackers.reduce((sum, t) => sum + (t.total_nhif || 0), 0)
-  const totalStatutory = totalNssf + totalNhif
+	// Financial totals
+	const totalVatPayable = props.trackers.reduce(
+		(sum, t) => sum + (t.net_vat_payable || 0),
+		0,
+	)
+	const totalPaye = props.trackers.reduce(
+		(sum, t) => sum + (t.total_paye || 0),
+		0,
+	)
+	const totalWht = props.trackers.reduce(
+		(sum, t) => sum + (t.total_wht || 0),
+		0,
+	)
+	const totalNssf = props.trackers.reduce(
+		(sum, t) => sum + (t.total_nssf || 0),
+		0,
+	)
+	const totalNhif = props.trackers.reduce(
+		(sum, t) => sum + (t.total_nhif || 0),
+		0,
+	)
+	const totalStatutory = totalNssf + totalNhif
 
-  // Issues
-  const openIssues = props.trackers.reduce((sum, t) => {
-    return sum + (t.issues_identified?.filter((i) => i.resolution_status === 'Open').length || 0)
-  }, 0)
+	// Issues
+	const openIssues = props.trackers.reduce((sum, t) => {
+		return (
+			sum +
+			(t.issues_identified?.filter((i) => i.resolution_status === "Open")
+				.length || 0)
+		)
+	}, 0)
 
-  // Average compliance score
-  const scoresWithValue = props.trackers.filter((t) => t.compliance_score !== null && t.compliance_score !== undefined)
-  const avgScore =
-    scoresWithValue.length > 0
-      ? Math.round(scoresWithValue.reduce((sum, t) => sum + (t.compliance_score || 0), 0) / scoresWithValue.length)
-      : 0
+	// Average compliance score
+	const scoresWithValue = props.trackers.filter(
+		(t) => t.compliance_score !== null && t.compliance_score !== undefined,
+	)
+	const avgScore =
+		scoresWithValue.length > 0
+			? Math.round(
+					scoresWithValue.reduce(
+						(sum, t) => sum + (t.compliance_score || 0),
+						0,
+					) / scoresWithValue.length,
+				)
+			: 0
 
-  // Unique periods
-  const periodsCount = new Set(props.trackers.map((t) => t.tax_period)).size
+	// Unique periods
+	const periodsCount = new Set(props.trackers.map((t) => t.tax_period)).size
 
-  return {
-    total,
-    vatFiled,
-    payeFiled,
-    whtFiled,
-    nssfFiled,
-    nhifFiled,
-    statutoryFiled: Math.min(nssfFiled, nhifFiled),
-    vatRate,
-    payeRate,
-    totalVatPayable,
-    totalPaye,
-    totalWht,
-    totalStatutory,
-    openIssues,
-    avgScore,
-    periodsCount,
-  }
+	return {
+		total,
+		vatFiled,
+		payeFiled,
+		whtFiled,
+		nssfFiled,
+		nhifFiled,
+		statutoryFiled: Math.min(nssfFiled, nhifFiled),
+		vatRate,
+		payeRate,
+		totalVatPayable,
+		totalPaye,
+		totalWht,
+		totalStatutory,
+		openIssues,
+		avgScore,
+		periodsCount,
+	}
 })
 
 function formatNumber(num) {
-  return new Intl.NumberFormat('en-KE').format(num || 0)
+	return new Intl.NumberFormat("en-KE").format(num || 0)
 }
 
 function getScoreTheme(score) {
-  if (score >= 90) return 'green'
-  if (score >= 70) return 'blue'
-  if (score >= 50) return 'orange'
-  return 'red'
+	if (score >= 90) return "green"
+	if (score >= 70) return "blue"
+	if (score >= 50) return "orange"
+	return "red"
 }
 </script>
