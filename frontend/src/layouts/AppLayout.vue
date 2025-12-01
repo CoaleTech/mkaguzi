@@ -525,6 +525,16 @@
 
 
 
+          <!-- Chat -->
+          <router-link
+            to="/chat"
+            class="nav-item"
+            :class="{ 'nav-item-active': $route.path.startsWith('/chat') }"
+          >
+            <MessageCircleIcon class="h-5 w-5" />
+            <span v-if="!isSidebarCollapsed">AI Chat</span>
+          </router-link>
+
           <!-- Settings -->
           <div class="nav-group">
             <div
@@ -574,14 +584,20 @@
       </aside>
 
       <!-- Main Content Area -->
-      <main class="flex-1 overflow-hidden">
-        <!-- Breadcrumbs -->
-        <div class="flex h-12 items-center border-b border-outline-gray-200 bg-surface-white px-6">
+      <main class="flex-1 overflow-hidden flex flex-col">
+        <!-- Breadcrumbs (hide for fullHeight pages like chat) -->
+        <div 
+          v-if="!isFullHeightPage" 
+          class="flex h-12 items-center border-b border-outline-gray-200 bg-surface-white px-6"
+        >
           <Breadcrumbs :items="breadcrumbItems" />
         </div>
 
         <!-- Page Content -->
-        <div class="h-full overflow-auto p-6">
+        <div :class="[
+          'flex-1 overflow-auto',
+          isFullHeightPage ? '' : 'p-6'
+        ]">
           <router-view />
         </div>
       </main>
@@ -665,6 +681,11 @@ const expandedGroups = ref({
 })
 
 // Computed properties
+// Check if current page should use full height (no padding/breadcrumbs)
+const isFullHeightPage = computed(() => {
+	return route.meta?.fullHeight === true
+})
+
 const breadcrumbItems = computed(() => {
 	const items = []
 	const pathSegments = route.path.split("/").filter(Boolean)
@@ -672,11 +693,11 @@ const breadcrumbItems = computed(() => {
 	let currentPath = ""
 	pathSegments.forEach((segment, index) => {
 		currentPath += `/${segment}`
-		const route = router.getRoutes().find((r) => r.path === currentPath)
-		if (route) {
+		const matchedRoute = router.getRoutes().find((r) => r.path === currentPath)
+		if (matchedRoute) {
 			items.push({
 				label:
-					route.meta?.title ||
+					matchedRoute.meta?.title ||
 					segment.charAt(0).toUpperCase() + segment.slice(1),
 				to: currentPath,
 				isActive: index === pathSegments.length - 1,

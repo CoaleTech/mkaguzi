@@ -3,7 +3,8 @@ import { createApp } from "vue"
 
 import App from "./App.vue"
 import router from "./router"
-import { initSocket } from "./socket"
+
+import { io } from "socket.io-client"
 
 import {
 	Alert,
@@ -43,11 +44,32 @@ app.use(router)
 app.use(resourcesPlugin)
 app.use(pageMetaPlugin)
 
-const socket = initSocket()
-app.config.globalProperties.$socket = socket
-
 for (const key in globalComponents) {
 	app.component(key, globalComponents[key])
 }
+
+// Initialize socket.io connection for real-time features
+const siteName = import.meta.env.DEV
+	? window.location.hostname
+	: window.site_name || "ukaguzi"
+const socketUrl = `http://localhost:9023/${siteName}`
+
+// Get the session cookie for authentication
+const getCookie = (name) => {
+	const value = `; ${document.cookie}`
+	const parts = value.split(`; ${name}=`)
+	if (parts.length === 2) return parts.pop().split(";").shift()
+}
+
+const sid = getCookie("sid") || getCookie("user_id")
+const auth = sid ? { sid } : {}
+
+const socket = io(socketUrl, {
+	withCredentials: true,
+	auth,
+	transports: ["websocket", "polling"],
+})
+window.frappe = window.frappe || {}
+window.frappe.realtime = socket
 
 app.mount("#app")

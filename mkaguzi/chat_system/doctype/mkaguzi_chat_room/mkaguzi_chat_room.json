@@ -1,0 +1,236 @@
+{
+ "actions": [],
+ "autoname": "format:CHAT-{####}",
+ "creation": "2025-11-30 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "room_name",
+  "room_type",
+  "description",
+  "column_break_basic",
+  "is_ai_enabled",
+  "is_active",
+  "created_by",
+  "engagement_section",
+  "linked_engagement",
+  "engagement_title",
+  "column_break_engagement",
+  "audit_type",
+  "engagement_status",
+  "participants_section",
+  "participants",
+  "ai_settings_section",
+  "ai_model_override",
+  "custom_system_prompt",
+  "statistics_section",
+  "message_count",
+  "last_message_at",
+  "column_break_stats",
+  "ai_message_count",
+  "last_ai_response_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "room_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Room Name",
+   "reqd": 1
+  },
+  {
+   "default": "General",
+   "fieldname": "room_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Room Type",
+   "options": "General\nEngagement\nFinding Discussion\nTeam\nPrivate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_ai_enabled",
+   "fieldtype": "Check",
+   "label": "AI Enabled",
+   "description": "Enable AI assistant in this room"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "engagement_section",
+   "fieldtype": "Section Break",
+   "label": "Linked Audit Engagement",
+   "depends_on": "eval:doc.room_type == 'Engagement' || doc.room_type == 'Finding Discussion'"
+  },
+  {
+   "fieldname": "linked_engagement",
+   "fieldtype": "Link",
+   "label": "Audit Engagement",
+   "options": "Audit Engagement",
+   "description": "Link this room to an audit engagement for context-aware AI responses"
+  },
+  {
+   "fieldname": "engagement_title",
+   "fieldtype": "Data",
+   "label": "Engagement Title",
+   "read_only": 1,
+   "fetch_from": "linked_engagement.engagement_title"
+  },
+  {
+   "fieldname": "column_break_engagement",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit_type",
+   "fieldtype": "Data",
+   "label": "Audit Type",
+   "read_only": 1,
+   "fetch_from": "linked_engagement.audit_type"
+  },
+  {
+   "fieldname": "engagement_status",
+   "fieldtype": "Data",
+   "label": "Engagement Status",
+   "read_only": 1,
+   "fetch_from": "linked_engagement.status"
+  },
+  {
+   "fieldname": "participants_section",
+   "fieldtype": "Section Break",
+   "label": "Participants"
+  },
+  {
+   "fieldname": "participants",
+   "fieldtype": "Table",
+   "label": "Participants",
+   "options": "Mkaguzi Chat Participant"
+  },
+  {
+   "fieldname": "ai_settings_section",
+   "fieldtype": "Section Break",
+   "label": "AI Settings Override",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "ai_model_override",
+   "fieldtype": "Select",
+   "label": "AI Model Override",
+   "options": "\nmeta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nqwen/qwen-2.5-7b-instruct:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
+   "description": "Override the default AI model for this room (leave blank to use default)"
+  },
+  {
+   "fieldname": "custom_system_prompt",
+   "fieldtype": "Text",
+   "label": "Custom System Prompt",
+   "description": "Additional instructions for the AI in this room (appended to default prompt)"
+  },
+  {
+   "fieldname": "statistics_section",
+   "fieldtype": "Section Break",
+   "label": "Statistics",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "message_count",
+   "fieldtype": "Int",
+   "label": "Message Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_message_at",
+   "fieldtype": "Datetime",
+   "label": "Last Message At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_stats",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "ai_message_count",
+   "fieldtype": "Int",
+   "label": "AI Message Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_ai_response_at",
+   "fieldtype": "Datetime",
+   "label": "Last AI Response At",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Chat System",
+ "name": "Mkaguzi Chat Room",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "room_name",
+ "track_changes": 1
+}

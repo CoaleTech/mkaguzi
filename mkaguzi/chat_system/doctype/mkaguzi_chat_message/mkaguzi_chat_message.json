@@ -1,0 +1,252 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2025-11-30 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "room",
+  "room_name",
+  "message_type",
+  "column_break_basic",
+  "sender",
+  "sender_name",
+  "created_at",
+  "content_section",
+  "content",
+  "ai_section",
+  "is_ai_generated",
+  "ai_model_used",
+  "column_break_ai",
+  "tokens_used",
+  "response_time_ms",
+  "context_section",
+  "context_sources",
+  "context_chunks_used",
+  "metadata_section",
+  "is_edited",
+  "edited_at",
+  "column_break_meta",
+  "is_deleted",
+  "deleted_at",
+  "reply_section",
+  "is_reply",
+  "reply_to_message",
+  "reply_preview"
+ ],
+ "fields": [
+  {
+   "fieldname": "room",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room",
+   "options": "Mkaguzi Chat Room",
+   "reqd": 1
+  },
+  {
+   "fieldname": "room_name",
+   "fieldtype": "Data",
+   "label": "Room Name",
+   "read_only": 1,
+   "fetch_from": "room.room_name"
+  },
+  {
+   "default": "User",
+   "fieldname": "message_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Message Type",
+   "options": "User\nAI\nSystem",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sender",
+   "options": "User"
+  },
+  {
+   "fieldname": "sender_name",
+   "fieldtype": "Data",
+   "label": "Sender Name",
+   "read_only": 1,
+   "fetch_from": "sender.full_name"
+  },
+  {
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Created At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Content",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ai_section",
+   "fieldtype": "Section Break",
+   "label": "AI Response Details",
+   "depends_on": "eval:doc.message_type == 'AI'",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_ai_generated",
+   "fieldtype": "Check",
+   "label": "AI Generated"
+  },
+  {
+   "fieldname": "ai_model_used",
+   "fieldtype": "Data",
+   "label": "AI Model Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ai",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tokens_used",
+   "fieldtype": "Int",
+   "label": "Tokens Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "response_time_ms",
+   "fieldtype": "Int",
+   "label": "Response Time (ms)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "context_section",
+   "fieldtype": "Section Break",
+   "label": "RAG Context",
+   "depends_on": "eval:doc.message_type == 'AI'",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "context_sources",
+   "fieldtype": "Code",
+   "label": "Context Sources",
+   "options": "JSON",
+   "read_only": 1,
+   "description": "JSON array of document references used as context"
+  },
+  {
+   "fieldname": "context_chunks_used",
+   "fieldtype": "Int",
+   "label": "Context Chunks Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "metadata_section",
+   "fieldtype": "Section Break",
+   "label": "Metadata",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_edited",
+   "fieldtype": "Check",
+   "label": "Edited"
+  },
+  {
+   "fieldname": "edited_at",
+   "fieldtype": "Datetime",
+   "label": "Edited At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_deleted",
+   "fieldtype": "Check",
+   "label": "Deleted"
+  },
+  {
+   "fieldname": "deleted_at",
+   "fieldtype": "Datetime",
+   "label": "Deleted At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reply_section",
+   "fieldtype": "Section Break",
+   "label": "Reply Information",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_reply",
+   "fieldtype": "Check",
+   "label": "Is Reply"
+  },
+  {
+   "fieldname": "reply_to_message",
+   "fieldtype": "Link",
+   "label": "Reply To",
+   "options": "Mkaguzi Chat Message"
+  },
+  {
+   "fieldname": "reply_preview",
+   "fieldtype": "Data",
+   "label": "Reply Preview",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Chat System",
+ "name": "Mkaguzi Chat Message",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "created_at",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 0
+}

@@ -1,0 +1,324 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2025-11-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "ai_settings_section",
+  "enable_ai_chat",
+  "openrouter_api_key",
+  "column_break_ai",
+  "default_model",
+  "fallback_model",
+  "model_settings_section",
+  "temperature",
+  "max_tokens",
+  "column_break_model",
+  "top_p",
+  "stream_responses",
+  "rag_settings_section",
+  "enable_rag",
+  "embedding_model",
+  "column_break_rag",
+  "chunk_size",
+  "chunk_overlap",
+  "context_settings_section",
+  "max_context_chunks",
+  "similarity_threshold",
+  "column_break_context",
+  "scope_to_engagement",
+  "include_related_findings",
+  "indexed_doctypes_section",
+  "index_audit_findings",
+  "index_working_papers",
+  "index_audit_programs",
+  "column_break_doctypes",
+  "index_test_executions",
+  "index_risk_assessments",
+  "index_compliance_requirements",
+  "system_prompt_section",
+  "system_prompt",
+  "indexing_status_section",
+  "last_full_index",
+  "total_documents_indexed",
+  "column_break_status",
+  "index_status",
+  "chromadb_collection_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "ai_settings_section",
+   "fieldtype": "Section Break",
+   "label": "AI Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_ai_chat",
+   "fieldtype": "Check",
+   "label": "Enable AI Chat"
+  },
+  {
+   "fieldname": "openrouter_api_key",
+   "fieldtype": "Password",
+   "label": "OpenRouter API Key",
+   "description": "Get your API key from https://openrouter.ai/keys"
+  },
+  {
+   "fieldname": "column_break_ai",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "meta-llama/llama-3.1-8b-instruct:free",
+   "fieldname": "default_model",
+   "fieldtype": "Select",
+   "label": "Default Model",
+   "options": "meta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nqwen/qwen-2.5-7b-instruct:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
+   "reqd": 1
+  },
+  {
+   "default": "qwen/qwen-2.5-7b-instruct:free",
+   "fieldname": "fallback_model",
+   "fieldtype": "Select",
+   "label": "Fallback Model",
+   "options": "meta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nqwen/qwen-2.5-7b-instruct:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
+   "description": "Used when primary model is unavailable"
+  },
+  {
+   "fieldname": "model_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Model Settings"
+  },
+  {
+   "default": "0.7",
+   "fieldname": "temperature",
+   "fieldtype": "Float",
+   "label": "Temperature",
+   "description": "Controls randomness (0.0-1.0). Lower = more focused, higher = more creative"
+  },
+  {
+   "default": "2048",
+   "fieldname": "max_tokens",
+   "fieldtype": "Int",
+   "label": "Max Tokens",
+   "description": "Maximum tokens in response"
+  },
+  {
+   "fieldname": "column_break_model",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0.9",
+   "fieldname": "top_p",
+   "fieldtype": "Float",
+   "label": "Top P",
+   "description": "Nucleus sampling threshold (0.0-1.0)"
+  },
+  {
+   "default": "1",
+   "fieldname": "stream_responses",
+   "fieldtype": "Check",
+   "label": "Stream Responses",
+   "description": "Enable streaming for real-time response display"
+  },
+  {
+   "fieldname": "rag_settings_section",
+   "fieldtype": "Section Break",
+   "label": "RAG Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_rag",
+   "fieldtype": "Check",
+   "label": "Enable RAG",
+   "description": "Use Retrieval-Augmented Generation for context-aware responses"
+  },
+  {
+   "default": "all-MiniLM-L6-v2",
+   "fieldname": "embedding_model",
+   "fieldtype": "Select",
+   "label": "Embedding Model",
+   "options": "all-MiniLM-L6-v2\nall-mpnet-base-v2\nparaphrase-MiniLM-L6-v2",
+   "read_only": 1,
+   "description": "Sentence transformer model for embeddings"
+  },
+  {
+   "fieldname": "column_break_rag",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "512",
+   "fieldname": "chunk_size",
+   "fieldtype": "Int",
+   "label": "Chunk Size",
+   "description": "Maximum characters per chunk (for fallback chunking)"
+  },
+  {
+   "default": "50",
+   "fieldname": "chunk_overlap",
+   "fieldtype": "Int",
+   "label": "Chunk Overlap",
+   "description": "Character overlap between chunks"
+  },
+  {
+   "fieldname": "context_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Context Retrieval Settings"
+  },
+  {
+   "default": "5",
+   "fieldname": "max_context_chunks",
+   "fieldtype": "Int",
+   "label": "Max Context Chunks",
+   "description": "Maximum number of chunks to include in context"
+  },
+  {
+   "default": "0.7",
+   "fieldname": "similarity_threshold",
+   "fieldtype": "Float",
+   "label": "Similarity Threshold",
+   "description": "Minimum similarity score (0.0-1.0) for including a chunk"
+  },
+  {
+   "fieldname": "column_break_context",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "scope_to_engagement",
+   "fieldtype": "Check",
+   "label": "Scope to Engagement",
+   "description": "Limit context to documents from the linked audit engagement"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_related_findings",
+   "fieldtype": "Check",
+   "label": "Include Related Findings",
+   "description": "Include related/repeat findings in context"
+  },
+  {
+   "fieldname": "indexed_doctypes_section",
+   "fieldtype": "Section Break",
+   "label": "Indexed Document Types"
+  },
+  {
+   "default": "1",
+   "fieldname": "index_audit_findings",
+   "fieldtype": "Check",
+   "label": "Index Audit Findings"
+  },
+  {
+   "default": "1",
+   "fieldname": "index_working_papers",
+   "fieldtype": "Check",
+   "label": "Index Working Papers"
+  },
+  {
+   "default": "1",
+   "fieldname": "index_audit_programs",
+   "fieldtype": "Check",
+   "label": "Index Audit Programs"
+  },
+  {
+   "fieldname": "column_break_doctypes",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "index_test_executions",
+   "fieldtype": "Check",
+   "label": "Index Test Executions"
+  },
+  {
+   "default": "1",
+   "fieldname": "index_risk_assessments",
+   "fieldtype": "Check",
+   "label": "Index Risk Assessments"
+  },
+  {
+   "default": "0",
+   "fieldname": "index_compliance_requirements",
+   "fieldtype": "Check",
+   "label": "Index Compliance Requirements"
+  },
+  {
+   "fieldname": "system_prompt_section",
+   "fieldtype": "Section Break",
+   "label": "System Prompt"
+  },
+  {
+   "default": "You are an AI assistant for the Mkaguzi Internal Audit Management System. You help auditors with:\n- Analyzing audit findings and their root causes\n- Drafting recommendations and corrective action plans\n- Understanding audit procedures and compliance requirements\n- Reviewing risk assessments and control evaluations\n- Answering questions about audit standards and best practices\n\nWhen responding:\n- Be concise and professional\n- Reference specific documents when available in context\n- Suggest relevant audit procedures when appropriate\n- Flag potential compliance or risk issues\n- Use audit terminology correctly",
+   "fieldname": "system_prompt",
+   "fieldtype": "Text",
+   "label": "System Prompt",
+   "description": "Instructions for the AI assistant"
+  },
+  {
+   "fieldname": "indexing_status_section",
+   "fieldtype": "Section Break",
+   "label": "Indexing Status",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "last_full_index",
+   "fieldtype": "Datetime",
+   "label": "Last Full Index",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_documents_indexed",
+   "fieldtype": "Int",
+   "label": "Total Documents Indexed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "index_status",
+   "fieldtype": "Select",
+   "label": "Index Status",
+   "options": "Not Started\nIndexing\nCompleted\nFailed",
+   "read_only": 1
+  },
+  {
+   "default": "mkaguzi_audit_docs",
+   "fieldname": "chromadb_collection_name",
+   "fieldtype": "Data",
+   "label": "ChromaDB Collection Name",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-11-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Chat System",
+ "name": "Mkaguzi Chat Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Internal Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

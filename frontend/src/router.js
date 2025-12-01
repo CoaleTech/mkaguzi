@@ -20,6 +20,7 @@ import EngagementList from "@/pages/EngagementList.vue"
 import FindingsList from "@/pages/FindingsList.vue"
 import FollowUpTracker from "@/pages/FollowUpTracker.vue"
 import ImportData from "@/pages/ImportData.vue"
+import MkaguziChat from "@/pages/MkaguziChat.vue"
 import RegulatoryCalendar from "@/pages/RegulatoryCalendar.vue"
 import ReportBuilder from "@/pages/ReportBuilder.vue"
 import Reports from "@/pages/Reports.vue"
@@ -53,8 +54,6 @@ import StockTakeSessionList from "@/pages/inventory/StockTakeSessionList.vue"
 import VarianceCaseDetail from "@/pages/inventory/VarianceCaseDetail.vue"
 import VarianceCaseForm from "@/pages/inventory/VarianceCaseForm.vue"
 import VarianceCaseList from "@/pages/inventory/VarianceCaseList.vue"
-
-
 
 // Error pages
 import NotFound from "@/pages/NotFound.vue"
@@ -412,8 +411,6 @@ const routes = [
 				},
 			},
 
-
-
 			// Settings
 			{
 				path: "settings/configuration",
@@ -445,6 +442,31 @@ const routes = [
 					icon: "Users",
 					breadcrumb: "User Management",
 				},
+			},
+
+			// Chat
+			{
+				path: "chat",
+				name: "MkaguziChat",
+				component: MkaguziChat,
+				meta: {
+					title: "AI Chat",
+					icon: "MessageCircle",
+					breadcrumb: "Chat",
+					fullHeight: true,
+				},
+			},
+			{
+				path: "chat/:roomId",
+				name: "MkaguziChatRoom",
+				component: MkaguziChat,
+				meta: {
+					title: "AI Chat",
+					icon: "MessageCircle",
+					breadcrumb: "Chat Room",
+					fullHeight: true,
+				},
+				props: true,
 			},
 
 			// Detail routes (keeping existing ones)

@@ -249,7 +249,7 @@
           </div>
         </div>
 
-        <!-- Stock Take Items Table -->
+        <!-- Stock Take Items ListView -->
         <div class="bg-white rounded-lg border p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Stock Take Items</h3>
@@ -264,93 +264,146 @@
             </div>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                  <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                  <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase">System Qty</th>
-                  <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase">Physical Qty</th>
-                  <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase">Variance</th>
-                  <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolution</th>
-                  <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="(item, index) in filteredItems" :key="item.name"
-                    :class="getRowClass(item)" class="hover:bg-gray-50">
-                  <td class="px-3 py-3 text-sm text-gray-500">{{ index + 1 }}</td>
-                  <td class="px-3 py-3">
-                    <div class="font-medium text-gray-900">{{ item.item_code }}</div>
-                    <div class="text-sm text-gray-500">{{ item.item_description }}</div>
-                  </td>
-                  <td class="px-3 py-3 text-sm text-right">{{ item.system_quantity || 0 }}</td>
-                  <td class="px-3 py-3 text-right">
-                    <div v-if="audit.status === 'Draft'">
-                      <FormControl
-                        type="number"
-                        :modelValue="item.physical_quantity"
-                        @update:modelValue="updatePhysicalQuantity(item, $event)"
-                        placeholder="Count"
-                        class="w-20 text-right"
-                        :disabled="updatingItem === item.name"
-                      />
-                    </div>
-                    <div v-else>
-                      {{ item.physical_quantity !== null ? item.physical_quantity : '-' }}
-                    </div>
-                  </td>
-                  <td class="px-3 py-3 text-sm text-right">
-                    <span :class="getVarianceClass(item.variance_quantity)">
-                      {{ item.variance_quantity || 0 }}
-                    </span>
-                  </td>
-                  <td class="px-3 py-3">
-                    <Badge :variant="getStatusVariant(item.verification_status)">
-                      {{ item.verification_status || 'Pending' }}
-                    </Badge>
-                  </td>
-                  <td class="px-3 py-3 text-sm">
-                    <span v-if="item.resolution_type" :class="getResolutionClass(item.resolution_type)">
-                      {{ item.resolution_type }}
-                    </span>
-                    <span v-else class="text-gray-400">-</span>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex items-center gap-1">
-                      <Button
-                        v-if="item.resolution_type === 'Charge Staff' && !item.staff_charge_record"
-                        variant="ghost"
-                        size="sm"
-                        @click="createStaffCharge(item)"
-                        title="Create Staff Charge"
-                        class="p-1"
-                      >
-                        <UserMinus class="w-4 h-4 text-red-600" />
-                      </Button>
-                      <Button
-                        v-if="item.staff_charge_record"
-                        variant="ghost"
-                        size="sm"
-                        @click="viewStaffCharge(item.staff_charge_record)"
-                        title="View Staff Charge"
-                        class="p-1"
-                      >
-                        <FileText class="w-4 h-4 text-blue-600" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="filteredItems.length === 0">
-                  <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                    No items found
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <ListView
+            :columns="[
+              {
+                label: '#',
+                key: 'index',
+                width: '60px',
+              },
+              {
+                label: 'Item',
+                key: 'item',
+                width: '2fr',
+              },
+              {
+                label: 'System Qty',
+                key: 'system_quantity',
+                width: '120px',
+                align: 'right',
+              },
+              {
+                label: 'Physical Qty',
+                key: 'physical_quantity',
+                width: '140px',
+                align: 'right',
+              },
+              {
+                label: 'Variance',
+                key: 'variance',
+                width: '120px',
+                align: 'right',
+              },
+              {
+                label: 'Status',
+                key: 'status',
+                width: '140px',
+              },
+              {
+                label: 'Resolution',
+                key: 'resolution',
+                width: '140px',
+              },
+              {
+                label: 'Actions',
+                key: 'actions',
+                width: '120px',
+              },
+            ]"
+            :rows="filteredItems.map((item, index) => ({
+              id: item.name,
+              index: {
+                label: (index + 1).toString(),
+              },
+              item: {
+                label: item.item_code,
+                description: item.item_description,
+              },
+              system_quantity: {
+                label: (item.system_quantity || 0).toString(),
+              },
+              physical_quantity: {
+                label: audit.status === 'Draft' ? '' : (item.physical_quantity !== null ? item.physical_quantity.toString() : '-'),
+                editable: audit.status === 'Draft',
+                value: item.physical_quantity,
+              },
+              variance: {
+                label: (item.variance_quantity || 0).toString(),
+                color: getVarianceColor(item.variance_quantity),
+              },
+              status: {
+                label: item.verification_status || 'Pending',
+                bg_color: getStatusBgColor(item.verification_status),
+              },
+              resolution: {
+                label: item.resolution_type || '-',
+                color: getResolutionColor(item.resolution_type),
+              },
+              actions: {
+                item: item,
+              },
+            }))"
+            :options="{
+              onRowClick: (row) => console.log(row),
+              selectable: false,
+              showTooltip: true,
+              resizeColumn: false,
+            }"
+            row-key="id"
+          >
+            <template #physical_quantity="{ item }">
+              <div v-if="audit.status === 'Draft'" class="flex items-center justify-center">
+                <FormControl
+                  type="number"
+                  :modelValue="item.value"
+                  @update:modelValue="updatePhysicalQuantity(item.item, $event)"
+                  placeholder="Count"
+                  class="w-20 text-right"
+                  :disabled="updatingItem === item.item.name"
+                />
+              </div>
+              <div v-else class="text-right">
+                {{ item.label }}
+              </div>
+            </template>
+
+            <template #status="{ item }">
+              <Badge :variant="getStatusVariant(item.label)">
+                {{ item.label }}
+              </Badge>
+            </template>
+
+            <template #actions="{ item }">
+              <div class="flex items-center gap-1">
+                <Button
+                  v-if="item.item.resolution_type === 'Charge Staff' && !item.item.staff_charge_record"
+                  variant="ghost"
+                  size="sm"
+                  @click="createStaffCharge(item.item)"
+                  title="Create Staff Charge"
+                  class="p-1"
+                >
+                  <UserMinus class="w-4 h-4 text-red-600" />
+                </Button>
+                <Button
+                  v-if="item.item.staff_charge_record"
+                  variant="ghost"
+                  size="sm"
+                  @click="viewStaffCharge(item.item.staff_charge_record)"
+                  title="View Staff Charge"
+                  class="p-1"
+                >
+                  <FileText class="w-4 h-4 text-blue-600" />
+                </Button>
+              </div>
+            </template>
+
+            <template #empty-state>
+              <div class="text-center py-8 text-gray-500">
+                No items found
+              </div>
+            </template>
+          </ListView>
         </div>
 
         <!-- Notes -->
@@ -509,7 +562,7 @@
 </template>
 
 <script setup>
-import { Badge, Button, Dialog, FormControl } from "frappe-ui"
+import { Badge, Button, Dialog, FormControl, ListView } from "frappe-ui"
 import { call } from "frappe-ui"
 import {
 	ArrowLeft,
@@ -690,14 +743,29 @@ function getVarianceClass(variance) {
 	return "text-red-600 font-medium"
 }
 
-function getResolutionClass(resolution) {
-	const classes = {
-		"Stock Amendment": "text-blue-600",
-		"Charge Staff": "text-red-600",
-		"Write-off": "text-gray-600",
-		"Under Investigation": "text-yellow-600",
+function getVarianceColor(variance) {
+	if (!variance || variance === 0) return "green"
+	return "red"
+}
+
+function getStatusBgColor(status) {
+	const colors = {
+		"Verified-Match": "bg-surface-green-3",
+		"Verified-Discrepancy": "bg-surface-red-5",
+		Resolved: "bg-surface-blue-3",
+		Pending: "bg-surface-yellow-3",
 	}
-	return classes[resolution] || ""
+	return colors[status] || "bg-surface-gray-3"
+}
+
+function getResolutionColor(resolution) {
+	const colors = {
+		"Stock Amendment": "blue",
+		"Charge Staff": "red",
+		"Write-off": "gray",
+		"Under Investigation": "yellow",
+	}
+	return colors[resolution] || "gray"
 }
 
 function isOverdue(date) {

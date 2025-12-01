@@ -42,7 +42,16 @@
       </div>
 
       <div class="p-6">
-        <!-- General Settings -->
+        <!-- Loading State -->
+        <div v-if="loading" class="flex items-center justify-center py-12">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-2 text-sm text-gray-600">Loading settings...</p>
+          </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div v-else>
         <div v-if="activeTab === 'general'" class="space-y-6">
           <div>
             <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
@@ -207,6 +216,143 @@
                     <p class="text-sm text-gray-500">Management must respond to all findings</p>
                   </div>
                   <Checkbox v-model="settings.requireManagementResponse" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Chat Settings -->
+        <div v-if="activeTab === 'ai'" class="space-y-6">
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+              <BotIcon class="h-5 w-5 mr-2" />
+              AI Chat Configuration
+            </h3>
+            <div class="space-y-6">
+              <!-- OpenRouter API Settings -->
+              <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h4 class="text-md font-medium text-gray-900 mb-4">OpenRouter API</h4>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
+                    <div class="flex space-x-2">
+                      <Input
+                        :type="showApiKey ? 'text' : 'password'"
+                        v-model="settings.openrouterApiKey"
+                        placeholder="sk-or-v1-..."
+                        class="flex-1"
+                      />
+                      <Button variant="outline" size="sm" @click="showApiKey = !showApiKey">
+                        {{ showApiKey ? 'Hide' : 'Show' }}
+                      </Button>
+                      <Button variant="outline" size="sm" @click="testAiConnection" :loading="testingAi">
+                        Test
+                      </Button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                      Get your free API key from <a href="https://openrouter.ai" target="_blank" class="text-blue-600 hover:underline">openrouter.ai</a>
+                    </p>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">AI Model</label>
+                    <Select
+                      v-model="settings.selectedModel"
+                      :options="aiModelOptions"
+                      class="w-full"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Free tier models with good performance</p>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <label class="text-sm font-medium text-gray-700">Enable AI Assistant</label>
+                      <p class="text-sm text-gray-500">Allow AI-powered responses in chat rooms</p>
+                    </div>
+                    <Checkbox v-model="settings.enableAiAssistant" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- RAG Settings -->
+              <div class="p-4 border border-gray-200 rounded-lg">
+                <h4 class="text-md font-medium text-gray-900 mb-4">RAG (Retrieval-Augmented Generation)</h4>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <label class="text-sm font-medium text-gray-700">Enable RAG</label>
+                      <p class="text-sm text-gray-500">Use audit documents as context for AI responses</p>
+                    </div>
+                    <Checkbox v-model="settings.ragEnabled" />
+                  </div>
+
+                  <div v-if="settings.ragEnabled" class="space-y-4 pl-4 border-l-2 border-blue-200">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Max Context Chunks</label>
+                      <Input
+                        v-model="settings.maxContextChunks"
+                        type="number"
+                        min="1"
+                        max="20"
+                        class="w-32"
+                      />
+                      <p class="text-xs text-gray-500 mt-1">Number of relevant document sections to include</p>
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Embedding Model</label>
+                      <Select
+                        v-model="settings.embeddingModel"
+                        :options="embeddingModelOptions"
+                        class="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Document Indexing -->
+              <div class="p-4 border border-gray-200 rounded-lg">
+                <h4 class="text-md font-medium text-gray-900 mb-4">Document Indexing</h4>
+                <p class="text-sm text-gray-500 mb-4">Select which document types to index for AI context</p>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexAuditFindings" />
+                    <span class="text-sm text-gray-700">Audit Findings</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexWorkingPapers" />
+                    <span class="text-sm text-gray-700">Working Papers</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexAuditPrograms" />
+                    <span class="text-sm text-gray-700">Audit Programs</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexTestExecutions" />
+                    <span class="text-sm text-gray-700">Test Executions</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexRiskAssessments" />
+                    <span class="text-sm text-gray-700">Risk Assessments</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <Checkbox v-model="settings.indexComplianceRequirements" />
+                    <span class="text-sm text-gray-700">Compliance Requirements</span>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-gray-700">Index Statistics</p>
+                      <p class="text-xs text-gray-500">{{ indexStats.totalDocuments || 0 }} documents indexed</p>
+                    </div>
+                    <Button variant="outline" size="sm" @click="rebuildIndex" :loading="rebuildingIndex">
+                      Rebuild Index
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -819,6 +965,8 @@
             </div>
           </div>
         </div>
+        <!-- End of settings content -->
+        </div>
       </div>
 
       <!-- Save Button -->
@@ -843,9 +991,10 @@
 </template>
 
 <script setup>
-import { Badge, Button, Checkbox, Input, Select } from "frappe-ui"
+import { Badge, Button, Checkbox, Input, Select, call } from "frappe-ui"
 import {
 	BarChart3Icon,
+	BotIcon,
 	CloudIcon,
 	CodeIcon,
 	DatabaseIcon,
@@ -860,7 +1009,7 @@ import {
 	UploadIcon,
 	UserIcon,
 } from "lucide-vue-next"
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 
 // Props
 const props = defineProps({
@@ -873,6 +1022,11 @@ const props = defineProps({
 // Reactive state
 const activeTab = ref(props.defaultTab)
 const saving = ref(false)
+const showApiKey = ref(false)
+const testingAi = ref(false)
+const rebuildingIndex = ref(false)
+const indexStats = ref({ totalDocuments: 0 })
+const loading = ref(true)
 
 const settings = ref({
 	// General Settings
@@ -894,6 +1048,20 @@ const settings = ref({
 	defaultFindingSeverity: "medium",
 	followUpReminderDays: 30,
 	requireManagementResponse: true,
+
+	// AI Chat Settings
+	openrouterApiKey: "",
+	selectedModel: "meta-llama/llama-3.1-8b-instruct:free",
+	enableAiAssistant: true,
+	ragEnabled: true,
+	maxContextChunks: 5,
+	embeddingModel: "all-MiniLM-L6-v2",
+	indexAuditFindings: true,
+	indexWorkingPapers: true,
+	indexAuditPrograms: true,
+	indexTestExecutions: true,
+	indexRiskAssessments: true,
+	indexComplianceRequirements: true,
 
 	// Data Import Settings
 	defaultImportType: "csv",
@@ -960,6 +1128,7 @@ const settings = ref({
 const tabs = [
 	{ id: "general", name: "General", icon: SettingsIcon },
 	{ id: "audit", name: "Audit", icon: FileCheckIcon },
+	{ id: "ai", name: "AI Chat", icon: BotIcon },
 	{ id: "data-import", name: "Data Import", icon: DatabaseIcon },
 	{ id: "compliance", name: "Compliance", icon: ShieldCheckIcon },
 	{ id: "preferences", name: "Preferences", icon: UserIcon },
@@ -1026,6 +1195,20 @@ const severityOptions = [
 	{ label: "Medium", value: "medium" },
 	{ label: "High", value: "high" },
 	{ label: "Critical", value: "critical" },
+]
+
+const aiModelOptions = [
+	{
+		label: "Llama 3.1 8B (Free)",
+		value: "meta-llama/llama-3.1-8b-instruct:free",
+	},
+	{ label: "Gemma 2 9B (Free)", value: "google/gemma-2-9b-it:free" },
+	{ label: "Qwen 2.5 7B (Free)", value: "qwen/qwen-2.5-7b-instruct:free" },
+]
+
+const embeddingModelOptions = [
+	{ label: "all-MiniLM-L6-v2 (Recommended)", value: "all-MiniLM-L6-v2" },
+	{ label: "all-mpnet-base-v2 (Higher quality)", value: "all-mpnet-base-v2" },
 ]
 
 const importTypeOptions = [
@@ -1189,7 +1372,46 @@ const reportTemplates = [
 	},
 ]
 
+// Load settings on component mount
+onMounted(async () => {
+	await loadSettings()
+})
+
 // Methods
+const loadSettings = async () => {
+	try {
+		loading.value = true
+		const response = await call("mkaguzi.api.chat.get_chat_settings")
+
+		// Update settings with backend data
+		if (response) {
+			// Map backend field names to frontend field names
+			settings.value.enableAiAssistant = response.enable_ai_chat || false
+			settings.value.openrouterApiKey = response.openrouter_api_key || ""
+			settings.value.selectedModel =
+				response.default_model || "meta-llama/llama-3.1-8b-instruct:free"
+			settings.value.ragEnabled = response.enable_rag || false
+			settings.value.maxContextChunks = response.max_context_chunks || 5
+			settings.value.embeddingModel =
+				response.embedding_model || "all-MiniLM-L6-v2"
+			settings.value.indexAuditFindings = response.index_audit_findings || false
+			settings.value.indexWorkingPapers = response.index_working_papers || false
+			settings.value.indexAuditPrograms = response.index_audit_programs || false
+			settings.value.indexTestExecutions =
+				response.index_test_executions || false
+			settings.value.indexRiskAssessments =
+				response.index_risk_assessments || false
+			settings.value.indexComplianceRequirements =
+				response.index_compliance_requirements || false
+			settings.value.lastUpdated = response.modified || new Date().toISOString()
+		}
+	} catch (error) {
+		console.error("Error loading settings:", error)
+		// Keep default values if loading fails
+	} finally {
+		loading.value = false
+	}
+}
 const toggleTwoFactor = () => {
 	settings.value.twoFactorEnabled = !settings.value.twoFactorEnabled
 }
@@ -1202,19 +1424,93 @@ const toggleApiAccess = () => {
 	settings.value.apiAccess = !settings.value.apiAccess
 }
 
+const testAiConnection = async () => {
+	if (!settings.value.openrouterApiKey) {
+		alert("Please enter an API key first")
+		return
+	}
+
+	testingAi.value = true
+	try {
+		// First save the API key to backend
+		await saveChatSettings()
+
+		// Then test the connection
+		const response = await call("mkaguzi.api.chat.test_ai_connection")
+
+		if (response?.success) {
+			alert(
+				"✅ AI connection successful! Available models: " +
+					(response.free_models_count || 0),
+			)
+		} else {
+			alert("❌ Connection failed: " + (response?.error || "Unknown error"))
+		}
+	} catch (error) {
+		alert("❌ Connection test failed: " + error.message)
+	} finally {
+		testingAi.value = false
+	}
+}
+
+const rebuildIndex = async () => {
+	if (
+		!confirm(
+			"This will rebuild the entire RAG index. This may take a few minutes. Continue?",
+		)
+	) {
+		return
+	}
+
+	rebuildingIndex.value = true
+	try {
+		await call("mkaguzi.chat_system.chat_service.rebuild_rag_index")
+
+		// Refresh stats
+		const statsResponse = await call("mkaguzi.api.chat.get_index_stats")
+		if (statsResponse) {
+			indexStats.value = statsResponse
+		}
+
+		alert("✅ Index rebuilt successfully!")
+	} catch (error) {
+		alert("❌ Index rebuild failed: " + error.message)
+	} finally {
+		rebuildingIndex.value = false
+	}
+}
+
+const saveChatSettings = async () => {
+	const chatSettings = {
+		enable_ai_chat: settings.value.enableAiAssistant,
+		openrouter_api_key: settings.value.openrouterApiKey,
+		default_model: settings.value.selectedModel,
+		enable_rag: settings.value.ragEnabled,
+		max_context_chunks: settings.value.maxContextChunks,
+		embedding_model: settings.value.embeddingModel,
+		index_audit_findings: settings.value.indexAuditFindings,
+		index_working_papers: settings.value.indexWorkingPapers,
+		index_audit_programs: settings.value.indexAuditPrograms,
+		index_test_executions: settings.value.indexTestExecutions,
+		index_risk_assessments: settings.value.indexRiskAssessments,
+		index_compliance_requirements: settings.value.indexComplianceRequirements,
+	}
+
+	return await call("mkaguzi.api.chat.save_chat_settings", {
+		settings_data: chatSettings,
+	})
+}
+
 const saveSettings = async () => {
 	saving.value = true
 	try {
 		// Update last updated timestamp
 		settings.value.lastUpdated = new Date().toISOString()
 
-		// Here you would typically save to backend
-		console.log("Saving settings:", settings.value)
+		// Save chat settings to backend
+		await saveChatSettings()
 
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-
-		// Show success message (you would use a toast notification here)
+		// Show success message
 		alert("Settings saved successfully!")
 	} catch (error) {
 		console.error("Error saving settings:", error)

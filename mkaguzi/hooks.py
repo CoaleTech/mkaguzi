@@ -148,7 +148,31 @@ fixtures = [
 doc_events = {
     "Audit Finding": {
         "after_insert": "mkaguzi.utils.notifications.on_audit_finding_insert",
-        "on_update": "mkaguzi.utils.notifications.on_audit_finding_update",
+        "on_update": [
+            "mkaguzi.utils.notifications.on_audit_finding_update",
+            "mkaguzi.ai.rag.indexer.on_document_update"
+        ],
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
+    },
+    "Working Paper": {
+        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
+    },
+    "Audit Program": {
+        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
+    },
+    "Test Execution": {
+        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
+    },
+    "Risk Assessment": {
+        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
+    },
+    "Compliance Requirement": {
+        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
     },
     "Compliance Check": {
         "on_update": "mkaguzi.utils.notifications.on_compliance_check_update",
@@ -156,7 +180,6 @@ doc_events = {
     "Audit Execution": {
         "on_update": "mkaguzi.utils.notifications.on_audit_execution_update",
     },
-
 }
 
 # Scheduled Tasks
@@ -169,7 +192,8 @@ scheduler_events = {
         "mkaguzi.inventory_audit.tasks.update_sla_statuses"
     ],
     "weekly": [
-        "mkaguzi.utils.notifications.send_weekly_digest"
+        "mkaguzi.utils.notifications.send_weekly_digest",
+        "mkaguzi.ai.rag.indexer.rebuild_full_index"
     ]
 }
 

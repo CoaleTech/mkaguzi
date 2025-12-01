@@ -368,30 +368,30 @@ const handleSendMessage = async (messageData) => {
 
 const handleMessageReply = (message) => {
 	// Handle reply - this would be handled by the MessageInput component
-	console.log('Reply to message:', message)
+	console.log("Reply to message:", message)
 }
 
 const handleMessageEdit = (message) => {
 	// Handle message editing
-	console.log('Edit message:', message)
+	console.log("Edit message:", message)
 }
 
 const handleMessageForward = (message) => {
 	// Handle message forwarding
-	console.log('Forward message:', message)
+	console.log("Forward message:", message)
 }
 
 const handleMessageDelete = async (message) => {
 	try {
 		await deleteMessage(message.name || message.id)
 	} catch (error) {
-		console.error('Failed to delete message:', error)
+		console.error("Failed to delete message:", error)
 	}
 }
 
 const handleScroll = (scrollInfo) => {
 	// Handle scroll events for analytics or additional features
-	console.log('Scroll info:', scrollInfo)
+	console.log("Scroll info:", scrollInfo)
 }
 
 const deleteMessage = async (messageId) => {
@@ -670,54 +670,65 @@ const getRoomTypeLabel = (roomType) => {
 const setupRealtimeHandlers = () => {
 	try {
 		// Import WebSocket service dynamically to avoid issues
-		import('@/services/WebSocketService').then((module) => {
-			const webSocketService = module.default
+		import("@/services/WebSocketService")
+			.then((module) => {
+				const webSocketService = module.default
 
-			// Connect to WebSocket
-			webSocketService.connect(currentUser.value, null)
+				// Connect to WebSocket
+				webSocketService.connect(currentUser.value, null)
 
-			// Handle new messages
-			webSocketService.on('message', (data) => {
-				if (data.room === props.room.name) {
-					// Add to cache
-					addToCache(data)
-					// Add to messages if not already present
-					const existingIndex = messages.value.findIndex(m => m.name === data.id || m.id === data.id)
-					if (existingIndex === -1) {
-						messages.value.push(data)
-					}
-				}
-			})
-
-			// Handle message updates
-			webSocketService.on('messageStatus', (data) => {
-				const message = messages.value.find(m => m.name === data.id || m.id === data.id)
-				if (message) {
-					message.read_by = data.read_by || message.read_by
-					message.delivered_to = data.delivered_to || message.delivered_to
-				}
-			})
-
-			// Handle typing indicators
-			webSocketService.on('typing', (data) => {
-				if (data.room === props.room.name && data.user !== currentUser.value) {
-					if (data.isTyping) {
-						if (!typingUsers.value.includes(data.user)) {
-							typingUsers.value.push(data.user)
+				// Handle new messages
+				webSocketService.on("message", (data) => {
+					if (data.room === props.room.name) {
+						// Add to cache
+						addToCache(data)
+						// Add to messages if not already present
+						const existingIndex = messages.value.findIndex(
+							(m) => m.name === data.id || m.id === data.id,
+						)
+						if (existingIndex === -1) {
+							messages.value.push(data)
 						}
-					} else {
-						typingUsers.value = typingUsers.value.filter(u => u !== data.user)
 					}
-				}
-			})
+				})
 
-			// Join room for real-time updates
-			webSocketService.joinRoom(props.room.name)
-		}).catch(error => {
-			console.warn('WebSocket service not available:', error)
-		})
+				// Handle message updates
+				webSocketService.on("messageStatus", (data) => {
+					const message = messages.value.find(
+						(m) => m.name === data.id || m.id === data.id,
+					)
+					if (message) {
+						message.read_by = data.read_by || message.read_by
+						message.delivered_to = data.delivered_to || message.delivered_to
+					}
+				})
+
+				// Handle typing indicators
+				webSocketService.on("typing", (data) => {
+					if (
+						data.room === props.room.name &&
+						data.user !== currentUser.value
+					) {
+						if (data.isTyping) {
+							if (!typingUsers.value.includes(data.user)) {
+								typingUsers.value.push(data.user)
+							}
+						} else {
+							typingUsers.value = typingUsers.value.filter(
+								(u) => u !== data.user,
+							)
+						}
+					}
+				})
+
+				// Join room for real-time updates
+				webSocketService.joinRoom(props.room.name)
+			})
+			.catch((error) => {
+				console.warn("WebSocket service not available:", error)
+			})
 	} catch (error) {
-		console.warn('Failed to setup realtime handlers:', error)
+		console.warn("Failed to setup realtime handlers:", error)
 	}
 }
 
@@ -776,7 +787,7 @@ onUnmounted(() => {
 
 // Expose methods for parent components (like ChatPage)
 defineExpose({
-	handleSendMessage
+	handleSendMessage,
 })
 </script>
 
