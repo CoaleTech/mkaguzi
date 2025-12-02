@@ -1,0 +1,6 @@
+# frappe -- https://github.com/frappe/frappe is installed via 'bench init'
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+httpx>=0.25.0
+tiktoken>=0.5.0
+beautifulsoup4>=4.12.0

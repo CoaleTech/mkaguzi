@@ -12,6 +12,33 @@ bench get-app $URL_OF_THIS_REPO --branch develop
 bench install-app mkaguzi
 ```
 
+### Dependencies
+
+After installing the app, install the required Python dependencies:
+
+#### Option 1: Using the installation script (Recommended)
+
+```bash
+cd apps/mkaguzi
+./install_dependencies.sh
+```
+
+Or using Python:
+
+```bash
+cd apps/mkaguzi
+python3 install_dependencies.py
+```
+
+#### Option 2: Manual installation
+
+```bash
+cd apps/mkaguzi
+pip3 install -r requirements.txt
+```
+
+**Note:** Frappe framework is installed and managed by bench, so it's not included in requirements.txt.
+
 ### Contributing
 
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:

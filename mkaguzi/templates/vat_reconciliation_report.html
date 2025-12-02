@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VAT Reconciliation Report - {{ doc.reconciliation_id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #1a56db;
+        }
+        .header p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a56db;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: table;
+            width: 100%;
+        }
+        .info-row {
+            display: table-row;
+        }
+        .info-label {
+            display: table-cell;
+            padding: 5px 10px;
+            font-weight: bold;
+            width: 200px;
+            background-color: #f8f9fa;
+        }
+        .info-value {
+            display: table-cell;
+            padding: 5px 10px;
+        }
+        .summary-cards {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .summary-card {
+            display: table-cell;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            width: 25%;
+        }
+        .summary-card-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a56db;
+        }
+        .summary-card-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        table.data-table th {
+            background-color: #1a56db;
+            color: white;
+            padding: 8px 5px;
+            text-align: left;
+            font-weight: bold;
+        }
+        table.data-table td {
+            padding: 6px 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        table.data-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .status-matched {
+            color: #059669;
+            font-weight: bold;
+        }
+        .status-unmatched {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        .status-discrepancy {
+            color: #d97706;
+            font-weight: bold;
+        }
+        .amount {
+            text-align: right;
+        }
+        .variance-positive {
+            color: #dc2626;
+        }
+        .variance-negative {
+            color: #059669;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 10px;
+            color: #666;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VAT Reconciliation Report</h1>
+        <p>{{ doc.reconciliation_id }}</p>
+        <p>{{ doc.reconciliation_month }} {{ doc.fiscal_year }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Reconciliation Details</div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Reconciliation Type</div>
+                <div class="info-value">{{ doc.reconciliation_type }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Period</div>
+                <div class="info-value">{{ doc.reconciliation_month }} {{ doc.fiscal_year }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Reconciliation Date</div>
+                <div class="info-value">{{ doc.reconciliation_date }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status</div>
+                <div class="info-value">{{ doc.reconciliation_status }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Prepared By</div>
+                <div class="info-value">{{ doc.prepared_by }}</div>
+            </div>
+            {% if doc.reviewed_by %}
+            <div class="info-row">
+                <div class="info-label">Reviewed By</div>
+                <div class="info-value">{{ doc.reviewed_by }}</div>
+            </div>
+            {% endif %}
+            {% if doc.approved_by %}
+            <div class="info-row">
+                <div class="info-label">Approved By</div>
+                <div class="info-value">{{ doc.approved_by }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Summary</div>
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-card-value">{{ doc.total_matched }}</div>
+                <div class="summary-card-label">Matched</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-value">{{ doc.total_unmatched_source_a + doc.total_unmatched_source_b }}</div>
+                <div class="summary-card-label">Unmatched</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-value">{{ doc.total_amount_discrepancies }}</div>
+                <div class="summary-card-label">Discrepancies</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-value">{{ "%.2f"|format(doc.match_percentage) }}%</div>
+                <div class="summary-card-label">Match Rate</div>
+            </div>
+        </div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Total Source A Records</div>
+                <div class="info-value">{{ doc.total_source_a_records }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Total Source B Records</div>
+                <div class="info-value">{{ doc.total_source_b_records }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Total Source A Amount</div>
+                <div class="info-value">{{ frappe.format_value(doc.total_source_a_amount, {"fieldtype": "Currency"}) }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Total Source B Amount</div>
+                <div class="info-value">{{ frappe.format_value(doc.total_source_b_amount, {"fieldtype": "Currency"}) }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Total Variance Amount</div>
+                <div class="info-value">{{ frappe.format_value(doc.total_variance_amount, {"fieldtype": "Currency"}) }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if doc.reconciliation_items %}
+    <div class="section page-break">
+        <div class="section-title">Reconciliation Items</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>CU Invoice Number</th>
+                    <th>Invoice Number</th>
+                    <th>Date (A)</th>
+                    <th>Date (B)</th>
+                    <th class="amount">Amount (A)</th>
+                    <th class="amount">Amount (B)</th>
+                    <th class="amount">Variance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in doc.reconciliation_items %}
+                <tr>
+                    <td>{{ item.cu_invoice_number }}</td>
+                    <td>{{ item.invoice_number or '-' }}</td>
+                    <td>{{ item.posting_date_a or '-' }}</td>
+                    <td>{{ item.posting_date_b or '-' }}</td>
+                    <td class="amount">{{ frappe.format_value(item.amount_a, {"fieldtype": "Currency"}) }}</td>
+                    <td class="amount">{{ frappe.format_value(item.amount_b, {"fieldtype": "Currency"}) }}</td>
+                    <td class="amount {% if item.variance > 0 %}variance-positive{% elif item.variance < 0 %}variance-negative{% endif %}">
+                        {{ frappe.format_value(item.variance, {"fieldtype": "Currency"}) }}
+                    </td>
+                    <td class="{% if item.match_status == 'Matched' %}status-matched{% elif item.match_status == 'Amount Discrepancy' %}status-discrepancy{% else %}status-unmatched{% endif %}">
+                        {{ item.match_status }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if doc.variance_trend and doc.previous_reconciliation %}
+    <div class="section">
+        <div class="section-title">Historical Comparison</div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Previous Reconciliation</div>
+                <div class="info-value">{{ doc.previous_reconciliation }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Variance Trend</div>
+                <div class="info-value">{{ doc.variance_trend }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if doc.notes %}
+    <div class="section">
+        <div class="section-title">Notes</div>
+        <div>{{ doc.notes }}</div>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>Generated on {{ frappe.utils.now_datetime() }} by {{ frappe.session.user }}</p>
+        <p>Mkaguzi Internal Audit Management System</p>
+    </div>
+</body>
+</html>

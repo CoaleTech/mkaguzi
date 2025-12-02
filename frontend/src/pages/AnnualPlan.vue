@@ -353,11 +353,11 @@
 
     <!-- Annual Plan Form Modal -->
     <AnnualPlanForm
-      v-model:show="showFormModal"
+      v-model="showFormModal"
       :plan="selectedPlan"
-      :mode="formMode"
-      @saved="handleFormSaved"
-      @close="handleFormClose"
+      @created="handleFormCreated"
+      @updated="handleFormUpdated"
+      @cancelled="handleFormClose"
     />
 
     <!-- Template Modal -->
@@ -496,7 +496,7 @@ import {
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 
-import AnnualPlanForm from "@/components/annualplan/AnnualPlanForm.vue"
+import AnnualPlanForm from "@/components/annualplan/AnnualPlanFormNew.vue"
 import PlanFilters from "@/components/annualplan/PlanFilters.vue"
 // Import components
 import PlanStats from "@/components/annualplan/PlanStats.vue"
@@ -743,10 +743,26 @@ const deletePlan = async (plan) => {
 	}
 }
 
-const handleFormSaved = async () => {
-	showFormModal.value = false
-	selectedPlan.value = null
-	await refreshData()
+const handleFormCreated = async (formData) => {
+	try {
+		await auditStore.createAnnualPlan(formData)
+		showFormModal.value = false
+		selectedPlan.value = null
+		await refreshData()
+	} catch (error) {
+		console.error("Error creating plan:", error)
+	}
+}
+
+const handleFormUpdated = async (formData) => {
+	try {
+		await auditStore.updateAnnualPlan(formData.name, formData)
+		showFormModal.value = false
+		selectedPlan.value = null
+		await refreshData()
+	} catch (error) {
+		console.error("Error updating plan:", error)
+	}
 }
 
 const handleFormClose = () => {

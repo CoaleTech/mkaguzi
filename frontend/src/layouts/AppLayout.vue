@@ -372,6 +372,14 @@
                 <CalendarIcon class="h-4 w-4" />
                 <span v-if="!isSidebarCollapsed">Regulatory Calendar</span>
               </router-link>
+              <router-link
+                to="/compliance/vat-reconciliation"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/compliance/vat-reconciliation') }"
+              >
+                <FileTextIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">VAT Reconciliation</span>
+              </router-link>
             </div>
           </div>
 

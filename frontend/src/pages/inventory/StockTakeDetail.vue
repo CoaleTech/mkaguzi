@@ -129,6 +129,33 @@
           </div>
         </div>
 
+        <!-- Attached Physical Stock Take (for Analyst Review and HOD) -->
+        <div v-if="audit.signed_stock_take_copy && (audit.status === 'Physical Count Submitted' || audit.status === 'Analyst Reviewed' || audit.status === 'HOD Approved')" class="bg-white rounded-lg border p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Attached Physical Stock Take</h3>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-4">
+              <FileText class="w-8 h-8 text-blue-500 flex-shrink-0" />
+              <div class="flex-1">
+                <p class="text-sm font-medium text-gray-900">Signed Stock Take Copy</p>
+                <p class="text-xs text-gray-500">{{ getFileName(audit.signed_stock_take_copy) }}</p>
+                <p class="text-xs text-gray-400 mt-1">Uploaded during physical count preparation</p>
+              </div>
+              <Button variant="outline" size="sm" @click="viewAttachment(audit.signed_stock_take_copy)">
+                <Eye class="w-4 h-4 mr-2" />
+                View Document
+              </Button>
+            </div>
+          </div>
+          
+          <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p class="text-sm text-blue-800">
+              <strong>Note:</strong> This is the original signed physical stock take document submitted by the stock taker. 
+              Review this document to verify the authenticity and completeness of the physical count process.
+            </p>
+          </div>
+        </div>
+
         <!-- Workflow Progress -->
         <div class="bg-white rounded-lg border p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Approval Workflow</h3>

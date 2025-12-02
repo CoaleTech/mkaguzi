@@ -2,679 +2,1069 @@
   <Dialog
     v-model="showDialog"
     :options="{
-      size: '7xl',
-      title: isEditing ? 'Edit Audit Finding' : 'New Audit Finding',
+      size: 'full',
+      title: isEditing ? 'Edit Audit Finding' : 'Create Audit Finding',
     }"
   >
     <template #body>
-      <div class="flex h-[calc(100vh-180px)] overflow-hidden">
-        <!-- Left Sidebar - Section Navigation -->
-        <div class="w-72 bg-gray-50 border-r border-gray-200 p-4 overflow-y-auto flex-shrink-0">
-          <div class="mb-6">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium text-gray-700">Progress</span>
-              <span class="text-sm text-gray-500">{{ formProgress }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
+      <div class="h-[80vh] flex">
+        <!-- Progress Sidebar -->
+        <div class="w-64 bg-gray-50 border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+          <div class="p-4">
+            <h4 class="text-sm font-semibold text-gray-900 mb-3">Progress</h4>
+            <div class="space-y-2">
               <div
-                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                :style="{ width: `${formProgress}%` }"
-              ></div>
+                v-for="(section, index) in sectionsList"
+                :key="section.key"
+                class="flex items-center space-x-2 p-2 rounded-lg cursor-pointer transition-all"
+                :class="activeSection === section.key ? 'bg-blue-100 border border-blue-300' : 'hover:bg-gray-100'"
+                @click="setActiveSection(section.key)"
+              >
+                <div
+                  class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+                  :class="getSectionStatusClass(section.key)"
+                >
+                  <CheckIcon v-if="isSectionComplete(section.key)" class="h-3 w-3" />
+                  <span v-else>{{ index + 1 }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-gray-900 truncate">{{ section.label }}</div>
+                  <div class="text-xs text-gray-500 truncate">{{ section.description }}</div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <nav class="space-y-1">
-            <button
-              v-for="(section, key) in sections"
-              :key="key"
-              @click="setActiveSection(key)"
-              class="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
-              :class="[
-                activeSection === key
-                  ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-600'
-                  : 'text-gray-600 hover:bg-gray-100'
-              ]"
-            >
-              <component
-                :is="section.icon"
-                class="h-5 w-5 mr-3 flex-shrink-0"
-                :class="activeSection === key ? 'text-blue-600' : 'text-gray-400'"
-              />
-              <span class="flex-1 text-left">{{ section.label }}</span>
-              <span
-                v-if="getSectionStatus(key) === 'complete'"
-                class="ml-2 flex-shrink-0"
-              >
-                <CheckCircleIcon class="h-5 w-5 text-green-500" />
-              </span>
-              <span
-                v-else-if="getSectionStatus(key) === 'partial'"
-                class="ml-2 flex-shrink-0"
-              >
-                <ExclamationCircleIcon class="h-5 w-5 text-yellow-500" />
-              </span>
-            </button>
-          </nav>
+            <!-- Overall Progress -->
+            <div class="mt-4 p-3 bg-white rounded-lg border border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-700">Overall Progress</span>
+                <span class="text-xs font-semibold text-blue-600">{{ overallProgress }}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-1.5">
+                <div
+                  class="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+                  :style="{ width: `${overallProgress}%` }"
+                ></div>
+              </div>
+            </div>
 
-          <!-- Draft Save Status -->
-          <div class="mt-6 pt-4 border-t border-gray-200">
-            <div class="flex items-center text-sm text-gray-500">
-              <CloudIcon class="h-4 w-4 mr-2" />
-              <span v-if="lastSaved">Saved {{ formatTimeAgo(lastSaved) }}</span>
-              <span v-else>Not saved yet</span>
+            <!-- Auto-save Status -->
+            <div v-if="lastSaved" class="mt-3 text-xs text-gray-500 text-center">
+              Last saved: {{ formatTimeAgo(lastSaved) }}
             </div>
           </div>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-1 overflow-y-auto p-6">
-          <!-- Section 1: Basic Information -->
-          <div v-show="activeSection === 'basic'" class="space-y-6">
-            <SectionHeader
-              title="Basic Information"
-              description="Essential finding identification and classification details"
-              :icon="DocumentTextIcon"
-            />
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Finding ID"
-                v-model="formData.finding_id"
-                type="text"
-                placeholder="e.g., FND-2024-001"
-                :required="true"
+        <!-- Main Form Content -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="p-6 space-y-8">
+            <!-- Section 1: Basic Information -->
+            <div v-show="activeSection === 'basic'" class="space-y-6">
+              <SectionHeader
+                title="Basic Information"
+                description="Essential finding identification and classification details"
+                :sectionNumber="1"
+                color="blue"
               />
-              <FormControl
-                label="Engagement Reference"
-                v-model="formData.engagement_reference"
-                type="autocomplete"
-                :options="engagementOptions"
-                placeholder="Select related engagement"
-                :required="true"
-              />
-            </div>
 
-            <FormControl
-              label="Finding Title"
-              v-model="formData.finding_title"
-              type="text"
-              placeholder="Enter a descriptive finding title"
-              :required="true"
-            />
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Finding ID <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-2">
+                      <FormControl
+                        v-model="formData.finding_id"
+                        placeholder="e.g., FND-2024-001"
+                        class="flex-1"
+                      />
+                      <Button variant="outline" size="sm" @click="generateFindingId">
+                        <RefreshCwIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
 
-            <div class="grid grid-cols-3 gap-6">
-              <FormControl
-                label="Finding Category"
-                v-model="formData.finding_category"
-                type="select"
-                :options="categoryOptions"
-                :required="true"
-              />
-              <FormControl
-                label="Risk Rating"
-                v-model="formData.risk_rating"
-                type="select"
-                :options="riskRatingOptions"
-              />
-              <FormControl
-                label="Business Impact Rating"
-                v-model="formData.business_impact_rating"
-                type="select"
-                :options="impactOptions"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Date Identified"
-                v-model="formData.date_identified"
-                type="date"
-              />
-              <FormControl
-                label="Source Document"
-                v-model="formData.source_document"
-                type="text"
-                placeholder="Reference to source workpaper"
-              />
-            </div>
-
-            <!-- Affected Locations - Simple child table -->
-            <div class="mt-6">
-              <InlineChildTable
-                v-model="formData.affected_locations"
-                title="Affected Locations"
-                :columns="affectedLocationColumns"
-                addButtonLabel="Add Location"
-              />
-            </div>
-          </div>
-
-          <!-- Section 2: Finding Details -->
-          <div v-show="activeSection === 'details'" class="space-y-6">
-            <SectionHeader
-              title="Finding Details"
-              description="Document the condition, criteria, cause, and effect of the finding"
-              :icon="ClipboardDocumentListIcon"
-            />
-
-            <div class="space-y-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Condition <span class="text-red-500">*</span>
-                </label>
-                <p class="text-xs text-gray-500 mb-2">What is the actual situation or state observed?</p>
-                <TextEditor
-                  v-model="formData.condition"
-                  placeholder="Describe the current condition or situation found during the audit..."
-                  :editorClass="'min-h-[150px] prose-sm'"
-                  :bubbleMenu="true"
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Criteria <span class="text-red-500">*</span>
-                </label>
-                <p class="text-xs text-gray-500 mb-2">What should be the expected state or standard?</p>
-                <TextEditor
-                  v-model="formData.criteria"
-                  placeholder="Describe the standard, policy, or expectation that should be met..."
-                  :editorClass="'min-h-[150px] prose-sm'"
-                  :bubbleMenu="true"
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Cause
-                </label>
-                <p class="text-xs text-gray-500 mb-2">Why did the condition occur?</p>
-                <TextEditor
-                  v-model="formData.cause"
-                  placeholder="Describe the root cause or reason for the gap between condition and criteria..."
-                  :editorClass="'min-h-[150px] prose-sm'"
-                  :bubbleMenu="true"
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Effect
-                </label>
-                <p class="text-xs text-gray-500 mb-2">What is the impact or consequence?</p>
-                <TextEditor
-                  v-model="formData.effect"
-                  placeholder="Describe the actual or potential impact of this finding..."
-                  :editorClass="'min-h-[150px] prose-sm'"
-                  :bubbleMenu="true"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Evidence & Recommendation -->
-          <div v-show="activeSection === 'evidence'" class="space-y-6">
-            <SectionHeader
-              title="Evidence & Recommendation"
-              description="Supporting evidence and proposed corrective actions"
-              :icon="DocumentMagnifyingGlassIcon"
-            />
-
-            <!-- Evidence Child Table -->
-            <ChildTable
-              v-model="formData.evidence"
-              title="Supporting Evidence"
-              :columns="evidenceColumns"
-              :fields="evidenceFields"
-              modalTitle="Evidence"
-              emptyMessage="No evidence documented yet"
-              :doctype="'Finding Evidence'"
-            />
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Sample Size Tested"
-                v-model="formData.sample_size"
-                type="number"
-                placeholder="Number of items tested"
-              />
-              <FormControl
-                label="Exceptions Found"
-                v-model="formData.exceptions_found"
-                type="number"
-                placeholder="Number of exceptions identified"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Recommendation <span class="text-red-500">*</span>
-              </label>
-              <TextEditor
-                v-model="formData.recommendation"
-                placeholder="Provide specific, actionable recommendations to address the finding..."
-                :editorClass="'min-h-[150px] prose-sm'"
-                :bubbleMenu="true"
-              />
-            </div>
-          </div>
-
-          <!-- Section 4: Management Response -->
-          <div v-show="activeSection === 'response'" class="space-y-6">
-            <SectionHeader
-              title="Management Response"
-              description="Management's agreement and response to the finding"
-              :icon="ChatBubbleLeftRightIcon"
-            />
-
-            <div class="grid grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Management Agrees</label>
-                <div class="flex items-center space-x-4 mt-2">
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      v-model="formData.management_agrees"
-                      :value="1"
-                      class="form-radio h-4 w-4 text-blue-600"
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Engagement Reference <span class="text-red-500">*</span>
+                    </label>
+                    <LinkField
+                      v-model="formData.engagement_reference"
+                      doctype="Audit Engagement"
+                      placeholder="Select related engagement"
                     />
-                    <span class="ml-2 text-sm text-gray-700">Yes</span>
-                  </label>
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      v-model="formData.management_agrees"
-                      :value="0"
-                      class="form-radio h-4 w-4 text-blue-600"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">No</span>
-                  </label>
+                  </div>
+
+                  <FormControl
+                    v-model="formData.finding_title"
+                    label="Finding Title"
+                    placeholder="Enter a descriptive finding title"
+                    :required="true"
+                  />
                 </div>
-              </div>
-              <FormControl
-                label="Response Date"
-                v-model="formData.response_date"
-                type="date"
-              />
-            </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Management Comments
-              </label>
-              <TextEditor
-                v-model="formData.management_comments"
-                placeholder="Enter management's response and comments..."
-                :editorClass="'min-h-[150px] prose-sm'"
-                :bubbleMenu="true"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Responding Manager"
-                v-model="formData.management_response_by"
-                type="autocomplete"
-                :options="userOptions"
-                placeholder="Select responding manager"
-              />
-              <FormControl
-                label="Response Received On"
-                v-model="formData.management_response_date"
-                type="date"
-              />
-            </div>
-          </div>
-
-          <!-- Section 5: Corrective Action Plan -->
-          <div v-show="activeSection === 'action'" class="space-y-6">
-            <SectionHeader
-              title="Corrective Action Plan"
-              description="Planned actions to address and resolve the finding"
-              :icon="ClipboardDocumentCheckIcon"
-            />
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Action Plan Description
-              </label>
-              <TextEditor
-                v-model="formData.action_plan_description"
-                placeholder="Describe the corrective action plan in detail..."
-                :editorClass="'min-h-[150px] prose-sm'"
-                :bubbleMenu="true"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Responsible Person"
-                v-model="formData.responsible_person"
-                type="autocomplete"
-                :options="userOptions"
-                placeholder="Select person responsible for implementation"
-              />
-              <FormControl
-                label="Target Completion Date"
-                v-model="formData.target_date"
-                type="date"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Revised Target Date"
-                v-model="formData.revised_target_date"
-                type="date"
-              />
-              <FormControl
-                label="Priority"
-                v-model="formData.priority"
-                type="select"
-                :options="priorityOptions"
-              />
-            </div>
-
-            <!-- Action Milestones Child Table -->
-            <ChildTable
-              v-model="formData.milestones"
-              title="Action Milestones"
-              :columns="milestoneColumns"
-              :fields="milestoneFields"
-              modalTitle="Milestone"
-              emptyMessage="No milestones defined yet"
-              :doctype="'Finding Action Milestone'"
-            />
-          </div>
-
-          <!-- Section 6: Follow-up & Status -->
-          <div v-show="activeSection === 'followup'" class="space-y-6">
-            <SectionHeader
-              title="Follow-up & Status"
-              description="Track finding status and follow-up activities"
-              :icon="ArrowPathIcon"
-            />
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Finding Status"
-                v-model="formData.finding_status"
-                type="select"
-                :options="statusOptions"
-                :required="true"
-              />
-              <FormControl
-                label="Status Date"
-                v-model="formData.status_date"
-                type="date"
-              />
-            </div>
-
-            <!-- Status History - Read-only display -->
-            <ChildTable
-              v-model="formData.status_history"
-              title="Status History"
-              :columns="statusHistoryColumns"
-              :fields="statusHistoryFields"
-              modalTitle="Status Change"
-              emptyMessage="No status changes recorded"
-              :doctype="'Finding Status Change'"
-            />
-
-            <div class="border-t border-gray-200 pt-6">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">Follow-up Settings</h4>
-              <div class="grid grid-cols-3 gap-6">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Follow-up Required</label>
-                  <div class="flex items-center space-x-4 mt-2">
-                    <label class="inline-flex items-center">
-                      <input
-                        type="radio"
-                        v-model="formData.follow_up_required"
-                        :value="1"
-                        class="form-radio h-4 w-4 text-blue-600"
-                      />
-                      <span class="ml-2 text-sm text-gray-700">Yes</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Finding Category <span class="text-red-500">*</span>
                     </label>
-                    <label class="inline-flex items-center">
-                      <input
-                        type="radio"
-                        v-model="formData.follow_up_required"
-                        :value="0"
-                        class="form-radio h-4 w-4 text-blue-600"
-                      />
-                      <span class="ml-2 text-sm text-gray-700">No</span>
-                    </label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.finding_category"
+                      :options="categoryOptions"
+                      placeholder="Select category"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Risk Rating</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.risk_rating"
+                      :options="riskRatingOptions"
+                      placeholder="Select risk rating"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Business Impact</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.business_impact_rating"
+                      :options="impactOptions"
+                      placeholder="Select impact"
+                    />
                   </div>
                 </div>
-                <FormControl
-                  label="Follow-up Frequency"
-                  v-model="formData.follow_up_frequency"
-                  type="select"
-                  :options="frequencyOptions"
-                  :disabled="!formData.follow_up_required"
-                />
-                <FormControl
-                  label="Next Follow-up Date"
-                  v-model="formData.next_follow_up_date"
-                  type="date"
-                  :disabled="!formData.follow_up_required"
-                />
-              </div>
-            </div>
 
-            <!-- Follow-up History -->
-            <ChildTable
-              v-model="formData.follow_up_history"
-              title="Follow-up History"
-              :columns="followUpHistoryColumns"
-              :fields="followUpHistoryFields"
-              modalTitle="Follow-up Activity"
-              emptyMessage="No follow-up activities recorded"
-              :doctype="'Finding Follow-up Activity'"
-            />
-          </div>
-
-          <!-- Section 7: Verification -->
-          <div v-show="activeSection === 'verification'" class="space-y-6">
-            <SectionHeader
-              title="Verification"
-              description="Verification of corrective action implementation"
-              :icon="ShieldCheckIcon"
-            />
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Verification Date"
-                v-model="formData.verification_date"
-                type="date"
-              />
-              <FormControl
-                label="Verified By"
-                v-model="formData.verified_by"
-                type="autocomplete"
-                :options="userOptions"
-                placeholder="Select verifier"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Verification Method"
-                v-model="formData.verification_method"
-                type="select"
-                :options="verificationMethodOptions"
-              />
-              <FormControl
-                label="Verification Status"
-                v-model="formData.verification_status"
-                type="select"
-                :options="verificationStatusOptions"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Verification Results
-              </label>
-              <TextEditor
-                v-model="formData.verification_results"
-                placeholder="Document the results of the verification testing..."
-                :editorClass="'min-h-[150px] prose-sm'"
-                :bubbleMenu="true"
-              />
-            </div>
-          </div>
-
-          <!-- Section 8: Closure & Reporting -->
-          <div v-show="activeSection === 'closure'" class="space-y-6">
-            <SectionHeader
-              title="Closure & Reporting"
-              description="Finding closure details and reporting preferences"
-              :icon="DocumentCheckIcon"
-            />
-
-            <div class="bg-gray-50 rounded-lg p-4 mb-6">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">Closure Information</h4>
-              <div class="grid grid-cols-2 gap-6">
-                <FormControl
-                  label="Closure Date"
-                  v-model="formData.closure_date"
-                  type="date"
-                />
-                <FormControl
-                  label="Closed By"
-                  v-model="formData.closed_by"
-                  type="autocomplete"
-                  :options="userOptions"
-                  placeholder="Select person closing the finding"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-6 mt-4">
-                <FormControl
-                  label="Closure Reason"
-                  v-model="formData.closure_reason"
-                  type="select"
-                  :options="closureReasonOptions"
-                />
-                <FormControl
-                  label="Final Disposition"
-                  v-model="formData.final_disposition"
-                  type="select"
-                  :options="dispositionOptions"
-                />
-              </div>
-
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Closure Notes
-                </label>
-                <TextEditor
-                  v-model="formData.closure_notes"
-                  placeholder="Document any final notes or comments regarding the closure..."
-                  :editorClass="'min-h-[100px] prose-sm'"
-                  :bubbleMenu="true"
-                />
-              </div>
-            </div>
-
-            <!-- Reporting Options -->
-            <div class="bg-blue-50 rounded-lg p-4">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">Reporting Options</h4>
-              <div class="grid grid-cols-2 gap-4">
-                <label class="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="formData.include_in_report"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <FormControl
+                    v-model="formData.date_identified"
+                    type="date"
+                    label="Date Identified"
                   />
-                  <span class="ml-2 text-sm text-gray-700">Include in Final Report</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="formData.reported_to_management"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                  <FormControl
+                    v-model="formData.source_document"
+                    label="Source Document"
+                    placeholder="Reference to source workpaper"
                   />
-                  <span class="ml-2 text-sm text-gray-700">Reported to Management</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="formData.reported_to_audit_committee"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
-                  />
-                  <span class="ml-2 text-sm text-gray-700">Reported to Audit Committee</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    v-model="formData.reported_to_board"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
-                  />
-                  <span class="ml-2 text-sm text-gray-700">Reported to Board</span>
-                </label>
+                </div>
               </div>
 
-              <div class="mt-4">
-                <FormControl
-                  label="Report Reference"
-                  v-model="formData.report_reference"
-                  type="text"
-                  placeholder="Reference to the report containing this finding"
-                />
-              </div>
-            </div>
+              <!-- Affected Locations -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Affected Locations</h4>
+                    <p class="text-xs text-gray-500">{{ formData.affected_locations?.length || 0 }} locations defined</p>
+                  </div>
+                  <Button variant="outline" size="sm" @click="addLocation">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add Location
+                  </Button>
+                </div>
 
-            <!-- Related Findings -->
-            <div class="mt-6">
-              <ChildTable
-                v-model="formData.related_findings"
-                title="Related Findings"
-                :columns="relatedFindingColumns"
-                :fields="relatedFindingFields"
-                modalTitle="Related Finding"
-                emptyMessage="No related findings linked"
-                :doctype="'Finding Related Finding'"
-              />
-            </div>
-
-            <!-- Repeat Finding Information -->
-            <div class="bg-yellow-50 rounded-lg p-4 mt-6">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">Repeat Finding Information</h4>
-              <div class="grid grid-cols-2 gap-6">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Repeat Finding</label>
-                  <div class="flex items-center space-x-4 mt-2">
-                    <label class="inline-flex items-center">
-                      <input
-                        type="radio"
-                        v-model="formData.repeat_finding"
-                        :value="1"
-                        class="form-radio h-4 w-4 text-yellow-600"
-                      />
-                      <span class="ml-2 text-sm text-gray-700">Yes</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                      <input
-                        type="radio"
-                        v-model="formData.repeat_finding"
-                        :value="0"
-                        class="form-radio h-4 w-4 text-yellow-600"
-                      />
-                      <span class="ml-2 text-sm text-gray-700">No</span>
-                    </label>
+                <div v-if="formData.affected_locations?.length > 0" class="space-y-3">
+                  <div
+                    v-for="(location, index) in formData.affected_locations"
+                    :key="index"
+                    class="border border-gray-200 rounded-lg p-3 hover:border-blue-300 transition-colors"
+                  >
+                    <div class="flex items-start gap-4">
+                      <Badge variant="subtle" theme="gray">{{ index + 1 }}</Badge>
+                      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormControl
+                          v-model="location.location"
+                          placeholder="Location name"
+                          size="sm"
+                        />
+                        <FormControl
+                          v-model="location.extent"
+                          placeholder="Extent/Notes"
+                          size="sm"
+                        />
+                      </div>
+                      <Button variant="ghost" size="sm" @click="removeLocation(index)" class="text-red-500">
+                        <TrashIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-                <FormControl
-                  v-if="formData.repeat_finding"
-                  label="Previous Finding Reference"
-                  v-model="formData.previous_finding_reference"
-                  type="autocomplete"
-                  :options="findingOptions"
-                  placeholder="Link to previous finding"
-                />
+
+                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <MapPinIcon class="mx-auto h-10 w-10 text-gray-400" />
+                  <p class="mt-2 text-sm text-gray-500">No locations specified</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Finding Details -->
+            <div v-show="activeSection === 'details'" class="space-y-6">
+              <SectionHeader
+                title="Finding Details"
+                description="Document the condition, criteria, cause, and effect of the finding"
+                :sectionNumber="2"
+                color="purple"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="space-y-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Condition <span class="text-red-500">*</span>
+                    </label>
+                    <p class="text-xs text-gray-500 mb-2">What is the actual situation or state observed?</p>
+                    <TextEditor
+                      :content="formData.condition"
+                      @change="formData.condition = $event"
+                      placeholder="Describe the current condition or situation found during the audit..."
+                      :editable="true"
+                      editorClass="min-h-[120px] prose-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Criteria <span class="text-red-500">*</span>
+                    </label>
+                    <p class="text-xs text-gray-500 mb-2">What should be the expected state or standard?</p>
+                    <TextEditor
+                      :content="formData.criteria"
+                      @change="formData.criteria = $event"
+                      placeholder="Describe the standard, policy, or expectation that should be met..."
+                      :editable="true"
+                      editorClass="min-h-[120px] prose-sm"
+                    />
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Cause</label>
+                      <p class="text-xs text-gray-500 mb-2">Why did the condition occur?</p>
+                      <TextEditor
+                        :content="formData.cause"
+                        @change="formData.cause = $event"
+                        placeholder="Describe the root cause..."
+                        :editable="true"
+                        editorClass="min-h-[100px] prose-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Effect</label>
+                      <p class="text-xs text-gray-500 mb-2">What is the impact or consequence?</p>
+                      <TextEditor
+                        :content="formData.effect"
+                        @change="formData.effect = $event"
+                        placeholder="Describe the actual or potential impact..."
+                        :editable="true"
+                        editorClass="min-h-[100px] prose-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Evidence & Recommendation -->
+            <div v-show="activeSection === 'evidence'" class="space-y-6">
+              <SectionHeader
+                title="Evidence & Recommendation"
+                description="Supporting evidence and proposed corrective actions"
+                :sectionNumber="3"
+                color="green"
+              />
+
+              <!-- Evidence Table -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Supporting Evidence</h4>
+                    <p class="text-xs text-gray-500">{{ formData.evidence?.length || 0 }} evidence items documented</p>
+                  </div>
+                  <Button variant="outline" size="sm" @click="addEvidence">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add Evidence
+                  </Button>
+                </div>
+
+                <div v-if="formData.evidence?.length > 0" class="space-y-4">
+                  <div
+                    v-for="(item, index) in formData.evidence"
+                    :key="index"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
+                  >
+                    <div class="flex items-start justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <Badge variant="subtle" :theme="getEvidenceBadgeTheme(item.evidence_type)">
+                          {{ item.evidence_type || 'Unclassified' }}
+                        </Badge>
+                      </div>
+                      <Button variant="ghost" size="sm" @click="removeEvidence(index)" class="text-red-500">
+                        <TrashIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Evidence Type</label>
+                        <FormControl
+                          type="select"
+                          v-model="item.evidence_type"
+                          :options="evidenceTypeOptions"
+                          size="sm"
+                        />
+                      </div>
+                      <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                        <FormControl
+                          v-model="item.description"
+                          placeholder="Describe the evidence"
+                          size="sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                      <FormControl
+                        v-model="item.source"
+                        label="Source"
+                        placeholder="Where did this come from?"
+                        size="sm"
+                      />
+                      <FormControl
+                        v-model="item.reference"
+                        label="Reference"
+                        placeholder="Reference number or link"
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <FileSearchIcon class="mx-auto h-10 w-10 text-gray-400" />
+                  <p class="mt-2 text-sm text-gray-500">No evidence documented yet</p>
+                  <Button variant="outline" size="sm" class="mt-3" @click="addEvidence">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add First Evidence
+                  </Button>
+                </div>
+              </div>
+
+              <!-- Sampling & Recommendation -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Sampling & Recommendation</h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <FormControl
+                    v-model="formData.sample_size"
+                    type="number"
+                    label="Sample Size Tested"
+                    placeholder="Number of items tested"
+                  />
+                  <FormControl
+                    v-model="formData.exceptions_found"
+                    type="number"
+                    label="Exceptions Found"
+                    placeholder="Number of exceptions identified"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Recommendation <span class="text-red-500">*</span>
+                  </label>
+                  <TextEditor
+                    :content="formData.recommendation"
+                    @change="formData.recommendation = $event"
+                    placeholder="Provide specific, actionable recommendations to address the finding..."
+                    :editable="true"
+                    editorClass="min-h-[150px] prose-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: Management Response -->
+            <div v-show="activeSection === 'response'" class="space-y-6">
+              <SectionHeader
+                title="Management Response"
+                description="Management's agreement and response to the finding"
+                :sectionNumber="4"
+                color="amber"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Management Agrees</label>
+                    <div class="flex items-center gap-6 mt-2">
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.management_agrees"
+                          :value="1"
+                          class="form-radio h-4 w-4 text-blue-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">Yes</span>
+                      </label>
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.management_agrees"
+                          :value="0"
+                          class="form-radio h-4 w-4 text-blue-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">No</span>
+                      </label>
+                    </div>
+                  </div>
+                  <FormControl
+                    v-model="formData.response_date"
+                    type="date"
+                    label="Response Date"
+                  />
+                </div>
+
+                <div class="mt-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Management Comments</label>
+                  <TextEditor
+                    :content="formData.management_comments"
+                    @change="formData.management_comments = $event"
+                    placeholder="Enter management's response and comments..."
+                    :editable="true"
+                    editorClass="min-h-[120px] prose-sm"
+                  />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Responding Manager</label>
+                    <LinkField
+                      v-model="formData.management_response_by"
+                      doctype="User"
+                      placeholder="Select responding manager"
+                    />
+                  </div>
+                  <FormControl
+                    v-model="formData.management_response_date"
+                    type="date"
+                    label="Response Received On"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 5: Corrective Action Plan -->
+            <div v-show="activeSection === 'action'" class="space-y-6">
+              <SectionHeader
+                title="Corrective Action Plan"
+                description="Planned actions to address and resolve the finding"
+                :sectionNumber="5"
+                color="indigo"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Action Plan Description</label>
+                  <TextEditor
+                    :content="formData.action_plan_description"
+                    @change="formData.action_plan_description = $event"
+                    placeholder="Describe the corrective action plan in detail..."
+                    :editable="true"
+                    editorClass="min-h-[120px] prose-sm"
+                  />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Responsible Person</label>
+                    <LinkField
+                      v-model="formData.responsible_person"
+                      doctype="User"
+                      placeholder="Select person responsible"
+                    />
+                  </div>
+                  <FormControl
+                    v-model="formData.target_date"
+                    type="date"
+                    label="Target Completion Date"
+                  />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <FormControl
+                    v-model="formData.revised_target_date"
+                    type="date"
+                    label="Revised Target Date"
+                  />
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.priority"
+                      :options="priorityOptions"
+                      placeholder="Select priority"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Milestones -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Action Milestones</h4>
+                    <p class="text-xs text-gray-500">{{ formData.milestones?.length || 0 }} milestones defined</p>
+                  </div>
+                  <Button variant="outline" size="sm" @click="addMilestone">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add Milestone
+                  </Button>
+                </div>
+
+                <div v-if="formData.milestones?.length > 0" class="space-y-4">
+                  <div
+                    v-for="(milestone, index) in formData.milestones"
+                    :key="index"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors"
+                  >
+                    <div class="flex items-start justify-between mb-3">
+                      <Badge :variant="getMilestoneStatusVariant(milestone.status)" size="sm">
+                        {{ milestone.status || 'Not Started' }}
+                      </Badge>
+                      <Button variant="ghost" size="sm" @click="removeMilestone(index)" class="text-red-500">
+                        <TrashIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Milestone Description</label>
+                        <FormControl
+                          v-model="milestone.milestone_description"
+                          placeholder="Describe this milestone"
+                          size="sm"
+                        />
+                      </div>
+                      <FormControl
+                        v-model="milestone.due_date"
+                        type="date"
+                        label="Due Date"
+                        size="sm"
+                      />
+                      <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                        <FormControl
+                          type="select"
+                          v-model="milestone.status"
+                          :options="milestoneStatusOptions"
+                          size="sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="mt-3">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                      <textarea
+                        v-model="milestone.notes"
+                        rows="2"
+                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Additional notes..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <FlagIcon class="mx-auto h-10 w-10 text-gray-400" />
+                  <p class="mt-2 text-sm text-gray-500">No milestones defined yet</p>
+                  <Button variant="outline" size="sm" class="mt-3" @click="addMilestone">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add First Milestone
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 6: Follow-up & Status -->
+            <div v-show="activeSection === 'followup'" class="space-y-6">
+              <SectionHeader
+                title="Follow-up & Status"
+                description="Track finding status and follow-up activities"
+                :sectionNumber="6"
+                color="cyan"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Current Status</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Finding Status <span class="text-red-500">*</span>
+                    </label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.finding_status"
+                      :options="statusOptions"
+                    />
+                  </div>
+                  <FormControl
+                    v-model="formData.status_date"
+                    type="date"
+                    label="Status Date"
+                  />
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Follow-up Settings</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Follow-up Required</label>
+                    <div class="flex items-center gap-6 mt-2">
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.follow_up_required"
+                          :value="1"
+                          class="form-radio h-4 w-4 text-blue-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">Yes</span>
+                      </label>
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.follow_up_required"
+                          :value="0"
+                          class="form-radio h-4 w-4 text-blue-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">No</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Follow-up Frequency</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.follow_up_frequency"
+                      :options="frequencyOptions"
+                      :disabled="!formData.follow_up_required"
+                      placeholder="Select frequency"
+                    />
+                  </div>
+                  <FormControl
+                    v-model="formData.next_follow_up_date"
+                    type="date"
+                    label="Next Follow-up Date"
+                    :disabled="!formData.follow_up_required"
+                  />
+                </div>
+              </div>
+
+              <!-- Follow-up History -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Follow-up History</h4>
+                    <p class="text-xs text-gray-500">{{ formData.follow_up_history?.length || 0 }} follow-up activities</p>
+                  </div>
+                  <Button variant="outline" size="sm" @click="addFollowUp">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add Follow-up
+                  </Button>
+                </div>
+
+                <div v-if="formData.follow_up_history?.length > 0" class="space-y-4">
+                  <div
+                    v-for="(followUp, index) in formData.follow_up_history"
+                    :key="index"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-cyan-300 transition-colors"
+                  >
+                    <div class="flex items-start justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <Badge variant="subtle" theme="blue">{{ followUp.follow_up_type || 'Status Check' }}</Badge>
+                        <span class="text-xs text-gray-500">{{ followUp.follow_up_date }}</span>
+                      </div>
+                      <Button variant="ghost" size="sm" @click="removeFollowUp(index)" class="text-red-500">
+                        <TrashIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormControl
+                        v-model="followUp.follow_up_date"
+                        type="date"
+                        label="Date"
+                        size="sm"
+                      />
+                      <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
+                        <FormControl
+                          type="select"
+                          v-model="followUp.follow_up_type"
+                          :options="followUpTypeOptions"
+                          size="sm"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Follow-up By</label>
+                        <LinkField
+                          v-model="followUp.follow_up_by"
+                          doctype="User"
+                          placeholder="Select user"
+                          size="sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="mt-3">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Findings/Observations</label>
+                      <textarea
+                        v-model="followUp.findings"
+                        rows="2"
+                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Document findings..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <RefreshCwIcon class="mx-auto h-10 w-10 text-gray-400" />
+                  <p class="mt-2 text-sm text-gray-500">No follow-up activities recorded</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 7: Verification -->
+            <div v-show="activeSection === 'verification'" class="space-y-6">
+              <SectionHeader
+                title="Verification"
+                description="Verification of corrective action implementation"
+                :sectionNumber="7"
+                color="teal"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormControl
+                    v-model="formData.verification_date"
+                    type="date"
+                    label="Verification Date"
+                  />
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Verified By</label>
+                    <LinkField
+                      v-model="formData.verified_by"
+                      doctype="User"
+                      placeholder="Select verifier"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Verification Method</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.verification_method"
+                      :options="verificationMethodOptions"
+                      placeholder="Select method"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Verification Status</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.verification_status"
+                      :options="verificationStatusOptions"
+                      placeholder="Select status"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Verification Results</label>
+                  <TextEditor
+                    :content="formData.verification_results"
+                    @change="formData.verification_results = $event"
+                    placeholder="Document the results of the verification testing..."
+                    :editable="true"
+                    editorClass="min-h-[150px] prose-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 8: Closure & Reporting -->
+            <div v-show="activeSection === 'closure'" class="space-y-6">
+              <SectionHeader
+                title="Closure & Reporting"
+                description="Finding closure details and reporting preferences"
+                :sectionNumber="8"
+                color="rose"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Closure Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormControl
+                    v-model="formData.closure_date"
+                    type="date"
+                    label="Closure Date"
+                  />
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Closed By</label>
+                    <LinkField
+                      v-model="formData.closed_by"
+                      doctype="User"
+                      placeholder="Select person closing the finding"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Closure Reason</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.closure_reason"
+                      :options="closureReasonOptions"
+                      placeholder="Select reason"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Final Disposition</label>
+                    <FormControl
+                      type="select"
+                      v-model="formData.final_disposition"
+                      :options="dispositionOptions"
+                      placeholder="Select disposition"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Closure Notes</label>
+                  <TextEditor
+                    :content="formData.closure_notes"
+                    @change="formData.closure_notes = $event"
+                    placeholder="Document any final notes regarding the closure..."
+                    :editable="true"
+                    editorClass="min-h-[100px] prose-sm"
+                  />
+                </div>
+              </div>
+
+              <!-- Reporting Options -->
+              <div class="bg-blue-50 rounded-xl border border-blue-200 p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Reporting Options</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="formData.include_in_report"
+                      class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">Include in Final Report</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="formData.reported_to_management"
+                      class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">Reported to Management</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="formData.reported_to_audit_committee"
+                      class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">Reported to Audit Committee</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="formData.reported_to_board"
+                      class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">Reported to Board</span>
+                  </label>
+                </div>
+
+                <div class="mt-4">
+                  <FormControl
+                    v-model="formData.report_reference"
+                    label="Report Reference"
+                    placeholder="Reference to the report containing this finding"
+                  />
+                </div>
+              </div>
+
+              <!-- Repeat Finding Information -->
+              <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4">Repeat Finding Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Repeat Finding</label>
+                    <div class="flex items-center gap-6 mt-2">
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.repeat_finding"
+                          :value="1"
+                          class="form-radio h-4 w-4 text-yellow-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">Yes</span>
+                      </label>
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="formData.repeat_finding"
+                          :value="0"
+                          class="form-radio h-4 w-4 text-yellow-600"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">No</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div v-if="formData.repeat_finding">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Previous Finding Reference</label>
+                    <LinkField
+                      v-model="formData.previous_finding_reference"
+                      doctype="Audit Finding"
+                      placeholder="Link to previous finding"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Related Findings -->
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Related Findings</h4>
+                    <p class="text-xs text-gray-500">{{ formData.related_findings?.length || 0 }} related findings</p>
+                  </div>
+                  <Button variant="outline" size="sm" @click="addRelatedFinding">
+                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
+                    Add Related
+                  </Button>
+                </div>
+
+                <div v-if="formData.related_findings?.length > 0" class="space-y-3">
+                  <div
+                    v-for="(related, index) in formData.related_findings"
+                    :key="index"
+                    class="border border-gray-200 rounded-lg p-3 hover:border-rose-300 transition-colors"
+                  >
+                    <div class="flex items-start gap-4">
+                      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Related Finding</label>
+                          <LinkField
+                            v-model="related.related_finding"
+                            doctype="Audit Finding"
+                            placeholder="Select finding"
+                            size="sm"
+                          />
+                        </div>
+                        <div>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Relationship Type</label>
+                          <FormControl
+                            type="select"
+                            v-model="related.relationship_type"
+                            :options="relationshipTypeOptions"
+                            size="sm"
+                          />
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm" @click="removeRelatedFinding(index)" class="text-red-500">
+                        <TrashIcon class="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <LinkIcon class="mx-auto h-10 w-10 text-gray-400" />
+                  <p class="mt-2 text-sm text-gray-500">No related findings linked</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 9: Review & Submit -->
+            <div v-show="activeSection === 'review'" class="space-y-6">
+              <SectionHeader
+                title="Review & Submit"
+                description="Review your finding and submit"
+                :sectionNumber="9"
+                color="blue"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Finding Summary</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Finding ID</p>
+                    <p class="text-lg font-semibold text-gray-900 mt-1">{{ formData.finding_id || 'Not set' }}</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Risk Rating</p>
+                    <Badge
+                      v-if="formData.risk_rating"
+                      :variant="getRiskBadgeVariant(formData.risk_rating)"
+                      class="mt-1"
+                    >
+                      {{ formData.risk_rating }}
+                    </Badge>
+                    <p v-else class="text-lg font-semibold text-gray-400 mt-1">Not set</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Category</p>
+                    <p class="text-lg font-semibold text-gray-900 mt-1">{{ formData.finding_category || 'Not set' }}</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Status</p>
+                    <Badge variant="subtle" class="mt-1">{{ formData.finding_status || 'Open' }}</Badge>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold text-blue-600">{{ formData.evidence?.length || 0 }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Evidence Items</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ formData.milestones?.length || 0 }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Action Milestones</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold text-cyan-600">{{ formData.follow_up_history?.length || 0 }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Follow-up Activities</p>
+                  </div>
+                </div>
+
+                <!-- Validation Status -->
+                <div class="border-t border-gray-200 pt-4">
+                  <h5 class="text-sm font-medium text-gray-900 mb-3">Validation Status</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div v-for="check in validationChecks" :key="check.label" class="flex items-center">
+                      <component
+                        :is="check.valid ? CheckCircle2Icon : XCircleIcon"
+                        :class="check.valid ? 'text-green-500' : 'text-red-500'"
+                        class="h-5 w-5 mr-2 flex-shrink-0"
+                      />
+                      <span :class="check.valid ? 'text-gray-700' : 'text-red-600'" class="text-sm">
+                        {{ check.label }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -684,33 +1074,42 @@
 
     <template #actions>
       <div class="flex items-center justify-between w-full">
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center gap-2">
           <Button
-            variant="subtle"
+            v-if="activeSection !== 'basic'"
+            variant="outline"
             @click="previousSection"
-            :disabled="activeSection === 'basic'"
           >
-            <ChevronLeftIcon class="h-4 w-4 mr-1" />
+            <template #prefix><ChevronLeftIcon class="h-4 w-4" /></template>
             Previous
-          </Button>
-          <Button
-            variant="subtle"
-            @click="nextSection"
-            :disabled="activeSection === 'closure'"
-          >
-            Next
-            <ChevronRightIcon class="h-4 w-4 ml-1" />
           </Button>
         </div>
 
-        <div class="flex items-center space-x-3">
-          <Button variant="subtle" @click="saveDraft">
-            Save as Draft
+        <div class="flex items-center gap-2">
+          <Button variant="outline" @click="saveDraft" :loading="saving">
+            <template #prefix><SaveIcon class="h-4 w-4" /></template>
+            Save Draft
           </Button>
-          <Button variant="outline" @click="closeDialog">
-            Cancel
+
+          <Button
+            v-if="activeSection !== 'review'"
+            variant="solid"
+            theme="blue"
+            @click="nextSection"
+          >
+            Next
+            <template #suffix><ChevronRightIcon class="h-4 w-4" /></template>
           </Button>
-          <Button variant="solid" theme="blue" @click="submitForm" :loading="saving">
+
+          <Button
+            v-else
+            variant="solid"
+            theme="blue"
+            @click="submitForm"
+            :loading="submitting"
+            :disabled="!isFormValid"
+          >
+            <template #prefix><CheckIcon class="h-4 w-4" /></template>
             {{ isEditing ? 'Update Finding' : 'Create Finding' }}
           </Button>
         </div>
@@ -720,26 +1119,24 @@
 </template>
 
 <script setup>
-import ChildTable from "@/components/Common/ChildTable.vue"
-import InlineChildTable from "@/components/Common/InlineChildTable.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
-import { useMultiSectionForm } from "@/composables/useMultiSectionForm"
-import { Button, Dialog, FormControl, TextEditor } from "frappe-ui"
+import { useAuditStore } from "@/stores/audit"
+import { Badge, Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
-	RefreshCwIcon as ArrowPathIcon,
-	MessageCircleIcon as ChatBubbleLeftRightIcon,
-	CheckCircle2Icon as CheckCircleIcon,
+	CheckCircle2Icon,
+	CheckIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	ClipboardCheckIcon as ClipboardDocumentCheckIcon,
-	ClipboardListIcon as ClipboardDocumentListIcon,
-	CloudIcon,
-	FileCheck2Icon as DocumentCheckIcon,
-	SearchIcon as DocumentMagnifyingGlassIcon,
-	FileTextIcon as DocumentTextIcon,
-	AlertCircleIcon as ExclamationCircleIcon,
+	FileSearchIcon,
+	FlagIcon,
+	LinkIcon,
+	MapPinIcon,
 	PlusIcon,
-	ShieldCheckIcon,
+	RefreshCwIcon,
+	SaveIcon,
+	TrashIcon,
+	XCircleIcon,
 } from "lucide-vue-next"
 import { computed, onMounted, reactive, ref, watch } from "vue"
 
@@ -758,6 +1155,9 @@ const props = defineProps({
 // Emits
 const emit = defineEmits(["update:modelValue", "saved", "close"])
 
+// Store
+const auditStore = useAuditStore()
+
 // Dialog visibility
 const showDialog = computed({
 	get: () => props.modelValue,
@@ -766,31 +1166,26 @@ const showDialog = computed({
 
 const isEditing = computed(() => !!props.finding?.name)
 const saving = ref(false)
+const submitting = ref(false)
 const lastSaved = ref(null)
+const activeSection = ref("basic")
 
-// Section definitions
-const sections = {
-	basic: { label: "Basic Information", icon: DocumentTextIcon },
-	details: { label: "Finding Details", icon: ClipboardDocumentListIcon },
-	evidence: {
-		label: "Evidence & Recommendation",
-		icon: DocumentMagnifyingGlassIcon,
-	},
-	response: { label: "Management Response", icon: ChatBubbleLeftRightIcon },
-	action: { label: "Corrective Action Plan", icon: ClipboardDocumentCheckIcon },
-	followup: { label: "Follow-up & Status", icon: ArrowPathIcon },
-	verification: { label: "Verification", icon: ShieldCheckIcon },
-	closure: { label: "Closure & Reporting", icon: DocumentCheckIcon },
-}
+// Section definitions with descriptions
+const sectionsList = [
+	{ key: "basic", label: "Basic Information", description: "Finding ID and classification" },
+	{ key: "details", label: "Finding Details", description: "Condition, criteria, cause, effect" },
+	{ key: "evidence", label: "Evidence & Recommendation", description: "Supporting evidence" },
+	{ key: "response", label: "Management Response", description: "Management agreement" },
+	{ key: "action", label: "Corrective Action Plan", description: "Action plan and milestones" },
+	{ key: "followup", label: "Follow-up & Status", description: "Status tracking" },
+	{ key: "verification", label: "Verification", description: "Implementation verification" },
+	{ key: "closure", label: "Closure & Reporting", description: "Closure details" },
+	{ key: "review", label: "Review & Submit", description: "Final review" },
+]
 
 // Section field mappings for validation
 const sectionFields = {
-	basic: [
-		"finding_id",
-		"engagement_reference",
-		"finding_title",
-		"finding_category",
-	],
+	basic: ["finding_id", "engagement_reference", "finding_title", "finding_category"],
 	details: ["condition", "criteria"],
 	evidence: ["recommendation"],
 	response: [],
@@ -798,19 +1193,8 @@ const sectionFields = {
 	followup: ["finding_status"],
 	verification: [],
 	closure: [],
+	review: [],
 }
-
-// Use multi-section form composable
-const {
-	activeSection,
-	formProgress,
-	setActiveSection,
-	getSectionStatus,
-	previousSection: prevSection,
-	nextSection: nxtSection,
-	validateForm,
-	prepareFormData,
-} = useMultiSectionForm(sections, sectionFields)
 
 // Form data with all fields
 const formData = reactive({
@@ -1148,46 +1532,233 @@ const relatedFindingColumns = [
 	{ key: "relationship_type", label: "Relationship", width: "150px" },
 ]
 
-const relatedFindingFields = [
-	{
-		key: "related_finding",
-		label: "Related Finding",
-		type: "link",
-		doctype: "Audit Finding",
-		required: true,
-	},
-	{
-		key: "relationship_type",
-		label: "Relationship Type",
-		type: "select",
-		required: true,
-		options: [
-			{ label: "Duplicate", value: "Duplicate" },
-			{ label: "Similar Issue", value: "Similar Issue" },
-			{ label: "Root Cause", value: "Root Cause" },
-			{ label: "Contributing Factor", value: "Contributing Factor" },
-			{ label: "Follow-up Action", value: "Follow-up Action" },
-			{ label: "Related Control", value: "Related Control" },
-		],
-	},
-	{ key: "description", label: "Description", type: "textarea" },
+const relationshipTypeOptions = [
+	{ label: "Duplicate", value: "Duplicate" },
+	{ label: "Similar Issue", value: "Similar Issue" },
+	{ label: "Root Cause", value: "Root Cause" },
+	{ label: "Contributing Factor", value: "Contributing Factor" },
+	{ label: "Follow-up Action", value: "Follow-up Action" },
+	{ label: "Related Control", value: "Related Control" },
 ]
+
+const evidenceTypeOptions = [
+	{ label: "Document", value: "Document" },
+	{ label: "Photo", value: "Photo" },
+	{ label: "Data Analysis", value: "Data Analysis" },
+	{ label: "Interview", value: "Interview" },
+	{ label: "Observation", value: "Observation" },
+	{ label: "Confirmation", value: "Confirmation" },
+]
+
+const milestoneStatusOptions = [
+	{ label: "Not Started", value: "Not Started" },
+	{ label: "In Progress", value: "In Progress" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Delayed", value: "Delayed" },
+]
+
+const followUpTypeOptions = [
+	{ label: "Status Check", value: "Status Check" },
+	{ label: "Progress Review", value: "Progress Review" },
+	{ label: "Implementation Verification", value: "Implementation Verification" },
+	{ label: "Effectiveness Assessment", value: "Effectiveness Assessment" },
+	{ label: "Closure Review", value: "Closure Review" },
+]
+
+// Computed properties
+const overallProgress = computed(() => {
+	let completed = 0
+	if (formData.finding_id && formData.finding_title && formData.finding_category) completed += 12
+	if (formData.condition && formData.criteria) completed += 12
+	if (formData.recommendation) completed += 12
+	if (formData.management_comments || formData.management_agrees !== null) completed += 12
+	if (formData.action_plan_description || formData.milestones?.length > 0) completed += 12
+	if (formData.finding_status) completed += 12
+	if (formData.verification_date || formData.verification_status) completed += 12
+	if (formData.closure_date || formData.closure_reason) completed += 12
+	completed += 4 // Review section always counts
+	return Math.min(100, completed)
+})
+
+const isFormValid = computed(() => {
+	return (
+		formData.finding_id &&
+		formData.finding_title &&
+		formData.finding_category &&
+		formData.condition &&
+		formData.criteria &&
+		formData.recommendation &&
+		formData.finding_status
+	)
+})
+
+const validationChecks = computed(() => [
+	{ label: "Finding ID is set", valid: !!formData.finding_id },
+	{ label: "Finding Title is set", valid: !!formData.finding_title },
+	{ label: "Category is selected", valid: !!formData.finding_category },
+	{ label: "Condition is documented", valid: !!formData.condition },
+	{ label: "Criteria is documented", valid: !!formData.criteria },
+	{ label: "Recommendation is provided", valid: !!formData.recommendation },
+	{ label: "Finding Status is set", valid: !!formData.finding_status },
+	{ label: "Evidence is documented", valid: formData.evidence?.length > 0 },
+])
+
+// Section completion helpers
+const isSectionComplete = (sectionKey) => {
+	switch (sectionKey) {
+		case "basic":
+			return formData.finding_id && formData.finding_title && formData.finding_category
+		case "details":
+			return formData.condition && formData.criteria
+		case "evidence":
+			return formData.recommendation
+		case "response":
+			return formData.management_agrees !== null || formData.management_comments
+		case "action":
+			return formData.action_plan_description || formData.milestones?.length > 0
+		case "followup":
+			return !!formData.finding_status
+		case "verification":
+			return formData.verification_date || formData.verification_status
+		case "closure":
+			return formData.closure_date || formData.closure_reason
+		case "review":
+			return true
+		default:
+			return false
+	}
+}
+
+const getSectionStatusClass = (sectionKey) => {
+	if (isSectionComplete(sectionKey)) {
+		return "bg-green-500 text-white"
+	}
+	return "bg-gray-300 text-gray-600"
+}
+
+const setActiveSection = (sectionKey) => {
+	activeSection.value = sectionKey
+}
 
 // Navigation methods
 const previousSection = () => {
-	const keys = Object.keys(sections)
-	const currentIndex = keys.indexOf(activeSection.value)
+	const currentIndex = sectionsList.findIndex((s) => s.key === activeSection.value)
 	if (currentIndex > 0) {
-		setActiveSection(keys[currentIndex - 1])
+		activeSection.value = sectionsList[currentIndex - 1].key
 	}
 }
 
 const nextSection = () => {
-	const keys = Object.keys(sections)
-	const currentIndex = keys.indexOf(activeSection.value)
-	if (currentIndex < keys.length - 1) {
-		setActiveSection(keys[currentIndex + 1])
+	const currentIndex = sectionsList.findIndex((s) => s.key === activeSection.value)
+	if (currentIndex < sectionsList.length - 1) {
+		activeSection.value = sectionsList[currentIndex + 1].key
 	}
+}
+
+// Generate Finding ID
+const generateFindingId = () => {
+	const year = new Date().getFullYear()
+	const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0")
+	formData.finding_id = `FND-${year}-${random}`
+}
+
+// Child table methods - Locations
+const addLocation = () => {
+	formData.affected_locations.push({
+		location: "",
+		extent: "",
+	})
+}
+
+const removeLocation = (index) => {
+	formData.affected_locations.splice(index, 1)
+}
+
+// Child table methods - Evidence
+const addEvidence = () => {
+	formData.evidence.push({
+		evidence_type: "",
+		description: "",
+		source: "",
+		reference: "",
+	})
+}
+
+const removeEvidence = (index) => {
+	formData.evidence.splice(index, 1)
+}
+
+const getEvidenceBadgeTheme = (type) => {
+	const themes = {
+		Document: "blue",
+		Photo: "green",
+		"Data Analysis": "purple",
+		Interview: "amber",
+		Observation: "cyan",
+		Confirmation: "teal",
+	}
+	return themes[type] || "gray"
+}
+
+// Child table methods - Milestones
+const addMilestone = () => {
+	formData.milestones.push({
+		milestone_description: "",
+		due_date: "",
+		status: "Not Started",
+		notes: "",
+	})
+}
+
+const removeMilestone = (index) => {
+	formData.milestones.splice(index, 1)
+}
+
+const getMilestoneStatusVariant = (status) => {
+	const variants = {
+		"Not Started": "subtle",
+		"In Progress": "subtle",
+		Completed: "subtle",
+		Delayed: "subtle",
+	}
+	return variants[status] || "subtle"
+}
+
+// Child table methods - Follow-up History
+const addFollowUp = () => {
+	formData.follow_up_history.push({
+		follow_up_date: "",
+		follow_up_type: "",
+		follow_up_by: "",
+		findings: "",
+	})
+}
+
+const removeFollowUp = (index) => {
+	formData.follow_up_history.splice(index, 1)
+}
+
+// Child table methods - Related Findings
+const addRelatedFinding = () => {
+	formData.related_findings.push({
+		related_finding: "",
+		relationship_type: "",
+	})
+}
+
+const removeRelatedFinding = (index) => {
+	formData.related_findings.splice(index, 1)
+}
+
+// Risk badge helper
+const getRiskBadgeVariant = (rating) => {
+	const variants = {
+		Critical: "subtle",
+		High: "subtle",
+		Medium: "subtle",
+		Low: "subtle",
+	}
+	return variants[rating] || "subtle"
 }
 
 // Time formatting helper
@@ -1205,62 +1776,46 @@ const formatTimeAgo = (date) => {
 
 // Draft save
 const saveDraft = async () => {
-	try {
-		// Auto-save logic would go here
-		lastSaved.value = new Date()
-		// Could emit a draft-saved event or call API
-	} catch (error) {
-		console.error("Failed to save draft:", error)
-	}
-}
-
-// Submit form
-const submitForm = async () => {
-	const validation = validateForm(formData)
-	if (!validation.isValid) {
-		// Show validation errors
-		console.error("Validation errors:", validation.errors)
-		// Navigate to first section with errors
-		if (validation.errors.length > 0) {
-			const firstErrorSection = Object.keys(sectionFields).find((section) =>
-				sectionFields[section].some((field) =>
-					validation.errors.includes(field),
-				),
-			)
-			if (firstErrorSection) {
-				setActiveSection(firstErrorSection)
-			}
-		}
-		return
-	}
-
 	saving.value = true
 	try {
-		const data = prepareFormData(formData, {
-			evidence: "Finding Evidence",
-			affected_locations: "Finding Affected Location",
-			milestones: "Finding Action Milestone",
-			status_history: "Finding Status Change",
-			follow_up_history: "Finding Follow-up Activity",
-			related_findings: "Finding Related Finding",
-		})
-
-		// API call would go here
-		// await createResource('Audit Finding').setValue.submit(data)
-
-		emit("saved", data)
-		closeDialog()
+		if (isEditing.value && props.finding?.name) {
+			await auditStore.updateAuditFinding(props.finding.name, formData)
+		} else {
+			await auditStore.createAuditFinding(formData)
+		}
+		lastSaved.value = new Date()
 	} catch (error) {
-		console.error("Failed to save finding:", error)
+		console.error("Failed to save draft:", error)
 	} finally {
 		saving.value = false
 	}
 }
 
-// Close dialog
-const closeDialog = () => {
-	showDialog.value = false
-	emit("close")
+// Submit form
+const submitForm = async () => {
+	if (!isFormValid.value) {
+		// Navigate to first section with errors
+		const firstIncomplete = sectionsList.find((s) => !isSectionComplete(s.key) && sectionFields[s.key]?.length > 0)
+		if (firstIncomplete) {
+			activeSection.value = firstIncomplete.key
+		}
+		return
+	}
+
+	submitting.value = true
+	try {
+		if (isEditing.value && props.finding?.name) {
+			await auditStore.updateAuditFinding(props.finding.name, formData)
+		} else {
+			await auditStore.createAuditFinding(formData)
+		}
+		emit("saved", formData)
+		showDialog.value = false
+	} catch (error) {
+		console.error("Failed to save finding:", error)
+	} finally {
+		submitting.value = false
+	}
 }
 
 // Watch for finding prop changes (editing mode)
@@ -1278,28 +1833,27 @@ watch(
 	{ immediate: true, deep: true },
 )
 
-// Watch formData for auto-save
+// Reset form when dialog closes
 watch(
-	formData,
-	() => {
-		// Debounced auto-save could be implemented here
+	() => props.modelValue,
+	(newShow) => {
+		if (!newShow) {
+			activeSection.value = "basic"
+			lastSaved.value = null
+		}
 	},
-	{ deep: true },
 )
 
 // Lifecycle
 onMounted(() => {
-	// Fetch options data
-	// fetchEngagements()
-	// fetchUsers()
-	// fetchFindings()
+	// Fetch options data if needed
 })
 </script>
 
 <style scoped>
 /* Custom styles for the form */
 :deep(.ProseMirror) {
-  min-height: 150px;
+  min-height: 120px;
   padding: 12px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;

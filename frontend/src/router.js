@@ -11,6 +11,8 @@ import BoardReports from "@/pages/BoardReports.vue"
 import ComplianceChecklist from "@/pages/ComplianceChecklist.vue"
 import ComplianceRequirements from "@/pages/ComplianceRequirements.vue"
 import CorrectiveActions from "@/pages/CorrectiveActions.vue"
+// Compliance Management
+import VATReconciliation from "@/pages/compliance/VATReconciliation.vue"
 // Pages
 import Dashboard from "@/pages/Dashboard.vue"
 import DataAnalytics from "@/pages/DataAnalytics.vue"
@@ -177,6 +179,39 @@ const routes = [
 					icon: "Calendar",
 					breadcrumb: "Annual Audit Plan",
 				},
+			},
+			{
+				path: "audit-planning/annual-plan/new",
+				name: "NewAnnualPlan",
+				component: () => import("@/pages/AnnualPlanDetail.vue"),
+				meta: {
+					title: "New Annual Plan",
+					breadcrumb: "New Plan",
+				},
+				props: { mode: "new" },
+			},
+			{
+				path: "audit-planning/annual-plan/:id",
+				name: "AnnualPlanDetail",
+				component: () => import("@/pages/AnnualPlanDetail.vue"),
+				meta: {
+					title: "Annual Plan Details",
+					breadcrumb: "Plan Details",
+				},
+				props: true,
+			},
+			{
+				path: "audit-planning/annual-plan/:id/edit",
+				name: "EditAnnualPlan",
+				component: () => import("@/pages/AnnualPlanDetail.vue"),
+				meta: {
+					title: "Edit Annual Plan",
+					breadcrumb: "Edit Plan",
+				},
+				props: (route) => ({
+					id: route.params.id,
+					mode: "edit",
+				}),
 			},
 			{
 				path: "audit-planning/programs",
@@ -377,6 +412,36 @@ const routes = [
 					icon: "Calendar",
 					breadcrumb: "Regulatory Calendar",
 				},
+			},
+			// VAT Reconciliation
+			{
+				path: "compliance/vat-reconciliation",
+				name: "VATReconciliation",
+				component: VATReconciliation,
+				meta: {
+					title: "VAT Reconciliation",
+					icon: "FileCheck",
+					breadcrumb: "VAT Reconciliation",
+				},
+			},
+			{
+				path: "compliance/vat-reconciliation/new",
+				name: "NewVATReconciliation",
+				component: () => import("@/pages/compliance/VATReconciliationDetail.vue"),
+				meta: {
+					title: "New VAT Reconciliation",
+					breadcrumb: "New Reconciliation",
+				},
+			},
+			{
+				path: "compliance/vat-reconciliation/:id",
+				name: "VATReconciliationDetail",
+				component: () => import("@/pages/compliance/VATReconciliationDetail.vue"),
+				meta: {
+					title: "VAT Reconciliation Details",
+					breadcrumb: "Reconciliation Details",
+				},
+				props: true,
 			},
 
 			// Reports

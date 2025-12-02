@@ -1,0 +1,101 @@
+{
+ "creation": "2024-12-01 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cu_invoice_number",
+  "invoice_number",
+  "match_status",
+  "column_break_1",
+  "posting_date_a",
+  "posting_date_b",
+  "column_break_2",
+  "amount_a",
+  "amount_b",
+  "variance",
+  "variance_percentage"
+ ],
+ "fields": [
+  {
+   "fieldname": "cu_invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CU Invoice Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Invoice Number"
+  },
+  {
+   "fieldname": "match_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Match Status",
+   "options": "Matched\nUnmatched Source A\nUnmatched Source B\nAmount Discrepancy",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date_a",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date (Source A)"
+  },
+  {
+   "fieldname": "posting_date_b",
+   "fieldtype": "Date",
+   "label": "Posting Date (Source B)"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount_a",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount (Source A)"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount_b",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount (Source B)"
+  },
+  {
+   "default": "0",
+   "fieldname": "variance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Variance"
+  },
+  {
+   "default": "0",
+   "fieldname": "variance_percentage",
+   "fieldtype": "Percent",
+   "label": "Variance %"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-12-01 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "VAT Reconciliation Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

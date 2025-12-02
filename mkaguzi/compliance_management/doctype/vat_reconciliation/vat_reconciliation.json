@@ -1,0 +1,508 @@
+{
+ "creation": "2024-12-01 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "reconciliation_details_section",
+  "reconciliation_id",
+  "reconciliation_type",
+  "status",
+  "column_break_1",
+  "reconciliation_month",
+  "fiscal_year",
+  "reconciliation_date",
+  "file_uploads_section",
+  "system_data_file",
+  "system_data_status",
+  "system_data_rows",
+  "column_break_2",
+  "itax_data_file",
+  "itax_data_status",
+  "itax_data_rows",
+  "column_break_3",
+  "tims_data_file",
+  "tims_data_status",
+  "tims_data_rows",
+  "parsed_data_section",
+  "system_data",
+  "itax_data",
+  "tims_data",
+  "reconciliation_results_section",
+  "reconciliation_items",
+  "summary_section",
+  "total_source_a_records",
+  "total_source_b_records",
+  "total_source_a_amount",
+  "total_source_b_amount",
+  "column_break_4",
+  "total_matched",
+  "total_unmatched_source_a",
+  "total_unmatched_source_b",
+  "total_amount_discrepancies",
+  "column_break_5",
+  "total_variance_amount",
+  "match_percentage",
+  "reconciliation_status",
+  "processing_section",
+  "is_background_job",
+  "job_id",
+  "progress_percent",
+  "column_break_6",
+  "started_at",
+  "completed_at",
+  "error_message",
+  "historical_comparison_section",
+  "compare_with_previous",
+  "previous_reconciliation",
+  "variance_trend",
+  "notes_section",
+  "notes",
+  "approval_section",
+  "prepared_by",
+  "reviewed_by",
+  "approved_by",
+  "approved_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "reconciliation_details_section",
+   "fieldtype": "Section Break",
+   "label": "Reconciliation Details"
+  },
+  {
+   "fieldname": "reconciliation_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reconciliation ID",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "reconciliation_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reconciliation Type",
+   "options": "System vs iTax\nSystem vs TIMs\niTax vs TIMs",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nFiles Uploaded\nValidating\nProcessing\nCompleted\nFailed\nReviewed\nApproved",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reconciliation_month",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reconciliation Month",
+   "options": "January\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fiscal_year",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Fiscal Year",
+   "reqd": 1,
+   "description": "Enter fiscal year (e.g., FY 2024, FY 2025)"
+  },
+  {
+   "default": "Today",
+   "fieldname": "reconciliation_date",
+   "fieldtype": "Date",
+   "label": "Reconciliation Date"
+  },
+  {
+   "fieldname": "file_uploads_section",
+   "fieldtype": "Section Break",
+   "label": "File Uploads"
+  },
+  {
+   "description": "Upload System Data CSV (posting_date, invoice_number, cu_invoice_number, net_amount)",
+   "fieldname": "system_data_file",
+   "fieldtype": "Attach",
+   "label": "System Data File"
+  },
+  {
+   "default": "Not Uploaded",
+   "fieldname": "system_data_status",
+   "fieldtype": "Select",
+   "label": "System Data Status",
+   "options": "Not Uploaded\nUploaded\nValidated\nValidation Failed\nParsed",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "system_data_rows",
+   "fieldtype": "Int",
+   "label": "System Data Rows",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Upload iTax Data CSV (posting_date, cu_invoice_number, net_amount)",
+   "fieldname": "itax_data_file",
+   "fieldtype": "Attach",
+   "label": "iTax Data File"
+  },
+  {
+   "default": "Not Uploaded",
+   "fieldname": "itax_data_status",
+   "fieldtype": "Select",
+   "label": "iTax Data Status",
+   "options": "Not Uploaded\nUploaded\nValidated\nValidation Failed\nParsed",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "itax_data_rows",
+   "fieldtype": "Int",
+   "label": "iTax Data Rows",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Upload TIMs Device Data CSV (posting_date, cu_invoice_number, amount)",
+   "fieldname": "tims_data_file",
+   "fieldtype": "Attach",
+   "label": "TIMs Data File"
+  },
+  {
+   "default": "Not Uploaded",
+   "fieldname": "tims_data_status",
+   "fieldtype": "Select",
+   "label": "TIMs Data Status",
+   "options": "Not Uploaded\nUploaded\nValidated\nValidation Failed\nParsed",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "tims_data_rows",
+   "fieldtype": "Int",
+   "label": "TIMs Data Rows",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "parsed_data_section",
+   "fieldtype": "Section Break",
+   "label": "Parsed Data"
+  },
+  {
+   "fieldname": "system_data",
+   "fieldtype": "Table",
+   "label": "System Data",
+   "options": "VAT System Data"
+  },
+  {
+   "fieldname": "itax_data",
+   "fieldtype": "Table",
+   "label": "iTax Data",
+   "options": "VAT iTax Data"
+  },
+  {
+   "fieldname": "tims_data",
+   "fieldtype": "Table",
+   "label": "TIMs Data",
+   "options": "VAT TIMs Data"
+  },
+  {
+   "fieldname": "reconciliation_results_section",
+   "fieldtype": "Section Break",
+   "label": "Reconciliation Results"
+  },
+  {
+   "fieldname": "reconciliation_items",
+   "fieldtype": "Table",
+   "label": "Reconciliation Items",
+   "options": "VAT Reconciliation Item"
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_source_a_records",
+   "fieldtype": "Int",
+   "label": "Total Source A Records",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_source_b_records",
+   "fieldtype": "Int",
+   "label": "Total Source B Records",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_source_a_amount",
+   "fieldtype": "Currency",
+   "label": "Total Source A Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_source_b_amount",
+   "fieldtype": "Currency",
+   "label": "Total Source B Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_matched",
+   "fieldtype": "Int",
+   "label": "Total Matched",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_unmatched_source_a",
+   "fieldtype": "Int",
+   "label": "Unmatched in Source A",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_unmatched_source_b",
+   "fieldtype": "Int",
+   "label": "Unmatched in Source B",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_amount_discrepancies",
+   "fieldtype": "Int",
+   "label": "Amount Discrepancies",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_variance_amount",
+   "fieldtype": "Currency",
+   "label": "Total Variance Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "match_percentage",
+   "fieldtype": "Percent",
+   "label": "Match Percentage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reconciliation_status",
+   "fieldtype": "Select",
+   "label": "Reconciliation Status",
+   "options": "\nFully Reconciled\nPartially Reconciled\nNot Reconciled",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "processing_section",
+   "fieldtype": "Section Break",
+   "label": "Processing Details"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_background_job",
+   "fieldtype": "Check",
+   "label": "Is Background Job",
+   "read_only": 1
+  },
+  {
+   "fieldname": "job_id",
+   "fieldtype": "Data",
+   "label": "Job ID",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "progress_percent",
+   "fieldtype": "Percent",
+   "label": "Progress",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "label": "Started At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_at",
+   "fieldtype": "Datetime",
+   "label": "Completed At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "historical_comparison_section",
+   "fieldtype": "Section Break",
+   "label": "Historical Comparison"
+  },
+  {
+   "default": "0",
+   "fieldname": "compare_with_previous",
+   "fieldtype": "Check",
+   "label": "Compare with Previous Month"
+  },
+  {
+   "fieldname": "previous_reconciliation",
+   "fieldtype": "Link",
+   "label": "Previous Reconciliation",
+   "options": "VAT Reconciliation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "variance_trend",
+   "fieldtype": "Select",
+   "label": "Variance Trend",
+   "options": "\nImproved\nWorsened\nNo Change",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "approval_section",
+   "fieldtype": "Section Break",
+   "label": "Approval"
+  },
+  {
+   "default": "__user",
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "label": "Prepared By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_date",
+   "fieldtype": "Date",
+   "label": "Approved Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2024-12-01 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Compliance Management",
+ "name": "VAT Reconciliation",
+ "naming_rule": "Expression",
+ "autoname": "VAT-REC-.YYYY.-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Executive",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "reconciliation_id",
+ "track_changes": 1
+}

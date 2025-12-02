@@ -403,39 +403,16 @@
     </div>
 
     <!-- Create/Edit Calendar Modal -->
-    <Dialog
+    <ScheduleAuditForm
       v-model="showCreateModal"
-      :title="editingItem ? 'Edit Audit Schedule' : 'Schedule New Audit'"
-      size="4xl"
-    >
-      <template #body>
-        <AuditCalendarForm
-          :form="calendarForm"
-          :universe-options="universeOptions"
-          :audit-type-options="auditTypeOptions"
-          :status-options="statusOptions"
-          :plan-options="planOptions"
-        />
-      </template>
-
-      <template #footer>
-        <div class="flex justify-end space-x-3">
-          <Button
-            variant="outline"
-            @click="showCreateModal = false"
-          >
-            Cancel
-          </Button>
-          <Button
-            @click="saveCalendarItem"
-            :loading="saving"
-            class="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {{ editingItem ? 'Update' : 'Schedule' }} Audit
-          </Button>
-        </div>
-      </template>
-    </Dialog>
+      :audit="editingItem"
+      :universe-options="universeOptions"
+      :audit-type-options="auditTypeOptions"
+      :plan-options="planOptions"
+      @created="handleFormCreated"
+      @updated="handleFormUpdated"
+      @cancelled="handleFormCancelled"
+    />
 
     <!-- Templates Modal -->
     <Dialog
@@ -648,7 +625,7 @@
 </template>
 
 <script setup>
-import AuditCalendarForm from "@/components/calendar/AuditCalendarForm.vue"
+import ScheduleAuditForm from "@/components/calendar/ScheduleAuditForm.vue"
 import CalendarFilters from "@/components/calendar/CalendarFilters.vue"
 import CalendarStats from "@/components/calendar/CalendarStats.vue"
 import { useAuditStore } from "@/stores/audit"
@@ -958,8 +935,6 @@ const viewCalendarItem = (item) => {
 
 const editCalendarItem = (item) => {
 	editingItem.value = item
-	// Load item data into form
-	calendarForm.value = { ...item }
 	showCreateModal.value = true
 }
 
@@ -1010,6 +985,24 @@ const resetForm = () => {
 		scope: "",
 		key_risks: "",
 	}
+	editingItem.value = null
+}
+
+// Form event handlers for ScheduleAuditForm
+const handleFormCreated = async () => {
+	showCreateModal.value = false
+	editingItem.value = null
+	await refreshData()
+}
+
+const handleFormUpdated = async () => {
+	showCreateModal.value = false
+	editingItem.value = null
+	await refreshData()
+}
+
+const handleFormCancelled = () => {
+	showCreateModal.value = false
 	editingItem.value = null
 }
 
