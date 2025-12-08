@@ -48,6 +48,12 @@
             <CalendarIcon class="h-4 w-4 mr-2" />
             Schedule Audit
           </Button>
+          <AskAIButton
+            v-if="mode === 'view' && entity"
+            contextType="audit-universe"
+            :contextData="getAuditUniverseContext()"
+            capability="entity-analysis"
+          />
         </div>
       </div>
     </div>
@@ -572,6 +578,7 @@
 
 <script setup>
 import { Badge, Button, Checkbox, Input, Select, Textarea } from "frappe-ui"
+import AskAIButton from "@/components/AskAIButton.vue"
 import {
 	ArrowLeftIcon,
 	CalendarIcon,
@@ -1019,6 +1026,36 @@ const viewAuditHistory = () => {
 const generateReport = () => {
 	// Generate entity report
 	console.log("Generate report for entity:", props.entityId)
+}
+
+const getAuditUniverseContext = () => {
+	if (!entity.value) return {}
+
+	return {
+		entityId: entity.value.name || entity.value.auditable_entity,
+		entityName: entity.value.auditable_entity,
+		entityType: entity.value.entity_type,
+		department: entity.value.department,
+		location: entity.value.location,
+		industry: entity.value.industry,
+		riskRating: entity.value.residual_risk_rating,
+		inherentRiskRating: entity.value.inherent_risk_rating,
+		controlEffectiveness: entity.value.control_effectiveness,
+		isActive: entity.value.is_active,
+		lastAuditDate: entity.value.last_audit_date,
+		nextAuditDue: entity.value.next_audit_due,
+		auditFrequency: entity.value.audit_frequency,
+		auditHistoryCount: entity.value.audit_history?.length || 0,
+		openFindings: entity.value.findings?.filter(f => f.status === 'Open').length || 0,
+		totalFindings: entity.value.findings?.length || 0,
+		// Include key risk factors
+		riskFactors: entity.value.risk_factors || [],
+		// Include control information
+		keyControls: entity.value.key_controls || [],
+		// Include audit planning data
+		auditScope: entity.value.audit_scope,
+		auditObjectives: entity.value.audit_objectives
+	}
 }
 
 // Lifecycle

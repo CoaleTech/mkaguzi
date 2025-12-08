@@ -73,6 +73,15 @@
               </button>
             </div>
           </div>
+          <AskAIButton
+            v-if="!isNewMode && reconciliation"
+            contextType="vat-reconciliation"
+            pageComponent="VATReconciliationDetail"
+            :contextData="getVATReconciliationContext()"
+            variant="solid"
+            size="sm"
+            theme="purple"
+          />
           <Button 
             v-if="isNewMode"
             variant="solid" 
@@ -736,29 +745,31 @@
 <script setup>
 import { useVATReconciliationStore } from "@/stores/useVATReconciliationStore"
 import { Badge, Button, Dialog, call } from "frappe-ui"
+import AskAIButton from "@/components/AskAIButton.vue"
 import {
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle,
-  ChevronDown,
-  Database,
-  DollarSign,
-  Download,
-  Eye,
-  FileSpreadsheet,
-  FileText,
-  Play,
-  RefreshCw,
-  Save,
-  TrendingUp,
-  Upload,
-  XCircle
+	AlertTriangle,
+	ArrowLeft,
+	Brain,
+	CheckCircle,
+	ChevronDown,
+	Database,
+	DollarSign,
+	Download,
+	Eye,
+	FileSpreadsheet,
+	FileText,
+	Play,
+	RefreshCw,
+	Save,
+	TrendingUp,
+	Upload,
+	XCircle,
 } from "lucide-vue-next"
 import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
 const props = defineProps({
-  id: String
+	id: String,
 })
 
 const router = useRouter()
@@ -792,484 +803,660 @@ const reconciliation = ref(null)
 const reconciliationResults = ref([])
 
 const form = ref({
-  reconciliation_month: "",
-  fiscal_year: "",
-  reconciliation_type: "",
-  tolerance: 0.01
+	reconciliation_month: "",
+	fiscal_year: "",
+	reconciliation_type: "",
+	tolerance: 0.01,
 })
 
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
 ]
 
 const fiscalYears = computed(() => {
-  const currentYear = new Date().getFullYear()
-  return Array.from({ length: 6 }, (_, i) => `FY ${currentYear - i}`)
+	const currentYear = new Date().getFullYear()
+	return Array.from({ length: 6 }, (_, i) => `FY ${currentYear - i}`)
 })
 
 const isNewMode = computed(() => route.path.endsWith("/new"))
 
 const canEditConfig = computed(() => {
-  return isNewMode.value || reconciliation.value?.status === "Draft"
+	return isNewMode.value || reconciliation.value?.status === "Draft"
 })
 
 const requiresSystemData = computed(() => {
-  const type = reconciliation.value?.reconciliation_type || form.value.reconciliation_type
-  // Handle both frontend format (system_vs_itax) and DocType format (System vs iTax)
-  return type === "system_vs_itax" || type === "system_vs_tims" || 
-         type === "System vs iTax" || type === "System vs TIMs"
+	const type =
+		reconciliation.value?.reconciliation_type || form.value.reconciliation_type
+	// Handle both frontend format (system_vs_itax) and DocType format (System vs iTax)
+	return (
+		type === "system_vs_itax" ||
+		type === "system_vs_tims" ||
+		type === "System vs iTax" ||
+		type === "System vs TIMs"
+	)
 })
 
 const requiresItaxData = computed(() => {
-  const type = reconciliation.value?.reconciliation_type || form.value.reconciliation_type
-  return type === "system_vs_itax" || type === "itax_vs_tims" ||
-         type === "System vs iTax" || type === "iTax vs TIMs"
+	const type =
+		reconciliation.value?.reconciliation_type || form.value.reconciliation_type
+	return (
+		type === "system_vs_itax" ||
+		type === "itax_vs_tims" ||
+		type === "System vs iTax" ||
+		type === "iTax vs TIMs"
+	)
 })
 
 const requiresTimsData = computed(() => {
-  const type = reconciliation.value?.reconciliation_type || form.value.reconciliation_type
-  return type === "system_vs_tims" || type === "itax_vs_tims" ||
-         type === "System vs TIMs" || type === "iTax vs TIMs"
+	const type =
+		reconciliation.value?.reconciliation_type || form.value.reconciliation_type
+	return (
+		type === "system_vs_tims" ||
+		type === "itax_vs_tims" ||
+		type === "System vs TIMs" ||
+		type === "iTax vs TIMs"
+	)
 })
 
 const canUploadFiles = computed(() => {
-  if (!reconciliation.value) return false
-  // Allow uploads in Draft, Files Uploaded, Validated, or Processing states
-  return ["Draft", "Files Uploaded", "Validated", "Validating"].includes(reconciliation.value.status)
+	if (!reconciliation.value) return false
+	// Allow uploads in Draft, Files Uploaded, Validated, or Processing states
+	return ["Draft", "Files Uploaded", "Validated", "Validating"].includes(
+		reconciliation.value.status,
+	)
 })
 
 const canRunReconciliation = computed(() => {
-  if (!reconciliation.value) return false
-  if (!["Draft", "Files Uploaded", "Validated"].includes(reconciliation.value.status)) return false
-  
-  const type = reconciliation.value.reconciliation_type
-  if (type === "system_vs_itax" || type === "System vs iTax") {
-    return reconciliation.value.system_data_file && reconciliation.value.itax_data_file
-  }
-  if (type === "system_vs_tims" || type === "System vs TIMs") {
-    return reconciliation.value.system_data_file && reconciliation.value.tims_data_file
-  }
-  if (type === "itax_vs_tims" || type === "iTax vs TIMs") {
-    return reconciliation.value.itax_data_file && reconciliation.value.tims_data_file
-  }
-  return false
+	if (!reconciliation.value) return false
+	if (
+		!["Draft", "Files Uploaded", "Validated"].includes(
+			reconciliation.value.status,
+		)
+	)
+		return false
+
+	const type = reconciliation.value.reconciliation_type
+	if (type === "system_vs_itax" || type === "System vs iTax") {
+		return (
+			reconciliation.value.system_data_file &&
+			reconciliation.value.itax_data_file
+		)
+	}
+	if (type === "system_vs_tims" || type === "System vs TIMs") {
+		return (
+			reconciliation.value.system_data_file &&
+			reconciliation.value.tims_data_file
+		)
+	}
+	if (type === "itax_vs_tims" || type === "iTax vs TIMs") {
+		return (
+			reconciliation.value.itax_data_file && reconciliation.value.tims_data_file
+		)
+	}
+	return false
 })
 
 const hasResults = computed(() => {
-  return reconciliationResults.value.length > 0 || 
-         reconciliation.value?.status === "Completed" ||
-         reconciliation.value?.status === "Reconciled"
+	return (
+		reconciliationResults.value.length > 0 ||
+		reconciliation.value?.status === "Completed" ||
+		reconciliation.value?.status === "Reconciled"
+	)
 })
 
 // Use document summary counts for tabs (not the loaded subset)
 const resultTabs = computed(() => {
-  const doc = reconciliation.value
-  const totalAll = (doc?.total_matched || 0) + 
-                   (doc?.total_unmatched_source_a || 0) + 
-                   (doc?.total_unmatched_source_b || 0) + 
-                   (doc?.total_amount_discrepancies || 0)
-  return [
-    { key: "all", label: "All", count: totalAll },
-    { key: "matched", label: "Matched", count: doc?.total_matched || 0 },
-    { key: "unmatched_a", label: "Missing in B", count: doc?.total_unmatched_source_a || 0 },
-    { key: "unmatched_b", label: "Missing in A", count: doc?.total_unmatched_source_b || 0 },
-    { key: "discrepancy", label: "Amount Mismatch", count: doc?.total_amount_discrepancies || 0 }
-  ]
+	const doc = reconciliation.value
+	const totalAll =
+		(doc?.total_matched || 0) +
+		(doc?.total_unmatched_source_a || 0) +
+		(doc?.total_unmatched_source_b || 0) +
+		(doc?.total_amount_discrepancies || 0)
+	return [
+		{ key: "all", label: "All", count: totalAll },
+		{ key: "matched", label: "Matched", count: doc?.total_matched || 0 },
+		{
+			key: "unmatched_a",
+			label: "Missing in B",
+			count: doc?.total_unmatched_source_a || 0,
+		},
+		{
+			key: "unmatched_b",
+			label: "Missing in A",
+			count: doc?.total_unmatched_source_b || 0,
+		},
+		{
+			key: "discrepancy",
+			label: "Amount Mismatch",
+			count: doc?.total_amount_discrepancies || 0,
+		},
+	]
 })
 
 // Results are already filtered by the API based on activeResultTab
 const filteredResults = computed(() => {
-  const start = (resultsPage.value - 1) * resultsPageSize.value
-  return reconciliationResults.value.slice(start, start + resultsPageSize.value)
+	const start = (resultsPage.value - 1) * resultsPageSize.value
+	return reconciliationResults.value.slice(start, start + resultsPageSize.value)
 })
 
 // Total for current filter comes from document summary
 const filteredResultsTotal = computed(() => {
-  const doc = reconciliation.value
-  if (!doc) return 0
-  
-  if (activeResultTab.value === "matched") {
-    return doc.total_matched || 0
-  } else if (activeResultTab.value === "unmatched_a") {
-    return doc.total_unmatched_source_a || 0
-  } else if (activeResultTab.value === "unmatched_b") {
-    return doc.total_unmatched_source_b || 0
-  } else if (activeResultTab.value === "discrepancy") {
-    return doc.total_amount_discrepancies || 0
-  }
-  // "all" tab
-  return (doc.total_matched || 0) + 
-         (doc.total_unmatched_source_a || 0) + 
-         (doc.total_unmatched_source_b || 0) + 
-         (doc.total_amount_discrepancies || 0)
+	const doc = reconciliation.value
+	if (!doc) return 0
+
+	if (activeResultTab.value === "matched") {
+		return doc.total_matched || 0
+	} else if (activeResultTab.value === "unmatched_a") {
+		return doc.total_unmatched_source_a || 0
+	} else if (activeResultTab.value === "unmatched_b") {
+		return doc.total_unmatched_source_b || 0
+	} else if (activeResultTab.value === "discrepancy") {
+		return doc.total_amount_discrepancies || 0
+	}
+	// "all" tab
+	return (
+		(doc.total_matched || 0) +
+		(doc.total_unmatched_source_a || 0) +
+		(doc.total_unmatched_source_b || 0) +
+		(doc.total_amount_discrepancies || 0)
+	)
 })
 
-const resultsTotalPages = computed(() => Math.ceil(filteredResultsTotal.value / resultsPageSize.value))
+const resultsTotalPages = computed(() =>
+	Math.ceil(filteredResultsTotal.value / resultsPageSize.value),
+)
 
 // Amount difference computed properties
 const netDifference = computed(() => {
-  if (!reconciliation.value) return 0
-  return (reconciliation.value.total_source_a_amount || 0) - (reconciliation.value.total_source_b_amount || 0)
+	if (!reconciliation.value) return 0
+	return (
+		(reconciliation.value.total_source_a_amount || 0) -
+		(reconciliation.value.total_source_b_amount || 0)
+	)
 })
 
 const matchRateColor = computed(() => {
-  const rate = reconciliation.value?.match_percentage || 0
-  if (rate >= 95) return "text-green-600"
-  if (rate >= 80) return "text-yellow-600"
-  return "text-red-600"
+	const rate = reconciliation.value?.match_percentage || 0
+	if (rate >= 95) return "text-green-600"
+	if (rate >= 80) return "text-yellow-600"
+	return "text-red-600"
 })
 
 const matchRateBarColor = computed(() => {
-  const rate = reconciliation.value?.match_percentage || 0
-  if (rate >= 95) return "bg-green-500"
-  if (rate >= 80) return "bg-yellow-500"
-  return "bg-red-500"
+	const rate = reconciliation.value?.match_percentage || 0
+	if (rate >= 95) return "bg-green-500"
+	if (rate >= 80) return "bg-yellow-500"
+	return "bg-red-500"
 })
 
 // Close export dropdown on outside click
 const handleClickOutside = (event) => {
-  if (exportDropdownRef.value && !exportDropdownRef.value.contains(event.target)) {
-    showExportDropdown.value = false
-  }
+	if (
+		exportDropdownRef.value &&
+		!exportDropdownRef.value.contains(event.target)
+	) {
+		showExportDropdown.value = false
+	}
 }
 
 onMounted(async () => {
-  document.addEventListener('click', handleClickOutside)
-  if (!isNewMode.value) {
-    await loadReconciliation()
-  }
+	document.addEventListener("click", handleClickOutside)
+	if (!isNewMode.value) {
+		await loadReconciliation()
+	}
 })
 
 async function loadReconciliation() {
-  loading.value = true
-  try {
-    const id = props.id || route.params.id
-    await store.fetchReconciliation(id)
-    reconciliation.value = store.activeReconciliation
-    
-    // Sync form with loaded data
-    if (reconciliation.value) {
-      form.value = {
-        reconciliation_type: reconciliation.value.reconciliation_type,
-        reconciliation_month: reconciliation.value.reconciliation_month,
-        fiscal_year: reconciliation.value.fiscal_year,
-        tolerance: reconciliation.value.tolerance || 0.01
-      }
-    }
-    
-    // Load results if completed or reconciled
-    if (reconciliation.value?.status === "Completed" || reconciliation.value?.status === "Reconciled") {
-      await loadResults()
-    }
-  } catch (error) {
-    console.error("Error loading reconciliation:", error)
-  } finally {
-    loading.value = false
-  }
+	loading.value = true
+	try {
+		const id = props.id || route.params.id
+		await store.fetchReconciliation(id)
+		reconciliation.value = store.activeReconciliation
+
+		// Sync form with loaded data
+		if (reconciliation.value) {
+			form.value = {
+				reconciliation_type: reconciliation.value.reconciliation_type,
+				reconciliation_month: reconciliation.value.reconciliation_month,
+				fiscal_year: reconciliation.value.fiscal_year,
+				tolerance: reconciliation.value.tolerance || 0.01,
+			}
+		}
+
+		// Load results if completed or reconciled
+		if (
+			reconciliation.value?.status === "Completed" ||
+			reconciliation.value?.status === "Reconciled"
+		) {
+			await loadResults()
+		}
+	} catch (error) {
+		console.error("Error loading reconciliation:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadResults(filterStatus = null, pageNum = 1) {
-  try {
-    loadingResults.value = true
-    console.log("loadResults called with filterStatus:", filterStatus, "page:", pageNum)
-    console.log("reconciliation.name:", reconciliation.value?.name)
-    
-    // Map tab key to match_status value
-    let statusFilter = null
-    if (filterStatus === "matched") statusFilter = "Matched"
-    else if (filterStatus === "unmatched_a") statusFilter = "Unmatched Source A"
-    else if (filterStatus === "unmatched_b") statusFilter = "Unmatched Source B"
-    else if (filterStatus === "discrepancy") statusFilter = "Amount Discrepancy"
-    
-    console.log("statusFilter:", statusFilter)
-    
-    const fetchResult = await store.fetchResults(reconciliation.value.name, statusFilter, pageNum)
-    console.log("store.fetchResults result:", fetchResult)
-    
-    reconciliationResults.value = store.reconciliationResults
-    console.log("reconciliationResults set to:", reconciliationResults.value.length, "items")
-    
-    return fetchResult
-  } catch (error) {
-    console.error("Error loading results:", error)
-  } finally {
-    loadingResults.value = false
-  }
+	try {
+		loadingResults.value = true
+		console.log(
+			"loadResults called with filterStatus:",
+			filterStatus,
+			"page:",
+			pageNum,
+		)
+		console.log("reconciliation.name:", reconciliation.value?.name)
+
+		// Map tab key to match_status value
+		let statusFilter = null
+		if (filterStatus === "matched") statusFilter = "Matched"
+		else if (filterStatus === "unmatched_a") statusFilter = "Unmatched Source A"
+		else if (filterStatus === "unmatched_b") statusFilter = "Unmatched Source B"
+		else if (filterStatus === "discrepancy") statusFilter = "Amount Discrepancy"
+
+		console.log("statusFilter:", statusFilter)
+
+		const fetchResult = await store.fetchResults(
+			reconciliation.value.name,
+			statusFilter,
+			pageNum,
+		)
+		console.log("store.fetchResults result:", fetchResult)
+
+		reconciliationResults.value = store.reconciliationResults
+		console.log(
+			"reconciliationResults set to:",
+			reconciliationResults.value.length,
+			"items",
+		)
+
+		return fetchResult
+	} catch (error) {
+		console.error("Error loading results:", error)
+	} finally {
+		loadingResults.value = false
+	}
 }
 
 async function createReconciliation() {
-  if (!form.value.reconciliation_month || !form.value.fiscal_year || !form.value.reconciliation_type) {
-    alert("Please fill in all required fields")
-    return
-  }
-  
-  saving.value = true
-  try {
-    const result = await store.createReconciliation({
-      reconciliation_month: form.value.reconciliation_month,
-      fiscal_year: form.value.fiscal_year,
-      reconciliation_type: form.value.reconciliation_type,
-      tolerance: form.value.tolerance || 0.01
-    })
-    
-    router.push(`/compliance/vat-reconciliation/${result.name}`)
-  } catch (error) {
-    console.error("Error creating reconciliation:", error)
-    alert("Error creating reconciliation: " + error.message)
-  } finally {
-    saving.value = false
-  }
+	if (
+		!form.value.reconciliation_month ||
+		!form.value.fiscal_year ||
+		!form.value.reconciliation_type
+	) {
+		alert("Please fill in all required fields")
+		return
+	}
+
+	saving.value = true
+	try {
+		const result = await store.createReconciliation({
+			reconciliation_month: form.value.reconciliation_month,
+			fiscal_year: form.value.fiscal_year,
+			reconciliation_type: form.value.reconciliation_type,
+			tolerance: form.value.tolerance || 0.01,
+		})
+
+		router.push(`/compliance/vat-reconciliation/${result.name}`)
+	} catch (error) {
+		console.error("Error creating reconciliation:", error)
+		alert("Error creating reconciliation: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function triggerFileInput(type) {
-  if (type === "system") systemFileInput.value?.click()
-  else if (type === "itax") itaxFileInput.value?.click()
-  else if (type === "tims") timsFileInput.value?.click()
+	if (type === "system") systemFileInput.value?.click()
+	else if (type === "itax") itaxFileInput.value?.click()
+	else if (type === "tims") timsFileInput.value?.click()
 }
 
 // CSV Template definitions - columns must match backend EXPECTED_HEADERS
 const csvTemplates = {
-  system: {
-    filename: "system_data_template.csv",
-    headers: ["posting_date", "invoice_number", "cu_invoice_number", "net_amount"],
-    sampleData: [
-      ["2024-01-15", "INV-001", "CU123456789", "10000.00"],
-      ["2024-01-16", "INV-002", "CU123456790", "5000.00"],
-      ["2024-01-17", "INV-003", "CU123456791", "15000.00"]
-    ]
-  },
-  itax: {
-    filename: "itax_data_template.csv",
-    headers: ["posting_date", "cu_invoice_number", "amount"],
-    sampleData: [
-      ["2024-01-15", "CU123456789", "10000.00"],
-      ["2024-01-16", "CU123456790", "5000.00"],
-      ["2024-01-17", "CU123456791", "15000.00"]
-    ]
-  },
-  tims: {
-    filename: "tims_data_template.csv",
-    headers: ["posting_date", "cu_invoice_number", "amount"],
-    sampleData: [
-      ["2024-01-15", "CU123456789", "10000.00"],
-      ["2024-01-16", "CU123456790", "5000.00"],
-      ["2024-01-17", "CU123456791", "15000.00"]
-    ]
-  }
+	system: {
+		filename: "system_data_template.csv",
+		headers: [
+			"posting_date",
+			"invoice_number",
+			"cu_invoice_number",
+			"net_amount",
+		],
+		sampleData: [
+			["2024-01-15", "INV-001", "CU123456789", "10000.00"],
+			["2024-01-16", "INV-002", "CU123456790", "5000.00"],
+			["2024-01-17", "INV-003", "CU123456791", "15000.00"],
+		],
+	},
+	itax: {
+		filename: "itax_data_template.csv",
+		headers: ["posting_date", "cu_invoice_number", "amount"],
+		sampleData: [
+			["2024-01-15", "CU123456789", "10000.00"],
+			["2024-01-16", "CU123456790", "5000.00"],
+			["2024-01-17", "CU123456791", "15000.00"],
+		],
+	},
+	tims: {
+		filename: "tims_data_template.csv",
+		headers: ["posting_date", "cu_invoice_number", "amount"],
+		sampleData: [
+			["2024-01-15", "CU123456789", "10000.00"],
+			["2024-01-16", "CU123456790", "5000.00"],
+			["2024-01-17", "CU123456791", "15000.00"],
+		],
+	},
 }
 
 function downloadTemplate(type) {
-  const template = csvTemplates[type]
-  if (!template) return
-  
-  // Create CSV content
-  const rows = [template.headers, ...template.sampleData]
-  const csvContent = rows.map(row => row.join(",")).join("\n")
-  
-  // Create blob and download
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-  const link = document.createElement("a")
-  const url = URL.createObjectURL(blob)
-  
-  link.setAttribute("href", url)
-  link.setAttribute("download", template.filename)
-  link.style.visibility = "hidden"
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+	const template = csvTemplates[type]
+	if (!template) return
+
+	// Create CSV content
+	const rows = [template.headers, ...template.sampleData]
+	const csvContent = rows.map((row) => row.join(",")).join("\n")
+
+	// Create blob and download
+	const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+	const link = document.createElement("a")
+	const url = URL.createObjectURL(blob)
+
+	link.setAttribute("href", url)
+	link.setAttribute("download", template.filename)
+	link.style.visibility = "hidden"
+	document.body.appendChild(link)
+	link.click()
+	document.body.removeChild(link)
+	URL.revokeObjectURL(url)
 }
 
 function downloadAllTemplates() {
-  // Download all templates based on reconciliation type
-  const type = reconciliation.value?.reconciliation_type || form.value.reconciliation_type
-  
-  if (requiresSystemData.value) downloadTemplate("system")
-  setTimeout(() => {
-    if (requiresItaxData.value) downloadTemplate("itax")
-  }, 100)
-  setTimeout(() => {
-    if (requiresTimsData.value) downloadTemplate("tims")
-  }, 200)
+	// Download all templates based on reconciliation type
+	const type =
+		reconciliation.value?.reconciliation_type || form.value.reconciliation_type
+
+	if (requiresSystemData.value) downloadTemplate("system")
+	setTimeout(() => {
+		if (requiresItaxData.value) downloadTemplate("itax")
+	}, 100)
+	setTimeout(() => {
+		if (requiresTimsData.value) downloadTemplate("tims")
+	}, 200)
 }
 
 async function handleFileUpload(event, fileType) {
-  const file = event.target.files[0]
-  if (!file) return
-  
-  uploadingFile.value = fileType
-  try {
-    await store.uploadFile(reconciliation.value.name, fileType, file)
-    await loadReconciliation()
-  } catch (error) {
-    console.error("Error uploading file:", error)
-    alert("Error uploading file: " + error.message)
-  } finally {
-    uploadingFile.value = null
-    // Reset file input
-    event.target.value = ""
-  }
+	const file = event.target.files[0]
+	if (!file) return
+
+	uploadingFile.value = fileType
+	try {
+		await store.uploadFile(reconciliation.value.name, fileType, file)
+		await loadReconciliation()
+	} catch (error) {
+		console.error("Error uploading file:", error)
+		alert("Error uploading file: " + error.message)
+	} finally {
+		uploadingFile.value = null
+		// Reset file input
+		event.target.value = ""
+	}
 }
 
 async function runReconciliation() {
-  runningReconciliation.value = true
-  try {
-    await store.runReconciliation(reconciliation.value.name)
-    await loadReconciliation()
-    await loadResults()
-  } catch (error) {
-    console.error("Error running reconciliation:", error)
-    alert("Error running reconciliation: " + error.message)
-  } finally {
-    runningReconciliation.value = false
-  }
+	runningReconciliation.value = true
+	try {
+		await store.runReconciliation(reconciliation.value.name)
+		await loadReconciliation()
+		await loadResults()
+	} catch (error) {
+		console.error("Error running reconciliation:", error)
+		alert("Error running reconciliation: " + error.message)
+	} finally {
+		runningReconciliation.value = false
+	}
 }
 
 async function exportReport(format) {
-  showExportDropdown.value = false
-  try {
-    const result = await store.exportReport(reconciliation.value.name, format)
-    
-    if (result.file_url) {
-      window.open(result.file_url, "_blank")
-    }
-  } catch (error) {
-    console.error("Error exporting report:", error)
-    alert("Error exporting report: " + error.message)
-  }
+	showExportDropdown.value = false
+	try {
+		const result = await store.exportReport(reconciliation.value.name, format)
+
+		if (result.file_url) {
+			window.open(result.file_url, "_blank")
+		}
+	} catch (error) {
+		console.error("Error exporting report:", error)
+		alert("Error exporting report: " + error.message)
+	}
 }
 
 async function viewFileData(fileType) {
-  previewFileType.value = fileType.charAt(0).toUpperCase() + fileType.slice(1)
-  
-  // Fetch data from the appropriate child table
-  try {
-    let doctype = ""
-    if (fileType === "system") doctype = "VAT System Data"
-    else if (fileType === "itax") doctype = "VAT iTax Data"
-    else if (fileType === "tims") doctype = "VAT TIMs Data"
-    
-    const result = await call("frappe.client.get_list", {
-      doctype: doctype,
-      filters: { parent: reconciliation.value.name },
-      fields: ["*"],
-      limit_page_length: 100
-    })
-    
-    if (result.length > 0) {
-      previewColumns.value = Object.keys(result[0]).filter(k => !k.startsWith("_") && k !== "name" && k !== "parent" && k !== "parenttype" && k !== "parentfield" && k !== "docstatus" && k !== "idx")
-      previewData.value = result
-    }
-    
-    showFilePreview.value = true
-  } catch (error) {
-    console.error("Error loading file data:", error)
-  }
+	previewFileType.value = fileType.charAt(0).toUpperCase() + fileType.slice(1)
+
+	// Fetch data from the appropriate child table
+	try {
+		let doctype = ""
+		if (fileType === "system") doctype = "VAT System Data"
+		else if (fileType === "itax") doctype = "VAT iTax Data"
+		else if (fileType === "tims") doctype = "VAT TIMs Data"
+
+		const result = await call("frappe.client.get_list", {
+			doctype: doctype,
+			filters: { parent: reconciliation.value.name },
+			fields: ["*"],
+			limit_page_length: 100,
+		})
+
+		if (result.length > 0) {
+			previewColumns.value = Object.keys(result[0]).filter(
+				(k) =>
+					!k.startsWith("_") &&
+					k !== "name" &&
+					k !== "parent" &&
+					k !== "parenttype" &&
+					k !== "parentfield" &&
+					k !== "docstatus" &&
+					k !== "idx",
+			)
+			previewData.value = result
+		}
+
+		showFilePreview.value = true
+	} catch (error) {
+		console.error("Error loading file data:", error)
+	}
 }
 
 async function fetchHistoricalComparison() {
-  loadingHistorical.value = true
-  try {
-    await store.fetchHistoricalComparison(reconciliation.value.name)
-    historicalComparison.value = store.historicalComparison
-  } catch (error) {
-    console.error("Error fetching historical comparison:", error)
-  } finally {
-    loadingHistorical.value = false
-  }
+	loadingHistorical.value = true
+	try {
+		await store.fetchHistoricalComparison(reconciliation.value.name)
+		historicalComparison.value = store.historicalComparison
+	} catch (error) {
+		console.error("Error fetching historical comparison:", error)
+	} finally {
+		loadingHistorical.value = false
+	}
 }
 
 function goBack() {
-  router.push("/compliance/vat-reconciliation")
+	router.push("/compliance/vat-reconciliation")
 }
 
 async function clearCacheAndReload() {
-  // Clear the results cache
-  store.clearResultsCache(reconciliation.value?.name)
-  
-  // Reload results if we have a completed reconciliation
-  if (reconciliation.value?.status === "Completed" || reconciliation.value?.status === "Reconciled") {
-    await loadResults()
-  }
+	// Clear the results cache
+	store.clearResultsCache(reconciliation.value?.name)
+
+	// Reload results if we have a completed reconciliation
+	if (
+		reconciliation.value?.status === "Completed" ||
+		reconciliation.value?.status === "Reconciled"
+	) {
+		await loadResults()
+	}
 }
 
 async function changePage(newPage) {
-  resultsPage.value = newPage
-  const filterStatus = activeResultTab.value === "all" ? null : activeResultTab.value
-  await loadResults(filterStatus, newPage)
+	resultsPage.value = newPage
+	const filterStatus =
+		activeResultTab.value === "all" ? null : activeResultTab.value
+	await loadResults(filterStatus, newPage)
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    "Draft": "subtle",
-    "Data Uploaded": "yellow",
-    "Reconciled": "blue",
-    "Reviewed": "purple",
-    "Approved": "green"
-  }
-  return variants[status] || "gray"
+	const variants = {
+		Draft: "subtle",
+		"Data Uploaded": "yellow",
+		Reconciled: "blue",
+		Reviewed: "purple",
+		Approved: "green",
+	}
+	return variants[status] || "gray"
 }
 
 function getMatchStatusVariant(status) {
-  const variants = {
-    "Matched": "green",
-    "Unmatched Source A": "yellow",
-    "Unmatched Source B": "orange",
-    "Amount Discrepancy": "red"
-  }
-  return variants[status] || "gray"
+	const variants = {
+		Matched: "green",
+		"Unmatched Source A": "yellow",
+		"Unmatched Source B": "orange",
+		"Amount Discrepancy": "red",
+	}
+	return variants[status] || "gray"
 }
 
 function formatDate(date) {
-  if (!date) return "-"
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 function formatCurrency(amount) {
-  if (amount === null || amount === undefined) return "-"
-  return new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    minimumFractionDigits: 2
-  }).format(amount)
+	if (amount === null || amount === undefined) return "-"
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 2,
+	}).format(amount)
 }
 
 function formatVariance(variance) {
-  if (variance === null || variance === undefined || variance === 0) return "KES 0.00"
-  const absAmount = Math.abs(variance)
-  const formatted = new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    minimumFractionDigits: 2
-  }).format(absAmount)
-  return variance > 0 ? `+${formatted}` : `-${formatted}`
+	if (variance === null || variance === undefined || variance === 0)
+		return "KES 0.00"
+	const absAmount = Math.abs(variance)
+	const formatted = new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 2,
+	}).format(absAmount)
+	return variance > 0 ? `+${formatted}` : `-${formatted}`
 }
 
 function getVarianceClass(variance, matchStatus) {
-  if (variance === 0 || matchStatus === "Matched") return "text-green-600"
-  if (variance > 0) return "text-orange-600" // Source A higher
-  return "text-red-600" // Source B higher (negative variance)
+	if (variance === 0 || matchStatus === "Matched") return "text-green-600"
+	if (variance > 0) return "text-orange-600" // Source A higher
+	return "text-red-600" // Source B higher (negative variance)
 }
 
 function getVarianceTooltip(variance, matchStatus) {
-  if (matchStatus === "Matched") return "Amounts match within tolerance"
-  if (matchStatus === "Unmatched Source A") return "Only exists in Source A"
-  if (matchStatus === "Unmatched Source B") return "Only exists in Source B"
-  if (variance > 0) return "Source A amount is higher by " + formatCurrency(variance)
-  if (variance < 0) return "Source B amount is higher by " + formatCurrency(Math.abs(variance))
-  return ""
+	if (matchStatus === "Matched") return "Amounts match within tolerance"
+	if (matchStatus === "Unmatched Source A") return "Only exists in Source A"
+	if (matchStatus === "Unmatched Source B") return "Only exists in Source B"
+	if (variance > 0)
+		return "Source A amount is higher by " + formatCurrency(variance)
+	if (variance < 0)
+		return "Source B amount is higher by " + formatCurrency(Math.abs(variance))
+	return ""
+}
+
+function getVATReconciliationContext() {
+	return {
+		reconciliation_name: reconciliation.value?.name,
+		reconciliation_month: reconciliation.value?.reconciliation_month,
+		fiscal_year: reconciliation.value?.fiscal_year,
+		reconciliation_type: reconciliation.value?.reconciliation_type,
+		status: reconciliation.value?.status,
+		tolerance: reconciliation.value?.tolerance,
+		match_percentage: reconciliation.value?.match_percentage,
+		total_matched: reconciliation.value?.total_matched,
+		total_unmatched_source_a: reconciliation.value?.total_unmatched_source_a,
+		total_unmatched_source_b: reconciliation.value?.total_unmatched_source_b,
+		total_amount_discrepancies: reconciliation.value?.total_amount_discrepancies,
+		total_source_a_amount: reconciliation.value?.total_source_a_amount,
+		total_source_b_amount: reconciliation.value?.total_source_b_amount,
+		total_variance_amount: reconciliation.value?.total_variance_amount,
+		system_records_count: reconciliation.value?.system_records_count,
+		itax_records_count: reconciliation.value?.itax_records_count,
+		tims_records_count: reconciliation.value?.tims_records_count,
+		sample_discrepancies: reconciliationResults.value?.slice(0, 5).map(item => ({
+			cu_invoice_number: item.cu_invoice_number,
+			invoice_number: item.invoice_number,
+			amount_a: item.amount_a,
+			amount_b: item.amount_b,
+			variance: item.variance,
+			match_status: item.match_status
+		}))
+	}
+}
+
+function askAISpecialist() {
+	// Collect current reconciliation context
+	const context = {
+		reconciliation_name: reconciliation.value.name,
+		reconciliation_month: reconciliation.value.reconciliation_month,
+		fiscal_year: reconciliation.value.fiscal_year,
+		reconciliation_type: reconciliation.value.reconciliation_type,
+		status: reconciliation.value.status,
+		tolerance: reconciliation.value.tolerance,
+		match_percentage: reconciliation.value.match_percentage,
+		total_matched: reconciliation.value.total_matched,
+		total_unmatched_source_a: reconciliation.value.total_unmatched_source_a,
+		total_unmatched_source_b: reconciliation.value.total_unmatched_source_b,
+		total_amount_discrepancies: reconciliation.value.total_amount_discrepancies,
+		total_source_a_amount: reconciliation.value.total_source_a_amount,
+		total_source_b_amount: reconciliation.value.total_source_b_amount,
+		total_variance_amount: reconciliation.value.total_variance_amount,
+		system_records_count: reconciliation.value.system_records_count,
+		itax_records_count: reconciliation.value.itax_records_count,
+		tims_records_count: reconciliation.value.tims_records_count,
+		last_reconciled_at: reconciliation.value.last_reconciled_at,
+		// Include summary of top discrepancies if available
+		sample_discrepancies: reconciliationResults.value.slice(0, 5).map(item => ({
+			cu_invoice_number: item.cu_invoice_number,
+			invoice_number: item.invoice_number,
+			amount_a: item.amount_a,
+			amount_b: item.amount_b,
+			variance: item.variance,
+			match_status: item.match_status
+		}))
+	}
+
+	// Store context in localStorage
+	localStorage.setItem('vat_reconciliation_context', JSON.stringify(context))
+
+	// Navigate to AI Specialist with context indicator
+	router.push('/ai-specialist?context=vat_reconciliation')
 }
 
 // Watch for tab changes to reload results with new filter
 watch(activeResultTab, async (newTab) => {
-  resultsPage.value = 1
-  if (reconciliation.value?.name) {
-    await loadResults(newTab === "all" ? null : newTab, resultsPage.value)
-  }
+	resultsPage.value = 1
+	if (reconciliation.value?.name) {
+		await loadResults(newTab === "all" ? null : newTab, resultsPage.value)
+	}
 })
 </script>

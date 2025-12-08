@@ -1,0 +1,259 @@
+{
+ "actions": [],
+ "autoname": "field:followup_id",
+ "creation": "2025-12-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "followup_id",
+  "audit_finding",
+  "followup_type",
+  "followup_title",
+  "scheduled_date",
+  "completed_date",
+  "followup_status",
+  "responsible_person",
+  "column_break_1",
+  "audit_engagement",
+  "finding_title",
+  "business_unit",
+  "followup_description",
+  "followup_objectives",
+  "methodology",
+  "section_break_1",
+  "findings_summary",
+  "effectiveness_assessment",
+  "recommendations",
+  "section_break_2",
+  "followup_activities",
+  "section_break_3",
+  "attachments",
+  "section_break_4",
+  "created_by",
+  "created_on",
+  "approved_by",
+  "approved_on",
+  "last_updated"
+ ],
+ "fields": [
+  {
+   "fieldname": "followup_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Follow-up ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "audit_finding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Audit Finding",
+   "options": "Audit Finding",
+   "reqd": 1
+  },
+  {
+   "fieldname": "followup_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Follow-up Type",
+   "options": "Corrective Action Verification\nPreventive Measure Review\nProcess Improvement Check\nRisk Mitigation Assessment\nCompliance Verification\nManagement Action Review",
+   "reqd": 1
+  },
+  {
+   "fieldname": "followup_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Follow-up Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scheduled_date",
+   "fieldtype": "Date",
+   "label": "Scheduled Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "completed_date",
+   "fieldtype": "Date",
+   "label": "Completed Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "followup_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Follow-up Status",
+   "options": "Scheduled\nIn Progress\nCompleted\nOverdue\nCancelled",
+   "reqd": 1,
+   "default": "Scheduled"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit_engagement",
+   "fieldtype": "Link",
+   "label": "Audit Engagement",
+   "options": "Audit Engagement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "finding_title",
+   "fieldtype": "Data",
+   "label": "Finding Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "business_unit",
+   "fieldtype": "Link",
+   "label": "Business Unit",
+   "options": "Business Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "followup_description",
+   "fieldtype": "Text Editor",
+   "label": "Follow-up Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "followup_objectives",
+   "fieldtype": "Text Editor",
+   "label": "Follow-up Objectives",
+   "reqd": 1
+  },
+  {
+   "fieldname": "methodology",
+   "fieldtype": "Text Editor",
+   "label": "Methodology",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break",
+   "label": "Findings & Assessment"
+  },
+  {
+   "fieldname": "findings_summary",
+   "fieldtype": "Text Editor",
+   "label": "Findings Summary"
+  },
+  {
+   "fieldname": "effectiveness_assessment",
+   "fieldtype": "Select",
+   "label": "Effectiveness Assessment",
+   "options": "\nHighly Effective\nEffective\nPartially Effective\nIneffective\nNot Applicable"
+  },
+  {
+   "fieldname": "recommendations",
+   "fieldtype": "Text Editor",
+   "label": "Recommendations"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Follow-up Activities"
+  },
+  {
+   "fieldname": "followup_activities",
+   "fieldtype": "Table",
+   "label": "Follow-up Activities",
+   "options": "Followup Activity"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_on",
+   "fieldtype": "Datetime",
+   "label": "Approved On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Followup Tracker",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "followup_title"
+}

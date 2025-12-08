@@ -34,6 +34,7 @@
             <Download class="w-4 h-4 mr-2" />
             Export
           </Button>
+          <AskAIButton contextType="audit-plan" :contextData="getAuditPlanContext()" />
           <Button variant="outline" @click="editPlan">
             <Edit class="w-4 h-4 mr-2" />
             Edit
@@ -359,6 +360,7 @@ import {
 	Plus,
 	RefreshCw,
 } from "lucide-vue-next"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
@@ -593,5 +595,78 @@ function formatCurrency(amount) {
 		currency: "KES",
 		minimumFractionDigits: 0,
 	}).format(amount)
+}
+
+function getAuditPlanContext() {
+	if (!plan.value) return null
+
+	const sessionsData = sessions.value || []
+	const scorecardData = scorecard.value || {}
+	const totalSessions = sessionsData.length
+	const completedSessions = sessionsData.filter(s => s.status === 'Completed').length
+	const inProgressSessions = sessionsData.filter(s => s.status === 'In Progress').length
+	const plannedSessions = sessionsData.filter(s => s.status === 'Planned').length
+
+	// Calculate risk metrics
+	const highRiskItems = scorecardData.high_risk_items || 0
+	const mediumRiskItems = scorecardData.medium_risk_items || 0
+	const lowRiskItems = scorecardData.low_risk_items || 0
+	const totalRiskItems = highRiskItems + mediumRiskItems + lowRiskItems
+
+	return {
+		page_type: 'audit-plan',
+		page_title: `Audit Plan: ${plan.value.plan_title}`,
+		plan_title: plan.value.plan_title,
+		plan_name: plan.value.name,
+		status: plan.value.status,
+		description: plan.value.description,
+		warehouse: plan.value.warehouse,
+		audit_type: plan.value.audit_type,
+		planned_start_date: plan.value.planned_start_date,
+		planned_end_date: plan.value.planned_end_date,
+		actual_start_date: plan.value.actual_start_date,
+		actual_end_date: plan.value.actual_end_date,
+		lead_auditor: plan.value.lead_auditor,
+		team_members: plan.value.team_members || [],
+		objectives: plan.value.objectives || [],
+		scope: plan.value.scope,
+		methodology: plan.value.methodology,
+		sessions_summary: {
+			total: totalSessions,
+			completed: completedSessions,
+			in_progress: inProgressSessions,
+			planned: plannedSessions,
+			completion_percentage: totalSessions > 0 ? (completedSessions / totalSessions * 100).toFixed(1) : 0
+		},
+		risk_assessment: {
+			total_risk_items: totalRiskItems,
+			high_risk: highRiskItems,
+			medium_risk: mediumRiskItems,
+			low_risk: lowRiskItems,
+			high_risk_percentage: totalRiskItems > 0 ? (highRiskItems / totalRiskItems * 100).toFixed(1) : 0,
+			risk_coverage: scorecardData.risk_coverage || 'Unknown'
+		},
+		issues_summary: {
+			variance_cases: varianceCasesCount.value,
+			open_issues: openIssuesCount.value,
+			critical_issues: scorecardData.critical_issues || 0
+		},
+		progress_indicators: {
+			has_sessions: totalSessions > 0,
+			has_completed_sessions: completedSessions > 0,
+			has_risk_assessment: totalRiskItems > 0,
+			has_issues: (varianceCasesCount.value + openIssuesCount.value) > 0,
+			is_on_track: plan.value.status === 'In Progress' || plan.value.status === 'Completed'
+		},
+		summary: {
+			description: `${plan.value.audit_type} audit plan for ${plan.value.warehouse}`,
+			key_metrics: [
+				`${totalSessions} audit sessions (${completedSessions} completed)`,
+				`${totalRiskItems} risk items identified (${highRiskItems} high risk)`,
+				`${varianceCasesCount.value} variance cases, ${openIssuesCount.value} open issues`,
+				`Status: ${plan.value.status}`
+			]
+		}
+	}
 }
 </script>

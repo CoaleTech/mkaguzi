@@ -175,58 +175,13 @@
               </div>
 
               <!-- Import Checklist -->
-              <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Import Checklist</h4>
-                  <Button size="sm" @click="addChecklistItem">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Item
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Import Type</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Status</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Records</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Imported Date</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(item, idx) in formData.import_checklist" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="item.import_type" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="item.status"
-                            :options="importStatusOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="item.record_count" type="number" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="item.imported_date" type="date" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeChecklistItem(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.import_checklist?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No import checklist items. Click "Add Item" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.import_checklist"
+                title="Import Checklist"
+                modalTitle="Import Item"
+                :columns="importChecklistColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 3: Approval & Lock -->
@@ -345,6 +300,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import {
@@ -459,6 +415,32 @@ const importStatusOptions = [
 	{ label: "Failed", value: "Failed" },
 ]
 
+// Column definitions for child tables
+const importChecklistColumns = [
+	{
+		key: "import_type",
+		label: "Import Type",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "status",
+		label: "Status",
+		fieldType: "select",
+		width: "120px",
+		options: importStatusOptions,
+		required: true,
+	},
+	{ key: "record_count", label: "Records", fieldType: "int", width: "100px" },
+	{
+		key: "imported_date",
+		label: "Imported Date",
+		fieldType: "date",
+		width: "130px",
+	},
+]
+
 // Watch for period prop changes
 watch(
 	() => props.period,
@@ -545,19 +527,7 @@ function getScoreColor(score) {
 	return "bg-red-500"
 }
 
-// Child table management
-function addChecklistItem() {
-	formData.import_checklist.push({
-		import_type: "",
-		status: "Pending",
-		record_count: 0,
-		imported_date: "",
-	})
-}
-
-function removeChecklistItem(index) {
-	formData.import_checklist.splice(index, 1)
-}
+// Child table management - handled by InlineChildTable component
 
 // Period actions
 function lockPeriod() {

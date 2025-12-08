@@ -58,6 +58,23 @@
         <!-- Main Form Content -->
         <div class="flex-1 overflow-y-auto">
           <div class="p-6 space-y-8">
+            <!-- Section 0: Template Selection -->
+            <div v-show="activeSection === 'template'" class="space-y-6">
+              <SectionHeader
+                title="Template Selection"
+                description="Choose a finding template to speed up the process (optional)"
+                :sectionNumber="0"
+                color="emerald"
+              />
+
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <FindingTemplateSelector
+                  @template-selected="applyTemplate"
+                  @create-custom="setActiveSection('basic')"
+                />
+              </div>
+            </div>
+
             <!-- Section 1: Basic Information -->
             <div v-show="activeSection === 'basic'" class="space-y-6">
               <SectionHeader
@@ -152,48 +169,13 @@
 
               <!-- Affected Locations -->
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Affected Locations</h4>
-                    <p class="text-xs text-gray-500">{{ formData.affected_locations?.length || 0 }} locations defined</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addLocation">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Location
-                  </Button>
-                </div>
-
-                <div v-if="formData.affected_locations?.length > 0" class="space-y-3">
-                  <div
-                    v-for="(location, index) in formData.affected_locations"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-3 hover:border-blue-300 transition-colors"
-                  >
-                    <div class="flex items-start gap-4">
-                      <Badge variant="subtle" theme="gray">{{ index + 1 }}</Badge>
-                      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormControl
-                          v-model="location.location"
-                          placeholder="Location name"
-                          size="sm"
-                        />
-                        <FormControl
-                          v-model="location.extent"
-                          placeholder="Extent/Notes"
-                          size="sm"
-                        />
-                      </div>
-                      <Button variant="ghost" size="sm" @click="removeLocation(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <MapPinIcon class="mx-auto h-10 w-10 text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-500">No locations specified</p>
-                </div>
+                <InlineChildTable
+                  v-model="formData.affected_locations"
+                  title="Affected Locations"
+                  modal-title="Location"
+                  :columns="affectedLocationsColumns"
+                  :auto-add-row="false"
+                />
               </div>
             </div>
 
@@ -275,81 +257,13 @@
               />
 
               <!-- Evidence Table -->
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Supporting Evidence</h4>
-                    <p class="text-xs text-gray-500">{{ formData.evidence?.length || 0 }} evidence items documented</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addEvidence">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Evidence
-                  </Button>
-                </div>
-
-                <div v-if="formData.evidence?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(item, index) in formData.evidence"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-3">
-                      <div class="flex items-center gap-2">
-                        <Badge variant="subtle" :theme="getEvidenceBadgeTheme(item.evidence_type)">
-                          {{ item.evidence_type || 'Unclassified' }}
-                        </Badge>
-                      </div>
-                      <Button variant="ghost" size="sm" @click="removeEvidence(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Evidence Type</label>
-                        <FormControl
-                          type="select"
-                          v-model="item.evidence_type"
-                          :options="evidenceTypeOptions"
-                          size="sm"
-                        />
-                      </div>
-                      <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                        <FormControl
-                          v-model="item.description"
-                          placeholder="Describe the evidence"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                      <FormControl
-                        v-model="item.source"
-                        label="Source"
-                        placeholder="Where did this come from?"
-                        size="sm"
-                      />
-                      <FormControl
-                        v-model="item.reference"
-                        label="Reference"
-                        placeholder="Reference number or link"
-                        size="sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <FileSearchIcon class="mx-auto h-10 w-10 text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-500">No evidence documented yet</p>
-                  <Button variant="outline" size="sm" class="mt-3" @click="addEvidence">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add First Evidence
-                  </Button>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.evidence"
+                title="Supporting Evidence"
+                modalTitle="Evidence"
+                :columns="inlineEvidenceColumns"
+                :autoAddRow="false"
+              />
 
               <!-- Sampling & Recommendation -->
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -511,80 +425,13 @@
               </div>
 
               <!-- Action Milestones -->
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Action Milestones</h4>
-                    <p class="text-xs text-gray-500">{{ formData.milestones?.length || 0 }} milestones defined</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addMilestone">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Milestone
-                  </Button>
-                </div>
-
-                <div v-if="formData.milestones?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(milestone, index) in formData.milestones"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-3">
-                      <Badge :variant="getMilestoneStatusVariant(milestone.status)" size="sm">
-                        {{ milestone.status || 'Not Started' }}
-                      </Badge>
-                      <Button variant="ghost" size="sm" @click="removeMilestone(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Milestone Description</label>
-                        <FormControl
-                          v-model="milestone.milestone_description"
-                          placeholder="Describe this milestone"
-                          size="sm"
-                        />
-                      </div>
-                      <FormControl
-                        v-model="milestone.due_date"
-                        type="date"
-                        label="Due Date"
-                        size="sm"
-                      />
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                        <FormControl
-                          type="select"
-                          v-model="milestone.status"
-                          :options="milestoneStatusOptions"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="mt-3">
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
-                      <textarea
-                        v-model="milestone.notes"
-                        rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Additional notes..."
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <FlagIcon class="mx-auto h-10 w-10 text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-500">No milestones defined yet</p>
-                  <Button variant="outline" size="sm" class="mt-3" @click="addMilestone">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add First Milestone
-                  </Button>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.milestones"
+                title="Action Milestones"
+                modalTitle="Milestone"
+                :columns="inlineMilestoneColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 6: Follow-up & Status -->
@@ -663,78 +510,13 @@
               </div>
 
               <!-- Follow-up History -->
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Follow-up History</h4>
-                    <p class="text-xs text-gray-500">{{ formData.follow_up_history?.length || 0 }} follow-up activities</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addFollowUp">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Follow-up
-                  </Button>
-                </div>
-
-                <div v-if="formData.follow_up_history?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(followUp, index) in formData.follow_up_history"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-cyan-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-3">
-                      <div class="flex items-center gap-2">
-                        <Badge variant="subtle" theme="blue">{{ followUp.follow_up_type || 'Status Check' }}</Badge>
-                        <span class="text-xs text-gray-500">{{ followUp.follow_up_date }}</span>
-                      </div>
-                      <Button variant="ghost" size="sm" @click="removeFollowUp(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormControl
-                        v-model="followUp.follow_up_date"
-                        type="date"
-                        label="Date"
-                        size="sm"
-                      />
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
-                        <FormControl
-                          type="select"
-                          v-model="followUp.follow_up_type"
-                          :options="followUpTypeOptions"
-                          size="sm"
-                        />
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Follow-up By</label>
-                        <LinkField
-                          v-model="followUp.follow_up_by"
-                          doctype="User"
-                          placeholder="Select user"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="mt-3">
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Findings/Observations</label>
-                      <textarea
-                        v-model="followUp.findings"
-                        rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Document findings..."
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <RefreshCwIcon class="mx-auto h-10 w-10 text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-500">No follow-up activities recorded</p>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.follow_up_history"
+                title="Follow-up History"
+                modalTitle="Follow-up Activity"
+                :columns="inlineFollowUpHistoryColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 7: Verification -->
@@ -943,57 +725,13 @@
               </div>
 
               <!-- Related Findings -->
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Related Findings</h4>
-                    <p class="text-xs text-gray-500">{{ formData.related_findings?.length || 0 }} related findings</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addRelatedFinding">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Related
-                  </Button>
-                </div>
-
-                <div v-if="formData.related_findings?.length > 0" class="space-y-3">
-                  <div
-                    v-for="(related, index) in formData.related_findings"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-3 hover:border-rose-300 transition-colors"
-                  >
-                    <div class="flex items-start gap-4">
-                      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label class="block text-xs font-medium text-gray-700 mb-1">Related Finding</label>
-                          <LinkField
-                            v-model="related.related_finding"
-                            doctype="Audit Finding"
-                            placeholder="Select finding"
-                            size="sm"
-                          />
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium text-gray-700 mb-1">Relationship Type</label>
-                          <FormControl
-                            type="select"
-                            v-model="related.relationship_type"
-                            :options="relationshipTypeOptions"
-                            size="sm"
-                          />
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" @click="removeRelatedFinding(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <LinkIcon class="mx-auto h-10 w-10 text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-500">No related findings linked</p>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.related_findings"
+                title="Related Findings"
+                modalTitle="Related Finding"
+                :columns="inlineRelatedFindingsColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 9: Review & Submit -->
@@ -1119,8 +857,10 @@
 </template>
 
 <script setup>
-import LinkField from "@/components/Common/fields/LinkField.vue"
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
+import LinkField from "@/components/Common/fields/LinkField.vue"
+import FindingTemplateSelector from "@/components/findings/FindingTemplateSelector.vue"
 import { useAuditStore } from "@/stores/audit"
 import { Badge, Button, Dialog, FormControl, TextEditor } from "frappe-ui"
 import {
@@ -1168,24 +908,67 @@ const isEditing = computed(() => !!props.finding?.name)
 const saving = ref(false)
 const submitting = ref(false)
 const lastSaved = ref(null)
-const activeSection = ref("basic")
+const activeSection = ref("template")
 
 // Section definitions with descriptions
 const sectionsList = [
-	{ key: "basic", label: "Basic Information", description: "Finding ID and classification" },
-	{ key: "details", label: "Finding Details", description: "Condition, criteria, cause, effect" },
-	{ key: "evidence", label: "Evidence & Recommendation", description: "Supporting evidence" },
-	{ key: "response", label: "Management Response", description: "Management agreement" },
-	{ key: "action", label: "Corrective Action Plan", description: "Action plan and milestones" },
-	{ key: "followup", label: "Follow-up & Status", description: "Status tracking" },
-	{ key: "verification", label: "Verification", description: "Implementation verification" },
-	{ key: "closure", label: "Closure & Reporting", description: "Closure details" },
+	{
+		key: "template",
+		label: "Template Selection",
+		description: "Choose a finding template",
+	},
+	{
+		key: "basic",
+		label: "Basic Information",
+		description: "Finding ID and classification",
+	},
+	{
+		key: "details",
+		label: "Finding Details",
+		description: "Condition, criteria, cause, effect",
+	},
+	{
+		key: "evidence",
+		label: "Evidence & Recommendation",
+		description: "Supporting evidence",
+	},
+	{
+		key: "response",
+		label: "Management Response",
+		description: "Management agreement",
+	},
+	{
+		key: "action",
+		label: "Corrective Action Plan",
+		description: "Action plan and milestones",
+	},
+	{
+		key: "followup",
+		label: "Follow-up & Status",
+		description: "Status tracking",
+	},
+	{
+		key: "verification",
+		label: "Verification",
+		description: "Implementation verification",
+	},
+	{
+		key: "closure",
+		label: "Closure & Reporting",
+		description: "Closure details",
+	},
 	{ key: "review", label: "Review & Submit", description: "Final review" },
 ]
 
 // Section field mappings for validation
 const sectionFields = {
-	basic: ["finding_id", "engagement_reference", "finding_title", "finding_category"],
+	template: [], // Template selection is optional
+	basic: [
+		"finding_id",
+		"engagement_reference",
+		"finding_title",
+		"finding_category",
+	],
 	details: ["condition", "criteria"],
 	evidence: ["recommendation"],
 	response: [],
@@ -1560,21 +1343,153 @@ const milestoneStatusOptions = [
 const followUpTypeOptions = [
 	{ label: "Status Check", value: "Status Check" },
 	{ label: "Progress Review", value: "Progress Review" },
-	{ label: "Implementation Verification", value: "Implementation Verification" },
+	{
+		label: "Implementation Verification",
+		value: "Implementation Verification",
+	},
 	{ label: "Effectiveness Assessment", value: "Effectiveness Assessment" },
 	{ label: "Closure Review", value: "Closure Review" },
+]
+
+// InlineChildTable Column Definitions
+const inlineEvidenceColumns = [
+	{
+		key: "evidence_type",
+		label: "Type",
+		fieldType: "select",
+		width: "130px",
+		required: true,
+		options: [
+			{ label: "Document", value: "Document" },
+			{ label: "Photo", value: "Photo" },
+			{ label: "Data Analysis", value: "Data Analysis" },
+			{ label: "Interview", value: "Interview" },
+			{ label: "Observation", value: "Observation" },
+			{ label: "Confirmation", value: "Confirmation" },
+		],
+	},
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+		required: true,
+	},
+	{ key: "source", label: "Source", fieldType: "text", width: "150px" },
+	{ key: "reference", label: "Reference", fieldType: "text", width: "150px" },
+]
+
+const inlineMilestoneColumns = [
+	{
+		key: "milestone_description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+		required: true,
+	},
+	{
+		key: "due_date",
+		label: "Due Date",
+		fieldType: "date",
+		width: "120px",
+		required: true,
+	},
+	{
+		key: "status",
+		label: "Status",
+		fieldType: "select",
+		width: "130px",
+		required: true,
+		options: [
+			{ label: "Not Started", value: "Not Started" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Delayed", value: "Delayed" },
+		],
+	},
+	{ key: "notes", label: "Notes", fieldType: "text", width: "180px" },
+]
+
+const inlineFollowUpHistoryColumns = [
+	{
+		key: "follow_up_date",
+		label: "Date",
+		fieldType: "date",
+		width: "120px",
+		required: true,
+	},
+	{
+		key: "follow_up_type",
+		label: "Type",
+		fieldType: "select",
+		width: "160px",
+		required: true,
+		options: [
+			{ label: "Status Check", value: "Status Check" },
+			{ label: "Progress Review", value: "Progress Review" },
+			{
+				label: "Implementation Verification",
+				value: "Implementation Verification",
+			},
+			{ label: "Effectiveness Assessment", value: "Effectiveness Assessment" },
+			{ label: "Closure Review", value: "Closure Review" },
+		],
+	},
+	{
+		key: "follow_up_by",
+		label: "Follow-up By",
+		fieldType: "link",
+		doctype: "User",
+		width: "150px",
+	},
+	{ key: "findings", label: "Findings", fieldType: "text", width: "200px" },
+]
+
+const inlineRelatedFindingsColumns = [
+	{
+		key: "related_finding",
+		label: "Related Finding",
+		fieldType: "link",
+		doctype: "Audit Finding",
+		width: "200px",
+		required: true,
+	},
+	{
+		key: "relationship_type",
+		label: "Relationship Type",
+		fieldType: "select",
+		width: "160px",
+		required: true,
+		options: [
+			{ label: "Duplicate", value: "Duplicate" },
+			{ label: "Similar Issue", value: "Similar Issue" },
+			{ label: "Root Cause", value: "Root Cause" },
+			{ label: "Contributing Factor", value: "Contributing Factor" },
+			{ label: "Follow-up Action", value: "Follow-up Action" },
+			{ label: "Related Control", value: "Related Control" },
+		],
+	},
 ]
 
 // Computed properties
 const overallProgress = computed(() => {
 	let completed = 0
-	if (formData.finding_id && formData.finding_title && formData.finding_category) completed += 12
+	completed += 10 // Template section always counts as complete
+	if (
+		formData.finding_id &&
+		formData.finding_title &&
+		formData.finding_category
+	)
+		completed += 12
 	if (formData.condition && formData.criteria) completed += 12
 	if (formData.recommendation) completed += 12
-	if (formData.management_comments || formData.management_agrees !== null) completed += 12
-	if (formData.action_plan_description || formData.milestones?.length > 0) completed += 12
+	if (formData.management_comments || formData.management_agrees !== null)
+		completed += 12
+	if (formData.action_plan_description || formData.milestones?.length > 0)
+		completed += 12
 	if (formData.finding_status) completed += 12
-	if (formData.verification_date || formData.verification_status) completed += 12
+	if (formData.verification_date || formData.verification_status)
+		completed += 12
 	if (formData.closure_date || formData.closure_reason) completed += 12
 	completed += 4 // Review section always counts
 	return Math.min(100, completed)
@@ -1606,8 +1521,14 @@ const validationChecks = computed(() => [
 // Section completion helpers
 const isSectionComplete = (sectionKey) => {
 	switch (sectionKey) {
+		case "template":
+			return true // Template selection is always complete (optional)
 		case "basic":
-			return formData.finding_id && formData.finding_title && formData.finding_category
+			return (
+				formData.finding_id &&
+				formData.finding_title &&
+				formData.finding_category
+			)
 		case "details":
 			return formData.condition && formData.criteria
 		case "evidence":
@@ -1642,24 +1563,81 @@ const setActiveSection = (sectionKey) => {
 
 // Navigation methods
 const previousSection = () => {
-	const currentIndex = sectionsList.findIndex((s) => s.key === activeSection.value)
+	const currentIndex = sectionsList.findIndex(
+		(s) => s.key === activeSection.value,
+	)
 	if (currentIndex > 0) {
 		activeSection.value = sectionsList[currentIndex - 1].key
 	}
 }
 
 const nextSection = () => {
-	const currentIndex = sectionsList.findIndex((s) => s.key === activeSection.value)
+	const currentIndex = sectionsList.findIndex(
+		(s) => s.key === activeSection.value,
+	)
 	if (currentIndex < sectionsList.length - 1) {
 		activeSection.value = sectionsList[currentIndex + 1].key
 	}
 }
 
-// Generate Finding ID
-const generateFindingId = () => {
-	const year = new Date().getFullYear()
-	const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0")
-	formData.finding_id = `FND-${year}-${random}`
+// Apply template method
+const applyTemplate = async (template) => {
+	try {
+		// Apply template content to form
+		if (template.condition_template) {
+			formData.condition = template.condition_template
+		}
+		if (template.criteria_template) {
+			formData.criteria = template.criteria_template
+		}
+		if (template.cause_template) {
+			formData.cause = template.cause_template
+		}
+		if (template.effect_template) {
+			formData.effect = template.effect_template
+		}
+		if (template.recommendation_template) {
+			formData.recommendation = template.recommendation_template
+		}
+
+		// Apply default values
+		if (template.finding_category) {
+			formData.finding_category = template.finding_category
+		}
+		if (template.typical_risk_rating) {
+			formData.risk_rating = template.typical_risk_rating
+		}
+		if (template.default_priority) {
+			formData.priority = template.default_priority
+		}
+		if (template.default_business_unit) {
+			// This would be set in the business unit field if it exists
+		}
+		if (template.default_responsible_person) {
+			formData.responsible_person = template.default_responsible_person
+		}
+		if (template.default_target_days) {
+			// Calculate target date from days
+			const targetDate = new Date()
+			targetDate.setDate(
+				targetDate.getDate() + Number.parseInt(template.default_target_days),
+			)
+			formData.target_date = targetDate.toISOString().split("T")[0]
+		}
+		if (template.repeat_finding_default) {
+			formData.repeat_finding = template.repeat_finding_default ? 1 : 0
+		}
+
+		// Auto-generate finding ID if not set
+		if (!formData.finding_id) {
+			generateFindingId()
+		}
+
+		// Move to basic information section
+		setActiveSection("basic")
+	} catch (error) {
+		console.error("Error applying template:", error)
+	}
 }
 
 // Child table methods - Locations
@@ -1795,7 +1773,9 @@ const saveDraft = async () => {
 const submitForm = async () => {
 	if (!isFormValid.value) {
 		// Navigate to first section with errors
-		const firstIncomplete = sectionsList.find((s) => !isSectionComplete(s.key) && sectionFields[s.key]?.length > 0)
+		const firstIncomplete = sectionsList.find(
+			(s) => !isSectionComplete(s.key) && sectionFields[s.key]?.length > 0,
+		)
 		if (firstIncomplete) {
 			activeSection.value = firstIncomplete.key
 		}

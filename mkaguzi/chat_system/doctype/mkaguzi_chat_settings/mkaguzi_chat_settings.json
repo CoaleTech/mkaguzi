@@ -73,7 +73,7 @@
    "fieldname": "default_model",
    "fieldtype": "Select",
    "label": "Default Model",
-   "options": "meta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nqwen/qwen-2.5-7b-instruct:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
+   "options": "openai/gpt-3.5-turbo\nopenai/gpt-4o-mini\nanthropic/claude-3-haiku\nmeta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
    "reqd": 1
   },
   {
@@ -81,7 +81,7 @@
    "fieldname": "fallback_model",
    "fieldtype": "Select",
    "label": "Fallback Model",
-   "options": "meta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nqwen/qwen-2.5-7b-instruct:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
+   "options": "openai/gpt-3.5-turbo\nopenai/gpt-4o-mini\nanthropic/claude-3-haiku\nmeta-llama/llama-3.1-8b-instruct:free\ngoogle/gemma-2-9b-it:free\nmistralai/mistral-7b-instruct:free\nmicrosoft/phi-3-mini-128k-instruct:free",
    "description": "Used when primary model is unavailable"
   },
   {

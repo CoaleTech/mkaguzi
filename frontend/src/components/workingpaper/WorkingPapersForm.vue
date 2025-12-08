@@ -499,7 +499,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue"
 // Import custom components
 import FileUploader from "@/components/Common/FileUploader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
-import SectionHeader from "@/components/workingpaper/SectionHeader.vue"
+import SectionHeader from "@/components/workingpaper/WorkingPaperSectionHeader.vue"
 
 // Props
 const props = defineProps({

@@ -14,6 +14,7 @@
       <div class="flex items-center gap-2">
         <Badge :variant="statusVariant">{{ varianceCase?.status }}</Badge>
         <Badge :variant="priorityVariant">{{ varianceCase?.priority }} Priority</Badge>
+        <AskAIButton contextType="variance-case" :contextData="getVarianceCaseContext()" />
         <Button variant="outline" @click="editCase">
           <Edit class="w-4 h-4 mr-2" />
           Edit
@@ -395,6 +396,7 @@ import {
 	Upload,
 	User,
 } from "lucide-vue-next"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
@@ -641,6 +643,63 @@ async function addComment() {
 		await loadComments()
 	} catch (error) {
 		console.error("Error adding comment:", error)
+	}
+}
+
+function getVarianceCaseContext() {
+	if (!varianceCase.value) return null
+
+	const varianceValue = Math.abs(varianceCase.value.variance_quantity * varianceCase.value.rate)
+	const isPositive = varianceCase.value.variance_quantity > 0
+	const isHighValue = varianceValue > 1000
+
+	return {
+		page_type: 'variance-case',
+		page_title: `Variance Case: ${varianceCase.value.name}`,
+		item_code: varianceCase.value.item_code,
+		item_name: varianceCase.value.item_name,
+		warehouse: varianceCase.value.warehouse,
+		branch: varianceCase.value.branch,
+		status: varianceCase.value.status,
+		priority: varianceCase.value.priority,
+		system_quantity: varianceCase.value.system_quantity,
+		physical_quantity: varianceCase.value.physical_quantity,
+		variance_quantity: varianceCase.value.variance_quantity,
+		variance_value: varianceValue,
+		rate: varianceCase.value.rate,
+		variance_type: isPositive ? 'positive' : 'negative',
+		is_high_value: isHighValue,
+		reported_date: varianceCase.value.reported_date,
+		investigation_status: varianceCase.value.investigation_status,
+		root_cause: varianceCase.value.root_cause,
+		corrective_action: varianceCase.value.corrective_action,
+		responsible_person: varianceCase.value.responsible_person,
+		target_resolution_date: varianceCase.value.target_resolution_date,
+		actual_resolution_date: varianceCase.value.actual_resolution_date,
+		evidence_count: evidence.value.length,
+		comments_count: comments.value.length,
+		risk_assessment: {
+			financial_impact: varianceValue,
+			operational_impact: isHighValue ? 'high' : 'medium',
+			urgency: varianceCase.value.priority === 'High' ? 'high' : varianceCase.value.priority === 'Medium' ? 'medium' : 'low',
+			likelihood_of_fraud: varianceCase.value.suspected_fraud ? 'high' : 'low'
+		},
+		investigation_details: {
+			has_evidence: evidence.value.length > 0,
+			has_comments: comments.value.length > 0,
+			has_root_cause: !!varianceCase.value.root_cause,
+			has_corrective_action: !!varianceCase.value.corrective_action,
+			is_overdue: varianceCase.value.target_resolution_date && new Date(varianceCase.value.target_resolution_date) < new Date()
+		},
+		summary: {
+			description: `${isPositive ? 'Positive' : 'Negative'} variance of ${Math.abs(varianceCase.value.variance_quantity)} units for ${varianceCase.value.item_name} in ${varianceCase.value.warehouse}`,
+			key_findings: [
+				`Variance Value: $${varianceValue.toFixed(2)}`,
+				`Priority: ${varianceCase.value.priority}`,
+				`Status: ${varianceCase.value.status}`,
+				`Evidence Available: ${evidence.value.length} items`
+			]
+		}
 	}
 }
 </script>

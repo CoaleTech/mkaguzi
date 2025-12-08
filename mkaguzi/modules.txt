@@ -10,3 +10,4 @@ Reporting
 Data Integration
 Dashboard Analytics
 Settings Masters
+AI

@@ -174,54 +174,13 @@
             <!-- Section 3: Activities & History -->
             <div v-show="currentSectionIndex === 2" class="space-y-4">
               <!-- Follow-up Activities Table -->
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Follow-up Activities</h4>
-                  <Button size="sm" @click="addActivity">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Activity
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden max-h-64 overflow-y-auto">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 sticky top-0">
-                      <tr>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Date</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Activity Type</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Description</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">By</th>
-                        <th class="px-3 py-2 w-12"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(activity, idx) in formData.follow_up_activities" :key="idx">
-                        <td class="px-3 py-2">
-                          <FormControl v-model="activity.activity_date" type="date" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <Select v-model="activity.activity_type" :options="activityTypeOptions" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <FormControl v-model="activity.description" type="text" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <FormControl v-model="activity.performed_by" type="text" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <Button variant="ghost" size="sm" @click="removeActivity(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.follow_up_activities?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No activities recorded. Click "Add Activity" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="formData.follow_up_activities"
+                title="Follow-up Activities"
+                modalTitle="Activity"
+                :columns="followUpActivitiesColumns"
+                :autoAddRow="false"
+              />
 
               <!-- Last Follow-up Info -->
               <div class="bg-gray-50 rounded-lg p-4">
@@ -481,6 +440,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import { Button, Dialog, FormControl, Select, TextEditor } from "frappe-ui"
@@ -660,6 +620,39 @@ const closureReasonOptions = [
 	{ label: "Management Decision", value: "Management Decision" },
 ]
 
+// Column definitions for child tables
+const followUpActivitiesColumns = [
+	{
+		key: "activity_date",
+		label: "Date",
+		fieldType: "date",
+		width: "120px",
+		required: true,
+	},
+	{
+		key: "activity_type",
+		label: "Type",
+		fieldType: "select",
+		width: "140px",
+		options: activityTypeOptions,
+		required: true,
+	},
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+		required: true,
+	},
+	{
+		key: "performed_by",
+		label: "Performed By",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+]
+
 // Watch for tracker prop changes
 watch(
 	() => props.tracker,
@@ -732,19 +725,7 @@ function previousSection() {
 	}
 }
 
-// Child table management
-function addActivity() {
-	formData.follow_up_activities.push({
-		activity_date: new Date().toISOString().split("T")[0],
-		activity_type: "",
-		description: "",
-		performed_by: "",
-	})
-}
-
-function removeActivity(index) {
-	formData.follow_up_activities.splice(index, 1)
-}
+// Child table management - handled by InlineChildTable component
 
 function resetForm() {
 	Object.keys(formData).forEach((key) => {

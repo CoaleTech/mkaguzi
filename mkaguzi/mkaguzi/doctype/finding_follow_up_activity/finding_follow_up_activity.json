@@ -1,0 +1,64 @@
+{
+ "creation": "2025-12-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "follow_up_date",
+  "followed_up_by",
+  "action_status",
+  "progress_percent",
+  "evidence_of_progress",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "follow_up_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Follow-up Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "followed_up_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Followed Up By",
+   "options": "Employee Master",
+   "reqd": 1
+  },
+  {
+   "fieldname": "action_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Action Status",
+   "options": "On Track\nDelayed\nCompleted\nNot Started",
+   "reqd": 1
+  },
+  {
+   "fieldname": "progress_percent",
+   "fieldtype": "Percent",
+   "label": "Progress Percent"
+  },
+  {
+   "fieldname": "evidence_of_progress",
+   "fieldtype": "Attach",
+   "label": "Evidence of Progress"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-12-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Finding Follow-up Activity",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

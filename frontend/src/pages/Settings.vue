@@ -937,29 +937,57 @@
 
               <!-- Report Templates -->
               <div class="border-t pt-6">
-                <h4 class="text-md font-medium text-gray-900 mb-4">Report Templates</h4>
-                <div class="space-y-3">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-md font-medium text-gray-900">Report Templates</h4>
+                  <Button @click="createNewReportTemplate" variant="outline" size="sm">
+                    <PlusIcon class="h-4 w-4 mr-2" />
+                    New Template
+                  </Button>
+                </div>
+                <div v-if="reportsStore.reportTemplates.length > 0" class="space-y-3">
                   <div
-                    v-for="template in reportTemplates"
-                    :key="template.id"
-                    class="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    v-for="template in reportsStore.reportTemplates"
+                    :key="template.name"
+                    class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
                   >
                     <div class="flex items-center space-x-3">
-                      <component :is="template.icon" class="h-4 w-4 text-gray-600" />
+                      <div class="p-2 bg-blue-50 rounded-lg">
+                        <FileTextIcon class="h-4 w-4 text-blue-600" />
+                      </div>
                       <div>
-                        <p class="text-sm font-medium text-gray-900">{{ template.name }}</p>
-                        <p class="text-xs text-gray-500">{{ template.description }}</p>
+                        <p class="text-sm font-medium text-gray-900">{{ template.template_name }}</p>
+                        <p class="text-xs text-gray-500">{{ template.description || 'No description' }}</p>
+                        <div class="flex items-center space-x-2 mt-1">
+                          <Badge :variant="template.is_active ? 'success' : 'secondary'" size="sm">
+                            {{ template.is_active ? 'Active' : 'Inactive' }}
+                          </Badge>
+                          <Badge v-if="template.is_default" variant="outline" size="sm">
+                            Default
+                          </Badge>
+                          <span class="text-xs text-gray-400">{{ template.template_type }}</span>
+                        </div>
                       </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                      <Badge :variant="template.enabled ? 'success' : 'secondary'" size="sm">
-                        {{ template.enabled ? 'Enabled' : 'Disabled' }}
-                      </Badge>
-                      <Button variant="ghost" size="sm">
-                        Configure
+                      <Button @click="editReportTemplate(template)" variant="ghost" size="sm">
+                        Edit
+                      </Button>
+                      <Button @click="duplicateReportTemplate(template)" variant="ghost" size="sm">
+                        Duplicate
+                      </Button>
+                      <Button @click="deleteReportTemplate(template)" variant="ghost" size="sm" class="text-red-600 hover:text-red-700">
+                        Delete
                       </Button>
                     </div>
                   </div>
+                </div>
+                <div v-else class="text-center py-8">
+                  <FileTextIcon class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p class="text-gray-500 mb-4">No report templates found</p>
+                  <Button @click="createNewReportTemplate" variant="solid">
+                    <PlusIcon class="h-4 w-4 mr-2" />
+                    Create Your First Template
+                  </Button>
                 </div>
               </div>
             </div>
@@ -988,10 +1016,46 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Report Template Dialog -->
+  <Dialog v-model="showCreateTemplateDialog" :options="{ title: editingTemplate ? 'Edit Report Template' : 'Create New Report Template' }">
+    <template #body-content>
+      <div class="space-y-4">
+        <FormControl
+          v-model="newTemplate.name"
+          label="Template Name"
+          placeholder="Enter template name"
+          required
+        />
+        <FormControl
+          v-model="newTemplate.description"
+          label="Description"
+          type="textarea"
+          placeholder="Enter template description"
+        />
+        <FormControl
+          v-model="newTemplate.template_type"
+          label="Template Type"
+          type="select"
+          :options="templateTypeOptions"
+          placeholder="Select template type"
+        />
+      </div>
+    </template>
+    <template #actions>
+      <Button variant="outline" @click="showCreateTemplateDialog = false">
+        Cancel
+      </Button>
+      <Button @click="submitCreateTemplate" :loading="creatingTemplate">
+        {{ editingTemplate ? 'Update Template' : 'Create Template' }}
+      </Button>
+    </template>
+  </Dialog>
 </template>
 
+
 <script setup>
-import { Badge, Button, Checkbox, Input, Select, call } from "frappe-ui"
+import { Badge, Button, Checkbox, Dialog, FormControl, Input, Select, call } from "frappe-ui"
 import {
 	BarChart3Icon,
 	BotIcon,
@@ -1000,8 +1064,10 @@ import {
 	DatabaseIcon,
 	DownloadIcon,
 	FileCheckIcon,
+	FileTextIcon,
 	LinkIcon,
 	MailIcon,
+	PlusIcon,
 	SaveIcon,
 	SettingsIcon,
 	ShieldCheckIcon,
@@ -1010,6 +1076,7 @@ import {
 	UserIcon,
 } from "lucide-vue-next"
 import { onMounted, ref } from "vue"
+import { useReportsStore } from "@/stores/reports"
 
 // Props
 const props = defineProps({
@@ -1123,6 +1190,19 @@ const settings = ref({
 	// Metadata
 	lastUpdated: new Date().toISOString(),
 })
+
+// Template creation dialog
+const showCreateTemplateDialog = ref(false)
+const creatingTemplate = ref(false)
+const editingTemplate = ref(null)
+const newTemplate = ref({
+	name: "",
+	description: "",
+	template_type: "",
+})
+
+// Reports store
+const reportsStore = useReportsStore()
 
 // Constants
 const tabs = [
@@ -1341,40 +1421,18 @@ const refreshRateOptions = [
 	{ label: "1 hour", value: "1hour" },
 ]
 
-const reportTemplates = [
-	{
-		id: "audit-summary",
-		name: "Audit Summary Report",
-		description: "Comprehensive audit findings and recommendations",
-		icon: FileCheckIcon,
-		enabled: true,
-	},
-	{
-		id: "compliance-status",
-		name: "Compliance Status Report",
-		description: "Regulatory compliance status and gaps",
-		icon: ShieldCheckIcon,
-		enabled: true,
-	},
-	{
-		id: "risk-assessment",
-		name: "Risk Assessment Report",
-		description: "Risk analysis and mitigation strategies",
-		icon: BarChart3Icon,
-		enabled: true,
-	},
-	{
-		id: "financial-audit",
-		name: "Financial Audit Report",
-		description: "Financial controls and transaction reviews",
-		icon: DatabaseIcon,
-		enabled: false,
-	},
+const templateTypeOptions = [
+	{ label: "Audit Report", value: "audit" },
+	{ label: "Compliance Report", value: "compliance" },
+	{ label: "Risk Assessment", value: "risk" },
+	{ label: "Management Letter", value: "management" },
+	{ label: "Custom Report", value: "custom" },
 ]
 
 // Load settings on component mount
 onMounted(async () => {
 	await loadSettings()
+	await reportsStore.fetchReportTemplates()
 })
 
 // Methods
@@ -1534,5 +1592,108 @@ const resetToDefaults = () => {
 const formatDate = (dateString) => {
 	if (!dateString) return "Never"
 	return new Date(dateString).toLocaleString()
+}
+
+// Report Template Management Methods
+const createNewReportTemplate = () => {
+	// Reset form
+	editingTemplate.value = null
+	newTemplate.value = {
+		name: "",
+		description: "",
+		template_type: "",
+	}
+	showCreateTemplateDialog.value = true
+}
+
+const submitCreateTemplate = async () => {
+	if (!newTemplate.value.name.trim()) {
+		alert("Please enter a template name")
+		return
+	}
+
+	creatingTemplate.value = true
+	try {
+		// Create template data with required fields
+		const templateData = {
+			name: newTemplate.value.name.trim(),
+			description: newTemplate.value.description.trim(),
+			template_type: newTemplate.value.template_type || "audit",
+			is_active: true,
+			is_default: false,
+			sections: [
+				{
+					type: "header",
+					content: {
+						title: newTemplate.value.name,
+						subtitle: newTemplate.value.description,
+					},
+				},
+			],
+		}
+
+		if (editingTemplate.value) {
+			// Update existing template
+			await reportsStore.updateReportTemplate(editingTemplate.value.name, templateData)
+		} else {
+			// Create new template
+			await reportsStore.createReportTemplate(templateData)
+		}
+		await reportsStore.fetchReportTemplates() // Refresh the list
+		
+		showCreateTemplateDialog.value = false
+		
+		// Reset form
+		editingTemplate.value = null
+		newTemplate.value = {
+			name: "",
+			description: "",
+			template_type: "",
+		}
+	} catch (error) {
+		console.error("Error creating report template:", error)
+		alert("Error creating template. Please try again.")
+	} finally {
+		creatingTemplate.value = false
+	}
+}
+
+const editReportTemplate = (template) => {
+	// Pre-fill the form with template data
+	editingTemplate.value = template
+	newTemplate.value = {
+		name: template.template_name || "",
+		description: template.description || "",
+		template_type: template.template_type || "",
+	}
+	showCreateTemplateDialog.value = true
+}
+
+const duplicateReportTemplate = async (template) => {
+	if (!confirm(`Are you sure you want to duplicate the template "${template.template_name}"?`)) {
+		return
+	}
+	
+	try {
+		await reportsStore.duplicateReportTemplate(template.name, `${template.template_name} (Copy)`)
+		await reportsStore.fetchReportTemplates() // Refresh the list
+	} catch (error) {
+		console.error("Error duplicating report template:", error)
+		alert("Error duplicating template. Please try again.")
+	}
+}
+
+const deleteReportTemplate = async (template) => {
+	if (!confirm(`Are you sure you want to delete the template "${template.template_name}"? This action cannot be undone.`)) {
+		return
+	}
+	
+	try {
+		await reportsStore.deleteReportTemplate(template.name)
+		await reportsStore.fetchReportTemplates() // Refresh the list
+	} catch (error) {
+		console.error("Error deleting report template:", error)
+		alert("Error deleting template. Please try again.")
+	}
 }
 </script>

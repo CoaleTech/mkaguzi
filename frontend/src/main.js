@@ -23,6 +23,15 @@ import {
 
 import "./index.css"
 
+import BaseTemplate from "./components/templates/BaseTemplate.vue"
+import TemplateEditor from "./components/templates/TemplateEditor.vue"
+// Import template components
+import TemplateManager from "./components/templates/TemplateManager.vue"
+import TemplateMarketplace from "./components/templates/TemplateMarketplace.vue"
+import TemplatePreview from "./components/templates/TemplatePreview.vue"
+import PublishTemplateForm from "./components/templates/marketplace/PublishTemplateForm.vue"
+import TemplateDetail from "./components/templates/marketplace/TemplateDetail.vue"
+
 const globalComponents = {
 	Button,
 	TextInput,
@@ -32,6 +41,14 @@ const globalComponents = {
 	Dialog,
 	Alert,
 	Badge,
+	// Template components
+	TemplateManager,
+	TemplateEditor,
+	TemplatePreview,
+	BaseTemplate,
+	TemplateMarketplace,
+	PublishTemplateForm,
+	TemplateDetail,
 }
 
 const app = createApp(App)
@@ -73,3 +90,15 @@ window.frappe = window.frappe || {}
 window.frappe.realtime = socket
 
 app.mount("#app")
+
+// Expose components globally for page templates
+window.mkaguzi = window.mkaguzi || {}
+window.mkaguzi.components = {
+	TemplateManager,
+	TemplateEditor,
+	TemplatePreview,
+	BaseTemplate,
+	TemplateMarketplace,
+	PublishTemplateForm,
+	TemplateDetail,
+}

@@ -150,7 +150,8 @@ doc_events = {
         "after_insert": "mkaguzi.utils.notifications.on_audit_finding_insert",
         "on_update": [
             "mkaguzi.utils.notifications.on_audit_finding_update",
-            "mkaguzi.ai.rag.indexer.on_document_update"
+            "mkaguzi.ai.rag.indexer.on_document_update",
+            "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update"
         ],
         "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
     },
@@ -167,7 +168,10 @@ doc_events = {
         "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
     },
     "Risk Assessment": {
-        "on_update": "mkaguzi.ai.rag.indexer.on_document_update",
+        "on_update": [
+            "mkaguzi.ai.rag.indexer.on_document_update",
+            "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update"
+        ],
         "on_trash": "mkaguzi.ai.rag.indexer.on_document_delete",
     },
     "Compliance Requirement": {
@@ -180,6 +184,35 @@ doc_events = {
     "Audit Execution": {
         "on_update": "mkaguzi.utils.notifications.on_audit_execution_update",
     },
+    # AI Context cache invalidation events
+    "VAT Reconciliation": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Engagement": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Annual Audit Plan": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Audit Universe Item": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Corrective Action Plan": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Stock Take Session": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
+    "Variance Case": {
+        "on_update": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_update",
+        "on_trash": "mkaguzi.utils.ai_context_hooks.invalidate_context_on_delete"
+    },
 }
 
 # Scheduled Tasks
@@ -189,11 +222,16 @@ scheduler_events = {
     "daily": [
         "mkaguzi.utils.notifications.schedule_notifications",
         "mkaguzi.inventory_audit.tasks.recalculate_all_scorecards",
-        "mkaguzi.inventory_audit.tasks.update_sla_statuses"
+        "mkaguzi.inventory_audit.tasks.update_sla_statuses",
+        "mkaguzi.utils.ai_context_hooks.cleanup_expired_shares"
     ],
     "weekly": [
         "mkaguzi.utils.notifications.send_weekly_digest",
-        "mkaguzi.ai.rag.indexer.rebuild_full_index"
+        "mkaguzi.ai.rag.indexer.rebuild_full_index",
+        "mkaguzi.utils.ai_context_hooks.analyze_context_patterns"
+    ],
+    "hourly": [
+        "mkaguzi.utils.ai_context_hooks.refresh_context_analytics"
     ]
 }
 

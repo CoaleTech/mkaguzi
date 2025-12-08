@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from "vue-router"
 // Layouts
 import AppLayout from "@/layouts/AppLayout.vue"
 
-import AnnualPlan from "@/pages/AnnualPlan.vue"
+import AISpecialist from "@/pages/AISpecialist.vue"
+import RealTimeDashboard from "@/pages/RealTimeDashboard.vue"
 import AuditCalendar from "@/pages/AuditCalendar.vue"
 import AuditPrograms from "@/pages/AuditPrograms.vue"
 import AuditUniverse from "@/pages/AuditUniverse.vue"
@@ -11,28 +12,31 @@ import BoardReports from "@/pages/BoardReports.vue"
 import ComplianceChecklist from "@/pages/ComplianceChecklist.vue"
 import ComplianceRequirements from "@/pages/ComplianceRequirements.vue"
 import CorrectiveActions from "@/pages/CorrectiveActions.vue"
-// Compliance Management
-import VATReconciliation from "@/pages/compliance/VATReconciliation.vue"
 // Pages
 import Dashboard from "@/pages/Dashboard.vue"
 import DataAnalytics from "@/pages/DataAnalytics.vue"
 import DataPeriods from "@/pages/DataPeriods.vue"
 import DataQuality from "@/pages/DataQuality.vue"
 import EngagementList from "@/pages/EngagementList.vue"
+import FindingTemplates from "@/pages/FindingTemplates.vue"
 import FindingsList from "@/pages/FindingsList.vue"
 import FollowUpTracker from "@/pages/FollowUpTracker.vue"
 import ImportData from "@/pages/ImportData.vue"
 import MkaguziChat from "@/pages/MkaguziChat.vue"
 import RegulatoryCalendar from "@/pages/RegulatoryCalendar.vue"
-import ReportBuilder from "@/pages/ReportBuilder.vue"
-import Reports from "@/pages/Reports.vue"
-import RiskAssessments from "@/pages/RiskAssessments.vue"
-import Settings from "@/pages/Settings.vue"
-import TaxCompliance from "@/pages/TaxCompliance.vue"
-import TestExecution from "@/pages/TestExecution.vue"
-import TestLibrary from "@/pages/TestLibrary.vue"
-import UserManagement from "@/pages/UserManagement.vue"
-import WorkingPapers from "@/pages/WorkingPapers.vue"
+// Lazy loaded heavy components
+const ReportBuilder = () => import("@/pages/ReportBuilder.vue")
+const Reports = () => import("@/pages/Reports.vue")
+const RiskAssessments = () => import("@/pages/RiskAssessments.vue")
+const Settings = () => import("@/pages/Settings.vue")
+const TaxCompliance = () => import("@/pages/TaxCompliance.vue")
+const TestExecution = () => import("@/pages/TestExecution.vue")
+const TestLibrary = () => import("@/pages/TestLibrary.vue")
+const UserManagement = () => import("@/pages/UserManagement.vue")
+const WorkingPapers = () => import("@/pages/WorkingPapers.vue")
+const AnnualPlan = () => import("@/pages/AnnualPlan.vue")
+// Compliance Management
+import VATReconciliation from "@/pages/compliance/VATReconciliation.vue"
 
 import AuditPlanDetail from "@/pages/inventory/AuditPlanDetail.vue"
 import AuditPlanForm from "@/pages/inventory/AuditPlanForm.vue"
@@ -40,22 +44,22 @@ import AuditPlanList from "@/pages/inventory/AuditPlanList.vue"
 import ComplianceScorecardDetail from "@/pages/inventory/ComplianceScorecardDetail.vue"
 import ComplianceScorecardForm from "@/pages/inventory/ComplianceScorecardForm.vue"
 import ComplianceScorecardList from "@/pages/inventory/ComplianceScorecardList.vue"
-// Inventory Audit Pages
-import InventoryAuditDashboard from "@/pages/inventory/InventoryAuditDashboard.vue"
-import InventoryAuditSettings from "@/pages/inventory/InventoryAuditSettings.vue"
-import InventoryItemMaster from "@/pages/inventory/InventoryItemMaster.vue"
-import IssueLogDetail from "@/pages/inventory/IssueLogDetail.vue"
-import IssueLogForm from "@/pages/inventory/IssueLogForm.vue"
-import IssueLogList from "@/pages/inventory/IssueLogList.vue"
-import StockTakeDetail from "@/pages/inventory/StockTakeDetail.vue"
-import StockTakeForm from "@/pages/inventory/StockTakeForm.vue"
-import StockTakeList from "@/pages/inventory/StockTakeList.vue"
-import StockTakeSessionDetail from "@/pages/inventory/StockTakeSessionDetail.vue"
-import StockTakeSessionForm from "@/pages/inventory/StockTakeSessionForm.vue"
-import StockTakeSessionList from "@/pages/inventory/StockTakeSessionList.vue"
-import VarianceCaseDetail from "@/pages/inventory/VarianceCaseDetail.vue"
-import VarianceCaseForm from "@/pages/inventory/VarianceCaseForm.vue"
-import VarianceCaseList from "@/pages/inventory/VarianceCaseList.vue"
+// Lazy loaded inventory audit pages
+const InventoryAuditDashboard = () => import("@/pages/inventory/InventoryAuditDashboard.vue")
+const InventoryAuditSettings = () => import("@/pages/inventory/InventoryAuditSettings.vue")
+const InventoryItemMaster = () => import("@/pages/inventory/InventoryItemMaster.vue")
+const IssueLogDetail = () => import("@/pages/inventory/IssueLogDetail.vue")
+const IssueLogForm = () => import("@/pages/inventory/IssueLogForm.vue")
+const IssueLogList = () => import("@/pages/inventory/IssueLogList.vue")
+const StockTakeDetail = () => import("@/pages/inventory/StockTakeDetail.vue")
+const StockTakeForm = () => import("@/pages/inventory/StockTakeForm.vue")
+const StockTakeList = () => import("@/pages/inventory/StockTakeList.vue")
+const StockTakeSessionDetail = () => import("@/pages/inventory/StockTakeSessionDetail.vue")
+const StockTakeSessionForm = () => import("@/pages/inventory/StockTakeSessionForm.vue")
+const StockTakeSessionList = () => import("@/pages/inventory/StockTakeSessionList.vue")
+const VarianceCaseDetail = () => import("@/pages/inventory/VarianceCaseDetail.vue")
+const VarianceCaseForm = () => import("@/pages/inventory/VarianceCaseForm.vue")
+const VarianceCaseList = () => import("@/pages/inventory/VarianceCaseList.vue")
 
 // Error pages
 import NotFound from "@/pages/NotFound.vue"
@@ -233,6 +237,26 @@ const routes = [
 					breadcrumb: "Audit Calendar",
 				},
 			},
+			{
+				path: "ai-specialist",
+				name: "AISpecialist",
+				component: AISpecialist,
+				meta: {
+					title: "AI Audit Specialist",
+					icon: "Brain",
+					breadcrumb: "AI Specialist",
+				},
+			},
+			{
+				path: "real-time-dashboard",
+				name: "RealTimeDashboard",
+				component: RealTimeDashboard,
+				meta: {
+					title: "Real-Time Dashboard",
+					icon: "Activity",
+					breadcrumb: "Live Analytics",
+				},
+			},
 
 			// Audit Execution
 			{
@@ -288,7 +312,7 @@ const routes = [
 
 			// Findings & Follow-up
 			{
-				path: "findings/list",
+				path: "findings",
 				name: "FindingsList",
 				component: FindingsList,
 				meta: {
@@ -296,6 +320,26 @@ const routes = [
 					icon: "Search",
 					breadcrumb: "Audit Findings",
 				},
+			},
+			{
+				path: "findings/templates",
+				name: "FindingTemplates",
+				component: FindingTemplates,
+				meta: {
+					title: "Finding Templates",
+					icon: "FileTemplate",
+					breadcrumb: "Finding Templates",
+				},
+			},
+			{
+				path: "findings/:id",
+				name: "FindingDetail",
+				component: () => import("@/pages/FindingDetail.vue"),
+				meta: {
+					title: "Finding Details",
+					breadcrumb: "Finding Details",
+				},
+				props: true,
 			},
 			{
 				path: "findings/corrective-actions",
@@ -427,7 +471,8 @@ const routes = [
 			{
 				path: "compliance/vat-reconciliation/new",
 				name: "NewVATReconciliation",
-				component: () => import("@/pages/compliance/VATReconciliationDetail.vue"),
+				component: () =>
+					import("@/pages/compliance/VATReconciliationDetail.vue"),
 				meta: {
 					title: "New VAT Reconciliation",
 					breadcrumb: "New Reconciliation",
@@ -436,7 +481,8 @@ const routes = [
 			{
 				path: "compliance/vat-reconciliation/:id",
 				name: "VATReconciliationDetail",
-				component: () => import("@/pages/compliance/VATReconciliationDetail.vue"),
+				component: () =>
+					import("@/pages/compliance/VATReconciliationDetail.vue"),
 				meta: {
 					title: "VAT Reconciliation Details",
 					breadcrumb: "Reconciliation Details",
@@ -445,6 +491,16 @@ const routes = [
 			},
 
 			// Reports
+			{
+				path: "reports/builder",
+				name: "ReportBuilder",
+				component: ReportBuilder,
+				meta: {
+					title: "Report Builder",
+					icon: "Wrench",
+					breadcrumb: "Report Builder",
+				},
+			},
 			{
 				path: "reports/audit-reports",
 				name: "AuditReports",
@@ -455,6 +511,17 @@ const routes = [
 					breadcrumb: "Audit Reports",
 				},
 			},
+			// TODO: Create AuditReportEditor.vue component
+			// {
+			// 	path: "reports/audit-reports/:id",
+			// 	name: "AuditReportEditor",
+			// 	component: () => import("@/pages/AuditReportEditor.vue"),
+			// 	meta: {
+			// 		title: "Audit Report Editor",
+			// 		breadcrumb: "Report Editor",
+			// 	},
+			// 	props: true,
+			// },
 			{
 				path: "reports/standard",
 				name: "StandardReports",
@@ -465,16 +532,54 @@ const routes = [
 					breadcrumb: "Standard Reports",
 				},
 			},
-			{
-				path: "reports/board-reports",
-				name: "BoardReports",
-				component: BoardReports,
-				meta: {
-					title: "Board Reports",
-					icon: "Presentation",
-					breadcrumb: "Board Reports",
-				},
-			},
+			// TODO: Create ReportTemplates.vue component
+			// {
+			// 	path: "reports/templates",
+			// 	name: "ReportTemplates",
+			// 	component: () => import("@/pages/ReportTemplates.vue"),
+			// 	meta: {
+			// 		title: "Report Templates",
+			// 		icon: "FileTemplate",
+			// 		breadcrumb: "Report Templates",
+			// 	},
+			// },
+			// TODO: Create ReportTemplateDetail.vue component
+			// {
+			// 	path: "reports/templates/new",
+			// 	name: "NewReportTemplate",
+			// 	component: () => import("@/pages/ReportTemplateDetail.vue"),
+			// 	meta: {
+			// 		title: "New Report Template",
+			// 		breadcrumb: "New Template",
+			// 	},
+			// 	props: { mode: "new" },
+			// },
+			// {
+			// 	path: "reports/templates/:id",
+			// 	name: "ReportTemplateDetail",
+			// 	component: () => import("@/pages/ReportTemplateDetail.vue"),
+			// 	meta: {
+			// 		title: "Report Template Details",
+			// 		breadcrumb: "Template Details",
+			// 	},
+			// 	props: (route) => ({
+			// 		templateId: route.params.id,
+			// 		mode: "view",
+			// 	}),
+			// },
+			// {
+			// 	path: "reports/templates/:id/edit",
+			// 	name: "EditReportTemplate",
+			// 	component: () => import("@/pages/ReportTemplateDetail.vue"),
+			// 	meta: {
+			// 		title: "Edit Report Template",
+			// 		breadcrumb: "Edit Template",
+			// 	},
+			// 	props: (route) => ({
+			// 		templateId: route.params.id,
+			// 		mode: "edit",
+			// 	}),
+			// },
 
 			// Settings
 			{
@@ -542,16 +647,6 @@ const routes = [
 				meta: {
 					title: "Engagement Details",
 					breadcrumb: "Engagement Details",
-				},
-				props: true,
-			},
-			{
-				path: "findings/:id",
-				name: "FindingDetail",
-				component: () => import("@/pages/FindingDetail.vue"),
-				meta: {
-					title: "Finding Details",
-					breadcrumb: "Finding Details",
 				},
 				props: true,
 			},

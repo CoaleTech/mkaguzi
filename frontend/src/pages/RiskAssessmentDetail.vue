@@ -46,6 +46,12 @@
 					<CheckCircleIcon class="h-4 w-4 mr-2" />
 					Approve
 				</Button>
+				<AskAIButton
+					v-if="assessment"
+					contextType="risk-assessment"
+					:contextData="getRiskAssessmentContext()"
+					capability="risk-analysis"
+				/>
 			</div>
 		</div>
 
@@ -556,7 +562,8 @@
 </template>
 
 <script setup>
-import RiskHeatMap from "@/components/RiskHeatMap.vue"
+import RiskHeatMap from "@/components/RiskHeatMapGrid.vue"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { Badge, Button, Card, Dialog, FormControl, Select } from "frappe-ui"
 import {
 	ArrowLeftIcon,
@@ -1011,6 +1018,39 @@ const getRiskLevel = (score) => {
 	if (score >= 15) return "High"
 	if (score >= 10) return "Medium"
 	return "Low"
+}
+
+const getRiskAssessmentContext = () => {
+	if (!assessment.value) return {}
+
+	return {
+		assessmentId: assessment.value.name || assessment.value.assessment_id,
+		assessmentName: assessment.value.assessment_name,
+		fiscalYear: assessment.value.fiscal_year,
+		assessmentPeriod: assessment.value.assessment_period,
+		status: assessment.value.status,
+		scope: assessment.value.assessment_scope,
+		methodology: assessment.value.methodology,
+		teamMembers: assessment.value.assessment_team?.length || 0,
+		riskCount: assessment.value.risk_register?.length || 0,
+		actionCount: assessment.value.action_plan?.length || 0,
+		highRiskCount: assessment.value.risk_register?.filter(r => r.inherent_risk_score >= 15).length || 0,
+		criticalRiskCount: assessment.value.risk_register?.filter(r => r.inherent_risk_score >= 20).length || 0,
+		assessmentSummary: assessment.value.assessment_summary,
+		recommendations: assessment.value.recommendations,
+		preparedBy: assessment.value.prepared_by,
+		// Include key risk data for AI analysis
+		topRisks: assessment.value.top_risks?.slice(0, 3).map(r => ({
+			id: r.risk_id,
+			title: r.risk_title,
+			score: r.inherent_risk_score,
+			category: r.risk_category,
+			owner: r.risk_owner
+		})) || [],
+		// Include action plan summary
+		pendingActions: assessment.value.action_plan?.filter(a => a.status !== 'Completed').length || 0,
+		completedActions: assessment.value.action_plan?.filter(a => a.status === 'Completed').length || 0
+	}
 }
 
 // Watch for risk register changes to update heat map

@@ -668,9 +668,15 @@ const findings = computed(() => auditStore.findings)
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-	return filters.search || filters.status || filters.category || 
-		   filters.riskRating || filters.engagement || filters.overdueOnly ||
-		   filters.repeatFindingsOnly
+	return (
+		filters.search ||
+		filters.status ||
+		filters.category ||
+		filters.riskRating ||
+		filters.engagement ||
+		filters.overdueOnly ||
+		filters.repeatFindingsOnly
+	)
 })
 
 // Filtered findings based on active filters
@@ -734,7 +740,7 @@ const filteredFindings = computed(() => {
 
 // Pagination computed properties
 const totalPages = computed(() =>
-	Math.max(1, Math.ceil(filteredFindings.value.length / itemsPerPage.value))
+	Math.max(1, Math.ceil(filteredFindings.value.length / itemsPerPage.value)),
 )
 
 const paginatedFindings = computed(() => {
@@ -749,7 +755,10 @@ const paginationStart = computed(() => {
 })
 
 const paginationEnd = computed(() => {
-	return Math.min(currentPage.value * itemsPerPage.value, filteredFindings.value.length)
+	return Math.min(
+		currentPage.value * itemsPerPage.value,
+		filteredFindings.value.length,
+	)
 })
 
 // Selection computed properties
@@ -1046,7 +1055,11 @@ const exportFindings = async () => {
 // Bulk actions
 const applyBulkActions = async () => {
 	if (bulkDeleteConfirm.value) {
-		if (confirm(`Are you sure you want to delete ${selectedFindings.value.length} findings?`)) {
+		if (
+			confirm(
+				`Are you sure you want to delete ${selectedFindings.value.length} findings?`,
+			)
+		) {
 			for (const name of selectedFindings.value) {
 				try {
 					await createResource({
@@ -1071,7 +1084,7 @@ const applyBulkActions = async () => {
 			if (bulkResponsibleUpdate.value) {
 				updateData.responsible_person = bulkResponsibleUpdate.value
 			}
-			
+
 			if (Object.keys(updateData).length > 0) {
 				try {
 					await createResource({
@@ -1088,7 +1101,7 @@ const applyBulkActions = async () => {
 			}
 		}
 	}
-	
+
 	// Reset and refresh
 	showBulkActionsModal.value = false
 	bulkStatusUpdate.value = ""

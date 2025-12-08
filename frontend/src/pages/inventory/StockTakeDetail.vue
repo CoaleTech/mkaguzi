@@ -15,6 +15,7 @@
       </div>
       <div class="flex items-center gap-2">
         <Badge :variant="statusVariant">{{ audit?.status }}</Badge>
+        <AskAIButton contextType="stock-take" :contextData="getStockTakeContext()" />
         <div class="flex items-center gap-2 ml-auto">
           <Button variant="outline" @click="editAudit" v-if="canEdit">
             <Edit class="w-4 h-4 mr-2" />
@@ -604,6 +605,7 @@ import {
 	Upload,
 	UserMinus,
 } from "lucide-vue-next"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
@@ -1049,6 +1051,54 @@ async function updatePhysicalQuantity(item, newValue) {
 		alert("Error updating physical quantity: " + error.message)
 	} finally {
 		updatingItem.value = null
+	}
+}
+
+function getStockTakeContext() {
+	if (!audit.value) return null
+
+	const items = audit.value.items || []
+	const variances = items.filter(item => item.variance !== 0)
+	const totalValue = items.reduce((sum, item) => sum + (item.system_quantity * item.rate), 0)
+	const varianceValue = variances.reduce((sum, item) => sum + (item.variance * item.rate), 0)
+
+	return {
+		page_type: 'stock-take',
+		page_title: `Stock Take: ${audit.value.name}`,
+		stock_take_type: audit.value.stock_take_type,
+		warehouse: audit.value.warehouse,
+		audit_date: audit.value.audit_date,
+		status: audit.value.status,
+		total_items: items.length,
+		items_with_variance: variances.length,
+		total_system_value: totalValue,
+		total_variance_value: Math.abs(varianceValue),
+		variance_percentage: totalValue > 0 ? Math.abs(varianceValue / totalValue * 100) : 0,
+		high_variance_items: variances
+			.filter(item => Math.abs(item.variance) > 10)
+			.map(item => ({
+				item_code: item.item_code,
+				item_name: item.item_name,
+				system_quantity: item.system_quantity,
+				physical_quantity: item.physical_quantity,
+				variance: item.variance,
+				variance_value: Math.abs(item.variance * item.rate),
+				rate: item.rate
+			})),
+		risk_indicators: {
+			large_variances: variances.filter(item => Math.abs(item.variance) > 50).length,
+			high_value_variances: variances.filter(item => Math.abs(item.variance * item.rate) > 1000).length,
+			negative_variances: variances.filter(item => item.variance < 0).length,
+			positive_variances: variances.filter(item => item.variance > 0).length
+		},
+		summary: {
+			description: `Stock take audit for ${audit.value.warehouse} conducted on ${audit.value.audit_date}`,
+			key_findings: [
+				`${variances.length} out of ${items.length} items have variances`,
+				`Total variance value: ${Math.abs(varianceValue).toFixed(2)}`,
+				`Variance percentage: ${(totalValue > 0 ? Math.abs(varianceValue / totalValue * 100) : 0).toFixed(2)}%`
+			]
+		}
 	}
 }
 </script>

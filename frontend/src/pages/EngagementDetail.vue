@@ -13,6 +13,7 @@
           <DownloadIcon class="h-4 w-4 mr-2" />
           Export
         </Button>
+        <AskAIButton contextType="engagement" :contextData="getEngagementContext()" />
         <Button @click="editEngagement">
           <EditIcon class="h-4 w-4 mr-2" />
           Edit
@@ -185,6 +186,7 @@ import {
 	PlusIcon,
 	UploadIcon,
 } from "lucide-vue-next"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
@@ -269,4 +271,59 @@ const uploadDocument = () => {
 onMounted(() => {
 	loadEngagement()
 })
+
+function getEngagementContext() {
+	if (!engagement.value) return null
+
+	const objectives = engagement.value.objectives || []
+	const findings = engagement.value.findings || { high: 0, medium: 0, low: 0 }
+	const totalFindings = findings.high + findings.medium + findings.low
+	const duration = engagement.value.startDate && engagement.value.endDate ?
+		Math.ceil((new Date(engagement.value.endDate) - new Date(engagement.value.startDate)) / (1000 * 60 * 60 * 24)) : 0
+
+	return {
+		page_type: 'engagement',
+		page_title: `Engagement: ${engagement.value.title}`,
+		title: engagement.value.title,
+		description: engagement.value.description,
+		status: engagement.value.status,
+		type: engagement.value.type,
+		start_date: engagement.value.startDate,
+		end_date: engagement.value.endDate,
+		duration_days: duration,
+		lead_auditor: engagement.value.leadAuditor,
+		budget: engagement.value.budget,
+		objectives_count: objectives.length,
+		objectives: objectives.map(obj => obj.description),
+		scope: engagement.value.scope,
+		findings_summary: {
+			total: totalFindings,
+			high: findings.high,
+			medium: findings.medium,
+			low: findings.low,
+			high_percentage: totalFindings > 0 ? (findings.high / totalFindings * 100).toFixed(1) : 0
+		},
+		risk_assessment: {
+			complexity: engagement.value.type === 'Financial Audit' ? 'high' : engagement.value.type === 'Operational Audit' ? 'medium' : 'low',
+			critical_findings: findings.high > 0,
+			timeline_pressure: duration < 90 ? 'high' : duration < 180 ? 'medium' : 'low',
+			budget_utilization: engagement.value.budget > 100000 ? 'high' : engagement.value.budget > 50000 ? 'medium' : 'low'
+		},
+		progress_indicators: {
+			has_scope_defined: !!engagement.value.scope,
+			has_objectives: objectives.length > 0,
+			has_findings: totalFindings > 0,
+			is_on_track: engagement.value.status === 'In Progress' || engagement.value.status === 'Completed'
+		},
+		summary: {
+			description: `${engagement.value.type} engagement: ${engagement.value.description}`,
+			key_metrics: [
+				`${objectives.length} audit objectives defined`,
+				`${totalFindings} findings identified (${findings.high} high risk)`,
+				`Budget: $${engagement.value.budget?.toLocaleString() || 'Not set'}`,
+				`Duration: ${duration} days`
+			]
+		}
+	}
+}
 </script>

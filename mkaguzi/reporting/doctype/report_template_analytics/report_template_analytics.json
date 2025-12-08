@@ -1,0 +1,329 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-06 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "template_id",
+  "category",
+  "column_break_4",
+  "total_views",
+  "total_uses",
+  "total_renders",
+  "section_break_8",
+  "performance_metrics",
+  "average_render_time",
+  "max_render_time",
+  "min_render_time",
+  "column_break_13",
+  "total_render_errors",
+  "success_rate",
+  "section_break_17",
+  "usage_analytics",
+  "last_used_date",
+  "first_used_date",
+  "column_break_21",
+  "most_used_by",
+  "usage_trend",
+  "section_break_25",
+  "variable_usage",
+  "popular_variables",
+  "column_break_28",
+  "variable_error_count",
+  "section_break_31",
+  "user_engagement",
+  "unique_users",
+  "average_session_duration",
+  "column_break_35",
+  "peak_usage_hours",
+  "section_break_38",
+  "system_metrics",
+  "cache_hit_rate",
+  "memory_usage",
+  "column_break_42",
+  "cpu_usage",
+  "section_break_45",
+  "detailed_logs",
+  "render_logs",
+  "error_logs",
+  "column_break_49",
+  "usage_logs"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "template_id",
+   "fieldtype": "Link",
+   "label": "Template ID",
+   "options": "Report Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Audit Report\nCompliance Report\nFinancial Report\nRisk Assessment\nCustom Report"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_views",
+   "fieldtype": "Int",
+   "label": "Total Views",
+   "default": "0"
+  },
+  {
+   "fieldname": "total_uses",
+   "fieldtype": "Int",
+   "label": "Total Uses",
+   "default": "0"
+  },
+  {
+   "fieldname": "total_renders",
+   "fieldtype": "Int",
+   "label": "Total Renders",
+   "default": "0"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "performance_metrics",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "average_render_time",
+   "fieldtype": "Float",
+   "label": "Average Render Time (seconds)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "max_render_time",
+   "fieldtype": "Float",
+   "label": "Max Render Time (seconds)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "min_render_time",
+   "fieldtype": "Float",
+   "label": "Min Render Time (seconds)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_render_errors",
+   "fieldtype": "Int",
+   "label": "Total Render Errors",
+   "default": "0"
+  },
+  {
+   "fieldname": "success_rate",
+   "fieldtype": "Percent",
+   "label": "Success Rate (%)"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Usage Analytics"
+  },
+  {
+   "fieldname": "usage_analytics",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "last_used_date",
+   "fieldtype": "Datetime",
+   "label": "Last Used Date"
+  },
+  {
+   "fieldname": "first_used_date",
+   "fieldtype": "Datetime",
+   "label": "First Used Date"
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "most_used_by",
+   "fieldtype": "Link",
+   "label": "Most Used By",
+   "options": "User"
+  },
+  {
+   "fieldname": "usage_trend",
+   "fieldtype": "JSON",
+   "label": "Usage Trend (JSON)"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break",
+   "label": "Variable Usage"
+  },
+  {
+   "fieldname": "variable_usage",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "popular_variables",
+   "fieldtype": "JSON",
+   "label": "Popular Variables (JSON)"
+  },
+  {
+   "fieldname": "column_break_28",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "variable_error_count",
+   "fieldtype": "Int",
+   "label": "Variable Error Count",
+   "default": "0"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break",
+   "label": "User Engagement"
+  },
+  {
+   "fieldname": "user_engagement",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "unique_users",
+   "fieldtype": "Int",
+   "label": "Unique Users",
+   "default": "0"
+  },
+  {
+   "fieldname": "average_session_duration",
+   "fieldtype": "Float",
+   "label": "Average Session Duration (minutes)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_35",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "peak_usage_hours",
+   "fieldtype": "JSON",
+   "label": "Peak Usage Hours (JSON)"
+  },
+  {
+   "fieldname": "section_break_38",
+   "fieldtype": "Section Break",
+   "label": "System Metrics"
+  },
+  {
+   "fieldname": "system_metrics",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "cache_hit_rate",
+   "fieldtype": "Percent",
+   "label": "Cache Hit Rate (%)"
+  },
+  {
+   "fieldname": "memory_usage",
+   "fieldtype": "Float",
+   "label": "Memory Usage (MB)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_42",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cpu_usage",
+   "fieldtype": "Percent",
+   "label": "CPU Usage (%)"
+  },
+  {
+   "fieldname": "section_break_45",
+   "fieldtype": "Section Break",
+   "label": "Detailed Logs"
+  },
+  {
+   "fieldname": "detailed_logs",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "render_logs",
+   "fieldtype": "JSON",
+   "label": "Render Logs (JSON)"
+  },
+  {
+   "fieldname": "error_logs",
+   "fieldtype": "JSON",
+   "label": "Error Logs (JSON)"
+  },
+  {
+   "fieldname": "column_break_49",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "usage_logs",
+   "fieldtype": "JSON",
+   "label": "Usage Logs (JSON)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-06 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Reporting",
+ "name": "Report Template Analytics",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "Audit User",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "template_name"
+}

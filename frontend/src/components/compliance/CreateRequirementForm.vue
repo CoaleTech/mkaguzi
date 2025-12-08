@@ -126,50 +126,14 @@
         </div>
         
         <div class="control-activities">
-          <label class="form-label">Control Activities</label>
-          <p class="form-description">Add specific control activities that need to be performed</p>
-          
-          <div class="activities-list">
-            <div
-              v-for="(activity, index) in formData.control_activities"
-              :key="index"
-              class="activity-item"
-            >
-              <FormControl
-                type="text"
-                v-model="activity.description"
-                placeholder="Control activity description"
-                required
-              />
-              
-              <FormControl
-                type="select"
-                v-model="activity.frequency"
-                :options="activityFrequencyOptions"
-                placeholder="Frequency"
-                required
-              />
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                @click="removeActivity(index)"
-                :disabled="formData.control_activities.length === 1"
-              >
-                <Trash2 class="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-          
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            @click="addActivity"
-          >
-            <Plus class="w-4 h-4 mr-2" />
-            Add Activity
-          </Button>
+          <InlineChildTable
+            v-model="formData.control_activities"
+            title="Control Activities"
+            modalTitle="Control Activity"
+            :columns="controlActivitiesColumns"
+            :autoAddRow="false"
+            :minRows="1"
+          />
         </div>
       </div>
 
@@ -424,6 +388,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import { Button, FormControl } from "frappe-ui"
 import { Plus, Trash2 } from "lucide-vue-next"
 import { computed, ref, watch } from "vue"
@@ -561,6 +526,25 @@ const testingApproachOptions = [
 	{ label: "Walkthrough", value: "walkthrough" },
 ]
 
+// Column definitions for child tables
+const controlActivitiesColumns = [
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "250px",
+		required: true,
+	},
+	{
+		key: "frequency",
+		label: "Frequency",
+		fieldType: "select",
+		width: "120px",
+		options: activityFrequencyOptions,
+		required: true,
+	},
+]
+
 // Computed
 const isFormValid = computed(() => {
 	const required = [
@@ -661,18 +645,7 @@ const validateForm = () => {
 	return Object.keys(newErrors).length === 0
 }
 
-const addActivity = () => {
-	formData.value.control_activities.push({
-		description: "",
-		frequency: "Monthly",
-	})
-}
-
-const removeActivity = (index) => {
-	if (formData.value.control_activities.length > 1) {
-		formData.value.control_activities.splice(index, 1)
-	}
-}
+// Child table management - handled by InlineChildTable component
 
 const toggleEvidenceType = (type, checked) => {
 	if (checked) {

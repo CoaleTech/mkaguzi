@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "creation": "2025-12-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "milestone_id",
+  "milestone_description",
+  "target_date",
+  "status",
+  "completion_date",
+  "responsible_person",
+  "deliverables"
+ ],
+ "fields": [
+  {
+   "fieldname": "milestone_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Milestone ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "milestone_description",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Milestone Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_date",
+   "fieldtype": "Date",
+   "label": "Target Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Not Started\nIn Progress\nCompleted\nOverdue\nCancelled",
+   "reqd": 1,
+   "default": "Not Started"
+  },
+  {
+   "fieldname": "completion_date",
+   "fieldtype": "Date",
+   "label": "Completion Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "deliverables",
+   "fieldtype": "Text",
+   "label": "Deliverables"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Action Plan Milestone",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

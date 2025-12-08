@@ -1,0 +1,27 @@
+<div class="template-manager-page">
+	<div id="template-manager-app"></div>
+</div>
+
+<script>
+frappe.ready(() => {
+	// Mount Vue app for template manager
+	const app = Vue.createApp({
+		template: `
+			<TemplateManager
+				:initial-filters="initialFilters"
+			/>
+		`,
+		data() {
+			return {
+				initialFilters: {}
+			}
+		},
+		components: {
+			TemplateManager: window.mkaguzi.components.TemplateManager
+		}
+	});
+
+	// Mount the app
+	app.mount('#template-manager-app');
+});
+</script>

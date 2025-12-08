@@ -14,6 +14,14 @@
           :options="periodOptions"
           class="w-32"
         />
+        <AskAIButton
+          page-component="Dashboard"
+          :contextData="getDashboardContext()"
+          button-text="Ask AI"
+          variant="solid"
+          theme="purple"
+          size="sm"
+        />
         <Button
           variant="outline"
           @click="refreshData"
@@ -25,108 +33,43 @@
       </div>
     </div>
 
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Active Engagements -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Active Engagements</p>
-            <p class="text-3xl font-bold text-gray-900">{{ stats.activeEngagements }}</p>
-          </div>
-          <div class="p-3 bg-blue-100 rounded-full">
-            <FileTextIcon class="h-6 w-6 text-blue-600" />
-          </div>
-        </div>
-        <div class="mt-4 flex items-center text-sm">
-          <TrendingUpIcon class="h-4 w-4 text-green-500 mr-1" />
-          <span class="text-green-600 font-medium">+12%</span>
-          <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-      </div>
+    <!-- Enhanced KPI Cards -->
+    <AuditKPICards
+      :findings="auditStore.findings"
+      :corrective-actions="auditStore.correctiveActions"
+      :previous-findings="previousMonthFindings"
+    />
 
-      <!-- Open Findings -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Open Findings</p>
-            <p class="text-3xl font-bold text-gray-900">{{ stats.openFindings }}</p>
-          </div>
-          <div class="p-3 bg-yellow-100 rounded-full">
-            <AlertTriangleIcon class="h-6 w-6 text-yellow-600" />
-          </div>
-        </div>
-        <div class="mt-4 flex items-center text-sm">
-          <TrendingDownIcon class="h-4 w-4 text-red-500 mr-1" />
-          <span class="text-red-600 font-medium">-5%</span>
-          <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-      </div>
-
-      <!-- Compliance Score -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Compliance Score</p>
-            <p class="text-3xl font-bold text-gray-900">{{ stats.complianceScore }}%</p>
-          </div>
-          <div class="p-3 bg-green-100 rounded-full">
-            <CheckCircleIcon class="h-6 w-6 text-green-600" />
-          </div>
-        </div>
-        <div class="mt-4 flex items-center text-sm">
-          <TrendingUpIcon class="h-4 w-4 text-green-500 mr-1" />
-          <span class="text-green-600 font-medium">+2%</span>
-          <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-      </div>
-
-      <!-- Risk Level -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Overall Risk</p>
-            <p class="text-3xl font-bold text-gray-900">{{ stats.overallRisk }}</p>
-          </div>
-          <div class="p-3 bg-red-100 rounded-full">
-            <AlertCircleIcon class="h-6 w-6 text-red-600" />
-          </div>
-        </div>
-        <div class="mt-4 flex items-center text-sm">
-          <MinusIcon class="h-4 w-4 text-gray-500 mr-1" />
-          <span class="text-gray-600 font-medium">No change</span>
-          <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-      </div>
+    <!-- Advanced Analytics Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <FindingsStatusChart
+        :findings="auditStore.findings"
+        :loading="loading"
+        @refresh="refreshData"
+        @export="exportChart('findings-status')"
+      />
+      <FindingsRiskChart
+        :findings="auditStore.findings"
+        :loading="loading"
+        @refresh="refreshData"
+        @export="exportChart('findings-risk')"
+      />
     </div>
 
-    <!-- Charts Row -->
+    <!-- Timeline and Progress Charts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Audit Status Chart -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-gray-900">Audit Status Overview</h3>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontalIcon class="h-4 w-4" />
-          </Button>
-        </div>
-        <div class="h-64">
-          <canvas ref="auditStatusChartRef" class="w-full h-full"></canvas>
-        </div>
-      </div>
-
-      <!-- Risk Distribution Chart -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-gray-900">Risk Distribution</h3>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontalIcon class="h-4 w-4" />
-          </Button>
-        </div>
-        <div class="h-64">
-          <canvas ref="riskDistributionChartRef" class="w-full h-full"></canvas>
-        </div>
-      </div>
+      <FindingsTimelineChart
+        :findings="auditStore.findings"
+        :loading="loading"
+        @refresh="refreshData"
+        @export="exportChart('findings-timeline')"
+      />
+      <CorrectiveActionsChart
+        :corrective-actions="auditStore.correctiveActions"
+        :loading="loading"
+        @refresh="refreshData"
+        @export="exportChart('corrective-actions')"
+      />
     </div>
 
     <!-- Recent Activities and Upcoming Tasks -->
@@ -266,20 +209,14 @@
 </template>
 
 <script setup>
+import AuditKPICards from "@/components/Charts/AuditKPICards.vue"
+import CorrectiveActionsChart from "@/components/Charts/CorrectiveActionsChart.vue"
+import FindingsRiskChart from "@/components/Charts/FindingsRiskChart.vue"
+import FindingsStatusChart from "@/components/Charts/FindingsStatusChart.vue"
+import FindingsTimelineChart from "@/components/Charts/FindingsTimelineChart.vue"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { useAuditStore } from "@/stores/audit"
 import { useDataStore } from "@/stores/data"
-import {
-	ArcElement,
-	BarController,
-	BarElement,
-	CategoryScale,
-	Chart as ChartJS,
-	Legend,
-	LinearScale,
-	PieController,
-	Title,
-	Tooltip,
-} from "chart.js"
 import { Badge, Button, Checkbox, Select } from "frappe-ui"
 import {
 	AlertCircleIcon,
@@ -296,20 +233,8 @@ import {
 	TrendingDownIcon,
 	TrendingUpIcon,
 } from "lucide-vue-next"
-import { computed, nextTick, onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-
-ChartJS.register(
-	ArcElement,
-	Tooltip,
-	Legend,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	BarController,
-	Title,
-	PieController,
-)
 
 const router = useRouter()
 const auditStore = useAuditStore()
@@ -318,10 +243,6 @@ const dataStore = useDataStore()
 // Reactive state
 const loading = ref(false)
 const selectedPeriod = ref("month")
-
-// Chart refs
-const auditStatusChartRef = ref(null)
-const riskDistributionChartRef = ref(null)
 
 // Constants
 const periodOptions = [
@@ -339,74 +260,6 @@ const stats = computed(() => ({
 	complianceScore: 87, // This could be calculated from real data
 	overallRisk: "Medium", // This could be calculated from risk assessments
 }))
-
-const auditStatusData = computed(() => {
-	const engagements = auditStore.engagements
-	const statusCounts = {
-		Planning: 0,
-		"In Progress": 0,
-		Review: 0,
-		Completed: 0,
-	}
-
-	engagements.forEach((engagement) => {
-		const status = engagement.status
-		if (status === "planned") statusCounts["Planning"]++
-		else if (status === "in_progress") statusCounts["In Progress"]++
-		else if (status === "under_review") statusCounts["Review"]++
-		else if (status === "completed") statusCounts["Completed"]++
-	})
-
-	return {
-		labels: Object.keys(statusCounts),
-		datasets: [
-			{
-				data: Object.values(statusCounts),
-				backgroundColor: [
-					"#3B82F6", // Blue
-					"#F59E0B", // Yellow
-					"#8B5CF6", // Purple
-					"#10B981", // Green
-				],
-				borderWidth: 1,
-			},
-		],
-	}
-})
-
-const riskDistributionData = computed(() => {
-	const findings = auditStore.findings
-	const riskCounts = {
-		Low: 0,
-		Medium: 0,
-		High: 0,
-		Critical: 0,
-	}
-
-	findings.forEach((finding) => {
-		const risk = finding.risk_rating
-		if (riskCounts.hasOwnProperty(risk)) {
-			riskCounts[risk]++
-		}
-	})
-
-	return {
-		labels: Object.keys(riskCounts),
-		datasets: [
-			{
-				label: "Risk Count",
-				data: Object.values(riskCounts),
-				backgroundColor: [
-					"#10B981", // Green
-					"#F59E0B", // Yellow
-					"#EF4444", // Red
-					"#7C2D12", // Dark Red
-				],
-				borderWidth: 1,
-			},
-		],
-	}
-})
 
 const recentActivities = computed(() => {
 	const activities = []
@@ -466,6 +319,36 @@ const upcomingTasks = computed(() => {
 	return tasks
 })
 
+// Previous month findings for comparison (mock data - in real app this would come from API)
+const previousMonthFindings = computed(() => {
+	// This would typically be fetched from the API
+	// For now, return a mock array with slightly different numbers
+	const currentCount = auditStore.findings.length
+	const previousCount = Math.max(
+		0,
+		currentCount - Math.floor(currentCount * 0.1),
+	)
+	return Array(previousCount)
+		.fill({})
+		.map((_, i) => ({ name: `prev-${i}` }))
+})
+
+// Get dashboard context for AI
+const getDashboardContext = () => {
+	return {
+		total_entities: stats.value.activeEngagements,
+		active_audits: stats.value.activeEngagements,
+		open_findings: stats.value.openFindings,
+		overdue_tasks: upcomingTasks.value.filter(task => task.priority === 'high').length,
+		compliance_score: 85, // Mock compliance score
+		recent_activities: recentActivities.value.slice(0, 5).map(activity => ({
+			type: activity.type,
+			description: activity.description,
+			date: activity.timestamp
+		}))
+	}
+}
+
 // Methods
 const refreshData = async () => {
 	loading.value = true
@@ -473,55 +356,17 @@ const refreshData = async () => {
 		// Refresh audit data
 		await auditStore.fetchEngagements()
 		await auditStore.fetchFindings()
+		await auditStore.fetchCorrectiveActions()
 		await dataStore.fetchDataPeriods()
 	} finally {
 		loading.value = false
 	}
 }
 
-const initializeCharts = () => {
-	if (auditStatusChartRef.value) {
-		new ChartJS(auditStatusChartRef.value, {
-			type: "pie",
-			data: auditStatusData.value,
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						position: "bottom",
-					},
-					title: {
-						display: false,
-					},
-				},
-			},
-		})
-	}
-
-	if (riskDistributionChartRef.value) {
-		new ChartJS(riskDistributionChartRef.value, {
-			type: "bar",
-			data: riskDistributionData.value,
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						display: false,
-					},
-					title: {
-						display: false,
-					},
-				},
-				scales: {
-					y: {
-						beginAtZero: true,
-					},
-				},
-			},
-		})
-	}
+const exportChart = (chartType) => {
+	// In a real implementation, this would export the chart as PNG/PDF
+	console.log(`Exporting ${chartType} chart`)
+	// You could use html2canvas or similar library to export charts
 }
 
 const getActivityIcon = (type) => {
@@ -568,7 +413,5 @@ const formatDate = (date) => {
 // Lifecycle
 onMounted(async () => {
 	await refreshData()
-	await nextTick()
-	initializeCharts()
 })
 </script>

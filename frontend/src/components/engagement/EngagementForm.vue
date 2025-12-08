@@ -692,7 +692,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue"
 import ChildTable from "@/components/Common/ChildTable.vue"
 import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
-import SectionHeader from "@/components/engagement/SectionHeader.vue"
+import SectionHeader from "@/components/engagement/EngagementSectionHeader.vue"
 
 // Props
 const props = defineProps({

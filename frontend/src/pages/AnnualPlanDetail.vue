@@ -47,6 +47,12 @@
 					<CheckCircleIcon class="h-4 w-4 mr-2" />
 					Approve
 				</Button>
+				<AskAIButton
+					v-if="plan && mode === 'view'"
+					contextType="annual-plan"
+					:contextData="getAnnualPlanContext()"
+					capability="audit-planning"
+				/>
 			</div>
 		</div>
 
@@ -499,7 +505,14 @@
 </template>
 
 <script setup>
-import { Badge, Button, Card, FormControl, Select, createResource } from "frappe-ui"
+import {
+	Badge,
+	Button,
+	Card,
+	FormControl,
+	Select,
+	createResource,
+} from "frappe-ui"
 import {
 	ArrowLeftIcon,
 	CheckCircleIcon,
@@ -508,6 +521,7 @@ import {
 	SaveIcon,
 	TrashIcon,
 } from "lucide-vue-next"
+import AskAIButton from "@/components/AskAIButton.vue"
 import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
@@ -587,7 +601,9 @@ const loadPlan = async () => {
 			}
 
 			try {
-				const response = await fetch(`/api/resource/Annual Audit Plan/${planId}`)
+				const response = await fetch(
+					`/api/resource/Annual Audit Plan/${planId}`,
+				)
 				if (response.ok) {
 					const data = await response.json()
 					plan.value = data.data || data
@@ -604,24 +620,52 @@ const loadPlan = async () => {
 					plan_start_date: "2024-01-01",
 					plan_end_date: "2024-12-31",
 					plan_owner: "Admin",
-					executive_summary: "This is the annual audit plan for fiscal year 2024.",
+					executive_summary:
+						"This is the annual audit plan for fiscal year 2024.",
 					objectives: "Ensure compliance and operational efficiency.",
 					scope: "All departments and business units.",
 					methodology: "Risk-based audit approach.",
 					resource_allocation: [
-						{ team_member: "John Doe", role: "Lead Auditor", allocated_hours: 500, availability: "Full-time" },
-						{ team_member: "Jane Smith", role: "Senior Auditor", allocated_hours: 400, availability: "Full-time" },
+						{
+							team_member: "John Doe",
+							role: "Lead Auditor",
+							allocated_hours: 500,
+							availability: "Full-time",
+						},
+						{
+							team_member: "Jane Smith",
+							role: "Senior Auditor",
+							allocated_hours: 400,
+							availability: "Full-time",
+						},
 					],
 					planned_audits: [
-						{ audit_name: "Financial Controls Audit", audit_type: "Financial", quarter: "Q1", planned_start_date: "2024-01-15", planned_end_date: "2024-02-28", priority: "High", status: "Planned" },
-						{ audit_name: "IT Security Audit", audit_type: "IT", quarter: "Q2", planned_start_date: "2024-04-01", planned_end_date: "2024-05-15", priority: "Critical", status: "Planned" },
+						{
+							audit_name: "Financial Controls Audit",
+							audit_type: "Financial",
+							quarter: "Q1",
+							planned_start_date: "2024-01-15",
+							planned_end_date: "2024-02-28",
+							priority: "High",
+							status: "Planned",
+						},
+						{
+							audit_name: "IT Security Audit",
+							audit_type: "IT",
+							quarter: "Q2",
+							planned_start_date: "2024-04-01",
+							planned_end_date: "2024-05-15",
+							priority: "Critical",
+							status: "Planned",
+						},
 					],
 					total_budget: 500000,
 					allocated_budget: 450000,
 					actual_spend: 125000,
 					budget_notes: "Budget allocated for FY2024 audit activities.",
 					key_risks: "Resource availability, regulatory changes.",
-					risk_mitigation: "Cross-training team members, monitoring regulatory updates.",
+					risk_mitigation:
+						"Cross-training team members, monitoring regulatory updates.",
 					contingency_plan: "Engage external auditors if needed.",
 					contingency_budget: 50000,
 					additional_notes: "",
@@ -650,14 +694,19 @@ const saveChanges = async () => {
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/audit-planning/annual-plan/${data.data?.name || data.name}`)
+				router.push(
+					`/audit-planning/annual-plan/${data.data?.name || data.name}`,
+				)
 			}
 		} else {
-			const response = await fetch(`/api/resource/Annual Audit Plan/${planId}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(plan.value),
-			})
+			const response = await fetch(
+				`/api/resource/Annual Audit Plan/${planId}`,
+				{
+					method: "PUT",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(plan.value),
+				},
+			)
 
 			if (response.ok) {
 				router.push(`/audit-planning/annual-plan/${planId}`)
@@ -752,6 +801,38 @@ const getAuditStatusVariant = (status) => {
 		Deferred: "warning",
 	}
 	return variants[status] || "secondary"
+}
+
+const getAnnualPlanContext = () => {
+	if (!plan.value) return {}
+
+	return {
+		planId: plan.value.name || plan.value.id,
+		planTitle: plan.value.plan_title,
+		fiscalYear: plan.value.fiscal_year,
+		status: plan.value.status,
+		planStartDate: plan.value.plan_start_date,
+		planEndDate: plan.value.plan_end_date,
+		totalBudget: plan.value.total_budget,
+		allocatedBudget: plan.value.allocated_budget,
+		// Audit engagements summary
+		totalAudits: plan.value.audit_engagements?.length || 0,
+		plannedAudits: plan.value.audit_engagements?.filter(a => a.status === 'Planned').length || 0,
+		inProgressAudits: plan.value.audit_engagements?.filter(a => a.status === 'In Progress').length || 0,
+		completedAudits: plan.value.audit_engagements?.filter(a => a.status === 'Completed').length || 0,
+		// Resource allocation
+		totalResources: plan.value.resource_allocation?.length || 0,
+		// Risk areas
+		highRiskAreas: plan.value.audit_engagements?.filter(a => a.risk_level === 'High').length || 0,
+		mediumRiskAreas: plan.value.audit_engagements?.filter(a => a.risk_level === 'Medium').length || 0,
+		lowRiskAreas: plan.value.audit_engagements?.filter(a => a.risk_level === 'Low').length || 0,
+		// Key objectives and scope
+		objectives: plan.value.objectives,
+		scope: plan.value.scope,
+		// Timeline information
+		duration: plan.value.plan_end_date && plan.value.plan_start_date ?
+			Math.ceil((new Date(plan.value.plan_end_date) - new Date(plan.value.plan_start_date)) / (1000 * 60 * 60 * 24)) : 0
+	}
 }
 
 onMounted(() => {

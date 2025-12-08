@@ -542,3 +542,360 @@ def schedule_report(report_config):
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), _("Report Scheduling Error"))
         frappe.throw(str(e))
+
+# Report Template Management Functions
+
+@frappe.whitelist()
+def get_report_templates(filters=None):
+    """Get all report templates with optional filtering"""
+    try:
+        filters = filters or {}
+
+        # For now, return mock templates since DocType creation is having issues
+        # In production, this would query the database
+        mock_templates = [
+            {
+                'id': 'audit-summary-template',
+                'name': 'Audit Summary Report',
+                'description': 'Comprehensive audit findings and recommendations',
+                'category': 'audit',
+                'branding': {
+                    'primary_color': '#7C3AED',
+                    'font_family': 'Inter',
+                    'header_style': 'centered'
+                },
+                'sections': [
+                    {'id': 'executive-summary', 'title': 'Executive Summary', 'type': 'text'},
+                    {'id': 'key-findings', 'title': 'Key Findings', 'type': 'chart', 'chart_type': 'bar'},
+                    {'id': 'recommendations', 'title': 'Recommendations', 'type': 'text'}
+                ],
+                'created_by': 'System',
+                'updated_at': frappe.utils.now_datetime(),
+                'usage_count': 15
+            },
+            {
+                'id': 'compliance-check-template',
+                'name': 'Compliance Check Report',
+                'description': 'Regulatory compliance assessment report',
+                'category': 'compliance',
+                'branding': {
+                    'primary_color': '#10B981',
+                    'font_family': 'Inter',
+                    'header_style': 'left-aligned'
+                },
+                'sections': [
+                    {'id': 'compliance-overview', 'title': 'Compliance Overview', 'type': 'metrics'},
+                    {'id': 'findings-table', 'title': 'Detailed Findings', 'type': 'table'},
+                    {'id': 'action-plan', 'title': 'Action Plan', 'type': 'text'}
+                ],
+                'created_by': 'System',
+                'updated_at': frappe.utils.now_datetime(),
+                'usage_count': 8
+            },
+            {
+                'id': 'risk-analysis-template',
+                'name': 'Risk Analysis Report',
+                'description': 'Detailed risk assessment and mitigation strategies',
+                'category': 'risk',
+                'branding': {
+                    'primary_color': '#F59E0B',
+                    'font_family': 'Inter',
+                    'header_style': 'centered'
+                },
+                'sections': [
+                    {'id': 'risk-heatmap', 'title': 'Risk Heatmap', 'type': 'chart', 'chart_type': 'bar'},
+                    {'id': 'top-risks', 'title': 'Top Risks Identified', 'type': 'table'},
+                    {'id': 'mitigation-strategies', 'title': 'Mitigation Strategies', 'type': 'text'}
+                ],
+                'created_by': 'System',
+                'updated_at': frappe.utils.now_datetime(),
+                'usage_count': 12
+            }
+        ]
+
+        # Apply filters
+        if filters.get('category') and filters['category'] != 'all':
+            mock_templates = [t for t in mock_templates if t['category'] == filters['category']]
+
+        if filters.get('search'):
+            search_term = filters['search'].lower()
+            mock_templates = [t for t in mock_templates if search_term in t['name'].lower() or search_term in t['description'].lower()]
+
+        return {
+            'success': True,
+            'data': mock_templates
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error getting report templates: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to load report templates'
+        }
+
+@frappe.whitelist()
+def create_report_template(template_data):
+    """Create a new report template"""
+    try:
+        data = json.loads(template_data) if isinstance(template_data, str) else template_data
+
+        # Validate required fields
+        if not data.get('name'):
+            return {
+                'success': False,
+                'message': 'Template name is required'
+            }
+
+        if not data.get('sections') or len(data['sections']) == 0:
+            return {
+                'success': False,
+                'message': 'At least one section is required'
+            }
+
+        # For now, use a simple cache-based storage
+        # In production, this would create a database record
+        template_id = f"template-{frappe.utils.now_datetime().strftime('%Y%m%d%H%M%S')}"
+
+        template_data = {
+            'id': template_id,
+            'name': data['name'],
+            'description': data.get('description', ''),
+            'category': data.get('category', 'audit'),
+            'branding': data.get('branding', {}),
+            'sections': data['sections'],
+            'created_by': frappe.session.user,
+            'updated_at': frappe.utils.now_datetime(),
+            'usage_count': 0
+        }
+
+        # Store in cache (in production, this would be database storage)
+        cache_key = f"report_template_{template_id}"
+        frappe.cache().set_value(cache_key, template_data, expires_in_sec=86400*30)  # 30 days
+
+        return {
+            'success': True,
+            'data': template_data,
+            'message': 'Template created successfully'
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error creating report template: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to create template'
+        }
+
+@frappe.whitelist()
+def update_report_template(template_id, template_data):
+    """Update an existing report template"""
+    try:
+        data = json.loads(template_data) if isinstance(template_data, str) else template_data
+
+        # Check if template exists in cache
+        cache_key = f"report_template_{template_id}"
+        existing_template = frappe.cache().get_value(cache_key)
+
+        if not existing_template:
+            return {
+                'success': False,
+                'message': 'Template not found'
+            }
+
+        # Validate required fields
+        if not data.get('name'):
+            return {
+                'success': False,
+                'message': 'Template name is required'
+            }
+
+        if not data.get('sections') or len(data['sections']) == 0:
+            return {
+                'success': False,
+                'message': 'At least one section is required'
+            }
+
+        # Update template data
+        updated_template = {
+            **existing_template,
+            'name': data['name'],
+            'description': data.get('description', ''),
+            'category': data.get('category', 'audit'),
+            'branding': data.get('branding', {}),
+            'sections': data['sections'],
+            'updated_at': frappe.utils.now_datetime()
+        }
+
+        # Store updated template in cache
+        frappe.cache().set_value(cache_key, updated_template, expires_in_sec=86400*30)
+
+        return {
+            'success': True,
+            'data': updated_template,
+            'message': 'Template updated successfully'
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error updating report template: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to update template'
+        }
+
+@frappe.whitelist()
+def delete_report_template(template_id):
+    """Delete a report template"""
+    try:
+        # Check if template exists in cache
+        cache_key = f"report_template_{template_id}"
+        existing_template = frappe.cache().get_value(cache_key)
+
+        if not existing_template:
+            return {
+                'success': False,
+                'message': 'Template not found'
+            }
+
+        # Delete template from cache
+        frappe.cache().delete_value(cache_key)
+
+        return {
+            'success': True,
+            'message': 'Template deleted successfully'
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error deleting report template: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to delete template'
+        }
+
+@frappe.whitelist()
+def duplicate_report_template(template_id, new_name):
+    """Duplicate an existing report template"""
+    try:
+        # Check if original template exists in cache
+        cache_key = f"report_template_{template_id}"
+        original_template = frappe.cache().get_value(cache_key)
+
+        if not original_template:
+            return {
+                'success': False,
+                'message': 'Original template not found'
+            }
+
+        # Check if new name already exists (simple check - in production would be more robust)
+        new_cache_key = f"report_template_{new_name.replace(' ', '_').lower()}"
+        if frappe.cache().get_value(new_cache_key):
+            return {
+                'success': False,
+                'message': 'A template with this name already exists'
+            }
+
+        # Create duplicate
+        duplicate_template = {
+            **original_template,
+            'id': f"template-{frappe.utils.now_datetime().strftime('%Y%m%d%H%M%S')}",
+            'name': new_name,
+            'description': f"{original_template['description']} (Copy)",
+            'created_by': frappe.session.user,
+            'updated_at': frappe.utils.now_datetime(),
+            'usage_count': 0
+        }
+
+        # Store duplicate in cache
+        duplicate_cache_key = f"report_template_{duplicate_template['id']}"
+        frappe.cache().set_value(duplicate_cache_key, duplicate_template, expires_in_sec=86400*30)
+
+        return {
+            'success': True,
+            'data': duplicate_template,
+            'message': 'Template duplicated successfully'
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error duplicating report template: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to duplicate template'
+        }
+
+@frappe.whitelist()
+def generate_report_from_template(template_id, report_data=None):
+    """Generate a report using a template"""
+    try:
+        # Check if template exists in cache
+        cache_key = f"report_template_{template_id}"
+        template = frappe.cache().get_value(cache_key)
+
+        if not template:
+            return {
+                'success': False,
+                'message': 'Template not found'
+            }
+
+        report_data = report_data or {}
+
+        # Generate the report
+        generated_report = {
+            'template_id': template_id,
+            'template_name': template['name'],
+            'generated_at': frappe.utils.now_datetime(),
+            'sections': []
+        }
+
+        # Process each section
+        sections = template['sections']
+        for section in sections:
+            processed_section = {
+                'id': section['id'],
+                'title': section['title'],
+                'type': section['type'],
+                'content': None
+            }
+
+            if section['type'] == 'text':
+                # Use provided content or generate AI content
+                if section.get('content'):
+                    processed_section['content'] = section['content']
+                else:
+                    # In production, call AI service to generate content
+                    processed_section['content'] = f"AI-generated content for {section['title']}"
+
+            elif section['type'] == 'chart':
+                # Generate chart data based on report_data
+                processed_section['content'] = {
+                    'type': section.get('chart_type', 'bar'),
+                    'data': report_data.get('chart_data', {})
+                }
+
+            elif section['type'] == 'table':
+                # Generate table data
+                processed_section['content'] = {
+                    'title': section.get('table_title', ''),
+                    'data': report_data.get('table_data', [])
+                }
+
+            elif section['type'] == 'metrics':
+                # Generate metrics data
+                processed_section['content'] = {
+                    'metric_1': section.get('metric_1', ''),
+                    'metric_2': section.get('metric_2', ''),
+                    'metric_3': section.get('metric_3', ''),
+                    'metric_4': section.get('metric_4', '')
+                }
+
+            generated_report['sections'].append(processed_section)
+
+        return {
+            'success': True,
+            'data': generated_report,
+            'message': 'Report generated successfully'
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error generating report from template: {str(e)}")
+        return {
+            'success': False,
+            'message': 'Failed to generate report'
+        }

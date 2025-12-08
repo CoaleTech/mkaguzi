@@ -1,0 +1,117 @@
+{
+ "creation": "2025-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "version_details_section",
+  "version_id",
+  "version_number",
+  "page_type",
+  "document_id",
+  "column_break_1",
+  "created_by",
+  "changes_summary",
+  "content_section",
+  "context_snapshot"
+ ],
+ "fields": [
+  {
+   "fieldname": "version_details_section",
+   "fieldtype": "Section Break",
+   "label": "Version Details"
+  },
+  {
+   "fieldname": "version_id",
+   "fieldtype": "Data",
+   "label": "Version ID",
+   "unique": 1,
+   "reqd": 1,
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "version_number",
+   "fieldtype": "Int",
+   "label": "Version Number",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "page_type",
+   "fieldtype": "Data",
+   "label": "Page Type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "document_id",
+   "fieldtype": "Data",
+   "label": "Document ID"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "changes_summary",
+   "fieldtype": "Text",
+   "label": "Changes Summary"
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "context_snapshot",
+   "fieldtype": "Long Text",
+   "label": "Context Snapshot (JSON)",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2025-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "AI",
+ "name": "AI Context Version",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Auditor"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Audit Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

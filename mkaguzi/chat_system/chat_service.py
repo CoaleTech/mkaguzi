@@ -55,13 +55,67 @@ class ChatService:
 		"""Load chat settings."""
 		self.settings = frappe.get_single("Mkaguzi Chat Settings")
 	
-	def get_ai_response(
+	def get_ai_response_with_prompt(
 		self,
 		user_message: str,
-		user_message_id: Optional[str] = None,
-		include_history: bool = True,
+		system_prompt: str = None,
+		include_history: bool = False,
 		max_history_messages: int = 10
 	) -> dict:
+		"""
+		Get an AI response with optional custom system prompt.
+		
+		Args:
+			user_message: The user's message
+			system_prompt: Optional custom system prompt to override room default
+			include_history: Whether to include conversation history
+			max_history_messages: Max history messages to include
+		
+		Returns:
+			Dict with response content and metadata
+		"""
+		if not self.settings.enable_ai_chat:
+			return {"error": "AI chat is not enabled"}
+		
+		if not self.room.is_ai_enabled:
+			return {"error": "AI is not enabled for this room"}
+		
+		start_time = time.time()
+		
+		# Build messages for the AI with custom system prompt
+		messages = self._build_messages_with_prompt(
+			user_message,
+			system_prompt,
+			include_history,
+			max_history_messages
+		)
+		
+		# Get AI response
+		client = OpenRouterClient()
+		model = self.room.get_ai_model()
+		
+		try:
+			response = client.chat_completion(
+				messages=messages,
+				model_override=model
+			)
+			
+			response_time = int((time.time() - start_time) * 1000)
+			
+			return {
+				"response": response.content,
+				"model": response.model,
+				"tokens_used": response.tokens_used,
+				"response_time_ms": response_time,
+				"success": True
+			}
+			
+		except Exception as e:
+			frappe.log_error(f"AI Response Error: {str(e)}", "Chat Service")
+			return {
+				"error": f"Failed to get AI response: {str(e)}",
+				"success": False
+			}
 		"""
 		Get an AI response to a user message.
 		
@@ -159,6 +213,43 @@ class ChatService:
 		
 		# Add conversation history
 		if include_history:
+			history = self._get_conversation_history(max_history_messages)
+			messages.extend(history)
+		
+		# Add current user message
+		messages.append(ChatMessage(role="user", content=user_message))
+		
+		return messages
+	
+	def _build_messages_with_prompt(
+		self,
+		user_message: str,
+		system_prompt: str = None,
+		include_history: bool = False,
+		max_history_messages: int = 10
+	) -> list[ChatMessage]:
+		"""Build the message list for the AI with optional custom system prompt."""
+		messages = []
+		
+		# Use custom system prompt or default room prompt
+		if system_prompt:
+			final_system_prompt = system_prompt
+		else:
+			final_system_prompt = self.room.get_system_prompt()
+		
+		# Add RAG context if enabled and no custom system prompt (to avoid conflicts)
+		if self.settings.enable_rag and not system_prompt:
+			retriever = get_retriever()
+			contexts = retriever.retrieve_for_room(user_message, self.room_name)
+			
+			if contexts:
+				context_text = retriever.format_context_for_prompt(contexts)
+				final_system_prompt += f"\n\n{context_text}"
+		
+		messages.append(ChatMessage(role="system", content=final_system_prompt))
+		
+		# Add conversation history (only if requested and no custom system prompt)
+		if include_history and not system_prompt:
 			history = self._get_conversation_history(max_history_messages)
 			messages.extend(history)
 		
@@ -319,7 +410,7 @@ def send_chat_message(
 
 
 @frappe.whitelist()
-def get_ai_chat_response(room: str, message: str) -> dict:
+def get_ai_chat_response(room: str, message: str, system_prompt: str = None) -> dict:
 	"""
 	Get an AI response without sending a user message first.
 	
@@ -328,11 +419,16 @@ def get_ai_chat_response(room: str, message: str) -> dict:
 	Args:
 		room: Room name
 		message: The question/message for the AI
+		system_prompt: Optional custom system prompt to override room default
 	
 	Returns:
 		Dict with AI response details
 	"""
-	# Verify user has access
+	# Special handling for AI specialist - bypass room verification
+	if room == "ai-specialist":
+		return get_ai_response_with_prompt(room, message, system_prompt)
+	
+	# Verify user has access for regular rooms
 	room_doc = frappe.get_doc("Mkaguzi Chat Room", room)
 	if not room_doc.is_participant():
 		frappe.throw(_("You are not a participant in this chat room"))
@@ -340,4 +436,82 @@ def get_ai_chat_response(room: str, message: str) -> dict:
 	if not room_doc.is_ai_enabled:
 		frappe.throw(_("AI is not enabled for this room"))
 	
-	return get_ai_response(room, message)
+	return get_ai_response_with_prompt(room, message, system_prompt)
+
+
+def get_ai_response_with_prompt(room_name: str, user_message: str, system_prompt: str = None) -> dict:
+	"""
+	Get an AI response with optional custom system prompt.
+	
+	Args:
+		room_name: Name of the chat room
+		user_message: The user's message
+		system_prompt: Optional custom system prompt
+	
+	Returns:
+		Dict with response details
+	"""
+	# Special handling for AI specialist
+	if room_name == "ai-specialist":
+		return get_ai_specialist_response(user_message, system_prompt)
+	
+	service = ChatService(room_name)
+	return service.get_ai_response_with_prompt(user_message, system_prompt)
+
+
+def get_ai_specialist_response(user_message: str, system_prompt: str = None) -> dict:
+	"""
+	Get an AI response for AI specialist queries without requiring a room.
+	
+	Args:
+		user_message: The user's message
+		system_prompt: Custom system prompt for the specialist
+	
+	Returns:
+		Dict with response details
+	"""
+	from mkaguzi.ai.openrouter_client import OpenRouterClient
+	
+	# Check if AI chat is enabled globally
+	settings = frappe.get_single("Mkaguzi Chat Settings")
+	if not settings.enable_ai_chat:
+		return {"error": "AI chat is not enabled", "success": False}
+	
+	start_time = time.time()
+	
+	# Build messages
+	messages = []
+	
+	# Use provided system prompt or default
+	if system_prompt:
+		messages.append(ChatMessage(role="system", content=system_prompt))
+	else:
+		messages.append(ChatMessage(role="system", content="You are an AI assistant specializing in internal audit and compliance. Provide helpful, accurate responses."))
+	
+	messages.append(ChatMessage(role="user", content=user_message))
+	
+	# Get AI response
+	client = OpenRouterClient()
+	
+	try:
+		response = client.chat_completion(
+			messages=messages,
+			model_override=settings.default_model or "meta-llama/llama-3.1-8b-instruct:free"
+		)
+		
+		response_time = int((time.time() - start_time) * 1000)
+		
+		return {
+			"response": response.content,
+			"model": response.model,
+			"tokens_used": response.tokens_used,
+			"response_time_ms": response_time,
+			"success": True
+		}
+		
+	except Exception as e:
+		frappe.log_error(f"AI Specialist Response Error: {str(e)}", "Chat Service")
+		return {
+			"error": f"Failed to get AI response: {str(e)}",
+			"success": False
+		}

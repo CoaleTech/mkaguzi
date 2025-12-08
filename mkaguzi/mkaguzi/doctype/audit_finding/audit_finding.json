@@ -1,0 +1,613 @@
+{
+ "actions": [],
+ "autoname": "field:finding_id",
+ "creation": "2025-12-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "finding_id",
+  "finding_title",
+  "engagement_reference",
+  "working_paper_reference",
+  "test_execution_reference",
+  "column_break_6",
+  "finding_category",
+  "risk_area",
+  "risk_category",
+  "risk_rating",
+  "risk_score",
+  "finding_details_section",
+  "condition",
+  "criteria",
+  "cause",
+  "effect",
+  "financial_impact",
+  "financial_impact_type",
+  "affected_period",
+  "affected_locations",
+  "evidence_section",
+  "evidence",
+  "sample_size",
+  "exceptions_found",
+  "exception_rate",
+  "recommendation_section",
+  "recommendation",
+  "management_response_section",
+  "management_agrees",
+  "management_comments",
+  "response_date",
+  "responded_by",
+  "corrective_action_plan_section",
+  "action_plan_description",
+  "responsible_person",
+  "responsible_department",
+  "target_completion_date",
+  "estimated_cost",
+  "resources_required",
+  "milestones",
+  "finding_status",
+  "status_history",
+  "follow_up_section",
+  "follow_up_required",
+  "follow_up_frequency",
+  "next_follow_up_date",
+  "follow_up_history",
+  "overdue_days",
+  "escalation_required",
+  "escalation_level",
+  "verification_section",
+  "verification_required",
+  "verification_date",
+  "verified_by",
+  "verification_method",
+  "verification_results",
+  "verification_status",
+  "verification_evidence",
+  "closure_information_section",
+  "closure_date",
+  "closed_by",
+  "closure_reason",
+  "closure_notes",
+  "approval_required_for_closure",
+  "closure_approved_by",
+  "closure_approval_date",
+  "reporting_section",
+  "include_in_report",
+  "reported_to_management",
+  "reported_to_audit_committee",
+  "reported_to_board",
+  "report_reference",
+  "related_findings_section",
+  "related_findings",
+  "repeat_finding",
+  "previous_finding_reference",
+  "previous_finding_date",
+  "repeat_count",
+  "attachments_section",
+  "attachments",
+  "notes_section",
+  "notes",
+  "audit_trail_section",
+  "created_by",
+  "created_on",
+  "last_modified"
+ ],
+ "fields": [
+  {
+   "fieldname": "finding_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Finding ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "finding_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Finding Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "engagement_reference",
+   "fieldtype": "Link",
+   "label": "Audit Engagement",
+   "options": "Audit Engagement",
+   "reqd": 1
+  },
+  {
+   "fieldname": "working_paper_reference",
+   "fieldtype": "Link",
+   "label": "Working Paper",
+   "options": "Working Paper"
+  },
+  {
+   "fieldname": "test_execution_reference",
+   "fieldtype": "Link",
+   "label": "Test Execution",
+   "options": "Test Execution"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "finding_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Finding Category",
+   "options": "Control Deficiency\nNon-Compliance\nInefficiency\nError\nFraud Indicator\nBest Practice Opportunity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_area",
+   "fieldtype": "Link",
+   "label": "Risk Area",
+   "options": "Audit Universe",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_category",
+   "fieldtype": "Select",
+   "label": "Risk Category",
+   "options": "Financial\nOperational\nCompliance\nIT\nReputational\nStrategic\nLegal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_rating",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_score",
+   "fieldtype": "Int",
+   "label": "Risk Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "finding_details_section",
+   "fieldtype": "Section Break",
+   "label": "Finding Details (5Cs)"
+  },
+  {
+   "fieldname": "condition",
+   "fieldtype": "Text Editor",
+   "label": "Condition (What was found?)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "criteria",
+   "fieldtype": "Text Editor",
+   "label": "Criteria (What should be?)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cause",
+   "fieldtype": "Text Editor",
+   "label": "Cause (Why did it happen?)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "effect",
+   "fieldtype": "Text Editor",
+   "label": "Effect (Impact/Consequences)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "financial_impact",
+   "fieldtype": "Currency",
+   "label": "Financial Impact"
+  },
+  {
+   "fieldname": "financial_impact_type",
+   "fieldtype": "Select",
+   "label": "Financial Impact Type",
+   "options": "Actual Loss\nPotential Loss\nRevenue Leakage\nInefficiency Cost\nOpportunity Cost"
+  },
+  {
+   "fieldname": "affected_period",
+   "fieldtype": "Data",
+   "label": "Affected Period"
+  },
+  {
+   "fieldname": "affected_locations",
+   "fieldtype": "Table",
+   "label": "Affected Locations",
+   "options": "Finding Affected Location"
+  },
+  {
+   "fieldname": "evidence_section",
+   "fieldtype": "Section Break",
+   "label": "Evidence & Documentation"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Table",
+   "label": "Evidence",
+   "options": "Finding Evidence",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sample_size",
+   "fieldtype": "Int",
+   "label": "Sample Size"
+  },
+  {
+   "fieldname": "exceptions_found",
+   "fieldtype": "Int",
+   "label": "Exceptions Found"
+  },
+  {
+   "fieldname": "exception_rate",
+   "fieldtype": "Percent",
+   "label": "Exception Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "recommendation_section",
+   "fieldtype": "Section Break",
+   "label": "Recommendation"
+  },
+  {
+   "fieldname": "recommendation",
+   "fieldtype": "Text Editor",
+   "label": "Auditor Recommendation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "management_response_section",
+   "fieldtype": "Section Break",
+   "label": "Management Response"
+  },
+  {
+   "fieldname": "management_agrees",
+   "fieldtype": "Select",
+   "label": "Management Agrees",
+   "options": "\nAgree\nPartially Agree\nDisagree"
+  },
+  {
+   "fieldname": "management_comments",
+   "fieldtype": "Text Editor",
+   "label": "Management Comments"
+  },
+  {
+   "fieldname": "response_date",
+   "fieldtype": "Date",
+   "label": "Response Date"
+  },
+  {
+   "fieldname": "responded_by",
+   "fieldtype": "Link",
+   "label": "Responded By",
+   "options": "Employee Master"
+  },
+  {
+   "fieldname": "corrective_action_plan_section",
+   "fieldtype": "Section Break",
+   "label": "Corrective Action Plan"
+  },
+  {
+   "fieldname": "action_plan_description",
+   "fieldtype": "Text Editor",
+   "label": "Action Plan Description"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "Employee Master"
+  },
+  {
+   "fieldname": "responsible_department",
+   "fieldtype": "Link",
+   "label": "Responsible Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion Date"
+  },
+  {
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost"
+  },
+  {
+   "fieldname": "resources_required",
+   "fieldtype": "Text",
+   "label": "Resources Required"
+  },
+  {
+   "fieldname": "milestones",
+   "fieldtype": "Table",
+   "label": "Action Milestones",
+   "options": "Finding Action Milestone"
+  },
+  {
+   "fieldname": "finding_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Finding Status",
+   "options": "Open\nAction in Progress\nPending Verification\nClosed\nAccepted as Risk\nManagement Override",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status_history",
+   "fieldtype": "Table",
+   "label": "Status History",
+   "options": "Finding Status Change"
+  },
+  {
+   "fieldname": "follow_up_section",
+   "fieldtype": "Section Break",
+   "label": "Follow-up & Monitoring"
+  },
+  {
+   "fieldname": "follow_up_required",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Follow-up Required"
+  },
+  {
+   "fieldname": "follow_up_frequency",
+   "fieldtype": "Select",
+   "label": "Follow-up Frequency",
+   "options": "Monthly\nQuarterly\nSemi-Annual\nAnnual\nOne-time"
+  },
+  {
+   "fieldname": "next_follow_up_date",
+   "fieldtype": "Date",
+   "label": "Next Follow-up Date"
+  },
+  {
+   "fieldname": "follow_up_history",
+   "fieldtype": "Table",
+   "label": "Follow-up History",
+   "options": "Finding Follow-up Activity"
+  },
+  {
+   "fieldname": "overdue_days",
+   "fieldtype": "Int",
+   "label": "Overdue Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "escalation_required",
+   "fieldtype": "Check",
+   "label": "Escalation Required",
+   "read_only": 1
+  },
+  {
+   "fieldname": "escalation_level",
+   "fieldtype": "Select",
+   "label": "Escalation Level",
+   "options": "Manager\nCAE\nAudit Committee\nBoard"
+  },
+  {
+   "fieldname": "verification_section",
+   "fieldtype": "Section Break",
+   "label": "Verification & Closure"
+  },
+  {
+   "fieldname": "verification_required",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Verification Required"
+  },
+  {
+   "fieldname": "verification_date",
+   "fieldtype": "Date",
+   "label": "Verification Date"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "Employee Master"
+  },
+  {
+   "fieldname": "verification_method",
+   "fieldtype": "Select",
+   "label": "Verification Method",
+   "options": "Document Review\nRe-testing\nObservation\nInterview\nData Analysis"
+  },
+  {
+   "fieldname": "verification_results",
+   "fieldtype": "Text Editor",
+   "label": "Verification Results"
+  },
+  {
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "label": "Verification Status",
+   "options": "Pending\nVerified-Closed\nVerified-Partially Implemented\nNot Implemented"
+  },
+  {
+   "fieldname": "verification_evidence",
+   "fieldtype": "Attach",
+   "label": "Verification Evidence"
+  },
+  {
+   "fieldname": "closure_information_section",
+   "fieldtype": "Section Break",
+   "label": "Closure Information"
+  },
+  {
+   "fieldname": "closure_date",
+   "fieldtype": "Date",
+   "label": "Closure Date"
+  },
+  {
+   "fieldname": "closed_by",
+   "fieldtype": "Link",
+   "label": "Closed By",
+   "options": "Employee Master"
+  },
+  {
+   "fieldname": "closure_reason",
+   "fieldtype": "Select",
+   "label": "Closure Reason",
+   "options": "Fully Implemented\nAccepted as Risk\nNo Longer Applicable\nManagement Override"
+  },
+  {
+   "fieldname": "closure_notes",
+   "fieldtype": "Text Editor",
+   "label": "Closure Notes"
+  },
+  {
+   "fieldname": "approval_required_for_closure",
+   "fieldtype": "Check",
+   "label": "Approval Required for Closure"
+  },
+  {
+   "fieldname": "closure_approved_by",
+   "fieldtype": "Link",
+   "label": "Closure Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "closure_approval_date",
+   "fieldtype": "Date",
+   "label": "Closure Approval Date"
+  },
+  {
+   "fieldname": "reporting_section",
+   "fieldtype": "Section Break",
+   "label": "Reporting & Communication"
+  },
+  {
+   "fieldname": "include_in_report",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Include in Report"
+  },
+  {
+   "fieldname": "reported_to_management",
+   "fieldtype": "Check",
+   "label": "Reported to Management"
+  },
+  {
+   "fieldname": "reported_to_audit_committee",
+   "fieldtype": "Check",
+   "label": "Reported to Audit Committee"
+  },
+  {
+   "fieldname": "reported_to_board",
+   "fieldtype": "Check",
+   "label": "Reported to Board"
+  },
+  {
+   "fieldname": "report_reference",
+   "fieldtype": "Link",
+   "label": "Report Reference",
+   "options": "Audit Report"
+  },
+  {
+   "fieldname": "related_findings_section",
+   "fieldtype": "Section Break",
+   "label": "Related Findings"
+  },
+  {
+   "fieldname": "related_findings",
+   "fieldtype": "Table",
+   "label": "Related Findings",
+   "options": "Finding Related Finding"
+  },
+  {
+   "fieldname": "repeat_finding",
+   "fieldtype": "Check",
+   "label": "Repeat Finding"
+  },
+  {
+   "fieldname": "previous_finding_reference",
+   "fieldtype": "Link",
+   "label": "Previous Finding Reference",
+   "options": "Audit Finding"
+  },
+  {
+   "fieldname": "previous_finding_date",
+   "fieldtype": "Date",
+   "label": "Previous Finding Date"
+  },
+  {
+   "fieldname": "repeat_count",
+   "fieldtype": "Int",
+   "label": "Repeat Count"
+  },
+  {
+   "fieldname": "attachments_section",
+   "fieldtype": "Section Break",
+   "label": "Attachments & Supporting Documents"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "audit_trail_section",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_modified",
+   "fieldtype": "Datetime",
+   "label": "Last Modified",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Finding",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "finding_title"
+}

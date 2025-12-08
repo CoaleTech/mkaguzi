@@ -125,14 +125,47 @@
             </Button>
           </div>
 
-          <!-- Permission Restricted Message -->
-          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <BarChart3Icon class="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <h3 class="text-lg font-medium text-yellow-800 mb-2">Charts Feature Restricted</h3>
-            <p class="text-yellow-700">
-              The chart library is currently not available due to permission restrictions.
-              Please contact your administrator for access to advanced analytics features.
-            </p>
+          <!-- Charts Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Findings Status Chart -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <FindingsStatusChart
+                :findings="auditStore.findings"
+                :loading="loading"
+                @refresh="refreshData"
+                @export="exportChart('findings-status')"
+              />
+            </div>
+
+            <!-- Findings Risk Chart -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <FindingsRiskChart
+                :findings="auditStore.findings"
+                :loading="loading"
+                @refresh="refreshData"
+                @export="exportChart('findings-risk')"
+              />
+            </div>
+
+            <!-- Corrective Actions Chart -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <CorrectiveActionsChart
+                :corrective-actions="auditStore.correctiveActions"
+                :loading="loading"
+                @refresh="refreshData"
+                @export="exportChart('corrective-actions')"
+              />
+            </div>
+
+            <!-- Findings Timeline Chart -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <FindingsTimelineChart
+                :findings="auditStore.findings"
+                :loading="loading"
+                @refresh="refreshData"
+                @export="exportChart('findings-timeline')"
+              />
+            </div>
           </div>
         </div>
 
@@ -170,6 +203,7 @@
 
 <script setup>
 import DataAnalyticsStats from "@/components/data/DataAnalyticsStats.vue"
+import { useAuditStore } from "@/stores/audit"
 import { useDataStore } from "@/stores/data"
 import { Badge, Button } from "frappe-ui"
 import {
@@ -184,8 +218,15 @@ import {
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 
+// Lazy loaded chart components
+const CorrectiveActionsChart = () => import("@/components/Charts/CorrectiveActionsChart.vue")
+const FindingsRiskChart = () => import("@/components/Charts/FindingsRiskChart.vue")
+const FindingsStatusChart = () => import("@/components/Charts/FindingsStatusChart.vue")
+const FindingsTimelineChart = () => import("@/components/Charts/FindingsTimelineChart.vue")
+
 const router = useRouter()
 const dataStore = useDataStore()
+const auditStore = useAuditStore()
 
 // Reactive state
 const activeTab = ref("dashboards")
@@ -197,6 +238,8 @@ const fetchData = async () => {
 	try {
 		await Promise.all([
 			dataStore.fetchDashboards(),
+			auditStore.fetchFindings(),
+			auditStore.fetchCorrectiveActions(),
 			// Note: Dashboard Charts and Data Sources are restricted doctypes
 			// dataStore.fetchDashboardCharts(),
 			// dataStore.fetchDashboardDataSources(),
@@ -206,6 +249,16 @@ const fetchData = async () => {
 	} finally {
 		loading.value = false
 	}
+}
+
+const refreshData = async () => {
+	await fetchData()
+}
+
+const exportChart = (chartType) => {
+	// In a real implementation, this would export the chart as PNG/PDF
+	console.log(`Exporting ${chartType} chart`)
+	// You could use html2canvas or similar library to export charts
 }
 
 const getDashboardTypeVariant = (type) => {

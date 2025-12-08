@@ -36,7 +36,7 @@
   "include_executive_summary",
   "include_background",
   "include_audit_scope",
-  "include_audit_objectives",
+  "include_appendices",
   "column_break_33",
   "include_findings_summary",
   "include_detailed_findings",
@@ -51,6 +51,54 @@
   "highlight_critical_findings",
   "highlight_high_findings",
   "highlight_medium_findings",
+  "section_break_specialized",
+  "audit_category",
+  "industry_specific",
+  "regulatory_framework",
+  "column_break_specialized_1",
+  "risk_assessment_matrix",
+  "control_testing_methodology",
+  "sampling_method",
+  "section_break_compliance",
+  "compliance_standards",
+  "certification_requirements",
+  "regulatory_deadlines",
+  "column_break_compliance_1",
+  "audit_evidence_requirements",
+  "documentation_standards",
+  "reporting_frequency",
+  "section_break_it_security",
+  "security_framework",
+  "vulnerability_scanning",
+  "penetration_testing",
+  "column_break_it_1",
+  "access_control_review",
+  "data_protection_measures",
+  "incident_response_plan",
+  "section_break_financial",
+  "financial_standards",
+  "accounting_framework",
+  "revenue_recognition",
+  "column_break_financial_1",
+  "asset_valuation_methods",
+  "liability_assessment",
+  "financial_ratios_analysis",
+  "section_break_operational",
+  "process_efficiency_metrics",
+  "control_effectiveness",
+  "performance_indicators",
+  "column_break_operational_1",
+  "benchmarking_criteria",
+  "best_practice_comparison",
+  "improvement_recommendations",
+  "section_break_fraud",
+  "fraud_risk_indicators",
+  "investigation_methodology",
+  "evidence_collection",
+  "column_break_fraud_1",
+  "whistleblower_protection",
+  "legal_compliance_review",
+  "recovery_recommendations",
   "section_break_48",
   "footer_section",
   "footer_text",
@@ -86,7 +134,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Template Type",
-   "options": "Full Audit Report\nExecutive Summary\nManagement Report\nBoard Report\nCompliance Report",
+   "options": "Full Audit Report\nExecutive Summary\nManagement Report\nBoard Report\nCompliance Report\nRisk Assessment Report\nIT Security Audit\nFinancial Audit\nOperational Audit\nCompliance Monitoring\nFraud Investigation\nSpecial Projects Audit\nFollow-up Audit\nAgreed-Upon Procedures\nPerformance Audit",
    "reqd": 1
   },
   {
@@ -331,6 +379,291 @@
    "fieldtype": "Color",
    "default": "#FFFF00",
    "label": "Medium Findings Highlight"
+  },
+  {
+   "fieldname": "section_break_specialized",
+   "fieldtype": "Section Break",
+   "label": "Specialized Audit Configuration"
+  },
+  {
+   "fieldname": "audit_category",
+   "fieldtype": "Select",
+   "label": "Audit Category",
+   "options": "Financial\nOperational\nCompliance\nIT Security\nFraud\nRisk Assessment\nPerformance\nSpecial Projects",
+   "depends_on": "eval:in_list(['Risk Assessment Report', 'IT Security Audit', 'Financial Audit', 'Operational Audit', 'Compliance Monitoring', 'Fraud Investigation', 'Special Projects Audit', 'Follow-up Audit', 'Agreed-Upon Procedures', 'Performance Audit'], doc.template_type)"
+  },
+  {
+   "fieldname": "industry_specific",
+   "fieldtype": "Check",
+   "label": "Industry-Specific Template",
+   "depends_on": "eval:doc.audit_category"
+  },
+  {
+   "fieldname": "regulatory_framework",
+   "fieldtype": "Select",
+   "label": "Regulatory Framework",
+   "options": "SOX\nCOSO\nCOBIT\nISO 27001\nNIST\nGDPR\nHIPAA\nPCI DSS\nOther",
+   "depends_on": "eval:doc.audit_category == 'Compliance' || doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "column_break_specialized_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "risk_assessment_matrix",
+   "fieldtype": "Check",
+   "label": "Include Risk Assessment Matrix",
+   "depends_on": "eval:doc.audit_category == 'Risk Assessment'"
+  },
+  {
+   "fieldname": "control_testing_methodology",
+   "fieldtype": "Select",
+   "label": "Control Testing Methodology",
+   "options": "Substantive Testing\nCompliance Testing\nCombined Testing\nRisk-Based Testing",
+   "depends_on": "eval:doc.audit_category == 'Financial' || doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "sampling_method",
+   "fieldtype": "Select",
+   "label": "Sampling Method",
+   "options": "Statistical Sampling\nNon-Statistical Sampling\nJudgmental Sampling\nHaphazard Sampling",
+   "depends_on": "eval:doc.audit_category == 'Financial' || doc.audit_category == 'Operational' || doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "section_break_compliance",
+   "fieldtype": "Section Break",
+   "label": "Compliance-Specific Configuration",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "compliance_standards",
+   "fieldtype": "Small Text",
+   "label": "Compliance Standards",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "certification_requirements",
+   "fieldtype": "Check",
+   "label": "Include Certification Requirements",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "regulatory_deadlines",
+   "fieldtype": "Check",
+   "label": "Include Regulatory Deadlines",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "column_break_compliance_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit_evidence_requirements",
+   "fieldtype": "Small Text",
+   "label": "Audit Evidence Requirements",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "documentation_standards",
+   "fieldtype": "Select",
+   "label": "Documentation Standards",
+   "options": "Standard\nDetailed\nExecutive Level\nTechnical",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "reporting_frequency",
+   "fieldtype": "Select",
+   "label": "Reporting Frequency",
+   "options": "Annual\nSemi-Annual\nQuarterly\nMonthly\nAs Needed",
+   "depends_on": "eval:doc.audit_category == 'Compliance'"
+  },
+  {
+   "fieldname": "section_break_it_security",
+   "fieldtype": "Section Break",
+   "label": "IT Security Configuration",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "security_framework",
+   "fieldtype": "Select",
+   "label": "Security Framework",
+   "options": "ISO 27001\nNIST CSF\nCIS Controls\nCOBIT\nOther",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "vulnerability_scanning",
+   "fieldtype": "Check",
+   "label": "Include Vulnerability Scanning Results",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "penetration_testing",
+   "fieldtype": "Check",
+   "label": "Include Penetration Testing Results",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "column_break_it_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "access_control_review",
+   "fieldtype": "Check",
+   "label": "Include Access Control Review",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "data_protection_measures",
+   "fieldtype": "Check",
+   "label": "Include Data Protection Measures",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "incident_response_plan",
+   "fieldtype": "Check",
+   "label": "Include Incident Response Plan Review",
+   "depends_on": "eval:doc.audit_category == 'IT Security'"
+  },
+  {
+   "fieldname": "section_break_financial",
+   "fieldtype": "Section Break",
+   "label": "Financial Audit Configuration",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "financial_standards",
+   "fieldtype": "Select",
+   "label": "Financial Standards",
+   "options": "GAAP\nIFRS\nLocal Standards\nOther",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "accounting_framework",
+   "fieldtype": "Select",
+   "label": "Accounting Framework",
+   "options": "Double Entry\nAccrual Basis\nCash Basis\nModified Cash Basis",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "revenue_recognition",
+   "fieldtype": "Check",
+   "label": "Include Revenue Recognition Review",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "column_break_financial_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "asset_valuation_methods",
+   "fieldtype": "Check",
+   "label": "Include Asset Valuation Methods",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "liability_assessment",
+   "fieldtype": "Check",
+   "label": "Include Liability Assessment",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "financial_ratios_analysis",
+   "fieldtype": "Check",
+   "label": "Include Financial Ratios Analysis",
+   "depends_on": "eval:doc.audit_category == 'Financial'"
+  },
+  {
+   "fieldname": "section_break_operational",
+   "fieldtype": "Section Break",
+   "label": "Operational Audit Configuration",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "process_efficiency_metrics",
+   "fieldtype": "Check",
+   "label": "Include Process Efficiency Metrics",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "control_effectiveness",
+   "fieldtype": "Check",
+   "label": "Include Control Effectiveness Assessment",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "performance_indicators",
+   "fieldtype": "Check",
+   "label": "Include Key Performance Indicators",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "column_break_operational_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "benchmarking_criteria",
+   "fieldtype": "Check",
+   "label": "Include Benchmarking Criteria",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "best_practice_comparison",
+   "fieldtype": "Check",
+   "label": "Include Best Practice Comparison",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "improvement_recommendations",
+   "fieldtype": "Check",
+   "label": "Include Process Improvement Recommendations",
+   "depends_on": "eval:doc.audit_category == 'Operational'"
+  },
+  {
+   "fieldname": "section_break_fraud",
+   "fieldtype": "Section Break",
+   "label": "Fraud Investigation Configuration",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "fraud_risk_indicators",
+   "fieldtype": "Check",
+   "label": "Include Fraud Risk Indicators",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "investigation_methodology",
+   "fieldtype": "Select",
+   "label": "Investigation Methodology",
+   "options": "Data Analytics\nInterview-Based\nDocument Review\nCombined Approach",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "evidence_collection",
+   "fieldtype": "Check",
+   "label": "Include Evidence Collection Procedures",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "column_break_fraud_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "whistleblower_protection",
+   "fieldtype": "Check",
+   "label": "Include Whistleblower Protection Measures",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "legal_compliance_review",
+   "fieldtype": "Check",
+   "label": "Include Legal Compliance Review",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
+  },
+  {
+   "fieldname": "recovery_recommendations",
+   "fieldtype": "Check",
+   "label": "Include Asset Recovery Recommendations",
+   "depends_on": "eval:doc.audit_category == 'Fraud'"
   },
   {
    "fieldname": "section_break_48",

@@ -8,6 +8,14 @@
           <p class="text-gray-600 mt-1">Reconcile VAT data between System, iTax, and TIMs device records</p>
         </div>
         <div class="flex gap-3">
+          <AskAIButton
+            contextType="vat-reconciliation-list"
+            pageComponent="VATReconciliation"
+            :contextData="getVATReconciliationListContext()"
+            variant="solid"
+            size="sm"
+            theme="purple"
+          />
           <Button 
             variant="solid" 
             size="sm" 
@@ -337,17 +345,18 @@
 <script setup>
 import { useVATReconciliationStore } from "@/stores/useVATReconciliationStore"
 import { Badge, Button } from "frappe-ui"
+import AskAIButton from "@/components/AskAIButton.vue"
 import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  FileText,
-  Plus,
-  RefreshCw,
-  TrendingUp,
-  X
+	AlertTriangle,
+	Calendar,
+	CheckCircle,
+	Clock,
+	DollarSign,
+	FileText,
+	Plus,
+	RefreshCw,
+	TrendingUp,
+	X,
 } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
@@ -362,164 +371,205 @@ const currentPage = ref(1)
 const pageSize = ref(20)
 
 const filters = ref({
-  month: "",
-  fiscal_year: "",
-  reconciliation_type: "",
-  status: ""
+	month: "",
+	fiscal_year: "",
+	reconciliation_type: "",
+	status: "",
 })
 
 const months = [
-  { value: "January", label: "January" },
-  { value: "February", label: "February" },
-  { value: "March", label: "March" },
-  { value: "April", label: "April" },
-  { value: "May", label: "May" },
-  { value: "June", label: "June" },
-  { value: "July", label: "July" },
-  { value: "August", label: "August" },
-  { value: "September", label: "September" },
-  { value: "October", label: "October" },
-  { value: "November", label: "November" },
-  { value: "December", label: "December" }
+	{ value: "January", label: "January" },
+	{ value: "February", label: "February" },
+	{ value: "March", label: "March" },
+	{ value: "April", label: "April" },
+	{ value: "May", label: "May" },
+	{ value: "June", label: "June" },
+	{ value: "July", label: "July" },
+	{ value: "August", label: "August" },
+	{ value: "September", label: "September" },
+	{ value: "October", label: "October" },
+	{ value: "November", label: "November" },
+	{ value: "December", label: "December" },
 ]
 
 // Generate fiscal years (current year and 5 previous years)
 const fiscalYears = computed(() => {
-  const currentYear = new Date().getFullYear()
-  return Array.from({ length: 6 }, (_, i) => `FY ${currentYear - i}`)
+	const currentYear = new Date().getFullYear()
+	return Array.from({ length: 6 }, (_, i) => `FY ${currentYear - i}`)
 })
 
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
 const stats = computed(() => {
-  const all = reconciliations.value
-  const total = totalCount.value || all.length
-  const pending = all.filter(r => ["Draft", "Data Uploaded", "In Progress"].includes(r.status)).length
-  const approved = all.filter(r => r.status === "Approved").length
-  const discrepancies = all.filter(r => (r.total_amount_discrepancies || 0) > 0).length
-  
-  // Calculate average match rate
-  const withMatchRate = all.filter(r => r.match_percentage !== null && r.match_percentage !== undefined)
-  const avgMatchRate = withMatchRate.length > 0 
-    ? Math.round(withMatchRate.reduce((sum, r) => sum + (r.match_percentage || 0), 0) / withMatchRate.length)
-    : 0
-  
-  const totalVariance = all.reduce((sum, r) => sum + (r.total_variance_amount || 0), 0)
+	const all = reconciliations.value
+	const total = totalCount.value || all.length
+	const pending = all.filter((r) =>
+		["Draft", "Data Uploaded", "In Progress"].includes(r.status),
+	).length
+	const approved = all.filter((r) => r.status === "Approved").length
+	const discrepancies = all.filter(
+		(r) => (r.total_amount_discrepancies || 0) > 0,
+	).length
 
-  return {
-    total,
-    pending,
-    approved,
-    discrepancies,
-    matchRate: avgMatchRate,
-    totalVariance
-  }
+	// Calculate average match rate
+	const withMatchRate = all.filter(
+		(r) => r.match_percentage !== null && r.match_percentage !== undefined,
+	)
+	const avgMatchRate =
+		withMatchRate.length > 0
+			? Math.round(
+					withMatchRate.reduce((sum, r) => sum + (r.match_percentage || 0), 0) /
+						withMatchRate.length,
+				)
+			: 0
+
+	const totalVariance = all.reduce(
+		(sum, r) => sum + (r.total_variance_amount || 0),
+		0,
+	)
+
+	return {
+		total,
+		pending,
+		approved,
+		discrepancies,
+		matchRate: avgMatchRate,
+		totalVariance,
+	}
 })
 
 onMounted(async () => {
-  await loadReconciliations()
+	await loadReconciliations()
 })
 
 async function loadReconciliations() {
-  loading.value = true
-  try {
-    const filterObj = {}
-    
-    if (filters.value.month) {
-      filterObj.reconciliation_month = filters.value.month
-    }
-    if (filters.value.fiscal_year) {
-      filterObj.fiscal_year = filters.value.fiscal_year
-    }
-    if (filters.value.reconciliation_type) {
-      filterObj.reconciliation_type = filters.value.reconciliation_type
-    }
-    if (filters.value.status) {
-      filterObj.status = filters.value.status
-    }
+	loading.value = true
+	try {
+		const filterObj = {}
 
-    await store.fetchReconciliations(filterObj, currentPage.value, pageSize.value)
-    reconciliations.value = store.reconciliations
-    totalCount.value = store.totalCount
-  } catch (error) {
-    console.error("Error loading reconciliations:", error)
-  } finally {
-    loading.value = false
-  }
+		if (filters.value.month) {
+			filterObj.reconciliation_month = filters.value.month
+		}
+		if (filters.value.fiscal_year) {
+			filterObj.fiscal_year = filters.value.fiscal_year
+		}
+		if (filters.value.reconciliation_type) {
+			filterObj.reconciliation_type = filters.value.reconciliation_type
+		}
+		if (filters.value.status) {
+			filterObj.status = filters.value.status
+		}
+
+		await store.fetchReconciliations(
+			filterObj,
+			currentPage.value,
+			pageSize.value,
+		)
+		reconciliations.value = store.reconciliations
+		totalCount.value = store.totalCount
+	} catch (error) {
+		console.error("Error loading reconciliations:", error)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function refreshData() {
-  currentPage.value = 1
-  await loadReconciliations()
+	currentPage.value = 1
+	await loadReconciliations()
 }
 
 function clearFilters() {
-  filters.value = {
-    month: "",
-    fiscal_year: "",
-    reconciliation_type: "",
-    status: ""
-  }
-  currentPage.value = 1
-  loadReconciliations()
+	filters.value = {
+		month: "",
+		fiscal_year: "",
+		reconciliation_type: "",
+		status: "",
+	}
+	currentPage.value = 1
+	loadReconciliations()
 }
 
 async function changePage(page) {
-  currentPage.value = page
-  await loadReconciliations()
+	currentPage.value = page
+	await loadReconciliations()
 }
 
 function createNewReconciliation() {
-  router.push("/compliance/vat-reconciliation/new")
+	router.push("/compliance/vat-reconciliation/new")
 }
 
 function viewReconciliation(name) {
-  router.push(`/compliance/vat-reconciliation/${name}`)
+	router.push(`/compliance/vat-reconciliation/${name}`)
 }
 
 function getTypeVariant(type) {
-  const variants = {
-    "system_vs_itax": "blue",
-    "system_vs_tims": "purple",
-    "itax_vs_tims": "orange"
-  }
-  return variants[type] || "gray"
+	const variants = {
+		system_vs_itax: "blue",
+		system_vs_tims: "purple",
+		itax_vs_tims: "orange",
+	}
+	return variants[type] || "gray"
 }
 
 function getStatusVariant(status) {
-  const variants = {
-    "Draft": "subtle",
-    "Data Uploaded": "yellow",
-    "Reconciled": "blue",
-    "Reviewed": "purple",
-    "Approved": "green"
-  }
-  return variants[status] || "gray"
+	const variants = {
+		Draft: "subtle",
+		"Data Uploaded": "yellow",
+		Reconciled: "blue",
+		Reviewed: "purple",
+		Approved: "green",
+	}
+	return variants[status] || "gray"
+}
+
+function getVATReconciliationListContext() {
+	return {
+		total_reconciliations: stats.value.total,
+		pending_reconciliations: stats.value.pending,
+		approved_reconciliations: stats.value.approved,
+		reconciliations_with_discrepancies: stats.value.discrepancies,
+		average_match_rate: stats.value.matchRate,
+		total_variance_amount: stats.value.totalVariance,
+		current_filters: filters.value,
+		reconciliation_summary: reconciliations.value.map(r => ({
+			name: r.name,
+			status: r.status,
+			reconciliation_month: r.reconciliation_month,
+			fiscal_year: r.fiscal_year,
+			match_percentage: r.match_percentage,
+			total_variance_amount: r.total_variance_amount,
+			total_matched: r.total_matched,
+			total_unmatched_source_a: r.total_unmatched_source_a,
+			total_unmatched_source_b: r.total_unmatched_source_b,
+			total_amount_discrepancies: r.total_amount_discrepancies
+		}))
+	}
 }
 
 function formatReconciliationType(type) {
-  const labels = {
-    "system_vs_itax": "System vs iTax",
-    "system_vs_tims": "System vs TIMs",
-    "itax_vs_tims": "iTax vs TIMs"
-  }
-  return labels[type] || type
+	const labels = {
+		system_vs_itax: "System vs iTax",
+		system_vs_tims: "System vs TIMs",
+		itax_vs_tims: "iTax vs TIMs",
+	}
+	return labels[type] || type
 }
 
 function formatDate(date) {
-  if (!date) return "-"
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  })
+	if (!date) return "-"
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    minimumFractionDigits: 2
-  }).format(amount || 0)
+	return new Intl.NumberFormat("en-KE", {
+		style: "currency",
+		currency: "KES",
+		minimumFractionDigits: 2,
+	}).format(amount || 0)
 }
 </script>

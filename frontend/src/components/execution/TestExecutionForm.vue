@@ -169,52 +169,13 @@
 
             <!-- Section 3: Execution Parameters -->
             <div v-show="currentSectionIndex === 2" class="space-y-4">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-medium text-gray-700">Parameters</h4>
-                <Button size="sm" @click="addParameter">
-                  <template #prefix><Plus class="h-4 w-4" /></template>
-                  Add Parameter
-                </Button>
-              </div>
-              <div class="border rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Parameter Name</th>
-                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Value</th>
-                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Type</th>
-                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Description</th>
-                      <th class="px-4 py-2 w-16"></th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="(param, idx) in formData.execution_parameters" :key="idx">
-                      <td class="px-4 py-2">
-                        <FormControl v-model="param.parameter_name" type="text" size="sm" />
-                      </td>
-                      <td class="px-4 py-2">
-                        <FormControl v-model="param.parameter_value" type="text" size="sm" />
-                      </td>
-                      <td class="px-4 py-2">
-                        <Select v-model="param.parameter_type" :options="paramTypeOptions" size="sm" />
-                      </td>
-                      <td class="px-4 py-2">
-                        <FormControl v-model="param.description" type="text" size="sm" />
-                      </td>
-                      <td class="px-4 py-2">
-                        <Button variant="ghost" size="sm" @click="removeParameter(idx)">
-                          <Trash2 class="h-4 w-4 text-red-500" />
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr v-if="!formData.execution_parameters?.length">
-                      <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                        No parameters defined. Click "Add Parameter" to configure test parameters.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <InlineChildTable
+                v-model="formData.execution_parameters"
+                title="Execution Parameters"
+                modalTitle="Parameter"
+                :columns="executionParametersColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 4: Results Summary -->
@@ -262,97 +223,25 @@
 
               <!-- Test Results Table -->
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Detailed Results</h4>
-                  <Button size="sm" variant="outline" @click="addTestResult">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Result
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden max-h-64 overflow-y-auto">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 sticky top-0">
-                      <tr>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Test Name</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Status</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Exceptions</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Message</th>
-                        <th class="px-3 py-2 w-12"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(result, idx) in formData.test_results" :key="idx">
-                        <td class="px-3 py-2">
-                          <FormControl v-model="result.test_name" type="text" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <Select v-model="result.status" :options="resultStatusOptions" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <FormControl v-model="result.exception_count" type="number" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <FormControl v-model="result.message" type="text" size="sm" />
-                        </td>
-                        <td class="px-3 py-2">
-                          <Button variant="ghost" size="sm" @click="removeTestResult(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.test_results?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No results yet. Results will appear after execution.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.test_results"
+                  title="Detailed Results"
+                  modalTitle="Test Result"
+                  :columns="testResultsColumns"
+                  :autoAddRow="false"
+                />
               </div>
             </div>
 
             <!-- Section 5: Execution Logs -->
             <div v-show="currentSectionIndex === 4" class="space-y-4">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-medium text-gray-700">Execution Logs</h4>
-                <Button size="sm" variant="outline" @click="addLogEntry">
-                  <template #prefix><Plus class="h-4 w-4" /></template>
-                  Add Log
-                </Button>
-              </div>
-              <div class="border rounded-lg overflow-hidden max-h-80 overflow-y-auto bg-gray-900">
-                <table class="min-w-full">
-                  <thead class="bg-gray-800 sticky top-0">
-                    <tr>
-                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-400 w-40">Timestamp</th>
-                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-400 w-24">Level</th>
-                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-400">Message</th>
-                      <th class="px-3 py-2 w-12"></th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-700">
-                    <tr v-for="(log, idx) in formData.execution_logs" :key="idx">
-                      <td class="px-3 py-2 text-xs text-gray-400 font-mono">
-                        {{ log.timestamp || new Date().toISOString() }}
-                      </td>
-                      <td class="px-3 py-2">
-                        <Badge :theme="getLogLevelTheme(log.level)">{{ log.level }}</Badge>
-                      </td>
-                      <td class="px-3 py-2 text-sm text-gray-300 font-mono">{{ log.message }}</td>
-                      <td class="px-3 py-2">
-                        <Button variant="ghost" size="sm" @click="removeLogEntry(idx)">
-                          <Trash2 class="h-4 w-4 text-red-400" />
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr v-if="!formData.execution_logs?.length">
-                      <td colspan="4" class="px-4 py-8 text-center text-gray-500 text-sm">
-                        No logs recorded yet.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <InlineChildTable
+                v-model="formData.execution_logs"
+                title="Execution Logs"
+                modalTitle="Log Entry"
+                :columns="executionLogsColumns"
+                :autoAddRow="false"
+              />
 
               <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Error Details</label>
@@ -537,6 +426,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import {
@@ -712,11 +602,94 @@ const paramTypeOptions = [
 	{ label: "Boolean", value: "Boolean" },
 ]
 
-const resultStatusOptions = [
-	{ label: "Pass", value: "Pass" },
-	{ label: "Fail", value: "Fail" },
-	{ label: "Warning", value: "Warning" },
-	{ label: "Skipped", value: "Skipped" },
+const logLevelOptions = [
+	{ label: "DEBUG", value: "DEBUG" },
+	{ label: "INFO", value: "INFO" },
+	{ label: "WARNING", value: "WARNING" },
+	{ label: "ERROR", value: "ERROR" },
+	{ label: "SUCCESS", value: "SUCCESS" },
+]
+
+// Column definitions for child tables
+const executionParametersColumns = [
+	{
+		key: "parameter_name",
+		label: "Parameter Name",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "parameter_value",
+		label: "Value",
+		fieldType: "text",
+		width: "120px",
+		required: true,
+	},
+	{
+		key: "parameter_type",
+		label: "Type",
+		fieldType: "select",
+		width: "100px",
+		options: paramTypeOptions,
+		required: true,
+	},
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+	},
+]
+
+const testResultsColumns = [
+	{
+		key: "test_name",
+		label: "Test Name",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "status",
+		label: "Status",
+		fieldType: "select",
+		width: "100px",
+		options: resultStatusOptions,
+		required: true,
+	},
+	{
+		key: "exception_count",
+		label: "Exceptions",
+		fieldType: "int",
+		width: "100px",
+	},
+	{ key: "message", label: "Message", fieldType: "text", width: "200px" },
+]
+
+const executionLogsColumns = [
+	{
+		key: "timestamp",
+		label: "Timestamp",
+		fieldType: "datetime",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "level",
+		label: "Level",
+		fieldType: "select",
+		width: "100px",
+		options: logLevelOptions,
+		required: true,
+	},
+	{
+		key: "message",
+		label: "Message",
+		fieldType: "text",
+		width: "250px",
+		required: true,
+	},
 ]
 
 // Watch for execution prop changes
@@ -812,44 +785,7 @@ function formatDuration(ms) {
 	return `${(ms / 60000).toFixed(2)}m`
 }
 
-// Child table management
-function addParameter() {
-	formData.execution_parameters.push({
-		parameter_name: "",
-		parameter_value: "",
-		parameter_type: "String",
-		description: "",
-	})
-}
-
-function removeParameter(index) {
-	formData.execution_parameters.splice(index, 1)
-}
-
-function addTestResult() {
-	formData.test_results.push({
-		test_name: "",
-		status: "Pass",
-		exception_count: 0,
-		message: "",
-	})
-}
-
-function removeTestResult(index) {
-	formData.test_results.splice(index, 1)
-}
-
-function addLogEntry() {
-	formData.execution_logs.push({
-		timestamp: new Date().toISOString(),
-		level: "INFO",
-		message: "",
-	})
-}
-
-function removeLogEntry(index) {
-	formData.execution_logs.splice(index, 1)
-}
+// Child table management - handled by InlineChildTable component
 
 function resetForm() {
 	Object.keys(formData).forEach((key) => {

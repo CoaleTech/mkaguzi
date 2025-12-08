@@ -9,6 +9,7 @@ export const useAuditStore = defineStore("audit", () => {
 	const findings = ref([])
 	const engagements = ref([])
 	const findingsCache = ref(new Map())
+	const correctiveActions = ref([])
 
 	// Audit Planning State
 	const annualPlans = ref([])
@@ -204,18 +205,65 @@ export const useAuditStore = defineStore("audit", () => {
 						"name",
 						"finding_id",
 						"finding_title",
+						"finding_status",
+						"finding_category",
 						"risk_rating",
+						"engagement_reference",
+						"responsible_person",
+						"responsible_department",
+						"target_completion_date",
 						"creation",
 						"modified",
-						"engagement_reference",
+						"condition",
+						"criteria",
+						"cause",
+						"effect",
+						"recommendation",
+						"repeat_finding",
+						"follow_up_required",
+						"date_identified",
+						"source_document",
 					],
 					limit_page_length: 1000,
+					order_by: "creation desc",
 				},
 			}).fetch()
 			setFindings(response || [])
 		} catch (error) {
 			console.error("Error fetching findings:", error)
+			// Provide fallback data or empty array
 			setFindings([])
+		}
+	}
+
+	const fetchCorrectiveActions = async () => {
+		try {
+			const response = await createResource({
+				url: "frappe.client.get_list",
+				params: {
+					doctype: "Corrective Action Plan",
+					fields: [
+						"name",
+						"audit_finding",
+						"action_description",
+						"status",
+						"responsible_person",
+						"target_completion_date",
+						"actual_completion_date",
+						"priority",
+						"estimated_cost",
+						"actual_cost",
+						"creation",
+						"modified",
+					],
+					limit_page_length: 1000,
+					order_by: "creation desc",
+				},
+			}).fetch()
+			correctiveActions.value = response || []
+		} catch (error) {
+			console.error("Error fetching corrective actions:", error)
+			correctiveActions.value = []
 		}
 	}
 
@@ -618,6 +666,7 @@ export const useAuditStore = defineStore("audit", () => {
 	const findingEvidence = ref([])
 	const findingStatusChanges = ref([])
 	const followUpActivities = ref([])
+	const findingTemplates = ref([])
 
 	// Working Papers Actions
 	const fetchWorkingPapers = async () => {
@@ -725,7 +774,7 @@ export const useAuditStore = defineStore("audit", () => {
 		}
 	}
 
-	const createFinding = async (findingData) => {
+	const createAuditFinding = async (findingData) => {
 		try {
 			const response = await createResource({
 				url: "frappe.client.insert",
@@ -739,12 +788,12 @@ export const useAuditStore = defineStore("audit", () => {
 			await fetchFindings() // Refresh the list
 			return response
 		} catch (error) {
-			console.error("Error creating finding:", error)
+			console.error("Error creating audit finding:", error)
 			throw error
 		}
 	}
 
-	const updateFindingDetails = async (findingId, updates) => {
+	const updateAuditFinding = async (findingId, updates) => {
 		try {
 			const response = await createResource({
 				url: "frappe.client.set_value",
@@ -757,7 +806,7 @@ export const useAuditStore = defineStore("audit", () => {
 			await fetchFindings() // Refresh the list
 			return response
 		} catch (error) {
-			console.error("Error updating finding:", error)
+			console.error("Error updating audit finding:", error)
 			throw error
 		}
 	}
@@ -767,26 +816,26 @@ export const useAuditStore = defineStore("audit", () => {
 			const response = await createResource({
 				url: "frappe.client.get_list",
 				params: {
-					doctype: "Follow-up Tracker",
+					doctype: "Followup Tracker",
 					fields: [
 						"name",
-						"tracker_id",
+						"followup_id",
 						"audit_finding",
-						"finding_title",
-						"status",
-						"follow_up_type",
-						"start_date",
+						"followup_title",
+						"followup_status",
+						"followup_type",
+						"scheduled_date",
 						"next_due_date",
-						"frequency",
 						"responsible_person",
-						"responsible_department",
+						"finding_title",
+						"business_unit",
 						"last_follow_up_date",
-						"current_status",
-						"progress_rating",
+						"effectiveness_assessment",
 						"creation",
 						"modified",
 					],
 					limit_page_length: 1000,
+					order_by: "creation desc",
 				},
 			}).fetch()
 			followUpTrackers.value = response || []
@@ -857,22 +906,20 @@ export const useAuditStore = defineStore("audit", () => {
 					doctype: "Corrective Action Plan",
 					fields: [
 						"name",
-						"plan_id",
+						"action_plan_id",
 						"audit_finding",
-						"title",
-						"status",
-						"priority",
-						"start_date",
+						"action_plan_title",
+						"action_plan_status",
+						"priority_level",
 						"target_completion_date",
-						"actual_completion_date",
-						"responsible_person",
-						"responsible_department",
+						"responsible_party",
+						"business_unit",
 						"overall_progress",
-						"completion_percentage",
 						"creation",
 						"modified",
 					],
 					limit_page_length: 1000,
+					order_by: "creation desc",
 				},
 			}).fetch()
 			correctiveActionPlans.value = response || []
@@ -935,24 +982,86 @@ export const useAuditStore = defineStore("audit", () => {
 		}
 	}
 
+	const fetchFindingTemplates = async () => {
+		try {
+			const response = await createResource({
+				url: "frappe.client.get_list",
+				params: {
+					doctype: "Finding Template",
+					fields: [
+						"name",
+						"template_name",
+						"finding_category",
+						"risk_category",
+						"is_active",
+						"description",
+						"usage_count",
+						"last_used",
+						"creation",
+						"modified",
+					],
+					filters: { is_active: 1 },
+					limit_page_length: 1000,
+					order_by: "usage_count desc, modified desc",
+				},
+			}).fetch()
+			findingTemplates.value = response || []
+		} catch (error) {
+			console.error("Error fetching finding templates:", error)
+			findingTemplates.value = []
+		}
+	}
+
+	const getTemplateSuggestions = async (category = null, riskArea = null) => {
+		try {
+			const filters = { is_active: 1 }
+			if (category) filters.finding_category = category
+			if (riskArea) filters.risk_area = riskArea
+
+			const response = await createResource({
+				url: "frappe.client.get_list",
+				params: {
+					doctype: "Finding Template",
+					fields: [
+						"name",
+						"template_id",
+						"template_name",
+						"template_title",
+						"typical_risk_rating",
+						"usage_count",
+					],
+					filters: filters,
+					limit_page_length: 50,
+					order_by: "usage_count desc, modified desc",
+				},
+			}).fetch()
+			return response || []
+		} catch (error) {
+			console.error("Error getting template suggestions:", error)
+			return []
+		}
+	}
+
+	const applyFindingTemplate = async (templateId, findingData) => {
+		try {
+			const response = await createResource({
+				url: "mkaguzi.api.apply_template",
+				params: {
+					template_id: templateId,
+					finding_doc: findingData,
+				},
+			}).fetch()
+			return response
+		} catch (error) {
+			console.error("Error applying finding template:", error)
+			throw error
+		}
+	}
+
 	const clearCache = () => {
 		findingsCache.value.clear()
-		findings.value = []
-		engagements.value = []
-		annualPlans.value = []
-		auditPrograms.value = []
-		auditCalendar.value = []
-		auditProcedures.value = []
-		auditUniverse.value = []
-		riskAssessments.value = []
-		workingPapers.value = []
-		followUpTrackers.value = []
-		correctiveActionPlans.value = []
-		findingEvidence.value = []
-		findingStatusChanges.value = []
-		followUpActivities.value = []
-		currentEngagement.value = null
-		auditPlan.value = null
+		// Clear other caches if needed
+		console.log("Audit store cache cleared")
 	}
 
 	return {
@@ -974,6 +1083,7 @@ export const useAuditStore = defineStore("audit", () => {
 		findingEvidence,
 		findingStatusChanges,
 		followUpActivities,
+		findingTemplates,
 
 		// Getters
 		activeEngagements,
@@ -1003,9 +1113,10 @@ export const useAuditStore = defineStore("audit", () => {
 		getEngagementById,
 		fetchEngagements,
 		fetchFindings,
+		fetchCorrectiveActions,
 		fetchFindingDetails,
-		createFinding,
-		updateFindingDetails,
+		createAuditFinding,
+		updateAuditFinding,
 		fetchAnnualPlans,
 		fetchAnnualPlanDetails,
 		createAnnualPlan,
@@ -1054,6 +1165,9 @@ export const useAuditStore = defineStore("audit", () => {
 		fetchCorrectiveActionPlanDetails,
 		createCorrectiveActionPlan,
 		updateCorrectiveActionPlan,
+		fetchFindingTemplates,
+		getTemplateSuggestions,
+		applyFindingTemplate,
 		clearCache,
 	}
 })

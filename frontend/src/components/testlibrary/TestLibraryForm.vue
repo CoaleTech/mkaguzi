@@ -157,118 +157,24 @@
 
               <!-- Required Data Fields Child Table -->
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Required Data Fields</h4>
-                  <Button size="sm" @click="addRequiredField">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Field
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Field Name</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Field Type</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Required</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Description</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(field, idx) in formData.required_data_fields" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="field.field_name" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="field.field_type"
-                            :options="fieldTypeOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2 text-center">
-                          <input
-                            type="checkbox"
-                            v-model="field.is_required"
-                            class="rounded border-gray-300"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="field.description" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeRequiredField(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.required_data_fields?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No required fields defined. Click "Add Field" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.required_data_fields"
+                  title="Required Data Fields"
+                  modalTitle="Data Field"
+                  :columns="requiredDataFieldsColumns"
+                  :autoAddRow="false"
+                />
               </div>
 
               <!-- Data Filters Child Table -->
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Data Filters</h4>
-                  <Button size="sm" @click="addDataFilter">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Filter
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Filter Field</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Operator</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Default Value</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Dynamic</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(filter, idx) in formData.data_filters" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="filter.filter_field" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="filter.operator"
-                            :options="operatorOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="filter.default_value" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2 text-center">
-                          <input
-                            type="checkbox"
-                            v-model="filter.is_dynamic"
-                            class="rounded border-gray-300"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeDataFilter(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.data_filters?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No filters defined. Click "Add Filter" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.data_filters"
+                  title="Data Filters"
+                  modalTitle="Data Filter"
+                  :columns="dataFiltersColumns"
+                  :autoAddRow="false"
+                />
               </div>
             </div>
 
@@ -371,56 +277,13 @@ def execute(data, params):
 
               <!-- Test Parameters Child Table -->
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Test Parameters</h4>
-                  <Button size="sm" @click="addTestParameter">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Parameter
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Parameter Name</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Type</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Default Value</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Description</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(param, idx) in formData.test_parameters" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="param.parameter_name" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="param.parameter_type"
-                            :options="parameterTypeOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="param.default_value" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="param.description" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeTestParameter(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.test_parameters?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No parameters defined. Click "Add Parameter" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.test_parameters"
+                  title="Test Parameters"
+                  modalTitle="Parameter"
+                  :columns="testParametersColumns"
+                  :autoAddRow="false"
+                />
               </div>
             </div>
 
@@ -450,62 +313,17 @@ def execute(data, params):
 
               <!-- Expected Results Child Table -->
               <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Expected Result Conditions</h4>
-                  <Button size="sm" @click="addExpectedResult">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Condition
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Condition</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Result Status</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Severity</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Action Required</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(result, idx) in formData.expected_results" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="result.condition" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="result.result_status"
-                            :options="resultStatusOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="result.severity"
-                            :options="severityOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="result.action_required" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeExpectedResult(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.expected_results?.length">
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No conditions defined. Click "Add Condition" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.expected_results"
+                  title="Expected Result Conditions"
+                  modalTitle="Expected Result"
+                  :columns="expectedResultsColumns"
+                  :autoAddRow="false"
+                />
               </div>
             </div>
+
+            <!-- Section 5: Threshold Settings -->
 
             <!-- Section 5: Threshold Settings -->
             <div v-show="currentSectionIndex === 4" class="space-y-4">
@@ -521,60 +339,13 @@ def execute(data, params):
 
               <!-- Threshold Settings Child Table -->
               <div class="mt-4">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-medium text-gray-700">Threshold Configurations</h4>
-                  <Button size="sm" @click="addThreshold">
-                    <template #prefix><Plus class="h-4 w-4" /></template>
-                    Add Threshold
-                  </Button>
-                </div>
-                <div class="border rounded-lg overflow-hidden">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Metric</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Operator</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Warning</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Critical</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Description</th>
-                        <th class="px-4 py-2 w-16"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr v-for="(threshold, idx) in formData.threshold_settings" :key="idx">
-                        <td class="px-4 py-2">
-                          <FormControl v-model="threshold.metric_name" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Select
-                            v-model="threshold.operator"
-                            :options="thresholdOperatorOptions"
-                            size="sm"
-                          />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="threshold.warning_threshold" type="number" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="threshold.critical_threshold" type="number" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <FormControl v-model="threshold.description" type="text" size="sm" />
-                        </td>
-                        <td class="px-4 py-2">
-                          <Button variant="ghost" size="sm" @click="removeThreshold(idx)">
-                            <Trash2 class="h-4 w-4 text-red-500" />
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr v-if="!formData.threshold_settings?.length">
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500 text-sm">
-                          No thresholds defined. Click "Add Threshold" to add one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <InlineChildTable
+                  v-model="formData.threshold_settings"
+                  title="Threshold Configurations"
+                  modalTitle="Threshold"
+                  :columns="thresholdSettingsColumns"
+                  :autoAddRow="false"
+                />
               </div>
             </div>
 
@@ -695,6 +466,7 @@ def execute(data, params):
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import { Button, Dialog, FormControl, Select, TextEditor } from "frappe-ui"
@@ -894,6 +666,189 @@ const thresholdOperatorOptions = [
 	{ label: "Less Than or Equal (<=)", value: "<=" },
 	{ label: "Equals (=)", value: "=" },
 	{ label: "Not Equals (!=)", value: "!=" },
+]
+
+// InlineChildTable Column Definitions
+const requiredDataFieldsColumns = [
+	{
+		key: "field_name",
+		label: "Field Name",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "field_type",
+		label: "Field Type",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Data", value: "Data" },
+			{ label: "Int", value: "Int" },
+			{ label: "Float", value: "Float" },
+			{ label: "Currency", value: "Currency" },
+			{ label: "Date", value: "Date" },
+			{ label: "Datetime", value: "Datetime" },
+			{ label: "Link", value: "Link" },
+			{ label: "Select", value: "Select" },
+		],
+	},
+	{ key: "is_required", label: "Required", fieldType: "check", width: "80px" },
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+	},
+]
+
+const dataFiltersColumns = [
+	{
+		key: "filter_field",
+		label: "Filter Field",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "operator",
+		label: "Operator",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Equals (=)", value: "=" },
+			{ label: "Not Equals (!=)", value: "!=" },
+			{ label: "Greater Than (>)", value: ">" },
+			{ label: "Less Than (<)", value: "<" },
+			{ label: "Like", value: "like" },
+			{ label: "In", value: "in" },
+			{ label: "Between", value: "between" },
+		],
+	},
+	{
+		key: "default_value",
+		label: "Default Value",
+		fieldType: "text",
+		width: "150px",
+	},
+	{ key: "is_dynamic", label: "Dynamic", fieldType: "check", width: "80px" },
+]
+
+const testParametersColumns = [
+	{
+		key: "parameter_name",
+		label: "Parameter Name",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "parameter_type",
+		label: "Type",
+		fieldType: "select",
+		width: "100px",
+		options: [
+			{ label: "String", value: "String" },
+			{ label: "Integer", value: "Integer" },
+			{ label: "Float", value: "Float" },
+			{ label: "Date", value: "Date" },
+			{ label: "Boolean", value: "Boolean" },
+			{ label: "List", value: "List" },
+		],
+	},
+	{
+		key: "default_value",
+		label: "Default Value",
+		fieldType: "text",
+		width: "150px",
+	},
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+	},
+]
+
+const expectedResultsColumns = [
+	{
+		key: "condition",
+		label: "Condition",
+		fieldType: "text",
+		width: "200px",
+		required: true,
+	},
+	{
+		key: "result_status",
+		label: "Result Status",
+		fieldType: "select",
+		width: "100px",
+		options: [
+			{ label: "Pass", value: "Pass" },
+			{ label: "Fail", value: "Fail" },
+			{ label: "Warning", value: "Warning" },
+		],
+	},
+	{
+		key: "severity",
+		label: "Severity",
+		fieldType: "select",
+		width: "100px",
+		options: [
+			{ label: "Low", value: "Low" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "High", value: "High" },
+			{ label: "Critical", value: "Critical" },
+		],
+	},
+	{
+		key: "action_required",
+		label: "Action Required",
+		fieldType: "text",
+		width: "180px",
+	},
+]
+
+const thresholdSettingsColumns = [
+	{
+		key: "metric_name",
+		label: "Metric",
+		fieldType: "text",
+		width: "150px",
+		required: true,
+	},
+	{
+		key: "operator",
+		label: "Operator",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Greater Than (>)", value: ">" },
+			{ label: "Greater Than or Equal (>=)", value: ">=" },
+			{ label: "Less Than (<)", value: "<" },
+			{ label: "Less Than or Equal (<=)", value: "<=" },
+			{ label: "Equals (=)", value: "=" },
+			{ label: "Not Equals (!=)", value: "!=" },
+		],
+	},
+	{
+		key: "warning_threshold",
+		label: "Warning",
+		fieldType: "float",
+		width: "100px",
+	},
+	{
+		key: "critical_threshold",
+		label: "Critical",
+		fieldType: "float",
+		width: "100px",
+	},
+	{
+		key: "description",
+		label: "Description",
+		fieldType: "text",
+		width: "180px",
+	},
 ]
 
 // Watch for test prop changes

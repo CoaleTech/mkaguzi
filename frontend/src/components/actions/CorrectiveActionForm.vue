@@ -308,86 +308,13 @@
                 color="purple"
               />
 
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Milestones</h4>
-                    <p class="text-xs text-gray-500">{{ form.milestones?.length || 0 }} milestones defined</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addMilestone">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Milestone
-                  </Button>
-                </div>
-
-                <div v-if="form.milestones?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(milestone, index) in form.milestones"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-4">
-                      <Badge :variant="getMilestoneStatusVariant(milestone.status)" size="sm">
-                        {{ milestone.status || 'Not Started' }}
-                      </Badge>
-                      <Button variant="ghost" size="sm" @click="removeMilestone(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div class="md:col-span-2">
-                        <FormControl
-                          v-model="milestone.milestone_description"
-                          label="Description"
-                          placeholder="Milestone description..."
-                          size="sm"
-                        />
-                      </div>
-                      <FormControl
-                        v-model="milestone.due_date"
-                        type="date"
-                        label="Due Date"
-                        size="sm"
-                      />
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                        <FormControl
-                          type="select"
-                          v-model="milestone.status"
-                          :options="milestoneStatusOptions"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                      <FormControl
-                        v-model="milestone.completion_date"
-                        type="date"
-                        label="Completion Date"
-                        size="sm"
-                      />
-                      <FormControl
-                        v-model="milestone.notes"
-                        label="Notes"
-                        placeholder="Additional notes..."
-                        size="sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <FlagIcon class="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 class="mt-2 text-sm font-medium text-gray-900">No milestones defined</h3>
-                  <p class="mt-1 text-sm text-gray-500">Add milestones to track progress.</p>
-                  <Button variant="outline" size="sm" class="mt-4" @click="addMilestone">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add First Milestone
-                  </Button>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="form.milestones"
+                title="Milestones"
+                modalTitle="Milestone"
+                :columns="milestonesColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 6: Progress Tracking -->
@@ -684,6 +611,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import { useCorrectiveActionsStore } from "@/stores/correctiveActions"
@@ -856,6 +784,43 @@ const closureReasonOptions = [
 	{ label: "No Longer Applicable", value: "No Longer Applicable" },
 	{ label: "Alternative Solution", value: "Alternative Solution" },
 	{ label: "Cancelled by Management", value: "Cancelled by Management" },
+]
+
+// InlineChildTable Column Definitions
+const milestonesColumns = [
+	{
+		key: "milestone_description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+		required: true,
+	},
+	{
+		key: "due_date",
+		label: "Due Date",
+		fieldType: "date",
+		width: "120px",
+		required: true,
+	},
+	{
+		key: "status",
+		label: "Status",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Not Started", value: "Not Started" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Delayed", value: "Delayed" },
+		],
+	},
+	{
+		key: "completion_date",
+		label: "Completion Date",
+		fieldType: "date",
+		width: "120px",
+	},
+	{ key: "notes", label: "Notes", fieldType: "text", width: "180px" },
 ]
 
 // Watch for action changes

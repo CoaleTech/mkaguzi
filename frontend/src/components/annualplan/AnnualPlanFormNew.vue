@@ -654,43 +654,43 @@
 <script setup>
 import { Button, Dialog } from "frappe-ui"
 import {
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusIcon,
-  XIcon,
+	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	PlusIcon,
+	XIcon,
 } from "lucide-vue-next"
 import { computed, onMounted, reactive, ref, watch } from "vue"
 
 // Import custom components
 import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
-import SectionHeader from "@/components/engagement/SectionHeader.vue"
+import SectionHeader from "@/components/engagement/EngagementSectionHeader.vue"
 
 // Props
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  plan: {
-    type: Object,
-    default: null,
-  },
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	plan: {
+		type: Object,
+		default: null,
+	},
 })
 
 // Emits
 const emit = defineEmits([
-  "update:modelValue",
-  "created",
-  "updated",
-  "cancelled",
+	"update:modelValue",
+	"created",
+	"updated",
+	"cancelled",
 ])
 
 // Dialog visibility
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
+	get: () => props.modelValue,
+	set: (val) => emit("update:modelValue", val),
 })
 
 // Edit mode detection
@@ -698,60 +698,64 @@ const isEditMode = computed(() => !!props.plan?.name)
 
 // Form Sections
 const formSections = [
-  { id: "basic", label: "Basic Information", description: "Core details" },
-  { id: "overview", label: "Plan Overview", description: "Summary & objectives" },
-  { id: "resources", label: "Resources", description: "Team allocation" },
-  { id: "audits", label: "Planned Audits", description: "Audit schedule" },
-  { id: "budget", label: "Budget", description: "Financial planning" },
-  { id: "risk", label: "Risk", description: "Risk considerations" },
-  { id: "contingency", label: "Contingency", description: "Backup plans" },
-  { id: "additional", label: "Additional", description: "Notes & extras" },
-  { id: "review", label: "Review & Submit", description: "Final review" },
+	{ id: "basic", label: "Basic Information", description: "Core details" },
+	{
+		id: "overview",
+		label: "Plan Overview",
+		description: "Summary & objectives",
+	},
+	{ id: "resources", label: "Resources", description: "Team allocation" },
+	{ id: "audits", label: "Planned Audits", description: "Audit schedule" },
+	{ id: "budget", label: "Budget", description: "Financial planning" },
+	{ id: "risk", label: "Risk", description: "Risk considerations" },
+	{ id: "contingency", label: "Contingency", description: "Backup plans" },
+	{ id: "additional", label: "Additional", description: "Notes & extras" },
+	{ id: "review", label: "Review & Submit", description: "Final review" },
 ]
 
 const activeSection = ref("basic")
 
 // Form State
 const form = reactive({
-  // Basic Information
-  plan_title: "",
-  fiscal_year: new Date().getFullYear().toString(),
-  status: "Draft",
-  plan_period: "Annual",
-  plan_start_date: "",
-  plan_end_date: "",
-  plan_owner: "",
+	// Basic Information
+	plan_title: "",
+	fiscal_year: new Date().getFullYear().toString(),
+	status: "Draft",
+	plan_period: "Annual",
+	plan_start_date: "",
+	plan_end_date: "",
+	plan_owner: "",
 
-  // Overview
-  executive_summary: "",
-  objectives: "",
-  scope: "",
-  methodology: "",
+	// Overview
+	executive_summary: "",
+	objectives: "",
+	scope: "",
+	methodology: "",
 
-  // Resources
-  resource_allocation: [],
-  total_available_days: 0,
-  total_planned_days: 0,
+	// Resources
+	resource_allocation: [],
+	total_available_days: 0,
+	total_planned_days: 0,
 
-  // Planned Audits
-  planned_audits: [],
+	// Planned Audits
+	planned_audits: [],
 
-  // Budget
-  total_budget: 0,
-  allocated_budget: 0,
-  actual_spend: 0,
-  budget_notes: "",
+	// Budget
+	total_budget: 0,
+	allocated_budget: 0,
+	actual_spend: 0,
+	budget_notes: "",
 
-  // Risk
-  key_risks: "",
-  risk_mitigation: "",
+	// Risk
+	key_risks: "",
+	risk_mitigation: "",
 
-  // Contingency
-  contingency_plan: "",
-  contingency_budget: 0,
+	// Contingency
+	contingency_plan: "",
+	contingency_budget: 0,
 
-  // Additional
-  additional_notes: "",
+	// Additional
+	additional_notes: "",
 })
 
 const errors = reactive({})
@@ -760,433 +764,446 @@ const isSavingDraft = ref(false)
 
 // Options
 const fiscalYearOptions = computed(() => {
-  const currentYear = new Date().getFullYear()
-  return [currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map(String)
+	const currentYear = new Date().getFullYear()
+	return [currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map(
+		String,
+	)
 })
 
 const statusOptions = [
-  { label: "Draft", value: "Draft" },
-  { label: "Pending Approval", value: "Pending Approval" },
-  { label: "Approved", value: "Approved" },
-  { label: "Active", value: "Active" },
-  { label: "Completed", value: "Completed" },
-  { label: "Archived", value: "Archived" },
+	{ label: "Draft", value: "Draft" },
+	{ label: "Pending Approval", value: "Pending Approval" },
+	{ label: "Approved", value: "Approved" },
+	{ label: "Active", value: "Active" },
+	{ label: "Completed", value: "Completed" },
+	{ label: "Archived", value: "Archived" },
 ]
 
 const periodOptions = [
-  { label: "Annual", value: "Annual" },
-  { label: "Semi-Annual", value: "Semi-Annual" },
-  { label: "Quarterly", value: "Quarterly" },
+	{ label: "Annual", value: "Annual" },
+	{ label: "Semi-Annual", value: "Semi-Annual" },
+	{ label: "Quarterly", value: "Quarterly" },
 ]
 
 // Inline Columns for Resource Allocation
 const resourceColumns = [
-  {
-    key: "team_member",
-    label: "Team Member",
-    width: "200px",
-    fieldType: "text",
-    required: true,
-    placeholder: "Enter name",
-  },
-  {
-    key: "role",
-    label: "Role",
-    width: "150px",
-    fieldType: "select",
-    options: [
-      { label: "Chief Audit Executive", value: "Chief Audit Executive" },
-      { label: "Audit Manager", value: "Audit Manager" },
-      { label: "Senior Auditor", value: "Senior Auditor" },
-      { label: "Staff Auditor", value: "Staff Auditor" },
-      { label: "IT Auditor", value: "IT Auditor" },
-      { label: "External Consultant", value: "External Consultant" },
-    ],
-    required: true,
-  },
-  {
-    key: "allocated_hours",
-    label: "Hours",
-    width: "100px",
-    fieldType: "number",
-    placeholder: "0",
-  },
-  {
-    key: "availability",
-    label: "Availability",
-    width: "120px",
-    fieldType: "select",
-    options: [
-      { label: "Full-time", value: "Full-time" },
-      { label: "Part-time", value: "Part-time" },
-      { label: "Contract", value: "Contract" },
-    ],
-    defaultValue: "Full-time",
-  },
+	{
+		key: "team_member",
+		label: "Team Member",
+		width: "200px",
+		fieldType: "text",
+		required: true,
+		placeholder: "Enter name",
+	},
+	{
+		key: "role",
+		label: "Role",
+		width: "150px",
+		fieldType: "select",
+		options: [
+			{ label: "Chief Audit Executive", value: "Chief Audit Executive" },
+			{ label: "Audit Manager", value: "Audit Manager" },
+			{ label: "Senior Auditor", value: "Senior Auditor" },
+			{ label: "Staff Auditor", value: "Staff Auditor" },
+			{ label: "IT Auditor", value: "IT Auditor" },
+			{ label: "External Consultant", value: "External Consultant" },
+		],
+		required: true,
+	},
+	{
+		key: "allocated_hours",
+		label: "Hours",
+		width: "100px",
+		fieldType: "number",
+		placeholder: "0",
+	},
+	{
+		key: "availability",
+		label: "Availability",
+		width: "120px",
+		fieldType: "select",
+		options: [
+			{ label: "Full-time", value: "Full-time" },
+			{ label: "Part-time", value: "Part-time" },
+			{ label: "Contract", value: "Contract" },
+		],
+		defaultValue: "Full-time",
+	},
 ]
 
 const validateResource = (data) => {
-  const errs = {}
-  if (!data.team_member) errs.team_member = "Team member is required"
-  if (!data.role) errs.role = "Role is required"
-  return Object.keys(errs).length ? errs : null
+	const errs = {}
+	if (!data.team_member) errs.team_member = "Team member is required"
+	if (!data.role) errs.role = "Role is required"
+	return Object.keys(errs).length ? errs : null
 }
 
 // Inline Columns for Planned Audits
 const auditColumns = [
-  {
-    key: "audit_name",
-    label: "Audit Name",
-    width: "200px",
-    fieldType: "text",
-    required: true,
-    placeholder: "Enter audit name",
-  },
-  {
-    key: "audit_type",
-    label: "Type",
-    width: "130px",
-    fieldType: "select",
-    options: [
-      { label: "Financial", value: "Financial" },
-      { label: "Operational", value: "Operational" },
-      { label: "Compliance", value: "Compliance" },
-      { label: "IT", value: "IT" },
-      { label: "Performance", value: "Performance" },
-      { label: "Integrated", value: "Integrated" },
-    ],
-    required: true,
-  },
-  {
-    key: "quarter",
-    label: "Quarter",
-    width: "90px",
-    fieldType: "select",
-    options: [
-      { label: "Q1", value: "Q1" },
-      { label: "Q2", value: "Q2" },
-      { label: "Q3", value: "Q3" },
-      { label: "Q4", value: "Q4" },
-    ],
-    required: true,
-  },
-  {
-    key: "planned_start_date",
-    label: "Start Date",
-    width: "130px",
-    fieldType: "date",
-  },
-  {
-    key: "planned_end_date",
-    label: "End Date",
-    width: "130px",
-    fieldType: "date",
-  },
-  {
-    key: "priority",
-    label: "Priority",
-    width: "110px",
-    fieldType: "select",
-    options: [
-      { label: "Low", value: "Low" },
-      { label: "Medium", value: "Medium" },
-      { label: "High", value: "High" },
-      { label: "Critical", value: "Critical" },
-    ],
-    defaultValue: "Medium",
-    component: "Badge",
-    badgeTheme: {
-      Low: "gray",
-      Medium: "blue",
-      High: "orange",
-      Critical: "red",
-    },
-  },
-  {
-    key: "status",
-    label: "Status",
-    width: "110px",
-    fieldType: "select",
-    options: [
-      { label: "Planned", value: "Planned" },
-      { label: "In Progress", value: "In Progress" },
-      { label: "Completed", value: "Completed" },
-      { label: "Deferred", value: "Deferred" },
-    ],
-    defaultValue: "Planned",
-    component: "Badge",
-    badgeTheme: {
-      Planned: "gray",
-      "In Progress": "blue",
-      Completed: "green",
-      Deferred: "orange",
-    },
-  },
+	{
+		key: "audit_name",
+		label: "Audit Name",
+		width: "200px",
+		fieldType: "text",
+		required: true,
+		placeholder: "Enter audit name",
+	},
+	{
+		key: "audit_type",
+		label: "Type",
+		width: "130px",
+		fieldType: "select",
+		options: [
+			{ label: "Financial", value: "Financial" },
+			{ label: "Operational", value: "Operational" },
+			{ label: "Compliance", value: "Compliance" },
+			{ label: "IT", value: "IT" },
+			{ label: "Performance", value: "Performance" },
+			{ label: "Integrated", value: "Integrated" },
+		],
+		required: true,
+	},
+	{
+		key: "quarter",
+		label: "Quarter",
+		width: "90px",
+		fieldType: "select",
+		options: [
+			{ label: "Q1", value: "Q1" },
+			{ label: "Q2", value: "Q2" },
+			{ label: "Q3", value: "Q3" },
+			{ label: "Q4", value: "Q4" },
+		],
+		required: true,
+	},
+	{
+		key: "planned_start_date",
+		label: "Start Date",
+		width: "130px",
+		fieldType: "date",
+	},
+	{
+		key: "planned_end_date",
+		label: "End Date",
+		width: "130px",
+		fieldType: "date",
+	},
+	{
+		key: "priority",
+		label: "Priority",
+		width: "110px",
+		fieldType: "select",
+		options: [
+			{ label: "Low", value: "Low" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "High", value: "High" },
+			{ label: "Critical", value: "Critical" },
+		],
+		defaultValue: "Medium",
+		component: "Badge",
+		badgeTheme: {
+			Low: "gray",
+			Medium: "blue",
+			High: "orange",
+			Critical: "red",
+		},
+	},
+	{
+		key: "status",
+		label: "Status",
+		width: "110px",
+		fieldType: "select",
+		options: [
+			{ label: "Planned", value: "Planned" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Deferred", value: "Deferred" },
+		],
+		defaultValue: "Planned",
+		component: "Badge",
+		badgeTheme: {
+			Planned: "gray",
+			"In Progress": "blue",
+			Completed: "green",
+			Deferred: "orange",
+		},
+	},
 ]
 
 const validateAudit = (data) => {
-  const errs = {}
-  if (!data.audit_name) errs.audit_name = "Audit name is required"
-  if (!data.audit_type) errs.audit_type = "Audit type is required"
-  if (!data.quarter) errs.quarter = "Quarter is required"
-  if (data.planned_start_date && data.planned_end_date) {
-    if (new Date(data.planned_end_date) < new Date(data.planned_start_date)) {
-      errs.planned_end_date = "End date must be after start date"
-    }
-  }
-  return Object.keys(errs).length ? errs : null
+	const errs = {}
+	if (!data.audit_name) errs.audit_name = "Audit name is required"
+	if (!data.audit_type) errs.audit_type = "Audit type is required"
+	if (!data.quarter) errs.quarter = "Quarter is required"
+	if (data.planned_start_date && data.planned_end_date) {
+		if (new Date(data.planned_end_date) < new Date(data.planned_start_date)) {
+			errs.planned_end_date = "End date must be after start date"
+		}
+	}
+	return Object.keys(errs).length ? errs : null
 }
 
 // Computed Properties
 const currentSectionIndex = computed(() =>
-  formSections.findIndex((s) => s.id === activeSection.value)
+	formSections.findIndex((s) => s.id === activeSection.value),
 )
 
 const utilizationPercentage = computed(() => {
-  if (!form.total_available_days) return 0
-  return Math.round((form.total_planned_days / form.total_available_days) * 100)
+	if (!form.total_available_days) return 0
+	return Math.round((form.total_planned_days / form.total_available_days) * 100)
 })
 
 const budgetUtilization = computed(() => {
-  if (!form.total_budget) return 0
-  return Math.round((form.actual_spend / form.total_budget) * 100)
+	if (!form.total_budget) return 0
+	return Math.round((form.actual_spend / form.total_budget) * 100)
 })
 
 const budgetUtilizationClass = computed(() => {
-  if (budgetUtilization.value > 90) return "text-red-600"
-  if (budgetUtilization.value > 75) return "text-amber-600"
-  return "text-green-600"
+	if (budgetUtilization.value > 90) return "text-red-600"
+	if (budgetUtilization.value > 75) return "text-amber-600"
+	return "text-green-600"
 })
 
 const budgetUtilizationBarClass = computed(() => {
-  if (budgetUtilization.value > 90) return "bg-red-500"
-  if (budgetUtilization.value > 75) return "bg-amber-500"
-  return "bg-green-500"
+	if (budgetUtilization.value > 90) return "bg-red-500"
+	if (budgetUtilization.value > 75) return "bg-amber-500"
+	return "bg-green-500"
 })
 
 const getSectionStatus = (sectionId) => {
-  switch (sectionId) {
-    case "basic":
-      return form.plan_title && form.fiscal_year && form.plan_start_date && form.plan_end_date
-        ? "complete"
-        : form.plan_title || form.fiscal_year
-          ? "partial"
-          : "incomplete"
-    case "overview":
-      return form.executive_summary && form.objectives
-        ? "complete"
-        : form.executive_summary || form.objectives
-          ? "partial"
-          : "incomplete"
-    case "resources":
-      return form.resource_allocation.length > 0 ? "complete" : "incomplete"
-    case "audits":
-      return form.planned_audits.length > 0 ? "complete" : "incomplete"
-    case "budget":
-      return form.total_budget > 0 ? "complete" : "incomplete"
-    case "risk":
-      return form.key_risks ? "complete" : "incomplete"
-    case "contingency":
-      return form.contingency_plan ? "complete" : "incomplete"
-    case "additional":
-      return "complete" // Optional section
-    case "review":
-      return "complete" // Review section
-    default:
-      return "incomplete"
-  }
+	switch (sectionId) {
+		case "basic":
+			return form.plan_title &&
+				form.fiscal_year &&
+				form.plan_start_date &&
+				form.plan_end_date
+				? "complete"
+				: form.plan_title || form.fiscal_year
+					? "partial"
+					: "incomplete"
+		case "overview":
+			return form.executive_summary && form.objectives
+				? "complete"
+				: form.executive_summary || form.objectives
+					? "partial"
+					: "incomplete"
+		case "resources":
+			return form.resource_allocation.length > 0 ? "complete" : "incomplete"
+		case "audits":
+			return form.planned_audits.length > 0 ? "complete" : "incomplete"
+		case "budget":
+			return form.total_budget > 0 ? "complete" : "incomplete"
+		case "risk":
+			return form.key_risks ? "complete" : "incomplete"
+		case "contingency":
+			return form.contingency_plan ? "complete" : "incomplete"
+		case "additional":
+			return "complete" // Optional section
+		case "review":
+			return "complete" // Review section
+		default:
+			return "incomplete"
+	}
 }
 
 const getSectionStatusClass = (sectionId) => {
-  const status = getSectionStatus(sectionId)
-  if (status === "complete") return "bg-green-500 text-white"
-  if (status === "partial") return "bg-amber-500 text-white"
-  return "bg-gray-300 text-gray-600"
+	const status = getSectionStatus(sectionId)
+	if (status === "complete") return "bg-green-500 text-white"
+	if (status === "partial") return "bg-amber-500 text-white"
+	return "bg-gray-300 text-gray-600"
 }
 
 const completedSections = computed(
-  () => formSections.filter((s) => getSectionStatus(s.id) === "complete").length
+	() =>
+		formSections.filter((s) => getSectionStatus(s.id) === "complete").length,
 )
 
 const formProgress = computed(() =>
-  Math.round((completedSections.value / formSections.length) * 100)
+	Math.round((completedSections.value / formSections.length) * 100),
 )
 
 const validationChecks = computed(() => [
-  { label: "Plan title provided", valid: !!form.plan_title },
-  { label: "Fiscal year selected", valid: !!form.fiscal_year },
-  { label: "Plan dates specified", valid: !!form.plan_start_date && !!form.plan_end_date },
-  { label: "Executive summary provided", valid: !!form.executive_summary },
-  { label: "Objectives defined", valid: !!form.objectives },
-  { label: "At least one audit planned", valid: form.planned_audits.length > 0 },
+	{ label: "Plan title provided", valid: !!form.plan_title },
+	{ label: "Fiscal year selected", valid: !!form.fiscal_year },
+	{
+		label: "Plan dates specified",
+		valid: !!form.plan_start_date && !!form.plan_end_date,
+	},
+	{ label: "Executive summary provided", valid: !!form.executive_summary },
+	{ label: "Objectives defined", valid: !!form.objectives },
+	{
+		label: "At least one audit planned",
+		valid: form.planned_audits.length > 0,
+	},
 ])
 
 const isFormValid = computed(() => {
-  return !!(
-    form.plan_title &&
-    form.fiscal_year &&
-    form.plan_start_date &&
-    form.plan_end_date &&
-    form.executive_summary &&
-    form.objectives &&
-    form.planned_audits.length > 0
-  )
+	return !!(
+		form.plan_title &&
+		form.fiscal_year &&
+		form.plan_start_date &&
+		form.plan_end_date &&
+		form.executive_summary &&
+		form.objectives &&
+		form.planned_audits.length > 0
+	)
 })
 
 // Methods
 const formatNumber = (num) => {
-  if (!num) return "0"
-  return num.toLocaleString()
+	if (!num) return "0"
+	return num.toLocaleString()
 }
 
 const goToPreviousSection = () => {
-  const idx = currentSectionIndex.value
-  if (idx > 0) {
-    activeSection.value = formSections[idx - 1].id
-  }
+	const idx = currentSectionIndex.value
+	if (idx > 0) {
+		activeSection.value = formSections[idx - 1].id
+	}
 }
 
 const goToNextSection = () => {
-  const idx = currentSectionIndex.value
-  if (idx < formSections.length - 1) {
-    activeSection.value = formSections[idx + 1].id
-  }
+	const idx = currentSectionIndex.value
+	if (idx < formSections.length - 1) {
+		activeSection.value = formSections[idx + 1].id
+	}
 }
 
 const validateForm = () => {
-  const errs = {}
+	const errs = {}
 
-  if (!form.plan_title) errs.plan_title = "Plan title is required"
-  if (!form.fiscal_year) errs.fiscal_year = "Fiscal year is required"
-  if (!form.plan_start_date) errs.plan_start_date = "Start date is required"
-  if (!form.plan_end_date) errs.plan_end_date = "End date is required"
-  if (!form.executive_summary) errs.executive_summary = "Executive summary is required"
-  if (!form.objectives) errs.objectives = "Objectives are required"
+	if (!form.plan_title) errs.plan_title = "Plan title is required"
+	if (!form.fiscal_year) errs.fiscal_year = "Fiscal year is required"
+	if (!form.plan_start_date) errs.plan_start_date = "Start date is required"
+	if (!form.plan_end_date) errs.plan_end_date = "End date is required"
+	if (!form.executive_summary)
+		errs.executive_summary = "Executive summary is required"
+	if (!form.objectives) errs.objectives = "Objectives are required"
 
-  if (form.plan_start_date && form.plan_end_date) {
-    if (new Date(form.plan_end_date) < new Date(form.plan_start_date)) {
-      errs.plan_end_date = "End date must be after start date"
-    }
-  }
+	if (form.plan_start_date && form.plan_end_date) {
+		if (new Date(form.plan_end_date) < new Date(form.plan_start_date)) {
+			errs.plan_end_date = "End date must be after start date"
+		}
+	}
 
-  if (form.planned_audits.length === 0) {
-    errs.planned_audits = "At least one audit is required"
-  }
+	if (form.planned_audits.length === 0) {
+		errs.planned_audits = "At least one audit is required"
+	}
 
-  Object.assign(errors, errs)
-  return Object.keys(errs).length === 0
+	Object.assign(errors, errs)
+	return Object.keys(errs).length === 0
 }
 
 const prepareFormData = () => {
-  return {
-    ...form,
-    resource_allocation: form.resource_allocation.map((r) => ({
-      ...r,
-      doctype: "Annual Audit Plan Resource",
-    })),
-    planned_audits: form.planned_audits.map((a) => ({
-      ...a,
-      doctype: "Annual Audit Plan Item",
-    })),
-  }
+	return {
+		...form,
+		resource_allocation: form.resource_allocation.map((r) => ({
+			...r,
+			doctype: "Annual Audit Plan Resource",
+		})),
+		planned_audits: form.planned_audits.map((a) => ({
+			...a,
+			doctype: "Annual Audit Plan Item",
+		})),
+	}
 }
 
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    const firstErrorSection = formSections.find((s) => {
-      const status = getSectionStatus(s.id)
-      return status !== "complete"
-    })
-    if (firstErrorSection) {
-      activeSection.value = firstErrorSection.id
-    }
-    return
-  }
+	if (!validateForm()) {
+		const firstErrorSection = formSections.find((s) => {
+			const status = getSectionStatus(s.id)
+			return status !== "complete"
+		})
+		if (firstErrorSection) {
+			activeSection.value = firstErrorSection.id
+		}
+		return
+	}
 
-  try {
-    isSaving.value = true
-    const formData = prepareFormData()
+	try {
+		isSaving.value = true
+		const formData = prepareFormData()
 
-    if (isEditMode.value) {
-      emit("updated", { ...formData, name: props.plan.name })
-    } else {
-      emit("created", formData)
-    }
+		if (isEditMode.value) {
+			emit("updated", { ...formData, name: props.plan.name })
+		} else {
+			emit("created", formData)
+		}
 
-    isOpen.value = false
-  } catch (error) {
-    console.error("Error saving plan:", error)
-  } finally {
-    isSaving.value = false
-  }
+		isOpen.value = false
+	} catch (error) {
+		console.error("Error saving plan:", error)
+	} finally {
+		isSaving.value = false
+	}
 }
 
 const saveAsDraft = async () => {
-  try {
-    isSavingDraft.value = true
-    const formData = prepareFormData()
-    emit("created", { ...formData, status: "Draft" })
-    isOpen.value = false
-  } catch (error) {
-    console.error("Error saving draft:", error)
-  } finally {
-    isSavingDraft.value = false
-  }
+	try {
+		isSavingDraft.value = true
+		const formData = prepareFormData()
+		emit("created", { ...formData, status: "Draft" })
+		isOpen.value = false
+	} catch (error) {
+		console.error("Error saving draft:", error)
+	} finally {
+		isSavingDraft.value = false
+	}
 }
 
 const handleCancel = () => {
-  emit("cancelled")
-  isOpen.value = false
+	emit("cancelled")
+	isOpen.value = false
 }
 
 const resetForm = () => {
-  Object.keys(form).forEach((key) => {
-    if (Array.isArray(form[key])) {
-      form[key] = []
-    } else if (typeof form[key] === "number") {
-      form[key] = 0
-    } else {
-      form[key] = ""
-    }
-  })
-  form.status = "Draft"
-  form.plan_period = "Annual"
-  form.fiscal_year = new Date().getFullYear().toString()
-  Object.keys(errors).forEach((key) => delete errors[key])
-  activeSection.value = "basic"
+	Object.keys(form).forEach((key) => {
+		if (Array.isArray(form[key])) {
+			form[key] = []
+		} else if (typeof form[key] === "number") {
+			form[key] = 0
+		} else {
+			form[key] = ""
+		}
+	})
+	form.status = "Draft"
+	form.plan_period = "Annual"
+	form.fiscal_year = new Date().getFullYear().toString()
+	Object.keys(errors).forEach((key) => delete errors[key])
+	activeSection.value = "basic"
 }
 
 const loadPlanData = (plan) => {
-  if (!plan) return
+	if (!plan) return
 
-  Object.keys(form).forEach((key) => {
-    if (plan[key] !== undefined) {
-      form[key] = plan[key]
-    }
-  })
+	Object.keys(form).forEach((key) => {
+		if (plan[key] !== undefined) {
+			form[key] = plan[key]
+		}
+	})
 }
 
 // Watchers
 watch(
-  () => props.modelValue,
-  (newVal) => {
-    if (newVal) {
-      if (props.plan) {
-        loadPlanData(props.plan)
-      } else {
-        resetForm()
-      }
-    }
-  }
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal) {
+			if (props.plan) {
+				loadPlanData(props.plan)
+			} else {
+				resetForm()
+			}
+		}
+	},
 )
 
 watch(
-  () => props.plan,
-  (newVal) => {
-    if (newVal && props.modelValue) {
-      loadPlanData(newVal)
-    }
-  },
-  { deep: true }
+	() => props.plan,
+	(newVal) => {
+		if (newVal && props.modelValue) {
+			loadPlanData(newVal)
+		}
+	},
+	{ deep: true },
 )
 </script>

@@ -160,137 +160,13 @@
                 color="green"
               />
 
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Procedures</h4>
-                    <p class="text-xs text-gray-500">{{ form.program_procedures?.length || 0 }} procedures defined</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addProcedure">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Procedure
-                  </Button>
-                </div>
-
-                <div v-if="form.program_procedures?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(procedure, index) in form.program_procedures"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-4">
-                      <div class="flex items-center gap-2">
-                        <Badge variant="subtle" theme="gray">{{ index + 1 }}</Badge>
-                        <span class="text-sm font-medium text-gray-900">{{ procedure.procedure_no || 'New Procedure' }}</span>
-                      </div>
-                      <div class="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" @click="editProcedure(index)">
-                          <EditIcon class="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" @click="removeProcedure(index)" class="text-red-500">
-                          <TrashIcon class="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <FormControl
-                        v-model="procedure.procedure_no"
-                        label="Procedure No"
-                        placeholder="e.g., P001"
-                        size="sm"
-                      />
-                      <FormControl
-                        v-model="procedure.procedure_section"
-                        label="Section"
-                        placeholder="e.g., Revenue Testing"
-                        size="sm"
-                      />
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
-                        <FormControl
-                          type="select"
-                          v-model="procedure.procedure_type"
-                          :options="procedureTypeOptions"
-                          size="sm"
-                        />
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                        <FormControl
-                          type="select"
-                          v-model="procedure.status"
-                          :options="procedureStatusOptions"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Assertion</label>
-                        <FormControl
-                          type="select"
-                          v-model="procedure.assertion"
-                          :options="assertionOptions"
-                          size="sm"
-                        />
-                      </div>
-                      <FormControl
-                        v-model="procedure.sample_size"
-                        type="number"
-                        label="Sample Size"
-                        size="sm"
-                      />
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Sampling Method</label>
-                        <FormControl
-                          type="select"
-                          v-model="procedure.sampling_method"
-                          :options="samplingMethodOptions"
-                          size="sm"
-                        />
-                      </div>
-                      <FormControl
-                        v-model="procedure.budgeted_hours"
-                        type="number"
-                        label="Budgeted Hours"
-                        size="sm"
-                      />
-                    </div>
-
-                    <div class="mt-4">
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Procedure Description</label>
-                      <textarea
-                        v-model="procedure.procedure_description"
-                        rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Describe the audit procedure..."
-                      ></textarea>
-                    </div>
-
-                    <div class="mt-4">
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Control Objective</label>
-                      <textarea
-                        v-model="procedure.control_objective"
-                        rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="What control does this procedure test?"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <ClipboardListIcon class="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 class="mt-2 text-sm font-medium text-gray-900">No procedures defined</h3>
-                  <p class="mt-1 text-sm text-gray-500">Add audit procedures to this program.</p>
-                  <Button variant="outline" size="sm" class="mt-4" @click="addProcedure">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add First Procedure
-                  </Button>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="form.program_procedures"
+                title="Audit Procedures"
+                modalTitle="Procedure"
+                :columns="programProceduresColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 4: Risk Areas -->
@@ -302,78 +178,13 @@
                 color="amber"
               />
 
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Risk Areas</h4>
-                    <p class="text-xs text-gray-500">{{ form.risk_areas?.length || 0 }} risk areas identified</p>
-                  </div>
-                  <Button variant="outline" size="sm" @click="addRiskArea">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Risk Area
-                  </Button>
-                </div>
-
-                <div v-if="form.risk_areas?.length > 0" class="space-y-4">
-                  <div
-                    v-for="(risk, index) in form.risk_areas"
-                    :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-amber-300 transition-colors"
-                  >
-                    <div class="flex items-start justify-between mb-4">
-                      <Badge
-                        :variant="getRiskBadgeVariant(risk.risk_rating)"
-                        size="sm"
-                      >
-                        {{ risk.risk_rating || 'Unrated' }}
-                      </Badge>
-                      <Button variant="ghost" size="sm" @click="removeRiskArea(index)" class="text-red-500">
-                        <TrashIcon class="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Risk Description</label>
-                        <textarea
-                          v-model="risk.risk_description"
-                          rows="2"
-                          class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          placeholder="Describe the risk..."
-                        ></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Risk Rating</label>
-                        <FormControl
-                          type="select"
-                          v-model="risk.risk_rating"
-                          :options="riskRatingOptions"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="mt-4">
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Procedures Addressing Risk</label>
-                      <textarea
-                        v-model="risk.procedures_addressing_risk"
-                        rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Which procedures address this risk?"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-else class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <AlertTriangleIcon class="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 class="mt-2 text-sm font-medium text-gray-900">No risk areas defined</h3>
-                  <p class="mt-1 text-sm text-gray-500">Add risk areas to document what this program addresses.</p>
-                  <Button variant="outline" size="sm" class="mt-4" @click="addRiskArea">
-                    <template #prefix><PlusIcon class="h-4 w-4" /></template>
-                    Add Risk Area
-                  </Button>
-                </div>
-              </div>
+              <InlineChildTable
+                v-model="form.risk_areas"
+                title="Risk Areas"
+                modalTitle="Risk Area"
+                :columns="riskAreasColumns"
+                :autoAddRow="false"
+              />
             </div>
 
             <!-- Section 5: Review & Submit -->
@@ -477,6 +288,7 @@
 </template>
 
 <script setup>
+import InlineChildTable from "@/components/Common/InlineChildTable.vue"
 import SectionHeader from "@/components/Common/SectionHeader.vue"
 import LinkField from "@/components/Common/fields/LinkField.vue"
 import { useAuditStore } from "@/stores/audit"
@@ -611,6 +423,85 @@ const riskRatingOptions = [
 	{ label: "High", value: "High" },
 	{ label: "Medium", value: "Medium" },
 	{ label: "Low", value: "Low" },
+]
+
+// InlineChildTable Column Definitions
+const programProceduresColumns = [
+	{
+		key: "procedure_no",
+		label: "Proc. No",
+		fieldType: "text",
+		width: "90px",
+		required: true,
+	},
+	{
+		key: "procedure_section",
+		label: "Section",
+		fieldType: "text",
+		width: "140px",
+	},
+	{
+		key: "procedure_type",
+		label: "Type",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Inquiry", value: "Inquiry" },
+			{ label: "Observation", value: "Observation" },
+			{ label: "Inspection", value: "Inspection" },
+			{ label: "Re-performance", value: "Re-performance" },
+			{ label: "Analytical", value: "Analytical" },
+			{ label: "Confirmation", value: "Confirmation" },
+			{ label: "Computation", value: "Computation" },
+		],
+	},
+	{
+		key: "status",
+		label: "Status",
+		fieldType: "select",
+		width: "120px",
+		options: [
+			{ label: "Not Started", value: "Not Started" },
+			{ label: "In Progress", value: "In Progress" },
+			{ label: "Completed", value: "Completed" },
+			{ label: "Not Applicable", value: "Not Applicable" },
+		],
+	},
+	{
+		key: "procedure_description",
+		label: "Description",
+		fieldType: "text",
+		width: "200px",
+	},
+	{ key: "budgeted_hours", label: "Hours", fieldType: "float", width: "80px" },
+]
+
+const riskAreasColumns = [
+	{
+		key: "risk_description",
+		label: "Risk Description",
+		fieldType: "text",
+		width: "250px",
+		required: true,
+	},
+	{
+		key: "risk_rating",
+		label: "Rating",
+		fieldType: "select",
+		width: "100px",
+		required: true,
+		options: [
+			{ label: "High", value: "High" },
+			{ label: "Medium", value: "Medium" },
+			{ label: "Low", value: "Low" },
+		],
+	},
+	{
+		key: "procedures_addressing_risk",
+		label: "Procedures Addressing Risk",
+		fieldType: "text",
+		width: "200px",
+	},
 ]
 
 // Watch for program changes

@@ -1,0 +1,157 @@
+{
+ "actions": [],
+ "autoname": "field:template_id",
+ "creation": "2025-12-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_id",
+  "template_name",
+  "finding_category",
+  "risk_area",
+  "template_title",
+  "condition_template",
+  "criteria_template",
+  "cause_options",
+  "effect_template",
+  "recommendation_template",
+  "typical_risk_rating",
+  "is_active",
+  "usage_count",
+  "created_by",
+  "created_on",
+  "last_modified"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finding_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Finding Category",
+   "options": "Control Deficiency\nNon-Compliance\nInefficiency\nError\nFraud Indicator\nBest Practice Opportunity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_area",
+   "fieldtype": "Link",
+   "label": "Risk Area",
+   "options": "Audit Universe"
+  },
+  {
+   "fieldname": "template_title",
+   "fieldtype": "Data",
+   "label": "Template Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_template",
+   "fieldtype": "Text Editor",
+   "label": "Condition Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "criteria_template",
+   "fieldtype": "Text Editor",
+   "label": "Criteria Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cause_options",
+   "fieldtype": "Table",
+   "label": "Common Cause Options",
+   "options": "Finding Template Cause"
+  },
+  {
+   "fieldname": "effect_template",
+   "fieldtype": "Text Editor",
+   "label": "Effect Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recommendation_template",
+   "fieldtype": "Text Editor",
+   "label": "Recommendation Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "typical_risk_rating",
+   "fieldtype": "Select",
+   "label": "Typical Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow",
+   "reqd": 1
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "usage_count",
+   "fieldtype": "Int",
+   "label": "Usage Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_modified",
+   "fieldtype": "Datetime",
+   "label": "Last Modified",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Finding Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "template_name"
+}

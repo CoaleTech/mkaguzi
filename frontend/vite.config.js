@@ -24,6 +24,19 @@ export default defineConfig({
 		emptyOutDir: true,
 		target: "es2015",
 		sourcemap: true,
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					// Vendor chunks
+					vue: ['vue', 'vue-router'],
+					// Feature chunks
+					charts: ['chart.js'],
+					icons: ['lucide-vue-next'],
+					// Large utility libraries
+					utils: ['date-fns'],
+				},
+			},
+		},
 	},
 	resolve: {
 		alias: {

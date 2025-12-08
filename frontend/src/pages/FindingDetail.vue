@@ -17,6 +17,12 @@
           <EditIcon class="h-4 w-4 mr-2" />
           Edit
         </Button>
+        <AskAIButton
+          v-if="finding"
+          contextType="audit-finding"
+          :contextData="getFindingContext()"
+          capability="finding-analysis"
+        />
       </div>
     </div>
 
@@ -213,6 +219,7 @@
 <script setup>
 import { createResource } from "frappe-ui"
 import { Badge, Button, Spinner } from "frappe-ui"
+import AskAIButton from "@/components/AskAIButton.vue"
 import {
 	CalendarIcon,
 	CheckCircleIcon,
@@ -345,6 +352,31 @@ const scheduleFollowUp = () => {
 
 const notifyManagement = () => {
 	// Notify management
+}
+
+const getFindingContext = () => {
+	if (!finding.value) return {}
+
+	return {
+		findingId: finding.value.name || finding.value.id,
+		title: finding.value.title,
+		severity: finding.value.severity,
+		status: finding.value.status,
+		category: finding.value.category,
+		entityName: finding.value.entityName,
+		description: finding.value.description,
+		rootCause: finding.value.rootCause,
+		recommendation: finding.value.recommendation,
+		reportedBy: finding.value.reportedBy,
+		reportedDate: finding.value.reportedDate,
+		dueDate: finding.value.dueDate,
+		correctiveActionsCount: finding.value.correctiveActions?.length || 0,
+		evidenceCount: finding.value.evidence?.length || 0,
+		// Include key metrics for AI analysis
+		openActions: finding.value.correctiveActions?.filter(a => a.status !== 'Completed').length || 0,
+		completedActions: finding.value.correctiveActions?.filter(a => a.status === 'Completed').length || 0,
+		overdueActions: finding.value.correctiveActions?.filter(a => a.dueDate && new Date(a.dueDate) < new Date() && a.status !== 'Completed').length || 0
+	}
 }
 
 onMounted(() => {

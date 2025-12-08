@@ -1,0 +1,88 @@
+{
+ "creation": "2025-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "affinity_details_section",
+  "source_page_type",
+  "target_page_type",
+  "column_break_1",
+  "affinity_score",
+  "explanation_template",
+  "last_updated"
+ ],
+ "fields": [
+  {
+   "fieldname": "affinity_details_section",
+   "fieldtype": "Section Break",
+   "label": "Affinity Details"
+  },
+  {
+   "fieldname": "source_page_type",
+   "fieldtype": "Data",
+   "label": "Source Page Type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "target_page_type",
+   "fieldtype": "Data",
+   "label": "Target Page Type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "affinity_score",
+   "fieldtype": "Float",
+   "label": "Affinity Score",
+   "default": 0,
+   "precision": 4,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "explanation_template",
+   "fieldtype": "Text",
+   "label": "Explanation Template"
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2025-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "AI",
+ "name": "AI Context Affinity",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Audit Manager",
+   "report": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

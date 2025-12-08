@@ -256,6 +256,14 @@
                 <ClockIcon class="h-4 w-4" />
                 <span v-if="!isSidebarCollapsed">Follow-up Tracker</span>
               </router-link>
+              <router-link
+                to="/findings/templates"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/findings/templates' }"
+              >
+                <FileTextIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Finding Templates</span>
+              </router-link>
             </div>
           </div>
 
@@ -543,6 +551,26 @@
             <span v-if="!isSidebarCollapsed">AI Chat</span>
           </router-link>
 
+          <!-- AI Specialist -->
+          <router-link
+            to="/ai-specialist"
+            class="nav-item"
+            :class="{ 'nav-item-active': $route.path.startsWith('/ai-specialist') }"
+          >
+            <BotIcon class="h-5 w-5" />
+            <span v-if="!isSidebarCollapsed">AI Specialist</span>
+          </router-link>
+
+          <!-- Real-Time Dashboard -->
+          <router-link
+            to="/real-time-dashboard"
+            class="nav-item"
+            :class="{ 'nav-item-active': $route.path.startsWith('/real-time-dashboard') }"
+          >
+            <ActivityIcon class="h-5 w-5" />
+            <span v-if="!isSidebarCollapsed">Real-Time Dashboard</span>
+          </router-link>
+
           <!-- Settings -->
           <div class="nav-group">
             <div
@@ -625,11 +653,13 @@ import Breadcrumbs from "@/components/Common/Breadcrumbs.vue"
 import { session } from "@/data/session"
 import { Avatar, Badge, Button, Dropdown } from "frappe-ui"
 import {
+	ActivityIcon,
 	AlertCircleIcon,
 	AlertTriangleIcon,
 	BarChart2Icon,
 	BarChartIcon,
 	BellIcon,
+	BotIcon,
 	BriefcaseIcon,
 	CalculatorIcon,
 	CalendarDaysIcon,
