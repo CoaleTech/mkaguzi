@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "skill_name",
+  "skill_category",
+  "proficiency_level",
+  "years_experience",
+  "certification_required",
+  "last_assessed"
+ ],
+ "fields": [
+  {
+   "fieldname": "skill_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Skill Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "skill_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Skill Category",
+   "options": "Technical Skills\nAudit Skills\nIndustry Knowledge\nSoft Skills\nIT Skills\nCompliance Skills\nRisk Management\nFinancial Analysis",
+   "reqd": 1
+  },
+  {
+   "fieldname": "proficiency_level",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Proficiency Level",
+   "options": "Beginner\nIntermediate\nAdvanced\nExpert",
+   "reqd": 1
+  },
+  {
+   "fieldname": "years_experience",
+   "fieldtype": "Int",
+   "label": "Years Experience"
+  },
+  {
+   "fieldname": "certification_required",
+   "fieldtype": "Check",
+   "label": "Certification Required"
+  },
+  {
+   "fieldname": "last_assessed",
+   "fieldtype": "Date",
+   "label": "Last Assessed"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit",
+ "name": "Audit Team Member Skill",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

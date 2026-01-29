@@ -1,0 +1,48 @@
+{
+ "actions": [],
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "trigger_type",
+  "trigger_condition",
+  "priority",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "trigger_type",
+   "fieldtype": "Select",
+   "label": "Trigger Type",
+   "options": "on_update\non_submit\non_cancel\non_trash\nvalidate\nbefore_save\nafter_insert",
+   "reqd": 1
+  },
+  {
+   "fieldname": "trigger_condition",
+   "fieldtype": "Data",
+   "label": "Trigger Condition"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority",
+   "default": "1"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Trigger",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -318,7 +318,7 @@
 </template>
 
 <script setup>
-import { Badge, Button, Dialog, FormControl } from "frappe-ui"
+import { Badge, Button, Dialog, FormControl, createResource } from "frappe-ui"
 import {
 	AlertCircle,
 	AlertTriangle,
@@ -353,6 +353,17 @@ const newReport = ref({
 	focusAreas: "",
 	notes: "",
 })
+
+// Additional state variables for new functions
+const exporting = ref(false)
+const scheduling = ref(false)
+const preparingMaterials = ref(false)
+const showScheduleDialog = ref(false)
+const showMeetingScheduler = ref(false)
+const showMaterialsDialog = ref(false)
+const selectedReportForSchedule = ref(null)
+const selectedReportForMeeting = ref(null)
+const boardMaterials = ref(null)
 
 // Computed properties
 const recentBoardReports = computed(() => {
@@ -515,14 +526,61 @@ const viewAllReports = () => {
 	router.push('/reports/board-reports')
 }
 
-const exportBoardReport = () => {
-	// TODO: Implement export functionality
-	console.log("Export board report")
+const exportBoardReport = async (reportId) => {
+	exporting.value = true
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.board_reports.export_board_report",
+			params: { report_id: reportId }
+		}).fetch()
+		if (result.success && result.file_url) {
+			window.open(result.file_url, "_blank")
+		}
+		showSuccessMessage("Board report exported successfully")
+		return result
+	} catch (error) {
+		showErrorMessage("Failed to export board report")
+	} finally {
+		exporting.value = false
+	}
 }
 
-const scheduleReport = () => {
-	// TODO: Implement schedule functionality
-	console.log("Schedule report")
+const scheduleReport = async (reportId) => {
+	scheduling.value = true
+	try {
+		selectedReportForSchedule.value = reportId
+		showScheduleDialog.value = true
+	} catch (error) {
+		showErrorMessage("Failed to open schedule dialog")
+	} finally {
+		scheduling.value = false
+	}
+}
+
+const confirmSchedule = async (reportId, scheduleData) => {
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.board_reports.schedule_board_report",
+			params: { report_id: reportId, schedule_data: scheduleData }
+		}).fetch()
+		showSuccessMessage("Board report scheduled successfully")
+		await reportsStore.fetchBoardReports()
+		showScheduleDialog.value = false
+	} catch (error) {
+		showErrorMessage("Failed to schedule board report")
+	}
+}
+
+// Utility functions
+const showSuccessMessage = (message) => {
+	// Using frappe-ui toast or similar
+	console.log("Success:", message)
+	// You can implement proper toast notification here
+}
+
+const showErrorMessage = (message) => {
+	console.log("Error:", message)
+	// You can implement proper error notification here
 }
 
 const viewRiskDashboard = () => {
@@ -541,14 +599,49 @@ const viewRecommendations = () => {
 	router.push('/findings/corrective-actions')
 }
 
-const scheduleMeeting = () => {
-	// TODO: Implement meeting scheduling
-	console.log("Schedule meeting")
+const scheduleMeeting = async (reportId) => {
+	showMeetingScheduler.value = true
+	try {
+		const report = await createResource({
+			url: "frappe.client.get_list",
+			params: { doctype: "Board Report", filters: { name: reportId }, fields: ["*"] }
+		}).fetch()
+		selectedReportForMeeting.value = report[0] || null
+	} catch (error) {
+		showErrorMessage("Failed to load report for meeting scheduling")
+	}
 }
 
-const prepareMaterials = (meeting) => {
-	// TODO: Implement material preparation
-	console.log("Prepare materials for:", meeting)
+const confirmMeetingSchedule = async (meetingData) => {
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.board_reports.schedule_board_meeting",
+			params: {
+				report_id: selectedReportForMeeting.value.name,
+				meeting_data: meetingData
+			}
+		}).fetch()
+		showSuccessMessage("Meeting scheduled successfully")
+		showMeetingScheduler.value = false
+	} catch (error) {
+		showErrorMessage("Failed to schedule meeting")
+	}
+}
+
+const prepareMaterials = async (reportId) => {
+	preparingMaterials.value = true
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.board_reports.prepare_board_materials",
+			params: { report_id: reportId }
+		}).fetch()
+		boardMaterials.value = result
+		showMaterialsDialog.value = true
+	} catch (error) {
+		showErrorMessage("Failed to prepare board materials")
+	} finally {
+		preparingMaterials.value = false
+	}
 }
 
 // Utility methods

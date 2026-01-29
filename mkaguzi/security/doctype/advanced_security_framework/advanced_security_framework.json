@@ -1,0 +1,294 @@
+{
+ "actions": [],
+ "autoname": "field:security_framework_id",
+ "creation": "2025-01-29 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "security_framework_id",
+  "framework_name",
+  "framework_version",
+  "description",
+  "status",
+  "security_layers_section",
+  "encryption_layer",
+  "access_control_layer",
+  "threat_detection_layer",
+  "monitoring_layer",
+  "compliance_layer",
+  "implementation_section",
+  "encryption_config",
+  "access_policies",
+  "threat_detection_rules",
+  "monitoring_config",
+  "compliance_requirements",
+  "security_metrics_section",
+  "security_score",
+  "threat_level",
+  "compliance_score",
+  "last_security_audit",
+  "next_audit_due",
+  "security_events",
+  "active_threats",
+  "security_incidents",
+  "encryption_status",
+  "access_violations",
+  "audit_trail_section",
+  "security_logs",
+  "audit_events",
+  "incident_reports",
+  "performance_metrics",
+  "created_by",
+  "approved_by",
+  "approval_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "security_framework_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Security Framework ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "framework_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Framework Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "framework_version",
+   "fieldtype": "Data",
+   "label": "Framework Version",
+   "default": "1.0.0"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nUnder Review\nDeprecated\nSuspended",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "security_layers_section",
+   "fieldtype": "Section Break",
+   "label": "Security Layers Configuration"
+  },
+  {
+   "fieldname": "encryption_layer",
+   "fieldtype": "JSON",
+   "label": "Encryption Layer"
+  },
+  {
+   "fieldname": "access_control_layer",
+   "fieldtype": "JSON",
+   "label": "Access Control Layer"
+  },
+  {
+   "fieldname": "threat_detection_layer",
+   "fieldtype": "JSON",
+   "label": "Threat Detection Layer"
+  },
+  {
+   "fieldname": "monitoring_layer",
+   "fieldtype": "JSON",
+   "label": "Monitoring Layer"
+  },
+  {
+   "fieldname": "compliance_layer",
+   "fieldtype": "JSON",
+   "label": "Compliance Layer"
+  },
+  {
+   "fieldname": "implementation_section",
+   "fieldtype": "Section Break",
+   "label": "Implementation Details"
+  },
+  {
+   "fieldname": "encryption_config",
+   "fieldtype": "JSON",
+   "label": "Encryption Configuration"
+  },
+  {
+   "fieldname": "access_policies",
+   "fieldtype": "JSON",
+   "label": "Access Policies"
+  },
+  {
+   "fieldname": "threat_detection_rules",
+   "fieldtype": "JSON",
+   "label": "Threat Detection Rules"
+  },
+  {
+   "fieldname": "monitoring_config",
+   "fieldtype": "JSON",
+   "label": "Monitoring Configuration"
+  },
+  {
+   "fieldname": "compliance_requirements",
+   "fieldtype": "JSON",
+   "label": "Compliance Requirements"
+  },
+  {
+   "fieldname": "security_metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Security Metrics"
+  },
+  {
+   "fieldname": "security_score",
+   "fieldtype": "Float",
+   "label": "Security Score",
+   "precision": 2
+  },
+  {
+   "fieldname": "threat_level",
+   "fieldtype": "Select",
+   "label": "Threat Level",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "compliance_score",
+   "fieldtype": "Float",
+   "label": "Compliance Score",
+   "precision": 2
+  },
+  {
+   "fieldname": "last_security_audit",
+   "fieldtype": "Datetime",
+   "label": "Last Security Audit"
+  },
+  {
+   "fieldname": "next_audit_due",
+   "fieldtype": "Date",
+   "label": "Next Audit Due"
+  },
+  {
+   "fieldname": "security_events",
+   "fieldtype": "Int",
+   "label": "Security Events (24h)"
+  },
+  {
+   "fieldname": "active_threats",
+   "fieldtype": "Int",
+   "label": "Active Threats"
+  },
+  {
+   "fieldname": "security_incidents",
+   "fieldtype": "Int",
+   "label": "Security Incidents (30d)"
+  },
+  {
+   "fieldname": "encryption_status",
+   "fieldtype": "Select",
+   "label": "Encryption Status",
+   "options": "Not Configured\nPartial\nFull\nVerified"
+  },
+  {
+   "fieldname": "access_violations",
+   "fieldtype": "Int",
+   "label": "Access Violations (7d)"
+  },
+  {
+   "fieldname": "audit_trail_section",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "security_logs",
+   "fieldtype": "JSON",
+   "label": "Security Logs"
+  },
+  {
+   "fieldname": "audit_events",
+   "fieldtype": "JSON",
+   "label": "Audit Events"
+  },
+  {
+   "fieldname": "incident_reports",
+   "fieldtype": "JSON",
+   "label": "Incident Reports"
+  },
+  {
+   "fieldname": "performance_metrics",
+   "fieldtype": "JSON",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-29 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Security",
+ "name": "Advanced Security Framework",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Security Manager",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Auditor",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "framework_name",
+ "track_changes": 1
+}

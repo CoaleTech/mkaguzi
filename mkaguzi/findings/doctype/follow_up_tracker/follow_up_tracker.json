@@ -1,0 +1,313 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tracker_id",
+  "audit_finding",
+  "finding_title",
+  "status",
+  "follow_up_type",
+  "column_break_6",
+  "start_date",
+  "next_due_date",
+  "frequency",
+  "follow_up_details_section",
+  "follow_up_objective",
+  "success_criteria",
+  "responsible_person",
+  "responsible_department",
+  "follow_up_history_section",
+  "follow_up_activities",
+  "last_follow_up_date",
+  "last_follow_up_by",
+  "last_findings",
+  "next_steps",
+  "progress_assessment_section",
+  "current_status",
+  "progress_rating",
+  "effectiveness_rating",
+  "issues_identified",
+  "recommendations",
+  "escalation_section",
+  "escalation_required",
+  "escalation_level",
+  "escalation_reason",
+  "escalation_date",
+  "closure_section",
+  "closure_criteria_met",
+  "closure_date",
+  "closed_by",
+  "closure_reason",
+  "final_assessment",
+  "attachments",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "tracker_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tracker ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "audit_finding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Audit Finding",
+   "options": "Audit Finding",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finding_title",
+   "fieldtype": "Data",
+   "label": "Finding Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nCompleted\nOn Hold\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "follow_up_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Follow-up Type",
+   "options": "Corrective Action Monitoring\nPreventive Measure Verification\nProcess Improvement Tracking\nRisk Mitigation Assessment\nCompliance Verification",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "next_due_date",
+   "fieldtype": "Date",
+   "label": "Next Due Date"
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "label": "Frequency",
+   "options": "Monthly\nQuarterly\nSemi-Annual\nAnnual\nOne-time\nAs Needed",
+   "reqd": 1
+  },
+  {
+   "fieldname": "follow_up_details_section",
+   "fieldtype": "Section Break",
+   "label": "Follow-up Details"
+  },
+  {
+   "fieldname": "follow_up_objective",
+   "fieldtype": "Text Editor",
+   "label": "Follow-up Objective",
+   "reqd": 1
+  },
+  {
+   "fieldname": "success_criteria",
+   "fieldtype": "Text Editor",
+   "label": "Success Criteria"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "responsible_department",
+   "fieldtype": "Link",
+   "label": "Responsible Department",
+   "options": "Department",
+   "reqd": 1
+  },
+  {
+   "fieldname": "follow_up_history_section",
+   "fieldtype": "Section Break",
+   "label": "Follow-up History"
+  },
+  {
+   "fieldname": "follow_up_activities",
+   "fieldtype": "Table",
+   "label": "Follow-up Activities",
+   "options": "Finding Follow-up Activity"
+  },
+  {
+   "fieldname": "last_follow_up_date",
+   "fieldtype": "Date",
+   "label": "Last Follow-up Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_follow_up_by",
+   "fieldtype": "Link",
+   "label": "Last Follow-up By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_findings",
+   "fieldtype": "Text Editor",
+   "label": "Last Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_steps",
+   "fieldtype": "Text Editor",
+   "label": "Next Steps"
+  },
+  {
+   "fieldname": "progress_assessment_section",
+   "fieldtype": "Section Break",
+   "label": "Progress Assessment"
+  },
+  {
+   "fieldname": "current_status",
+   "fieldtype": "Select",
+   "label": "Current Status",
+   "options": "On Track\nBehind Schedule\nAt Risk\nOff Track\nCompleted Successfully"
+  },
+  {
+   "fieldname": "progress_rating",
+   "fieldtype": "Rating",
+   "label": "Progress Rating (1-5)"
+  },
+  {
+   "fieldname": "effectiveness_rating",
+   "fieldtype": "Rating",
+   "label": "Effectiveness Rating (1-5)"
+  },
+  {
+   "fieldname": "issues_identified",
+   "fieldtype": "Text Editor",
+   "label": "Issues Identified"
+  },
+  {
+   "fieldname": "recommendations",
+   "fieldtype": "Text Editor",
+   "label": "Recommendations"
+  },
+  {
+   "fieldname": "escalation_section",
+   "fieldtype": "Section Break",
+   "label": "Escalation"
+  },
+  {
+   "fieldname": "escalation_required",
+   "fieldtype": "Check",
+   "label": "Escalation Required"
+  },
+  {
+   "fieldname": "escalation_level",
+   "fieldtype": "Select",
+   "label": "Escalation Level",
+   "options": "Manager\nSenior Management\nAudit Committee\nBoard"
+  },
+  {
+   "fieldname": "escalation_reason",
+   "fieldtype": "Text",
+   "label": "Escalation Reason"
+  },
+  {
+   "fieldname": "escalation_date",
+   "fieldtype": "Date",
+   "label": "Escalation Date"
+  },
+  {
+   "fieldname": "closure_section",
+   "fieldtype": "Section Break",
+   "label": "Closure"
+  },
+  {
+   "fieldname": "closure_criteria_met",
+   "fieldtype": "Check",
+   "label": "Closure Criteria Met"
+  },
+  {
+   "fieldname": "closure_date",
+   "fieldtype": "Date",
+   "label": "Closure Date"
+  },
+  {
+   "fieldname": "closed_by",
+   "fieldtype": "Link",
+   "label": "Closed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "closure_reason",
+   "fieldtype": "Select",
+   "label": "Closure Reason",
+   "options": "Successfully Completed\nNo Longer Required\nAlternative Solution Implemented\nManagement Decision"
+  },
+  {
+   "fieldname": "final_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Final Assessment"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Follow-up Tracker",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Management",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "tracker_id",
+ "track_changes": 1
+}

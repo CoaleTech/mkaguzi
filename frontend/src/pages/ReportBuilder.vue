@@ -450,11 +450,22 @@ const previewReport = async () => {
 	try {
 		generating.value = true
 
-		// Mock data generation - in real implementation, this would query Frappe
-		const mockData = generateMockData()
-		reportData.value = mockData
+		// Real API call to Frappe backend for report data
+		const result = await createResource({
+			url: "frappe.client.get_list",
+			params: {
+				doctype: reportConfig.value.source_doctype || "Audit Engagement",
+				fields: selectedColumns.value.map((col) => col.fieldname),
+				filters: reportConfig.value.filters || {},
+				limit_page_length: reportConfig.value.limit || 100,
+			},
+		}).fetch()
+
+		reportData.value = result || []
 	} catch (error) {
 		console.error("Error generating preview:", error)
+		// Fallback to empty array on error
+		reportData.value = []
 	} finally {
 		generating.value = false
 	}
@@ -464,37 +475,41 @@ const refreshPreview = () => {
 	previewReport()
 }
 
-const generateMockData = () => {
-	const data = []
-	const count = Math.floor(Math.random() * 50) + 10
-
-	for (let i = 0; i < count; i++) {
-		const row = {}
-		selectedColumns.value.forEach((column) => {
-			if (column.fieldtype === "Date") {
-				const date = new Date()
-				date.setDate(date.getDate() - Math.floor(Math.random() * 365))
-				row[column.fieldname] = date.toISOString().split("T")[0]
-			} else if (column.fieldtype === "Int") {
-				row[column.fieldname] = Math.floor(Math.random() * 1000)
-			} else {
-				row[column.fieldname] = `Sample ${column.label} ${i + 1}`
-			}
-		})
-		data.push(row)
-	}
-
-	return data
-}
-
-const saveReport = () => {
+const saveReport = async () => {
 	if (!reportConfig.value.title) {
 		alert("Please enter a report title")
 		return
 	}
 
-	console.log("Saving report:", reportConfig.value)
-	alert("Report saved successfully!")
+	try {
+		saving.value = true
+
+		// Create or update report via Frappe API
+		await createResource({
+			url: "frappe.client.insert",
+			params: {
+				doc: {
+					doctype: "Report Template",
+					template_name: reportConfig.value.title,
+					report_type: reportConfig.value.report_type || "Custom",
+					template_config: JSON.stringify({
+						columns: selectedColumns.value,
+						filters: reportConfig.value.filters || {},
+						sort_by: reportConfig.value.sortBy,
+						sort_order: reportConfig.value.sortOrder || "asc",
+					}),
+					is_active: 1,
+				},
+			},
+		}).fetch()
+
+		alert("Report saved successfully!")
+	} catch (error) {
+		console.error("Error saving report:", error)
+		alert("Failed to save report: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 const exportReport = async () => {

@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "autoname": "field:link_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "link_id",
+  "anomaly_alert",
+  "alert_type",
+  "severity",
+  "confidence_score",
+  "alert_status",
+  "detected_date",
+  "included_in_assessment"
+ ],
+ "fields": [
+  {
+   "fieldname": "link_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Link ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "anomaly_alert",
+   "fieldtype": "Link",
+   "label": "Anomaly Alert",
+   "options": "Anomaly Alert",
+   "reqd": 1
+  },
+  {
+   "fieldname": "alert_type",
+   "fieldtype": "Data",
+   "label": "Alert Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "read_only": 1
+  },
+  {
+   "fieldname": "confidence_score",
+   "fieldtype": "Float",
+   "label": "Confidence Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "alert_status",
+   "fieldtype": "Select",
+   "label": "Alert Status",
+   "options": "Open\nInvestigating\nResolved\nFalse Positive",
+   "read_only": 1
+  },
+  {
+   "fieldname": "detected_date",
+   "fieldtype": "Date",
+   "label": "Detected Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "included_in_assessment",
+   "fieldtype": "Check",
+   "label": "Included in Assessment",
+   "default": "1"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Anomaly Alert Link",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,283 @@
+{
+ "actions": [],
+ "autoname": "field:assessment_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "assessment_id",
+  "assessment_name",
+  "assessment_date",
+  "fiscal_year",
+  "assessment_period",
+  "assessment_type",
+  "assessment_team",
+  "assessment_scope",
+  "methodology",
+  "status",
+  "real_time_monitoring",
+  "automated_triggers",
+  "risk_indicators_section",
+  "risk_indicators",
+  "anomaly_detection_section",
+  "anomaly_alerts",
+  "predictive_analytics_section",
+  "ml_insights",
+  "risk_forecasting",
+  "risk_register",
+  "action_plan",
+  "overall_risk_score",
+  "overall_risk_rating",
+  "real_time_risk_score",
+  "risk_trend_direction",
+  "risk_heat_map_data",
+  "top_risks",
+  "assessment_summary",
+  "recommendations",
+  "prepared_by",
+  "reviewed_by",
+  "approved_by",
+  "approval_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "assessment_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Assessment ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "assessment_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Assessment Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_date",
+   "fieldtype": "Date",
+   "label": "Assessment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fiscal_year",
+   "fieldtype": "Link",
+   "label": "Fiscal Year",
+   "options": "Fiscal Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_period",
+   "fieldtype": "Select",
+   "label": "Assessment Period",
+   "options": "Annual\nMid-Year\nQuarterly\nAd-hoc\nContinuous",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_type",
+   "fieldtype": "Select",
+   "label": "Assessment Type",
+   "options": "Traditional\nReal-time\nPredictive\nHybrid",
+   "default": "Traditional"
+  },
+  {
+   "fieldname": "assessment_team",
+   "fieldtype": "Table",
+   "label": "Assessment Team",
+   "options": "Assessment Team Member"
+  },
+  {
+   "fieldname": "assessment_scope",
+   "fieldtype": "Text Editor",
+   "label": "Assessment Scope"
+  },
+  {
+   "fieldname": "methodology",
+   "fieldtype": "Small Text",
+   "label": "Methodology"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Planning\nIn Progress\nReview\nFinalized\nApproved\nContinuous Monitoring",
+   "default": "Planning"
+  },
+  {
+   "fieldname": "real_time_monitoring",
+   "fieldtype": "Section Break",
+   "label": "Real-time Monitoring"
+  },
+  {
+   "fieldname": "automated_triggers",
+   "fieldtype": "Table",
+   "label": "Automated Triggers",
+   "options": "Assessment Trigger"
+  },
+  {
+   "fieldname": "risk_indicators_section",
+   "fieldtype": "Section Break",
+   "label": "Risk Indicators Integration"
+  },
+  {
+   "fieldname": "risk_indicators",
+   "fieldtype": "Table",
+   "label": "Risk Indicators",
+   "options": "Risk Indicator Link"
+  },
+  {
+   "fieldname": "anomaly_detection_section",
+   "fieldtype": "Section Break",
+   "label": "Anomaly Detection"
+  },
+  {
+   "fieldname": "anomaly_alerts",
+   "fieldtype": "Table",
+   "label": "Anomaly Alerts",
+   "options": "Anomaly Alert Link"
+  },
+  {
+   "fieldname": "predictive_analytics_section",
+   "fieldtype": "Section Break",
+   "label": "Predictive Analytics"
+  },
+  {
+   "fieldname": "ml_insights",
+   "fieldtype": "JSON",
+   "label": "ML Insights",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_forecasting",
+   "fieldtype": "JSON",
+   "label": "Risk Forecasting",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_register",
+   "fieldtype": "Table",
+   "label": "Risk Register",
+   "options": "Risk Assessment Register",
+   "reqd": 1
+  },
+  {
+   "fieldname": "action_plan",
+   "fieldtype": "Table",
+   "label": "Action Plan",
+   "options": "Risk Assessment Action"
+  },
+  {
+   "fieldname": "overall_risk_score",
+   "fieldtype": "Float",
+   "label": "Overall Risk Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overall_risk_rating",
+   "fieldtype": "Select",
+   "label": "Overall Risk Rating",
+   "options": "Very Low\nLow\nMedium\nHigh\nVery High",
+   "read_only": 1
+  },
+  {
+   "fieldname": "real_time_risk_score",
+   "fieldtype": "Float",
+   "label": "Real-time Risk Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_trend_direction",
+   "fieldtype": "Select",
+   "label": "Risk Trend Direction",
+   "options": "Improving\nStable\nDeteriorating\nUnknown",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_heat_map_data",
+   "fieldtype": "JSON",
+   "label": "Risk Heat Map Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "top_risks",
+   "fieldtype": "Table",
+   "label": "Top Risks",
+   "options": "Top Risk Summary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "assessment_summary",
+   "fieldtype": "Text Editor",
+   "label": "Assessment Summary"
+  },
+  {
+   "fieldname": "recommendations",
+   "fieldtype": "Text Editor",
+   "label": "Recommendations"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "label": "Prepared By",
+   "options": "User"
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Risk Assessment",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "assessment_name"
+}

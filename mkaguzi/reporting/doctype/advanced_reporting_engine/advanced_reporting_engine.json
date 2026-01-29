@@ -1,0 +1,368 @@
+{
+	"actions": [],
+	"allow_copy": 0,
+	"allow_guest_to_view": 0,
+	"allow_import": 0,
+	"allow_rename": 1,
+	"autoname": "field:report_id",
+	"beta": 0,
+	"creation": "2024-01-29 10:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"report_id",
+		"report_name",
+		"report_type",
+		"report_category",
+		"description",
+		"column_break_5",
+		"status",
+		"is_scheduled",
+		"is_template",
+		"version",
+		"section_break_10",
+		"data_sources",
+		"query_config",
+		"filters_config",
+		"column_break_14",
+		"aggregation_config",
+		"visualization_config",
+		"export_config",
+		"section_break_18",
+		"report_columns",
+		"section_break_20",
+		"schedule_config",
+		"recipients",
+		"delivery_method",
+		"column_break_24",
+		"last_run",
+		"next_run",
+		"execution_history",
+		"section_break_28",
+		"permissions_config",
+		"alerts_config",
+		"performance_config",
+		"column_break_32",
+		"custom_logic",
+		"template_config",
+		"attachments",
+		"section_break_36",
+		"created_by",
+		"created_on",
+		"modified_by",
+		"modified_on",
+		"column_break_40",
+		"execution_count",
+		"average_runtime",
+		"performance_metrics"
+	],
+	"fields": [
+		{
+			"fieldname": "report_id",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Report ID",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "report_name",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Report Name",
+			"reqd": 1
+		},
+		{
+			"fieldname": "report_type",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Report Type",
+			"options": "Compliance Report\nAudit Report\nRisk Report\nPerformance Report\nExecutive Summary\nCustom Report\nDashboard Export",
+			"reqd": 1
+		},
+		{
+			"fieldname": "report_category",
+			"fieldtype": "Select",
+			"label": "Report Category",
+			"options": "Operational\nStrategic\nRegulatory\nFinancial\nTechnical\nCustom",
+			"default": "Operational"
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Text",
+			"label": "Description"
+		},
+		{
+			"fieldname": "column_break_5",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Status",
+			"options": "Draft\nActive\nInactive\nArchived",
+			"default": "Draft"
+		},
+		{
+			"fieldname": "is_scheduled",
+			"fieldtype": "Check",
+			"label": "Is Scheduled"
+		},
+		{
+			"fieldname": "is_template",
+			"fieldtype": "Check",
+			"label": "Is Template"
+		},
+		{
+			"fieldname": "version",
+			"fieldtype": "Data",
+			"label": "Version",
+			"default": "1.0"
+		},
+		{
+			"fieldname": "section_break_10",
+			"fieldtype": "Section Break",
+			"label": "Data Configuration"
+		},
+		{
+			"fieldname": "data_sources",
+			"fieldtype": "JSON",
+			"label": "Data Sources"
+		},
+		{
+			"fieldname": "query_config",
+			"fieldtype": "JSON",
+			"label": "Query Configuration"
+		},
+		{
+			"fieldname": "filters_config",
+			"fieldtype": "JSON",
+			"label": "Filters Configuration"
+		},
+		{
+			"fieldname": "column_break_14",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "aggregation_config",
+			"fieldtype": "JSON",
+			"label": "Aggregation Configuration"
+		},
+		{
+			"fieldname": "visualization_config",
+			"fieldtype": "JSON",
+			"label": "Visualization Configuration"
+		},
+		{
+			"fieldname": "export_config",
+			"fieldtype": "JSON",
+			"label": "Export Configuration"
+		},
+		{
+			"fieldname": "section_break_18",
+			"fieldtype": "Section Break",
+			"label": "Report Structure"
+		},
+		{
+			"fieldname": "report_columns",
+			"fieldtype": "Table",
+			"label": "Report Columns",
+			"options": "Report Column"
+		},
+		{
+			"fieldname": "section_break_20",
+			"fieldtype": "Section Break",
+			"label": "Scheduling"
+		},
+		{
+			"fieldname": "schedule_config",
+			"fieldtype": "JSON",
+			"label": "Schedule Configuration"
+		},
+		{
+			"fieldname": "recipients",
+			"fieldtype": "Table",
+			"label": "Recipients",
+			"options": "Report Recipient"
+		},
+		{
+			"fieldname": "delivery_method",
+			"fieldtype": "Select",
+			"label": "Delivery Method",
+			"options": "Email\nFile System\nFTP\nAPI\nPrint",
+			"default": "Email"
+		},
+		{
+			"fieldname": "column_break_24",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "last_run",
+			"fieldtype": "Datetime",
+			"label": "Last Run",
+			"read_only": 1
+		},
+		{
+			"fieldname": "next_run",
+			"fieldtype": "Datetime",
+			"label": "Next Run",
+			"read_only": 1
+		},
+		{
+			"fieldname": "execution_history",
+			"fieldtype": "JSON",
+			"label": "Execution History"
+		},
+		{
+			"fieldname": "section_break_28",
+			"fieldtype": "Section Break",
+			"label": "Advanced Configuration"
+		},
+		{
+			"fieldname": "permissions_config",
+			"fieldtype": "JSON",
+			"label": "Permissions Configuration"
+		},
+		{
+			"fieldname": "alerts_config",
+			"fieldtype": "JSON",
+			"label": "Alerts Configuration"
+		},
+		{
+			"fieldname": "performance_config",
+			"fieldtype": "JSON",
+			"label": "Performance Configuration"
+		},
+		{
+			"fieldname": "column_break_32",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "custom_logic",
+			"fieldtype": "Code",
+			"label": "Custom Logic",
+			"options": "Python"
+		},
+		{
+			"fieldname": "template_config",
+			"fieldtype": "JSON",
+			"label": "Template Configuration"
+		},
+		{
+			"fieldname": "attachments",
+			"fieldtype": "Attach",
+			"label": "Attachments"
+		},
+		{
+			"fieldname": "section_break_36",
+			"fieldtype": "Section Break",
+			"label": "Audit Information"
+		},
+		{
+			"fieldname": "created_by",
+			"fieldtype": "Link",
+			"label": "Created By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "created_on",
+			"fieldtype": "Datetime",
+			"label": "Created On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_by",
+			"fieldtype": "Link",
+			"label": "Modified By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_on",
+			"fieldtype": "Datetime",
+			"label": "Modified On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_40",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "execution_count",
+			"fieldtype": "Int",
+			"label": "Execution Count",
+			"read_only": 1
+		},
+		{
+			"fieldname": "average_runtime",
+			"fieldtype": "Float",
+			"label": "Average Runtime (seconds)",
+			"read_only": 1
+		},
+		{
+			"fieldname": "performance_metrics",
+			"fieldtype": "JSON",
+			"label": "Performance Metrics"
+		}
+	],
+	"has_web_view": 0,
+	"idx": 0,
+	"image_field": "",
+	"is_submittable": 0,
+	"links": [],
+	"modified": "2024-01-29 10:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Reporting",
+	"name": "Advanced Reporting Engine",
+	"naming_rule": "",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "System Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Compliance Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 0,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Auditor",
+			"share": 0,
+			"write": 0
+		}
+	],
+	"quick_entry": 0,
+	"search_fields": "report_name,report_type,status",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "report_name",
+	"track_changes": 1,
+	"track_seen": 1,
+	"track_views": 1
+}

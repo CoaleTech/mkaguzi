@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "autoname": "field:link_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "link_id",
+  "risk_indicator",
+  "indicator_name",
+  "current_value",
+  "threshold_status",
+  "weight",
+  "last_updated",
+  "monitoring_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "link_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Link ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "risk_indicator",
+   "fieldtype": "Link",
+   "label": "Risk Indicator",
+   "options": "Risk Indicator",
+   "reqd": 1
+  },
+  {
+   "fieldname": "indicator_name",
+   "fieldtype": "Data",
+   "label": "Indicator Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current_value",
+   "fieldtype": "Float",
+   "label": "Current Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "threshold_status",
+   "fieldtype": "Select",
+   "label": "Threshold Status",
+   "options": "Normal\nWarning\nCritical\nUnknown",
+   "read_only": 1
+  },
+  {
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "label": "Weight",
+   "default": "1.0",
+   "description": "Weight factor for risk calculation (0.1 to 5.0)"
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "monitoring_active",
+   "fieldtype": "Check",
+   "label": "Monitoring Active",
+   "default": "1"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Risk Indicator Link",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

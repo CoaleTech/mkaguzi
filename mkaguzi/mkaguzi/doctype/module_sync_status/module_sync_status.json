@@ -1,0 +1,200 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "module_name",
+  "sync_type",
+  "last_sync_date",
+  "column_break_4",
+  "sync_status",
+  "next_sync_due",
+  "sync_frequency",
+  "section_break_8",
+  "sync_details",
+  "section_break_10",
+  "records_processed",
+  "records_failed",
+  "column_break_13",
+  "error_count",
+  "warning_count",
+  "success_rate",
+  "section_break_16",
+  "last_sync_errors",
+  "section_break_18",
+  "sync_history",
+  "change_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "module_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Module Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sync_type",
+   "fieldtype": "Select",
+   "label": "Sync Type",
+   "options": "Audit Trail\nDoctype Catalog\nTemplates\nHooks\nFull Sync",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_sync_date",
+   "fieldtype": "Datetime",
+   "label": "Last Sync Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sync_status",
+   "fieldtype": "Select",
+   "label": "Sync Status",
+   "options": "Never Synced\nSuccess\nFailed\nIn Progress\nPartial Success",
+   "default": "Never Synced"
+  },
+  {
+   "fieldname": "next_sync_due",
+   "fieldtype": "Datetime",
+   "label": "Next Sync Due",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sync_frequency",
+   "fieldtype": "Select",
+   "label": "Sync Frequency",
+   "options": "Real-time\nHourly\nDaily\nWeekly\nMonthly\nManual",
+   "default": "Daily"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Sync Details"
+  },
+  {
+   "fieldname": "sync_details",
+   "fieldtype": "Text Editor",
+   "label": "Sync Details"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break",
+   "label": "Sync Statistics"
+  },
+  {
+   "fieldname": "records_processed",
+   "fieldtype": "Int",
+   "label": "Records Processed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "records_failed",
+   "fieldtype": "Int",
+   "label": "Records Failed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "error_count",
+   "fieldtype": "Int",
+   "label": "Error Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "warning_count",
+   "fieldtype": "Int",
+   "label": "Warning Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "success_rate",
+   "fieldtype": "Percent",
+   "label": "Success Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break",
+   "label": "Error Details"
+  },
+  {
+   "fieldname": "last_sync_errors",
+   "fieldtype": "Text Editor",
+   "label": "Last Sync Errors",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Sync History"
+  },
+  {
+   "fieldname": "sync_history",
+   "fieldtype": "Table",
+   "label": "Sync History",
+   "options": "Sync History Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "change_log",
+   "fieldtype": "Text",
+   "label": "Change Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Module Sync Status",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "module_name",
+ "track_changes": 1
+}

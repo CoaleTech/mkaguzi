@@ -1,0 +1,176 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "category",
+  "subcategory",
+  "is_active",
+  "section_break_1",
+  "criteria",
+  "condition",
+  "cause",
+  "consequence",
+  "corrective_action",
+  "section_break_2",
+  "description",
+  "impact_assessment",
+  "risk_rating",
+  "section_break_3",
+  "recommended_controls",
+  "testing_procedures",
+  "references",
+  "section_break_4",
+  "usage_count",
+  "last_used"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "label": "Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Segregation of Duties\nAccess Controls\nPolicy & Procedures\nDocumentation\nApproval Processes\nFinancial Controls\nOperational Controls\nCompliance\nIT Security\nRisk Management",
+   "reqd": 1
+  },
+  {
+   "fieldname": "subcategory",
+   "fieldtype": "Data",
+   "label": "Subcategory"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break",
+   "label": "Five C's Framework Template"
+  },
+  {
+   "fieldname": "criteria",
+   "fieldtype": "Text Editor",
+   "label": "Criteria Template",
+   "description": "Template for what should be according to policies, procedures, laws, or standards"
+  },
+  {
+   "fieldname": "condition",
+   "fieldtype": "Text Editor",
+   "label": "Condition Template",
+   "description": "Template for what actually exists or what is happening"
+  },
+  {
+   "fieldname": "cause",
+   "fieldtype": "Text Editor",
+   "label": "Cause Template",
+   "description": "Template for the reason for the difference between criteria and condition"
+  },
+  {
+   "fieldname": "consequence",
+   "fieldtype": "Text Editor",
+   "label": "Consequence Template",
+   "description": "Template for the risk or impact of the condition"
+  },
+  {
+   "fieldname": "corrective_action",
+   "fieldtype": "Text Editor",
+   "label": "Corrective Action Template",
+   "description": "Template for recommended action to address the finding"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Finding Details Template"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description Template"
+  },
+  {
+   "fieldname": "impact_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Impact Assessment Template"
+  },
+  {
+   "fieldname": "risk_rating",
+   "fieldtype": "Select",
+   "label": "Default Risk Rating",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break",
+   "label": "Controls & Testing"
+  },
+  {
+   "fieldname": "recommended_controls",
+   "fieldtype": "Text Editor",
+   "label": "Recommended Controls"
+  },
+  {
+   "fieldname": "testing_procedures",
+   "fieldtype": "Text Editor",
+   "label": "Testing Procedures"
+  },
+  {
+   "fieldname": "references",
+   "fieldtype": "Text Editor",
+   "label": "References & Standards"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Usage Statistics"
+  },
+  {
+   "fieldname": "usage_count",
+   "fieldtype": "Int",
+   "label": "Usage Count",
+   "default": 0
+  },
+  {
+   "fieldname": "last_used",
+   "fieldtype": "Date",
+   "label": "Last Used"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit",
+ "name": "Common Finding Template",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "role": "System Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "role": "Audit Manager"
+  },
+  {
+   "read": 1,
+   "role": "Internal Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "template_name"
+}

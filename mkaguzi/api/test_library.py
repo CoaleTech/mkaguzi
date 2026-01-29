@@ -1,3 +1,6 @@
+# TEST LIBRARY MODULE APIs
+# =============================================================================
+
 import frappe
 from frappe import _
 from frappe.utils import now, get_datetime
@@ -364,3 +367,224 @@ def export_tests(filters=None):
     except Exception as e:
         frappe.log_error(f"Error exporting tests: {str(e)}")
         frappe.throw(_("Failed to export tests"))
+
+
+@frappe.whitelist()
+def get_test_categories():
+    """
+    Get all test categories for frontend filter
+
+    Returns:
+        list: List of unique test categories
+    """
+    try:
+        categories = frappe.db.sql("""
+            SELECT DISTINCT test_category
+            FROM `tabAudit Test Library`
+            WHERE test_category IS NOT NULL
+            AND test_category != ''
+            ORDER BY test_category
+        """, as_dict=True)
+
+        return [cat['test_category'] for cat in categories]
+
+    except Exception as e:
+        frappe.log_error(f"Error fetching test categories: {str(e)}")
+        return []
+
+
+@frappe.whitelist()
+def get_test_statistics():
+    """
+    Get test statistics for dashboard analytics
+
+    Returns:
+        dict: Test statistics including totals, by status, by category, execution stats
+    """
+    try:
+        # Total tests
+        total_tests = frappe.db.count("Audit Test Library")
+
+        # Tests by status
+        status_stats = frappe.db.sql("""
+            SELECT status, COUNT(*) as count
+            FROM `tabAudit Test Library`
+            GROUP BY status
+        """, as_dict=True)
+
+        # Tests by category
+        category_stats = frappe.db.sql("""
+            SELECT test_category, COUNT(*) as count
+            FROM `tabAudit Test Library`
+            WHERE test_category IS NOT NULL
+            GROUP BY test_category
+            ORDER BY count DESC
+        """, as_dict=True)
+
+        # Execution statistics
+        execution_stats = frappe.db.sql("""
+            SELECT
+                COUNT(*) as total_executions,
+                SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = 'Failed' THEN 1 ELSE 0 END) as failed,
+                SUM(CASE WHEN status = 'Running' THEN 1 ELSE 0 END) as running
+            FROM `tabTest Execution`
+        """, as_dict=True)[0]
+
+        # Average success rate
+        avg_success_rate = frappe.db.sql("""
+            SELECT AVG(success_rate) as avg_rate
+            FROM `tabAudit Test Library`
+            WHERE success_rate IS NOT NULL
+        """, as_dict=True)[0]['avg_rate'] or 0
+
+        # Most used tests
+        most_used = frappe.db.sql("""
+            SELECT test_id, test_name, usage_count
+            FROM `tabAudit Test Library`
+            WHERE usage_count > 0
+            ORDER BY usage_count DESC
+            LIMIT 5
+        """, as_dict=True)
+
+        # Recent executions
+        recent_executions = frappe.db.sql("""
+            SELECT
+                te.name,
+                te.execution_id,
+                te.test_library_reference,
+                at.test_name,
+                te.status,
+                te.actual_start_date
+            FROM `tabTest Execution` te
+            LEFT JOIN `tabAudit Test Library` at ON te.test_library_reference = at.name
+            ORDER BY te.actual_start_date DESC
+            LIMIT 10
+        """, as_dict=True)
+
+        return {
+            'total_tests': total_tests,
+            'by_status': {s['status']: s['count'] for s in status_stats},
+            'by_category': category_stats,
+            'execution_stats': {
+                'total': execution_stats['total_executions'] or 0,
+                'completed': execution_stats['completed'] or 0,
+                'failed': execution_stats['failed'] or 0,
+                'running': execution_stats['running'] or 0,
+                'success_rate': round(avg_success_rate, 2)
+            },
+            'most_used': most_used,
+            'recent_executions': recent_executions
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error fetching test statistics: {str(e)}")
+        return {
+            'total_tests': 0,
+            'by_status': {},
+            'by_category': [],
+            'execution_stats': {
+                'total': 0,
+                'completed': 0,
+                'failed': 0,
+                'running': 0,
+                'success_rate': 0
+            },
+            'most_used': [],
+            'recent_executions': []
+        }
+
+
+@frappe.whitelist()
+def bulk_test_operations(operation, test_ids, **kwargs):
+    """
+    Perform bulk operations on multiple tests
+
+    Args:
+        operation (str): Operation to perform (activate, deactivate, delete, export, clone)
+        test_ids (list): List of test IDs to operate on
+        **kwargs: Additional operation-specific parameters
+
+    Returns:
+        dict: Operation results
+    """
+    try:
+        if isinstance(test_ids, str):
+            test_ids = json.loads(test_ids)
+
+        results = {
+            'success': [],
+            'failed': [],
+            'operation': operation
+        }
+
+        for test_id in test_ids:
+            try:
+                if operation == 'activate':
+                    test = frappe.get_doc('Audit Test Library', test_id)
+                    test.status = 'Active'
+                    test.save()
+                    results['success'].append(test_id)
+
+                elif operation == 'deactivate':
+                    test = frappe.get_doc('Audit Test Library', test_id)
+                    test.status = 'Inactive'
+                    test.save()
+                    results['success'].append(test_id)
+
+                elif operation == 'delete':
+                    frappe.delete_doc('Audit Test Library', test_id)
+                    results['success'].append(test_id)
+
+                elif operation == 'clone':
+                    original = frappe.get_doc('Audit Test Library', test_id)
+                    clone = frappe.copy_doc(original, ignore_no_copy=True)
+                    clone.test_name = f"{original.test_name} (Copy)"
+                    clone.test_id = frappe.generate_hash(length=8).upper()
+                    clone.usage_count = 0
+                    clone.insert()
+                    results['success'].append({
+                        'original': test_id,
+                        'clone': clone.name,
+                        'clone_id': clone.test_id
+                    })
+
+                elif operation == 'export':
+                    test = frappe.get_doc('Audit Test Library', test_id)
+                    results['success'].append({
+                        'test_id': test.test_id,
+                        'test_name': test.test_name,
+                        'category': test.test_category,
+                        'test_type': test.test_logic_type,
+                        'description': test.description,
+                        'objective': test.objective,
+                        'status': test.status
+                    })
+
+                elif operation == 'archive':
+                    test = frappe.get_doc('Audit Test Library', test_id)
+                    test.status = 'Archived'
+                    test.save()
+                    results['success'].append(test_id)
+
+                else:
+                    results['failed'].append({
+                        'test_id': test_id,
+                        'reason': f"Unknown operation: {operation}"
+                    })
+
+            except Exception as e:
+                results['failed'].append({
+                    'test_id': test_id,
+                    'reason': str(e)
+                })
+
+        results['total'] = len(test_ids)
+        results['success_count'] = len(results['success'])
+        results['failed_count'] = len(results['failed'])
+
+        return results
+
+    except Exception as e:
+        frappe.log_error(f"Error in bulk test operations: {str(e)}")
+        frappe.throw(_("Failed to perform bulk operations"))

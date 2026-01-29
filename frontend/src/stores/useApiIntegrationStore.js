@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
+import { createResource } from "frappe-ui"
 
 export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 	// State
@@ -15,89 +16,35 @@ export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 	const loading = ref(false)
 	const error = ref(null)
 
-	// Sample data initialization
-	const initializeSampleData = () => {
-		// API Integrations
-		integrations.value = [
-			{
-				id: "int_001",
-				name: "Salesforce CRM",
-				type: "REST",
-				status: "Active",
-				description: "Customer relationship management integration",
-				base_url: "https://company.salesforce.com/services/data/v54.0/",
-				auth_type: "OAuth2",
-				version: "v54.0",
-				rate_limit: 15000,
-				rate_period: "hour",
-				health_status: "Healthy",
-				last_sync: "2025-11-25T10:30:00Z",
-				next_sync: "2025-11-25T11:30:00Z",
-				sync_frequency: "hourly",
-				created: "2025-11-15T09:00:00Z",
-				created_by: "John Doe",
-				tags: ["CRM", "Customer Data", "Sales"],
-				metadata: {
-					total_requests: 125680,
-					successful_requests: 124892,
-					failed_requests: 788,
-					avg_response_time: 245,
-					last_error: null,
-					uptime_percentage: 99.37,
-				},
-			},
-			{
-				id: "int_002",
-				name: "SAP ERP",
-				type: "REST",
-				status: "Active",
-				description: "Enterprise resource planning system integration",
-				base_url: "https://erp.company.com/api/v2/",
-				auth_type: "API_Key",
-				version: "v2.1",
-				rate_limit: 5000,
-				rate_period: "hour",
-				health_status: "Warning",
-				last_sync: "2025-11-25T10:15:00Z",
-				next_sync: "2025-11-25T12:15:00Z",
-				sync_frequency: "every_2_hours",
-				created: "2025-11-10T14:20:00Z",
-				created_by: "Jane Smith",
-				tags: ["ERP", "Financial Data", "Procurement"],
-				metadata: {
-					total_requests: 87340,
-					successful_requests: 85120,
-					failed_requests: 2220,
-					avg_response_time: 1200,
-					last_error: "Rate limit exceeded",
-					uptime_percentage: 97.45,
-				},
-			},
-			{
-				id: "int_003",
-				name: "Microsoft Graph",
-				type: "GraphQL",
-				status: "Active",
-				description: "Microsoft 365 integration for user and document data",
-				base_url: "https://graph.microsoft.com/v1.0/",
-				auth_type: "OAuth2",
-				version: "v1.0",
-				rate_limit: 10000,
-				rate_period: "minute",
-				health_status: "Healthy",
-				last_sync: "2025-11-25T10:45:00Z",
-				next_sync: "2025-11-25T11:00:00Z",
-				sync_frequency: "every_15_minutes",
-				created: "2025-11-20T11:30:00Z",
-				created_by: "Mike Johnson",
-				tags: ["Microsoft 365", "Documents", "Users"],
-				metadata: {
-					total_requests: 45680,
-					successful_requests: 45321,
-					failed_requests: 359,
-					avg_response_time: 180,
-					last_error: null,
-					uptime_percentage: 99.21,
+	// Removed mock data initialization - using real API calls instead
+
+	// API resource for loading integrations from backend
+	const integrationsResource = createResource({
+		url: "frappe.client.get_list",
+		params: {
+			doctype: "Integration Hub",
+			fields: ["*"],
+			limit_page_length: 100,
+		},
+		onSuccess: (data) => {
+			integrations.value = data || []
+		},
+	})
+
+	// API resource for connections
+	const connectionsResource = createResource({
+		url: "frappe.client.get_list",
+		params: {
+			doctype: "Integration Connection",
+			fields: ["*"],
+			limit_page_length: 100,
+		},
+		onSuccess: (data) => {
+			connections.value = data || []
+		},
+	})
+
+	// Computed properties
 				},
 			},
 			{
@@ -559,12 +506,11 @@ export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 		error.value = null
 
 		try {
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 1000))
-			// In a real app, this would fetch from the API
-			console.log("Integrations loaded:", integrations.value.length)
+			await integrationsResource.fetch()
+			await connectionsResource.fetch()
 		} catch (err) {
 			error.value = err.message
+			console.error("Error loading integrations:", err)
 		} finally {
 			loading.value = false
 		}
@@ -575,24 +521,19 @@ export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 		error.value = null
 
 		try {
-			const newIntegration = {
-				id: `int_${Date.now()}`,
-				...integrationData,
-				status: "Inactive",
-				health_status: "Unknown",
-				created: new Date().toISOString(),
-				metadata: {
-					total_requests: 0,
-					successful_requests: 0,
-					failed_requests: 0,
-					avg_response_time: 0,
-					last_error: null,
-					uptime_percentage: 0,
+			const result = await createResource({
+				url: "frappe.client.insert",
+				params: {
+					doc: {
+						doctype: "Integration Hub",
+						...integrationData,
+					},
 				},
-			}
+			}).fetch()
 
-			integrations.value.push(newIntegration)
-			return newIntegration
+			// Refresh integrations list
+			await loadIntegrations()
+			return result
 		} catch (err) {
 			error.value = err.message
 			throw err
@@ -602,43 +543,92 @@ export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 	}
 
 	const updateIntegration = async (integrationId, updates) => {
-		const index = integrations.value.findIndex((i) => i.id === integrationId)
-		if (index !== -1) {
-			integrations.value[index] = { ...integrations.value[index], ...updates }
+		loading.value = true
+		error.value = null
+
+		try {
+			await createResource({
+				url: "frappe.client.set_value",
+				params: {
+					doctype: "Integration Hub",
+					name: integrationId,
+					fieldname: Object.keys(updates)[0],
+					value: Object.values(updates)[0],
+				},
+			}).fetch()
+
+			// Update local state
+			const index = integrations.value.findIndex((i) => i.name === integrationId)
+			if (index !== -1) {
+				integrations.value[index] = { ...integrations.value[index], ...updates }
+			}
+		} catch (err) {
+			error.value = err.message
+		} finally {
+			loading.value = false
 		}
 	}
 
 	const deleteIntegration = async (integrationId) => {
-		const index = integrations.value.findIndex((i) => i.id === integrationId)
-		if (index !== -1) {
-			integrations.value.splice(index, 1)
+		loading.value = true
+		error.value = null
+
+		try {
+			await createResource({
+				url: "frappe.client.delete",
+				params: {
+					doctype: "Integration Hub",
+					name: integrationId,
+				},
+			}).fetch()
+
+			// Remove from local state
+			integrations.value = integrations.value.filter((i) => i.name !== integrationId)
 
 			// Also remove related connections, webhooks, etc.
 			connections.value = connections.value.filter(
-				(c) => c.integration_id !== integrationId,
+				(c) => c.integration !== integrationId,
 			)
 			webhooks.value = webhooks.value.filter(
-				(w) => w.integration_id !== integrationId,
+				(w) => w.integration !== integrationId,
 			)
 			syncJobs.value = syncJobs.value.filter(
-				(j) => j.integration_id !== integrationId,
+				(j) => j.integration !== integrationId,
 			)
+		} catch (err) {
+			error.value = err.message
+			throw err
+		} finally {
+			loading.value = false
 		}
 	}
 
 	const testConnection = async (connectionId) => {
-		const connection = connections.value.find((c) => c.id === connectionId)
-		if (connection) {
-			// Simulate connection test
-			await new Promise((resolve) => setTimeout(resolve, 2000))
+		loading.value = true
+		error.value = null
 
-			const success = Math.random() > 0.3 // 70% success rate
-			connection.last_tested = new Date().toISOString()
-			connection.test_status = success ? "Success" : "Failed"
+		try {
+			const result = await createResource({
+				url: "mkaguzi.api.test_connection",
+				params: {
+					connection_id: connectionId,
+				},
+			}).fetch()
 
-			return success
+			// Update connection with test results
+			const index = connections.value.findIndex((c) => c.name === connectionId)
+			if (index !== -1) {
+				connections.value[index].last_tested = new Date().toISOString()
+				connections.value[index].test_status = result.success ? "Success" : "Failed"
+			}
+
+			return result.success
+		} catch (err) {
+			error.value = err.message
+			return false
+		} finally {
+			loading.value = false
 		}
-		return false
 	}
 
 	// Actions - Webhook Management
@@ -922,4 +912,7 @@ export const useApiIntegrationStore = defineStore("apiIntegration", () => {
 		getSyncJobById,
 		getTransformationById,
 	}
+
+	// Auto-load integrations when store is created
+	loadIntegrations()
 })

@@ -1,0 +1,370 @@
+{
+	"actions": [],
+	"allow_copy": 0,
+	"allow_guest_to_view": 0,
+	"allow_import": 0,
+	"allow_rename": 1,
+	"autoname": "field:framework_id",
+	"beta": 0,
+	"creation": "2024-01-29 10:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"framework_id",
+		"framework_name",
+		"regulatory_body",
+		"framework_type",
+		"description",
+		"column_break_5",
+		"version",
+		"effective_date",
+		"status",
+		"priority_level",
+		"section_break_10",
+		"scope_and_applicability",
+		"key_requirements",
+		"compliance_obligations",
+		"column_break_14",
+		"reporting_requirements",
+		"documentation_requirements",
+		"audit_requirements",
+		"section_break_18",
+		"requirements_table",
+		"section_break_20",
+		"implementation_status",
+		"compliance_score",
+		"gap_analysis",
+		"column_break_24",
+		"implementation_plan",
+		"responsible_parties",
+		"timeline",
+		"section_break_28",
+		"monitoring_config",
+		"alerts_config",
+		"integration_config",
+		"column_break_32",
+		"change_management",
+		"version_history",
+		"attachments",
+		"section_break_36",
+		"created_by",
+		"created_on",
+		"modified_by",
+		"modified_on",
+		"column_break_40",
+		"last_reviewed",
+		"next_review_date",
+		"performance_metrics"
+	],
+	"fields": [
+		{
+			"fieldname": "framework_id",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Framework ID",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "framework_name",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Framework Name",
+			"reqd": 1
+		},
+		{
+			"fieldname": "regulatory_body",
+			"fieldtype": "Link",
+			"in_list_view": 1,
+			"label": "Regulatory Body",
+			"options": "Regulatory Body"
+		},
+		{
+			"fieldname": "framework_type",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Framework Type",
+			"options": "Financial Regulation\nData Protection\nIndustry Specific\nInternational Standard\nCorporate Governance\nRisk Management\nEnvironmental\nHealth & Safety\nCustom",
+			"reqd": 1
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Text",
+			"label": "Description"
+		},
+		{
+			"fieldname": "column_break_5",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "version",
+			"fieldtype": "Data",
+			"label": "Version",
+			"default": "1.0"
+		},
+		{
+			"fieldname": "effective_date",
+			"fieldtype": "Date",
+			"label": "Effective Date",
+			"reqd": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Status",
+			"options": "Draft\nActive\nUnder Review\nDeprecated\nArchived",
+			"default": "Draft"
+		},
+		{
+			"fieldname": "priority_level",
+			"fieldtype": "Select",
+			"label": "Priority Level",
+			"options": "Critical\nHigh\nMedium\nLow",
+			"default": "Medium"
+		},
+		{
+			"fieldname": "section_break_10",
+			"fieldtype": "Section Break",
+			"label": "Framework Details"
+		},
+		{
+			"fieldname": "scope_and_applicability",
+			"fieldtype": "Text Editor",
+			"label": "Scope and Applicability"
+		},
+		{
+			"fieldname": "key_requirements",
+			"fieldtype": "Text Editor",
+			"label": "Key Requirements"
+		},
+		{
+			"fieldname": "compliance_obligations",
+			"fieldtype": "Text Editor",
+			"label": "Compliance Obligations"
+		},
+		{
+			"fieldname": "column_break_14",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "reporting_requirements",
+			"fieldtype": "Text Editor",
+			"label": "Reporting Requirements"
+		},
+		{
+			"fieldname": "documentation_requirements",
+			"fieldtype": "Text Editor",
+			"label": "Documentation Requirements"
+		},
+		{
+			"fieldname": "audit_requirements",
+			"fieldtype": "Text Editor",
+			"label": "Audit Requirements"
+		},
+		{
+			"fieldname": "section_break_18",
+			"fieldtype": "Section Break",
+			"label": "Requirements"
+		},
+		{
+			"fieldname": "requirements_table",
+			"fieldtype": "Table",
+			"label": "Requirements Table",
+			"options": "Regulatory Requirement"
+		},
+		{
+			"fieldname": "section_break_20",
+			"fieldtype": "Section Break",
+			"label": "Implementation"
+		},
+		{
+			"fieldname": "implementation_status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Implementation Status",
+			"options": "Not Started\nPlanning\nIn Progress\nPartially Implemented\nFully Implemented\nUnder Review",
+			"default": "Not Started"
+		},
+		{
+			"fieldname": "compliance_score",
+			"fieldtype": "Percent",
+			"label": "Compliance Score",
+			"read_only": 1
+		},
+		{
+			"fieldname": "gap_analysis",
+			"fieldtype": "Text Editor",
+			"label": "Gap Analysis"
+		},
+		{
+			"fieldname": "column_break_24",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "implementation_plan",
+			"fieldtype": "Text Editor",
+			"label": "Implementation Plan"
+		},
+		{
+			"fieldname": "responsible_parties",
+			"fieldtype": "Table",
+			"label": "Responsible Parties",
+			"options": "Framework Responsible Party"
+		},
+		{
+			"fieldname": "timeline",
+			"fieldtype": "Table",
+			"label": "Timeline",
+			"options": "Framework Timeline"
+		},
+		{
+			"fieldname": "section_break_28",
+			"fieldtype": "Section Break",
+			"label": "Configuration"
+		},
+		{
+			"fieldname": "monitoring_config",
+			"fieldtype": "JSON",
+			"label": "Monitoring Configuration"
+		},
+		{
+			"fieldname": "alerts_config",
+			"fieldtype": "JSON",
+			"label": "Alerts Configuration"
+		},
+		{
+			"fieldname": "integration_config",
+			"fieldtype": "JSON",
+			"label": "Integration Configuration"
+		},
+		{
+			"fieldname": "column_break_32",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "change_management",
+			"fieldtype": "JSON",
+			"label": "Change Management"
+		},
+		{
+			"fieldname": "version_history",
+			"fieldtype": "JSON",
+			"label": "Version History"
+		},
+		{
+			"fieldname": "attachments",
+			"fieldtype": "Attach",
+			"label": "Attachments"
+		},
+		{
+			"fieldname": "section_break_36",
+			"fieldtype": "Section Break",
+			"label": "Audit Information"
+		},
+		{
+			"fieldname": "created_by",
+			"fieldtype": "Link",
+			"label": "Created By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "created_on",
+			"fieldtype": "Datetime",
+			"label": "Created On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_by",
+			"fieldtype": "Link",
+			"label": "Modified By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_on",
+			"fieldtype": "Datetime",
+			"label": "Modified On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_40",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "last_reviewed",
+			"fieldtype": "Date",
+			"label": "Last Reviewed",
+			"read_only": 1
+		},
+		{
+			"fieldname": "next_review_date",
+			"fieldtype": "Date",
+			"label": "Next Review Date"
+		},
+		{
+			"fieldname": "performance_metrics",
+			"fieldtype": "JSON",
+			"label": "Performance Metrics"
+		}
+	],
+	"has_web_view": 0,
+	"idx": 0,
+	"image_field": "",
+	"is_submittable": 0,
+	"links": [],
+	"modified": "2024-01-29 10:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Compliance",
+	"name": "Regulatory Framework Manager",
+	"naming_rule": "",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "System Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Compliance Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 0,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Auditor",
+			"share": 0,
+			"write": 0
+		}
+	],
+	"quick_entry": 0,
+	"search_fields": "framework_name,regulatory_body,framework_type,status",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "framework_name",
+	"track_changes": 1,
+	"track_seen": 1,
+	"track_views": 1
+}

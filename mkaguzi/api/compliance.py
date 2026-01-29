@@ -1,6 +1,11 @@
+# API module for Internal Audit Management System
+
+# =============================================================================
+# COMPLIANCE MODULE APIs
+# =============================================================================
+
 import frappe
 from frappe import _
-import json
 from datetime import datetime, timedelta
 
 @frappe.whitelist()
@@ -197,7 +202,7 @@ def get_compliance_dashboard():
         # Compliance trends (last 12 months)
         trends = frappe.db.sql("""
             SELECT
-                DATE_FORMAT(execution_date, '%Y-%m') as month,
+                DATE_FORMAT(execution_date, '%Y-%m') as avg_compliance,
                 AVG(overall_compliance) as avg_compliance,
                 COUNT(*) as execution_count
             FROM `tabCompliance Execution`
@@ -244,40 +249,48 @@ def get_compliance_checks(filters=None, page=1, page_size=50):
         # Calculate offset
         offset = (page - 1) * page_size
 
-        # Get checks
-        checks = frappe.get_all('Compliance Check',
-            filters=filter_conditions,
-            fields=['name', 'check_name', 'description', 'compliance_type',
-                   'frequency', 'next_due_date', 'status', 'responsible_person',
-                   'last_execution_date'],
-            order_by='next_due_date',
-            limit_page_length=page_size,
-            limit_start=offset)
+        # Get checks with last execution in single query (FIX N+1)
+        checks = frappe.db.sql("""
+            SELECT
+                cc.name,
+                cc.check_name,
+                cc.description,
+                cc.compliance_type,
+                cc.frequency,
+                cc.next_due_date,
+                cc.status,
+                cc.responsible_person,
+                cc.last_execution_date,
+                ce.overall_compliance as last_compliance_score,
+                ce.status as last_execution_status
+            FROM `tabCompliance Check` cc
+            LEFT JOIN `tabCompliance Execution` ce
+                ON cc.name = ce.compliance_check
+                AND ce.execution_date = (
+                    SELECT MAX(execution_date)
+                    FROM `tabCompliance Execution`
+                    WHERE compliance_check = cc.name
+                )
+            WHERE {where_clause}
+            ORDER BY cc.next_due_date
+            LIMIT %s
+            OFFSET %s
+        """.format(
+            where_clause=" AND ".join([f"cc.{k} = %s" for k in filter_conditions]) if filter_conditions else "1=1"
+        ), tuple(filter_conditions.values()) + (page_size, offset), as_dict=True)
 
         # Get total count
         total_count = frappe.db.count('Compliance Check', filters=filter_conditions)
 
-        # Add additional data
+        # Calculate days until due for each check
         for check in checks:
-            # Get last execution result
-            last_execution = frappe.get_all('Compliance Execution',
-                filters={'compliance_check': check.name},
-                fields=['overall_compliance', 'status'],
-                order_by='execution_date desc',
-                limit=1)
-
-            if last_execution:
-                check['last_compliance_score'] = last_execution[0]['overall_compliance']
-                check['last_execution_status'] = last_execution[0]['status']
-            else:
-                check['last_compliance_score'] = None
-                check['last_execution_status'] = None
-
-            # Calculate days until due
             if check['next_due_date']:
-                due_date = datetime.strptime(str(check['next_due_date']), '%Y-%m-%d').date()
-                today = datetime.now().date()
-                check['days_until_due'] = (due_date - today).days
+                try:
+                    due_date = datetime.strptime(str(check['next_due_date']), '%Y-%m-%d').date()
+                    today = datetime.now().date()
+                    check['days_until_due'] = (due_date - today).days
+                except (ValueError, TypeError):
+                    check['days_until_due'] = None
             else:
                 check['days_until_due'] = None
 

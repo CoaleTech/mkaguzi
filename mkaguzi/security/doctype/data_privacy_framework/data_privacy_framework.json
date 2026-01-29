@@ -1,0 +1,371 @@
+{
+ "actions": [],
+ "autoname": "field:privacy_framework_id",
+ "creation": "2025-01-29 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "privacy_framework_id",
+  "framework_name",
+  "framework_version",
+  "description",
+  "status",
+  "privacy_laws_section",
+  "applicable_laws",
+  "gdpr_compliance",
+  "ccpa_compliance",
+  "data_protection_officer",
+  "data_processing_section",
+  "data_inventory",
+  "processing_activities",
+  "legal_basis_matrix",
+  "consent_management",
+  "data_subject_rights_section",
+  "access_rights",
+  "rectification_rights",
+  "erasure_rights",
+  "portability_rights",
+  "objection_rights",
+  "restriction_rights",
+  "data_breach_section",
+  "breach_response_plan",
+  "breach_notification_log",
+  "breach_impact_assessment",
+  "automated_decision_making",
+  "privacy_impact_assessments",
+  "data_sharing_agreements",
+  "international_data_transfers",
+  "cookie_consent_management",
+  "privacy_policy_version",
+  "last_audit_date",
+  "next_audit_due",
+  "compliance_score",
+  "open_violations",
+  "resolved_violations",
+  "privacy_training_records",
+  "data_retention_schedules",
+  "anonymization_procedures",
+  "audit_trail_section",
+  "privacy_logs",
+  "consent_logs",
+  "access_logs",
+  "violation_reports",
+  "performance_metrics",
+  "created_by",
+  "approved_by",
+  "approval_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "privacy_framework_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Privacy Framework ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "framework_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Framework Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "framework_version",
+   "fieldtype": "Data",
+   "label": "Framework Version",
+   "default": "1.0.0"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nUnder Review\nSuspended\nArchived",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "privacy_laws_section",
+   "fieldtype": "Section Break",
+   "label": "Applicable Privacy Laws"
+  },
+  {
+   "fieldname": "applicable_laws",
+   "fieldtype": "Table",
+   "label": "Applicable Laws",
+   "options": "Privacy Law"
+  },
+  {
+   "fieldname": "gdpr_compliance",
+   "fieldtype": "JSON",
+   "label": "GDPR Compliance Status"
+  },
+  {
+   "fieldname": "ccpa_compliance",
+   "fieldtype": "JSON",
+   "label": "CCPA Compliance Status"
+  },
+  {
+   "fieldname": "data_protection_officer",
+   "fieldtype": "Link",
+   "label": "Data Protection Officer",
+   "options": "User"
+  },
+  {
+   "fieldname": "data_processing_section",
+   "fieldtype": "Section Break",
+   "label": "Data Processing Activities"
+  },
+  {
+   "fieldname": "data_inventory",
+   "fieldtype": "JSON",
+   "label": "Data Inventory"
+  },
+  {
+   "fieldname": "processing_activities",
+   "fieldtype": "JSON",
+   "label": "Processing Activities"
+  },
+  {
+   "fieldname": "legal_basis_matrix",
+   "fieldtype": "JSON",
+   "label": "Legal Basis Matrix"
+  },
+  {
+   "fieldname": "consent_management",
+   "fieldtype": "JSON",
+   "label": "Consent Management"
+  },
+  {
+   "fieldname": "data_subject_rights_section",
+   "fieldtype": "Section Break",
+   "label": "Data Subject Rights"
+  },
+  {
+   "fieldname": "access_rights",
+   "fieldtype": "JSON",
+   "label": "Access Rights Implementation"
+  },
+  {
+   "fieldname": "rectification_rights",
+   "fieldtype": "JSON",
+   "label": "Rectification Rights"
+  },
+  {
+   "fieldname": "erasure_rights",
+   "fieldtype": "JSON",
+   "label": "Erasure Rights (Right to be Forgotten)"
+  },
+  {
+   "fieldname": "portability_rights",
+   "fieldtype": "JSON",
+   "label": "Data Portability Rights"
+  },
+  {
+   "fieldname": "objection_rights",
+   "fieldtype": "JSON",
+   "label": "Objection Rights"
+  },
+  {
+   "fieldname": "restriction_rights",
+   "fieldtype": "JSON",
+   "label": "Restriction Rights"
+  },
+  {
+   "fieldname": "data_breach_section",
+   "fieldtype": "Section Break",
+   "label": "Data Breach Management"
+  },
+  {
+   "fieldname": "breach_response_plan",
+   "fieldtype": "JSON",
+   "label": "Breach Response Plan"
+  },
+  {
+   "fieldname": "breach_notification_log",
+   "fieldtype": "JSON",
+   "label": "Breach Notification Log"
+  },
+  {
+   "fieldname": "breach_impact_assessment",
+   "fieldtype": "JSON",
+   "label": "Breach Impact Assessment"
+  },
+  {
+   "fieldname": "automated_decision_making",
+   "fieldtype": "JSON",
+   "label": "Automated Decision Making"
+  },
+  {
+   "fieldname": "privacy_impact_assessments",
+   "fieldtype": "JSON",
+   "label": "Privacy Impact Assessments"
+  },
+  {
+   "fieldname": "data_sharing_agreements",
+   "fieldtype": "JSON",
+   "label": "Data Sharing Agreements"
+  },
+  {
+   "fieldname": "international_data_transfers",
+   "fieldtype": "JSON",
+   "label": "International Data Transfers"
+  },
+  {
+   "fieldname": "cookie_consent_management",
+   "fieldtype": "JSON",
+   "label": "Cookie Consent Management"
+  },
+  {
+   "fieldname": "privacy_policy_version",
+   "fieldtype": "Data",
+   "label": "Privacy Policy Version"
+  },
+  {
+   "fieldname": "last_audit_date",
+   "fieldtype": "Date",
+   "label": "Last Privacy Audit Date"
+  },
+  {
+   "fieldname": "next_audit_due",
+   "fieldtype": "Date",
+   "label": "Next Audit Due"
+  },
+  {
+   "fieldname": "compliance_score",
+   "fieldtype": "Float",
+   "label": "Compliance Score",
+   "precision": 2
+  },
+  {
+   "fieldname": "open_violations",
+   "fieldtype": "Int",
+   "label": "Open Privacy Violations"
+  },
+  {
+   "fieldname": "resolved_violations",
+   "fieldtype": "Int",
+   "label": "Resolved Privacy Violations"
+  },
+  {
+   "fieldname": "privacy_training_records",
+   "fieldtype": "JSON",
+   "label": "Privacy Training Records"
+  },
+  {
+   "fieldname": "data_retention_schedules",
+   "fieldtype": "JSON",
+   "label": "Data Retention Schedules"
+  },
+  {
+   "fieldname": "anonymization_procedures",
+   "fieldtype": "JSON",
+   "label": "Anonymization Procedures"
+  },
+  {
+   "fieldname": "audit_trail_section",
+   "fieldtype": "Section Break",
+   "label": "Privacy Audit Trail"
+  },
+  {
+   "fieldname": "privacy_logs",
+   "fieldtype": "JSON",
+   "label": "Privacy Event Logs"
+  },
+  {
+   "fieldname": "consent_logs",
+   "fieldtype": "JSON",
+   "label": "Consent Logs"
+  },
+  {
+   "fieldname": "access_logs",
+   "fieldtype": "JSON",
+   "label": "Data Access Logs"
+  },
+  {
+   "fieldname": "violation_reports",
+   "fieldtype": "JSON",
+   "label": "Privacy Violation Reports"
+  },
+  {
+   "fieldname": "performance_metrics",
+   "fieldtype": "JSON",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-29 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Security",
+ "name": "Data Privacy Framework",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Data Protection Officer",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Privacy Auditor",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "framework_name",
+ "track_changes": 1
+}

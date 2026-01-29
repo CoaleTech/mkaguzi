@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2025-01-29 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "original_doctype",
+  "original_name",
+  "archived_data",
+  "archived_by",
+  "archived_on",
+  "archive_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "original_doctype",
+   "fieldtype": "Data",
+   "label": "Original DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "original_name",
+   "fieldtype": "Data",
+   "label": "Original Document Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "archived_data",
+   "fieldtype": "Code",
+   "label": "Archived Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "archived_by",
+   "fieldtype": "Link",
+   "label": "Archived By",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "archived_on",
+   "fieldtype": "Datetime",
+   "label": "Archived On",
+   "reqd": 1
+  },
+  {
+   "fieldname": "archive_reason",
+   "fieldtype": "Text",
+   "label": "Archive Reason"
+  }
+ ],
+ "is_submittable": 0,
+ "module": "Audit",
+ "name": "Audit Archive",
+ "permissions": [
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Internal Auditor",
+   "share": 0,
+   "write": 0
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "archived_on",
+ "sort_order": "DESC"
+}

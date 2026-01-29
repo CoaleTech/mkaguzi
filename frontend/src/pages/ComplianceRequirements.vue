@@ -249,6 +249,8 @@ const complianceStore = useComplianceStore()
 // Reactive data
 const showCreateRequirementDialog = ref(false)
 const showRequirementDetailDialog = ref(false)
+const showEditDialog = ref(false)
+const editMode = ref(false)
 const selectedRequirement = ref(null)
 const creating = ref(false)
 const filters = ref({
@@ -352,8 +354,10 @@ const viewRequirement = async (requirement) => {
 }
 
 const editRequirement = (requirement) => {
-	// TODO: Implement edit functionality
-	console.log("Edit requirement:", requirement)
+	// Load requirement into edit mode
+	editMode.value = true
+	selectedRequirement.value = { ...requirement }
+	showEditDialog.value = true
 }
 
 const clearFilters = () => {

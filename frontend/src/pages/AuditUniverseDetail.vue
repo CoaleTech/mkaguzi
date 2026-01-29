@@ -409,61 +409,6 @@
           </div>
         </div>
 
-        <!-- BC Data Sources -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Business Central Data Sources</h3>
-            <Button
-              v-if="mode !== 'view'"
-              variant="outline"
-              size="sm"
-              @click="addDataSource"
-            >
-              <PlusIcon class="h-4 w-4 mr-2" />
-              Add Data Source
-            </Button>
-          </div>
-          <div class="space-y-4">
-            <div
-              v-for="(source, index) in form.bc_data_sources"
-              :key="index"
-              class="p-4 border border-gray-200 rounded-lg"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Data Type</label>
-                  <Select
-                    v-model="source.data_type"
-                    :options="dataTypeOptions"
-                    :disabled="mode === 'view'"
-                    size="sm"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Relevance</label>
-                  <Select
-                    v-model="source.relevance"
-                    :options="relevanceOptions"
-                    :disabled="mode === 'view'"
-                    size="sm"
-                  />
-                </div>
-                <div class="flex items-end">
-                  <Button
-                    v-if="mode !== 'view'"
-                    variant="ghost"
-                    size="sm"
-                    @click="removeDataSource(index)"
-                    class="text-red-600 hover:text-red-700"
-                  >
-                    <XIcon class="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Additional Information -->
         <div class="bg-white rounded-lg border border-gray-200 p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
@@ -628,7 +573,6 @@ const form = ref({
 	next_scheduled_audit: "",
 	mandatory_audit: false,
 	regulatory_reference: "",
-	bc_data_sources: [],
 	notes: "",
 	is_active: true,
 })
@@ -828,16 +772,6 @@ const loadEntity = async () => {
 			next_scheduled_audit: "2024-01-15",
 			mandatory_audit: false,
 			regulatory_reference: "",
-			bc_data_sources: [
-				{
-					data_type: "Purchase Invoices",
-					relevance: "Primary",
-				},
-				{
-					data_type: "Vendor Ledger Entries",
-					relevance: "Secondary",
-				},
-			],
 			notes: "Regular monitoring required due to high transaction volume",
 			is_active: true,
 		}
@@ -927,17 +861,6 @@ const addKeyControl = () => {
 
 const removeKeyControl = (index) => {
 	form.value.key_controls.splice(index, 1)
-}
-
-const addDataSource = () => {
-	form.value.bc_data_sources.push({
-		data_type: "",
-		relevance: "",
-	})
-}
-
-const removeDataSource = (index) => {
-	form.value.bc_data_sources.splice(index, 1)
 }
 
 const getRiskVariant = (rating) => {

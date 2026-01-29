@@ -282,51 +282,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Business Central Integration -->
-              <div class="border-t pt-6">
-                <h4 class="text-md font-medium text-gray-900 mb-4">Business Central Integration</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div class="space-y-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">BC API Endpoint</label>
-                      <Input
-                        v-model="settings.bcApiEndpoint"
-                        placeholder="https://api.businesscentral.dynamics.com"
-                        class="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                      <Input
-                        v-model="settings.bcCompanyName"
-                        placeholder="CRONUS International Ltd."
-                        class="w-full"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="space-y-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">Sync Frequency</label>
-                      <Select
-                        v-model="settings.bcSyncFrequency"
-                        :options="syncFrequencyOptions"
-                        class="w-full"
-                      />
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <label class="text-sm font-medium text-gray-700">Auto-sync Enabled</label>
-                        <p class="text-sm text-gray-500">Automatically sync data from BC</p>
-                      </div>
-                      <Checkbox v-model="settings.bcAutoSync" />
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -638,31 +593,6 @@
               Integrations
             </h3>
             <div class="space-y-4">
-              <!-- Business Central -->
-              <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-blue-100 rounded-lg">
-                    <DatabaseIcon class="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-900">Microsoft Business Central</h4>
-                    <p class="text-sm text-gray-500">Connect to Dynamics 365 Business Central for financial data</p>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <Badge :variant="settings.bcIntegration ? 'success' : 'secondary'">
-                    {{ settings.bcIntegration ? 'Connected' : 'Disconnected' }}
-                  </Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    @click="toggleBCIntegration"
-                  >
-                    {{ settings.bcIntegration ? 'Disconnect' : 'Connect' }}
-                  </Button>
-                </div>
-              </div>
-
               <!-- Email Service -->
               <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div class="flex items-center space-x-3">

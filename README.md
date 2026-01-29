@@ -1,41 +1,127 @@
-### Mkaguzi
+# Mkaguzi - Internal Audit Management System
 
-Internal Audit Management System
+## Overview
 
-### Installation
+Mkaguzi is a comprehensive Internal Audit Management System built on ERPNext/Frappe framework. It provides organizations with tools to manage internal audit processes, compliance tracking, risk assessment, and reporting.
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+## Features
+
+- **Audit Trail Management:** Track all system changes with comprehensive audit trails
+- **Compliance Tracking:** Monitor regulatory compliance with automated checks
+- **Risk Assessment:** Identify and assess organizational risks
+- **Audit Findings:** Track and manage audit findings and remediation
+- **Advanced Reporting:** Generate comprehensive audit reports
+- **Multi-Module Support:** Audit across financial, HR, inventory, and other modules
+
+## Installation
 
 ```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch develop
+# Navigate to your Frappe bench directory
+cd /path/to/your/bench
+
+# Get the app
+bench get-app mkaguzi https://github.com/your-repo/mkaguzi.git
+
+# Install the app
 bench install-app mkaguzi
+
+# Build assets
+bench build
+
+# Migrate database
+bench migrate
 ```
 
-### Contributing
+## Configuration
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
+After installation, configure the system:
+
+Navigate to Audit Settings in Frappe Desk
+Set up notification recipients
+Configure sync intervals
+Set up audit rules and triggers
+
+## API Documentation
+
+### Authentication
+All API endpoints require Frappe session authentication or API key.
+
+### Endpoints
+
+#### System Status
+```
+GET /api/method/mkaguzi.api.audit_api.get_system_status
+```
+Get comprehensive system status information.
+
+#### Get Audit Trail
+```
+GET /api/method/mkaguzi.api.audit_api.get_audit_trail
+```
+Parameters:
+- `doctype` (optional): Filter by document type
+- `docname` (optional): Filter by document name
+- `limit` (default: 100): Maximum results
+- `start` (default: 0): Pagination offset
+
+#### Run Integrity Check
+```
+POST /api/method/mkaguzi.api.audit_api.run_integrity_check
+```
+Parameters:
+- `check_type` (default: 'full'): 'full', 'data', or 'config'
+- `target_module` (optional): Specific module to check
+
+## Development
+
+### Setting Up Development Environment
 
 ```bash
-cd apps/mkaguzi
-pre-commit install
+# Install development dependencies
+bench setup requirements --dev
+
+# Enable developer mode
+bench set-config developer_mode 1
+
+# Run tests
+bench run-tests --app mkaguzi
 ```
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+### Code Style
+Follow PEP 8 for Python code
+Use type hints for all public functions
+Write docstrings for all classes and methods
+Keep functions focused and modular
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
+### Running Tests
 
-### CI
+```bash
+# Run all tests
+bench run-tests --app mkaguzi
 
-This app can use GitHub Actions for CI. The following workflows are configured:
+# Run specific test module
+bench run-tests --app mkaguzi --module mkaguzi.tests.test_security
 
-- CI: Installs this app and runs unit tests on every push to `develop` branch.
-- Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
+# Run with coverage
+bench run-tests --app mkaguzi --coverage
+```
 
+## Security Considerations
 
-### License
+- All audit trail entries are immutable once created
+- Deleted documents are archived before removal
+- Sensitive information is sanitized in error messages
+- SQL queries use whitelisted templates only
+- Role-based access control for all operations
 
-mit
+## License
+
+MIT License - See LICENSE file for details
+
+## Support
+
+For support and documentation:
+
+- Documentation: https://docs.mkaguzi.coale.tech
+- Issues: https://github.com/your-repo/mkaguzi/issues
+- Email: info@coale.tech

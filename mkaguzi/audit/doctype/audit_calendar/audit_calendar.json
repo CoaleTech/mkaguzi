@@ -1,0 +1,299 @@
+{
+ "actions": [],
+ "autoname": "field:calendar_id",
+ "creation": "2025-11-24 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "calendar_id",
+  "annual_audit_plan",
+  "audit_universe",
+  "audit_type",
+  "status",
+  "column_break_6",
+  "planned_start_date",
+  "planned_end_date",
+  "actual_start_date",
+  "actual_end_date",
+  "section_break_11",
+  "lead_auditor",
+  "team_members",
+  "estimated_days",
+  "actual_days",
+  "section_break_16",
+  "objectives",
+  "scope",
+  "key_risks",
+  "section_break_20",
+  "conflicts_identified",
+  "conflict_resolution",
+  "rescheduled_date",
+  "section_break_24",
+  "progress_percentage",
+  "milestones",
+  "next_milestone",
+  "section_break_28",
+  "budget_utilized",
+  "issues_encountered",
+  "lessons_learned",
+  "section_break_32",
+  "completion_status",
+  "final_report_date",
+  "audit_findings_summary",
+  "section_break_36",
+  "notes",
+  "attachments"
+ ],
+ "fields": [
+  {
+   "fieldname": "calendar_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Calendar ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "annual_audit_plan",
+   "fieldtype": "Link",
+   "label": "Annual Audit Plan",
+   "options": "Annual Audit Plan"
+  },
+  {
+   "fieldname": "audit_universe",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Audit Universe",
+   "options": "Audit Universe",
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Audit Type",
+   "options": "Financial\nOperational\nCompliance\nIT\nIntegrated\nSpecial Investigation\nFollow-up",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Planned\nScheduled\nIn Progress\nOn Hold\nCompleted\nCancelled\nRescheduled",
+   "default": "Planned",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "planned_start_date",
+   "fieldtype": "Date",
+   "label": "Planned Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "planned_end_date",
+   "fieldtype": "Date",
+   "label": "Planned End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_start_date",
+   "fieldtype": "Date",
+   "label": "Actual Start Date"
+  },
+  {
+   "fieldname": "actual_end_date",
+   "fieldtype": "Date",
+   "label": "Actual End Date"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break",
+   "label": "Resources"
+  },
+  {
+   "fieldname": "lead_auditor",
+   "fieldtype": "Link",
+   "label": "Lead Auditor",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "team_members",
+   "fieldtype": "Table",
+   "label": "Team Members",
+   "options": "Audit Calendar Team Member"
+  },
+  {
+   "fieldname": "estimated_days",
+   "fieldtype": "Int",
+   "label": "Estimated Days",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_days",
+   "fieldtype": "Int",
+   "label": "Actual Days"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break",
+   "label": "Audit Details"
+  },
+  {
+   "fieldname": "objectives",
+   "fieldtype": "Text Editor",
+   "label": "Objectives"
+  },
+  {
+   "fieldname": "scope",
+   "fieldtype": "Text Editor",
+   "label": "Scope"
+  },
+  {
+   "fieldname": "key_risks",
+   "fieldtype": "Text",
+   "label": "Key Risks"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Conflict Management"
+  },
+  {
+   "fieldname": "conflicts_identified",
+   "fieldtype": "Text",
+   "label": "Conflicts Identified"
+  },
+  {
+   "fieldname": "conflict_resolution",
+   "fieldtype": "Text",
+   "label": "Conflict Resolution"
+  },
+  {
+   "fieldname": "rescheduled_date",
+   "fieldtype": "Date",
+   "label": "Rescheduled Date"
+  },
+  {
+   "fieldname": "section_break_24",
+   "fieldtype": "Section Break",
+   "label": "Progress Tracking"
+  },
+  {
+   "fieldname": "progress_percentage",
+   "fieldtype": "Percent",
+   "label": "Progress Percentage"
+  },
+  {
+   "fieldname": "milestones",
+   "fieldtype": "Table",
+   "label": "Milestones",
+   "options": "Audit Calendar Milestone"
+  },
+  {
+   "fieldname": "next_milestone",
+   "fieldtype": "Data",
+   "label": "Next Milestone"
+  },
+  {
+   "fieldname": "section_break_28",
+   "fieldtype": "Section Break",
+   "label": "Execution Details"
+  },
+  {
+   "fieldname": "budget_utilized",
+   "fieldtype": "Currency",
+   "label": "Budget Utilized"
+  },
+  {
+   "fieldname": "issues_encountered",
+   "fieldtype": "Text Editor",
+   "label": "Issues Encountered"
+  },
+  {
+   "fieldname": "lessons_learned",
+   "fieldtype": "Text Editor",
+   "label": "Lessons Learned"
+  },
+  {
+   "fieldname": "section_break_32",
+   "fieldtype": "Section Break",
+   "label": "Completion"
+  },
+  {
+   "fieldname": "completion_status",
+   "fieldtype": "Select",
+   "label": "Completion Status",
+   "options": "Successful\nPartially Successful\nUnsuccessful\nOngoing"
+  },
+  {
+   "fieldname": "final_report_date",
+   "fieldtype": "Date",
+   "label": "Final Report Date"
+  },
+  {
+   "fieldname": "audit_findings_summary",
+   "fieldtype": "Text Editor",
+   "label": "Audit Findings Summary"
+  },
+  {
+   "fieldname": "section_break_36",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Audit Calendar",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "calendar_id"
+}

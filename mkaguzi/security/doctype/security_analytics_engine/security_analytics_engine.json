@@ -1,0 +1,403 @@
+{
+ "actions": [],
+ "autoname": "field:analytics_engine_id",
+ "creation": "2025-01-29 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "analytics_engine_id",
+  "engine_name",
+  "engine_version",
+  "description",
+  "status",
+  "data_sources_section",
+  "security_data_sources",
+  "log_sources",
+  "threat_intelligence_feeds",
+  "analytics_configuration_section",
+  "real_time_analytics",
+  "batch_analytics",
+  "predictive_analytics",
+  "behavioral_analytics",
+  "threat_detection_section",
+  "anomaly_detection",
+  "pattern_recognition",
+  "correlation_engine",
+  "risk_scoring",
+  "alerting_section",
+  "alert_rules",
+  "escalation_policies",
+  "notification_channels",
+  "suppression_rules",
+  "reporting_section",
+  "security_dashboards",
+  "executive_reports",
+  "compliance_reports",
+  "custom_reports",
+  "performance_metrics_section",
+  "processing_throughput",
+  "detection_accuracy",
+  "false_positive_rate",
+  "response_time",
+  "uptime_percentage",
+  "threat_intelligence_section",
+  "threat_feeds",
+  "ioc_database",
+  "vulnerability_scanning",
+  "asset_discovery",
+  "analytics_models_section",
+  "machine_learning_models",
+  "statistical_models",
+  "rule_based_engines",
+  "model_performance",
+  "audit_trail_section",
+  "security_events",
+  "analytics_logs",
+  "model_predictions",
+  "alert_history",
+  "performance_logs",
+  "created_by",
+  "approved_by",
+  "approval_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "analytics_engine_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Analytics Engine ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "engine_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Engine Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "engine_version",
+   "fieldtype": "Data",
+   "label": "Engine Version",
+   "default": "1.0.0"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nMaintenance\nSuspended\nRetired",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "data_sources_section",
+   "fieldtype": "Section Break",
+   "label": "Data Sources Configuration"
+  },
+  {
+   "fieldname": "security_data_sources",
+   "fieldtype": "JSON",
+   "label": "Security Data Sources"
+  },
+  {
+   "fieldname": "log_sources",
+   "fieldtype": "JSON",
+   "label": "Log Sources"
+  },
+  {
+   "fieldname": "threat_intelligence_feeds",
+   "fieldtype": "JSON",
+   "label": "Threat Intelligence Feeds"
+  },
+  {
+   "fieldname": "analytics_configuration_section",
+   "fieldtype": "Section Break",
+   "label": "Analytics Configuration"
+  },
+  {
+   "fieldname": "real_time_analytics",
+   "fieldtype": "JSON",
+   "label": "Real-time Analytics"
+  },
+  {
+   "fieldname": "batch_analytics",
+   "fieldtype": "JSON",
+   "label": "Batch Analytics"
+  },
+  {
+   "fieldname": "predictive_analytics",
+   "fieldtype": "JSON",
+   "label": "Predictive Analytics"
+  },
+  {
+   "fieldname": "behavioral_analytics",
+   "fieldtype": "JSON",
+   "label": "Behavioral Analytics"
+  },
+  {
+   "fieldname": "threat_detection_section",
+   "fieldtype": "Section Break",
+   "label": "Threat Detection"
+  },
+  {
+   "fieldname": "anomaly_detection",
+   "fieldtype": "JSON",
+   "label": "Anomaly Detection"
+  },
+  {
+   "fieldname": "pattern_recognition",
+   "fieldtype": "JSON",
+   "label": "Pattern Recognition"
+  },
+  {
+   "fieldname": "correlation_engine",
+   "fieldtype": "JSON",
+   "label": "Correlation Engine"
+  },
+  {
+   "fieldname": "risk_scoring",
+   "fieldtype": "JSON",
+   "label": "Risk Scoring"
+  },
+  {
+   "fieldname": "alerting_section",
+   "fieldtype": "Section Break",
+   "label": "Alerting & Response"
+  },
+  {
+   "fieldname": "alert_rules",
+   "fieldtype": "JSON",
+   "label": "Alert Rules"
+  },
+  {
+   "fieldname": "escalation_policies",
+   "fieldtype": "JSON",
+   "label": "Escalation Policies"
+  },
+  {
+   "fieldname": "notification_channels",
+   "fieldtype": "JSON",
+   "label": "Notification Channels"
+  },
+  {
+   "fieldname": "suppression_rules",
+   "fieldtype": "JSON",
+   "label": "Suppression Rules"
+  },
+  {
+   "fieldname": "reporting_section",
+   "fieldtype": "Section Break",
+   "label": "Reporting & Dashboards"
+  },
+  {
+   "fieldname": "security_dashboards",
+   "fieldtype": "JSON",
+   "label": "Security Dashboards"
+  },
+  {
+   "fieldname": "executive_reports",
+   "fieldtype": "JSON",
+   "label": "Executive Reports"
+  },
+  {
+   "fieldname": "compliance_reports",
+   "fieldtype": "JSON",
+   "label": "Compliance Reports"
+  },
+  {
+   "fieldname": "custom_reports",
+   "fieldtype": "JSON",
+   "label": "Custom Reports"
+  },
+  {
+   "fieldname": "performance_metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "processing_throughput",
+   "fieldtype": "Float",
+   "label": "Processing Throughput (events/sec)",
+   "precision": 2
+  },
+  {
+   "fieldname": "detection_accuracy",
+   "fieldtype": "Float",
+   "label": "Detection Accuracy (%)",
+   "precision": 2
+  },
+  {
+   "fieldname": "false_positive_rate",
+   "fieldtype": "Float",
+   "label": "False Positive Rate (%)",
+   "precision": 2
+  },
+  {
+   "fieldname": "response_time",
+   "fieldtype": "Float",
+   "label": "Average Response Time (ms)",
+   "precision": 2
+  },
+  {
+   "fieldname": "uptime_percentage",
+   "fieldtype": "Float",
+   "label": "Uptime Percentage (%)",
+   "precision": 2
+  },
+  {
+   "fieldname": "threat_intelligence_section",
+   "fieldtype": "Section Break",
+   "label": "Threat Intelligence"
+  },
+  {
+   "fieldname": "threat_feeds",
+   "fieldtype": "JSON",
+   "label": "Threat Feeds"
+  },
+  {
+   "fieldname": "ioc_database",
+   "fieldtype": "JSON",
+   "label": "IoC Database"
+  },
+  {
+   "fieldname": "vulnerability_scanning",
+   "fieldtype": "JSON",
+   "label": "Vulnerability Scanning"
+  },
+  {
+   "fieldname": "asset_discovery",
+   "fieldtype": "JSON",
+   "label": "Asset Discovery"
+  },
+  {
+   "fieldname": "analytics_models_section",
+   "fieldtype": "Section Break",
+   "label": "Analytics Models"
+  },
+  {
+   "fieldname": "machine_learning_models",
+   "fieldtype": "JSON",
+   "label": "Machine Learning Models"
+  },
+  {
+   "fieldname": "statistical_models",
+   "fieldtype": "JSON",
+   "label": "Statistical Models"
+  },
+  {
+   "fieldname": "rule_based_engines",
+   "fieldtype": "JSON",
+   "label": "Rule-based Engines"
+  },
+  {
+   "fieldname": "model_performance",
+   "fieldtype": "JSON",
+   "label": "Model Performance"
+  },
+  {
+   "fieldname": "audit_trail_section",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "security_events",
+   "fieldtype": "JSON",
+   "label": "Security Events"
+  },
+  {
+   "fieldname": "analytics_logs",
+   "fieldtype": "JSON",
+   "label": "Analytics Logs"
+  },
+  {
+   "fieldname": "model_predictions",
+   "fieldtype": "JSON",
+   "label": "Model Predictions"
+  },
+  {
+   "fieldname": "alert_history",
+   "fieldtype": "JSON",
+   "label": "Alert History"
+  },
+  {
+   "fieldname": "performance_logs",
+   "fieldtype": "JSON",
+   "label": "Performance Logs"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-29 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Security",
+ "name": "Security Analytics Engine",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Security Analyst",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "SOC Analyst",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "engine_name",
+ "track_changes": 1
+}

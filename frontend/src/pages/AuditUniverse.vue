@@ -1175,8 +1175,18 @@ const isOverdue = (dateString) => {
 const refreshData = async () => {
 	loading.value = true
 	try {
-		// TODO: Implement data refresh from backend
-		console.log("Refreshing audit universe data...")
+		// Fetch fresh data from backend
+		await auditStore.fetchAuditUniverse()
+
+		// Update the local universeList with fresh data
+		const freshData = auditStore.auditUniverse || []
+		universeList.value = freshData.map((entity) => ({
+			...entity,
+			riskLevel: calculateRiskLevel(entity),
+			lastAudit: formatLastAuditDate(entity.last_audit_date),
+		}))
+	} catch (error) {
+		console.error("Error refreshing audit universe data:", error)
 	} finally {
 		loading.value = false
 	}

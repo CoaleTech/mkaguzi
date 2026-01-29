@@ -1,0 +1,180 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "finding_category",
+  "risk_category",
+  "is_active",
+  "column_break_5",
+  "description",
+  "template_details_section",
+  "condition_template",
+  "criteria_template",
+  "cause_template",
+  "consequence_template",
+  "recommendation_template",
+  "evidence_types",
+  "corrective_actions_section",
+  "action_plan_template",
+  "responsible_roles",
+  "estimated_effort_days",
+  "resources_template",
+  "verification_methods",
+  "tags",
+  "usage_count",
+  "last_used"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "finding_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Finding Category",
+   "options": "Control Deficiency\nNon-Compliance\nInefficiency\nError\nFraud Indicator\nBest Practice Opportunity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_category",
+   "fieldtype": "Select",
+   "label": "Risk Category",
+   "options": "Financial\nOperational\nCompliance\nIT\nReputational\nStrategic"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "template_details_section",
+   "fieldtype": "Section Break",
+   "label": "Template Details"
+  },
+  {
+   "fieldname": "condition_template",
+   "fieldtype": "Text Editor",
+   "label": "Condition Template (What was found)"
+  },
+  {
+   "fieldname": "criteria_template",
+   "fieldtype": "Text Editor",
+   "label": "Criteria Template (What should be)"
+  },
+  {
+   "fieldname": "cause_template",
+   "fieldtype": "Text Editor",
+   "label": "Cause Template (Why it happened)"
+  },
+  {
+   "fieldname": "consequence_template",
+   "fieldtype": "Text Editor",
+   "label": "Consequence Template (Impact/Outcomes)",
+   "description": "Outcomes, financial implications, governance impact"
+  },
+  {
+   "fieldname": "recommendation_template",
+   "fieldtype": "Text Editor",
+   "label": "Recommendation Template"
+  },
+  {
+   "fieldname": "evidence_types",
+   "fieldtype": "Small Text",
+   "label": "Common Evidence Types"
+  },
+  {
+   "fieldname": "corrective_actions_section",
+   "fieldtype": "Section Break",
+   "label": "Corrective Actions"
+  },
+  {
+   "fieldname": "action_plan_template",
+   "fieldtype": "Text Editor",
+   "label": "Action Plan Template"
+  },
+  {
+   "fieldname": "responsible_roles",
+   "fieldtype": "Small Text",
+   "label": "Responsible Roles"
+  },
+  {
+   "fieldname": "estimated_effort_days",
+   "fieldtype": "Int",
+   "label": "Estimated Effort (Days)"
+  },
+  {
+   "fieldname": "resources_template",
+   "fieldtype": "Text",
+   "label": "Resources Template"
+  },
+  {
+   "fieldname": "verification_methods",
+   "fieldtype": "Small Text",
+   "label": "Verification Methods"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Small Text",
+   "label": "Tags"
+  },
+  {
+   "fieldname": "usage_count",
+   "fieldtype": "Int",
+   "label": "Usage Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_used",
+   "fieldtype": "Date",
+   "label": "Last Used",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Finding Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "template_name",
+ "track_changes": 1
+}

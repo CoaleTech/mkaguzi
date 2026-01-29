@@ -421,7 +421,7 @@ import DataPeriodForm from "@/components/dataperiods/DataPeriodForm.vue"
 import PeriodFilters from "@/components/dataperiods/PeriodFilters.vue"
 import PeriodStats from "@/components/dataperiods/PeriodStats.vue"
 import { useDataPeriodsStore } from "@/stores/dataPeriods"
-import { Badge, Button, Input, Select } from "frappe-ui"
+import { Badge, Button, Input, Select, createResource } from "frappe-ui"
 import {
 	DownloadIcon,
 	EditIcon,
@@ -440,6 +440,82 @@ const fiscalYearFilter = ref("")
 const showFormDialog = ref(false)
 const isEditMode = ref(false)
 const selectedPeriod = ref(null)
+
+// Additional state variables for new functions
+const creatingFiscalYear = ref(false)
+const creatingPeriodType = ref(false)
+const savingSettings = ref(false)
+const exporting = ref(false)
+
+// Additional reactive state
+const periodSettings = ref({})
+const currentFilters = ref({})
+const dataPeriods = ref([])
+const error = ref(null)
+
+// Utility functions
+const showSuccessMessage = (message) => {
+	// Using frappe-ui toast or similar
+	console.log("Success:", message)
+	// You can implement proper toast notification here
+}
+
+const showErrorMessage = (message) => {
+	console.log("Error:", message)
+	// You can implement proper error notification here
+}
+
+const generateCSVFromData = (data, columns) => {
+	if (!data || !data.length) return ""
+	
+	const headers = columns.join(",")
+	const rows = data.map(row => 
+		columns.map(col => `"${row[col] || ''}"`).join(",")
+	).join("\n")
+	
+	return `${headers}\n${rows}`
+}
+
+const downloadCSV = (content, filename) => {
+	const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
+	const link = document.createElement('a')
+	const url = URL.createObjectURL(blob)
+	link.setAttribute('href', url)
+	link.setAttribute('download', filename)
+	link.style.visibility = 'hidden'
+	document.body.appendChild(link)
+	link.click()
+	document.body.removeChild(link)
+}
+
+// API functions
+const loadDataPeriods = async () => {
+	loading.value = true
+	error.value = null
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.data_period.get_data_periods",
+			params: currentFilters.value
+		}).fetch()
+		dataPeriods.value = result || []
+	} catch (err) {
+		error.value = err.message
+		showErrorMessage("Failed to load data periods")
+	} finally {
+		loading.value = false
+	}
+}
+
+const loadPeriodTypes = async () => {
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.data_period.get_period_types"
+		}).fetch()
+		periodTypes.value = result || []
+	} catch (err) {
+		showErrorMessage("Failed to load period types")
+	}
+}
 
 // Store bindings
 const loading = computed(() => dataPeriodsStore.loading)
@@ -621,14 +697,23 @@ const reopenPeriod = async (period) => {
 	}
 }
 
-const createFiscalYear = () => {
-	// TODO: Implement fiscal year creation
-	console.log("Create fiscal year")
+const createFiscalYear = async () => {
+	creatingFiscalYear.value = true
+	try {
+		// This will be called from a dialog, so we need to implement the dialog first
+		// For now, just show a placeholder
+		showSuccessMessage("Fiscal year creation dialog would open here")
+	} catch (error) {
+		showErrorMessage("Failed to open fiscal year creation dialog")
+	} finally {
+		creatingFiscalYear.value = false
+	}
 }
 
 const createNewPeriodType = () => {
-	// TODO: Implement period type creation
-	console.log("Create period type")
+	// This will be called from a dialog, so we need to implement the dialog first
+	// For now, just show a placeholder
+	showSuccessMessage("Period type creation dialog would open here")
 }
 
 const editPeriodType = (type) => {
@@ -636,18 +721,43 @@ const editPeriodType = (type) => {
 	console.log("Edit period type:", type.name)
 }
 
-const saveSettings = () => {
-	// TODO: Implement save settings logic
-	console.log("Saving settings:", settings.value)
+const saveSettings = async (settingsData) => {
+	savingSettings.value = true
+	try {
+		await createResource({
+			url: "mkaguzi.api.data_period.save_period_settings",
+			params: { settings: settingsData }
+		}).fetch()
+		periodSettings.value = { ...periodSettings.value, ...settingsData }
+		showSuccessMessage("Settings saved successfully")
+	} catch (error) {
+		showErrorMessage("Failed to save settings")
+	} finally {
+		savingSettings.value = false
+	}
 }
 
-const exportPeriods = () => {
-	// TODO: Implement export functionality
-	console.log("Export periods")
+const exportPeriods = async () => {
+	exporting.value = true
+	try {
+		const result = await createResource({
+			url: "mkaguzi.api.data_period.export_data_periods",
+			params: { filters: currentFilters.value }
+		}).fetch()
+		const csvContent = generateCSVFromData(result.data, result.columns)
+		downloadCSV(csvContent, `data-periods-${new Date().toISOString().split('T')[0]}.csv`)
+		showSuccessMessage(`Exported ${result.data.length} data periods`)
+	} catch (error) {
+		showErrorMessage("Failed to export data periods")
+	} finally {
+		exporting.value = false
+	}
 }
 
 // Lifecycle
 onMounted(async () => {
 	await fetchData()
+	await loadDataPeriods()
+	await loadPeriodTypes()
 })
 </script>

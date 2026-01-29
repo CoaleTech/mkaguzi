@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "field_name",
+  "field_label",
+  "field_type",
+  "is_sensitive",
+  "audit_frequency",
+  "risk_level"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Data",
+   "label": "Field Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "field_label",
+   "fieldtype": "Data",
+   "label": "Field Label"
+  },
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Data",
+   "label": "Field Type"
+  },
+  {
+   "fieldname": "is_sensitive",
+   "fieldtype": "Check",
+   "label": "Is Sensitive"
+  },
+  {
+   "fieldname": "audit_frequency",
+   "fieldtype": "Select",
+   "label": "Audit Frequency",
+   "options": "Every Change\nDaily\nWeekly\nMonthly\nQuarterly\nAnnually",
+   "default": "Every Change"
+  },
+  {
+   "fieldname": "risk_level",
+   "fieldtype": "Select",
+   "label": "Risk Level",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "default": "Medium"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Field",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -287,8 +287,35 @@ const handleTrackerSaved = async () => {
 }
 
 const exportTrackers = () => {
-	// TODO: Implement export functionality
-	console.log("Export trackers")
+	try {
+		exporting.value = true
+
+		// Generate CSV from trackers data
+		const headers = ["ID", "Follow-up ID", "Finding", "Action Required", "Due Date", "Status", "Assigned To"]
+		const rows = trackers.value.map((tracker) => [
+			tracker.name,
+			tracker.follow_up_id,
+			tracker.finding_reference,
+			tracker.action_required,
+			tracker.target_completion_date,
+			tracker.status,
+			tracker.assigned_to,
+		])
+
+		const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n")
+		const blob = new Blob([csvContent], { type: "text/csv" })
+		const url = window.URL.createObjectURL(blob)
+		const a = document.createElement("a")
+		a.href = url
+		a.download = `follow-up-trackers-${new Date().toISOString().split("T")[0]}.csv`
+		a.click()
+		window.URL.revokeObjectURL(url)
+	} catch (error) {
+		console.error("Error exporting trackers:", error)
+		alert("Failed to export trackers: " + error.message)
+	} finally {
+		exporting.value = false
+	}
 }
 
 // Lifecycle

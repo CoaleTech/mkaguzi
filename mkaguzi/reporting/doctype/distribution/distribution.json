@@ -1,0 +1,62 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "recipient_name",
+  "recipient_title",
+  "recipient_email",
+  "distribution_method",
+  "sent_date",
+  "read_receipt"
+ ],
+ "fields": [
+  {
+   "fieldname": "recipient_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Recipient Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recipient_title",
+   "fieldtype": "Data",
+   "label": "Recipient Title"
+  },
+  {
+   "fieldname": "recipient_email",
+   "fieldtype": "Data",
+   "label": "Recipient Email"
+  },
+  {
+   "fieldname": "distribution_method",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Distribution Method",
+   "options": "Email\nHard Copy\nPortal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sent_date",
+   "fieldtype": "Date",
+   "label": "Sent Date"
+  },
+  {
+   "fieldname": "read_receipt",
+   "fieldtype": "Check",
+   "label": "Read Receipt"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Distribution",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

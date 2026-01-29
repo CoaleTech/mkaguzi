@@ -1,0 +1,404 @@
+{
+ "creation": "2025-11-24 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "plan_id",
+  "audit_finding",
+  "title",
+  "status",
+  "priority",
+  "column_break_6",
+  "start_date",
+  "target_completion_date",
+  "actual_completion_date",
+  "plan_details_section",
+  "action_description",
+  "root_cause_analysis",
+  "expected_outcomes",
+  "success_criteria",
+  "responsibility_section",
+  "responsible_person",
+  "responsible_department",
+  "accountable_person",
+  "supporting_team",
+  "resources_section",
+  "estimated_cost",
+  "actual_cost",
+  "resources_required",
+  "allocated_resources",
+  "milestones_section",
+  "milestones",
+  "progress_tracking_section",
+  "overall_progress",
+  "completion_percentage",
+  "last_progress_update",
+  "progress_notes",
+  "issues_risks_section",
+  "identified_issues",
+  "mitigation_actions",
+  "escalation_required",
+  "escalation_details",
+  "verification_section",
+  "verification_required",
+  "verification_method",
+  "verification_date",
+  "verified_by",
+  "verification_results",
+  "approval_section",
+  "approval_required",
+  "approved_by",
+  "approval_date",
+  "approval_notes",
+  "closure_section",
+  "closure_reason",
+  "closure_notes",
+  "lessons_learned",
+  "attachments",
+  "created_by",
+  "created_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "plan_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Plan ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "audit_finding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Audit Finding",
+   "options": "Audit Finding",
+   "reqd": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nApproved\nIn Progress\nOn Hold\nCompleted\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_completion_date",
+   "fieldtype": "Date",
+   "label": "Actual Completion Date"
+  },
+  {
+   "fieldname": "plan_details_section",
+   "fieldtype": "Section Break",
+   "label": "Plan Details"
+  },
+  {
+   "fieldname": "action_description",
+   "fieldtype": "Text Editor",
+   "label": "Action Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "root_cause_analysis",
+   "fieldtype": "Text Editor",
+   "label": "Root Cause Analysis"
+  },
+  {
+   "fieldname": "expected_outcomes",
+   "fieldtype": "Text Editor",
+   "label": "Expected Outcomes"
+  },
+  {
+   "fieldname": "success_criteria",
+   "fieldtype": "Text Editor",
+   "label": "Success Criteria"
+  },
+  {
+   "fieldname": "responsibility_section",
+   "fieldtype": "Section Break",
+   "label": "Responsibility"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "responsible_department",
+   "fieldtype": "Link",
+   "label": "Responsible Department",
+   "options": "Department",
+   "reqd": 1
+  },
+  {
+   "fieldname": "accountable_person",
+   "fieldtype": "Link",
+   "label": "Accountable Person",
+   "options": "User"
+  },
+  {
+   "fieldname": "supporting_team",
+   "fieldtype": "Small Text",
+   "label": "Supporting Team"
+  },
+  {
+   "fieldname": "resources_section",
+   "fieldtype": "Section Break",
+   "label": "Resources"
+  },
+  {
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost"
+  },
+  {
+   "fieldname": "actual_cost",
+   "fieldtype": "Currency",
+   "label": "Actual Cost"
+  },
+  {
+   "fieldname": "resources_required",
+   "fieldtype": "Text",
+   "label": "Resources Required"
+  },
+  {
+   "fieldname": "allocated_resources",
+   "fieldtype": "Text",
+   "label": "Allocated Resources"
+  },
+  {
+   "fieldname": "milestones_section",
+   "fieldtype": "Section Break",
+   "label": "Milestones"
+  },
+  {
+   "fieldname": "milestones",
+   "fieldtype": "Table",
+   "label": "Milestones",
+   "options": "Finding Action Milestone"
+  },
+  {
+   "fieldname": "progress_tracking_section",
+   "fieldtype": "Section Break",
+   "label": "Progress Tracking"
+  },
+  {
+   "fieldname": "overall_progress",
+   "fieldtype": "Select",
+   "label": "Overall Progress",
+   "options": "Not Started\nPlanning\nIn Progress\nReview\nTesting\nCompleted"
+  },
+  {
+   "fieldname": "completion_percentage",
+   "fieldtype": "Percent",
+   "label": "Completion Percentage"
+  },
+  {
+   "fieldname": "last_progress_update",
+   "fieldtype": "Date",
+   "label": "Last Progress Update"
+  },
+  {
+   "fieldname": "progress_notes",
+   "fieldtype": "Text Editor",
+   "label": "Progress Notes"
+  },
+  {
+   "fieldname": "issues_risks_section",
+   "fieldtype": "Section Break",
+   "label": "Issues & Risks"
+  },
+  {
+   "fieldname": "identified_issues",
+   "fieldtype": "Text Editor",
+   "label": "Identified Issues"
+  },
+  {
+   "fieldname": "mitigation_actions",
+   "fieldtype": "Text Editor",
+   "label": "Mitigation Actions"
+  },
+  {
+   "fieldname": "escalation_required",
+   "fieldtype": "Check",
+   "label": "Escalation Required"
+  },
+  {
+   "fieldname": "escalation_details",
+   "fieldtype": "Text",
+   "label": "Escalation Details"
+  },
+  {
+   "fieldname": "verification_section",
+   "fieldtype": "Section Break",
+   "label": "Verification"
+  },
+  {
+   "fieldname": "verification_required",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Verification Required"
+  },
+  {
+   "fieldname": "verification_method",
+   "fieldtype": "Select",
+   "label": "Verification Method",
+   "options": "Document Review\nRe-testing\nObservation\nInterview\nData Analysis\nAudit Testing"
+  },
+  {
+   "fieldname": "verification_date",
+   "fieldtype": "Date",
+   "label": "Verification Date"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "User"
+  },
+  {
+   "fieldname": "verification_results",
+   "fieldtype": "Text Editor",
+   "label": "Verification Results"
+  },
+  {
+   "fieldname": "approval_section",
+   "fieldtype": "Section Break",
+   "label": "Approval"
+  },
+  {
+   "fieldname": "approval_required",
+   "fieldtype": "Check",
+   "label": "Approval Required"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "approval_notes",
+   "fieldtype": "Text",
+   "label": "Approval Notes"
+  },
+  {
+   "fieldname": "closure_section",
+   "fieldtype": "Section Break",
+   "label": "Closure"
+  },
+  {
+   "fieldname": "closure_reason",
+   "fieldtype": "Select",
+   "label": "Closure Reason",
+   "options": "Successfully Completed\nNo Longer Applicable\nAlternative Solution\nCancelled by Management"
+  },
+  {
+   "fieldname": "closure_notes",
+   "fieldtype": "Text Editor",
+   "label": "Closure Notes"
+  },
+  {
+   "fieldname": "lessons_learned",
+   "fieldtype": "Text Editor",
+   "label": "Lessons Learned"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-24 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Corrective Action Plan",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Management",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

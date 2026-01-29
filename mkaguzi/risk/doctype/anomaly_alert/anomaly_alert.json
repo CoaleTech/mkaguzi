@@ -1,0 +1,213 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-29 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "alert_id",
+  "alert_type",
+  "severity",
+  "status",
+  "column_break_4",
+  "detected_date",
+  "source_doctype",
+  "source_document",
+  "section_break_8",
+  "alert_description",
+  "anomaly_details",
+  "threshold_breached",
+  "section_break_12",
+  "assigned_to",
+  "escalated_to",
+  "resolution_date",
+  "section_break_16",
+  "related_findings",
+  "audit_trail_reference",
+  "preventive_actions",
+  "section_break_20",
+  "false_positive",
+  "confidence_score",
+  "detection_method"
+ ],
+ "fields": [
+  {
+   "fieldname": "alert_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Alert ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "alert_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Alert Type",
+   "options": "Financial Anomaly\nTiming Anomaly\nAccess Anomaly\nVolume Anomaly\nPattern Anomaly\nPredictive Alert",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Open\nInvestigating\nResolved\nClosed\nFalse Positive",
+   "default": "Open",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "detected_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Detected Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Data",
+   "label": "Source DocType"
+  },
+  {
+   "fieldname": "source_document",
+   "fieldtype": "Data",
+   "label": "Source Document"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Alert Details"
+  },
+  {
+   "fieldname": "alert_description",
+   "fieldtype": "Text",
+   "label": "Alert Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "anomaly_details",
+   "fieldtype": "Long Text",
+   "label": "Anomaly Details (JSON)"
+  },
+  {
+   "fieldname": "threshold_breached",
+   "fieldtype": "Data",
+   "label": "Threshold Breached"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break",
+   "label": "Assignment & Resolution"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Data",
+   "label": "Assigned To"
+  },
+  {
+   "fieldname": "escalated_to",
+   "fieldtype": "Data",
+   "label": "Escalated To"
+  },
+  {
+   "fieldname": "resolution_date",
+   "fieldtype": "Datetime",
+   "label": "Resolution Date"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break",
+   "label": "Related Information"
+  },
+  {
+   "fieldname": "related_findings",
+   "fieldtype": "Long Text",
+   "label": "Related Findings"
+  },
+  {
+   "fieldname": "audit_trail_reference",
+   "fieldtype": "Data",
+   "label": "Audit Trail Reference"
+  },
+  {
+   "fieldname": "preventive_actions",
+   "fieldtype": "Text",
+   "label": "Preventive Actions"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Analytics"
+  },
+  {
+   "fieldname": "false_positive",
+   "fieldtype": "Check",
+   "label": "False Positive"
+  },
+  {
+   "fieldname": "confidence_score",
+   "fieldtype": "Float",
+   "label": "Confidence Score (%)"
+  },
+  {
+   "fieldname": "detection_method",
+   "fieldtype": "Select",
+   "label": "Detection Method",
+   "options": "Rule-based\nStatistical\nMachine Learning\nPattern Recognition\nManual"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Risk",
+ "name": "Anomaly Alert",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Risk Analyst"
+  }
+ ],
+ "sort_field": "detected_date",
+ "sort_order": "DESC",
+ "title_field": "alert_id",
+ "track_changes": 1
+}

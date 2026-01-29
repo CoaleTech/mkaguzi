@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-29 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_1",
+  "default_notification_recipients",
+  "sync_alert_recipients",
+  "integrity_alert_recipients",
+  "section_break_2",
+  "enable_audit_trail",
+  "enable_auto_sync",
+  "sync_interval_hours"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break",
+   "label": "Notification Settings"
+  },
+  {
+   "fieldname": "default_notification_recipients",
+   "fieldtype": "Small Text",
+   "label": "Default Notification Recipients",
+   "description": "Comma-separated email addresses"
+  },
+  {
+   "fieldname": "sync_alert_recipients",
+   "fieldtype": "Small Text",
+   "label": "Sync Alert Recipients",
+   "description": "Comma-separated email addresses"
+  },
+  {
+   "fieldname": "integrity_alert_recipients",
+   "fieldtype": "Small Text",
+   "label": "Integrity Alert Recipients",
+   "description": "Comma-separated email addresses"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "System Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_audit_trail",
+   "fieldtype": "Check",
+   "label": "Enable Audit Trail"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_auto_sync",
+   "fieldtype": "Check",
+   "label": "Enable Auto Sync"
+  },
+  {
+   "default": "1",
+   "fieldname": "sync_interval_hours",
+   "fieldtype": "Int",
+   "label": "Sync Interval (Hours)"
+  }
+ ],
+ "is_submittable": 0,
+ "module": "Security",
+ "name": "Audit Settings",
+ "permissions": [
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "role": "System Manager"
+  },
+  {
+   "read": 1,
+   "role": "Audit Manager"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "single": 1
+}

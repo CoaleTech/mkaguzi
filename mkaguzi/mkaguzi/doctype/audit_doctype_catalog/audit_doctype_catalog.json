@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "doctype_name",
+  "module",
+  "description",
+  "audit_category",
+  "risk_level",
+  "column_break_6",
+  "is_active",
+  "auto_discover",
+  "last_discovered",
+  "audit_triggers",
+  "section_break_10",
+  "fields_to_audit",
+  "audit_rules",
+  "section_break_13",
+  "change_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "doctype_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "DocType Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "module",
+   "fieldtype": "Link",
+   "label": "Module",
+   "options": "Module Def",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "audit_category",
+   "fieldtype": "Select",
+   "label": "Audit Category",
+   "options": "Financial\nHR\nInventory\nProcurement\nAccess\nGeneral",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_level",
+   "fieldtype": "Select",
+   "label": "Risk Level",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "auto_discover",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Auto Discover"
+  },
+  {
+   "fieldname": "last_discovered",
+   "fieldtype": "Datetime",
+   "label": "Last Discovered",
+   "read_only": 1
+  },
+  {
+   "fieldname": "audit_triggers",
+   "fieldtype": "Table",
+   "label": "Audit Triggers",
+   "options": "Audit Trigger"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break",
+   "label": "Audit Configuration"
+  },
+  {
+   "fieldname": "fields_to_audit",
+   "fieldtype": "Table",
+   "label": "Fields to Audit",
+   "options": "Audit Field"
+  },
+  {
+   "fieldname": "audit_rules",
+   "fieldtype": "Table",
+   "label": "Audit Rules",
+   "options": "Audit Rule"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Change Log"
+  },
+  {
+   "fieldname": "change_log",
+   "fieldtype": "Text",
+   "label": "Change Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Doctype Catalog",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "doctype_name",
+ "track_changes": 1
+}

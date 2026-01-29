@@ -1,0 +1,86 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "procedure_name",
+  "procedure_type",
+  "expected_result",
+  "actual_result",
+  "variance",
+  "column_break_5",
+  "variance_percentage",
+  "threshold",
+  "result_status",
+  "analysis_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "procedure_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Procedure Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "procedure_type",
+   "fieldtype": "Select",
+   "label": "Procedure Type",
+   "options": "Ratio Analysis\nTrend Analysis\nReasonableness Test\nRegression Analysis\nOther"
+  },
+  {
+   "fieldname": "expected_result",
+   "fieldtype": "Float",
+   "label": "Expected Result"
+  },
+  {
+   "fieldname": "actual_result",
+   "fieldtype": "Float",
+   "label": "Actual Result",
+   "reqd": 1
+  },
+  {
+   "fieldname": "variance",
+   "fieldtype": "Float",
+   "label": "Variance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "variance_percentage",
+   "fieldtype": "Percent",
+   "label": "Variance %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "threshold",
+   "fieldtype": "Percent",
+   "label": "Threshold %"
+  },
+  {
+   "fieldname": "result_status",
+   "fieldtype": "Select",
+   "label": "Result Status",
+   "options": "Within Threshold\nAbove Threshold\nBelow Threshold",
+   "read_only": 1
+  },
+  {
+   "fieldname": "analysis_notes",
+   "fieldtype": "Text",
+   "label": "Analysis Notes"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Analytical Procedure Result",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

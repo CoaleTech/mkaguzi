@@ -1,0 +1,382 @@
+{
+ "actions": [],
+ "autoname": "field:audit_id",
+ "creation": "2025-01-29 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "audit_id",
+  "audit_title",
+  "column_break_3",
+  "audit_type",
+  "status",
+  "priority",
+  "section_break_8",
+  "engagement_reference",
+  "assigned_to",
+  "start_date",
+  "end_date",
+  "column_break_13",
+  "esg_framework",
+  "carbon_footprint_scope",
+  "environmental_category",
+  "sustainability_standards",
+  "section_break_18",
+  "environmental_scope",
+  "compliance_requirements",
+  "regulatory_framework",
+  "section_break_22",
+  "carbon_emissions",
+  "energy_consumption",
+  "water_usage",
+  "waste_generation",
+  "biodiversity_impact",
+  "section_break_28",
+  "esg_score",
+  "sustainability_rating",
+  "compliance_status",
+  "risk_level",
+  "column_break_33",
+  "target_reduction",
+  "actual_reduction",
+  "improvement_percentage",
+  "section_break_37",
+  "compliance_findings",
+  "esg_recommendations",
+  "corrective_actions",
+  "section_break_41",
+  "target_completion_date",
+  "actual_completion_date",
+  "follow_up_required",
+  "next_audit_date",
+  "section_break_46",
+  "audit_report",
+  "supporting_documents",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "audit_id",
+   "fieldtype": "Data",
+   "label": "Audit ID",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_title",
+   "fieldtype": "Data",
+   "label": "Audit Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit_type",
+   "fieldtype": "Select",
+   "label": "Audit Type",
+   "options": "Environmental Compliance\nESG Assessment\nSustainability Review\nCarbon Footprint Audit\nBiodiversity Impact\nSupply Chain Sustainability",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Planned\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "default": "Planned",
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Audit Details"
+  },
+  {
+   "fieldname": "engagement_reference",
+   "fieldtype": "Link",
+   "label": "Audit Engagement",
+   "options": "Audit Engagement"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "Assigned To",
+   "options": "User"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "esg_framework",
+   "fieldtype": "Select",
+   "label": "ESG Framework",
+   "description": "Select the ESG framework for this audit",
+   "options": "GRI (Global Reporting Initiative)\nSASB (Sustainability Accounting Standards Board)\nTCFD (Task Force on Climate-related Financial Disclosures)\nCDP (Carbon Disclosure Project)\nUN SDGs (UN Sustainable Development Goals)\nISO 14001\nCustom\nNone"
+  },
+  {
+   "fieldname": "carbon_footprint_scope",
+   "fieldtype": "Select",
+   "label": "Carbon Footprint Scope",
+   "options": "Scope 1 (Direct Emissions)\nScope 2 (Indirect Emissions)\nScope 3 (Value Chain)\nFull Assessment"
+  },
+  {
+   "fieldname": "environmental_category",
+   "fieldtype": "Select",
+   "label": "Environmental Category",
+   "options": "Air Quality\nWater Management\nWaste Management\nEnergy Consumption\nCarbon Emissions\nBiodiversity\nSupply Chain\nCommunity Impact\nOther"
+  },
+  {
+   "fieldname": "sustainability_standards",
+   "fieldtype": "Text",
+   "label": "Sustainability Standards",
+   "description": "e.g., ISO 14001, ISO 50001, LEED certification"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Scope and Compliance"
+  },
+  {
+   "fieldname": "environmental_scope",
+   "fieldtype": "Text Editor",
+   "label": "Environmental Scope",
+   "description": "Define the scope of environmental audit"
+  },
+  {
+   "fieldname": "compliance_requirements",
+   "fieldtype": "Text Editor",
+   "label": "Compliance Requirements",
+   "description": "Environmental compliance requirements to verify"
+  },
+  {
+   "fieldname": "regulatory_framework",
+   "fieldtype": "Text Editor",
+   "label": "Regulatory Framework",
+   "description": "Applicable environmental laws and regulations"
+  },
+  {
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break",
+   "label": "Environmental Metrics"
+  },
+  {
+   "fieldname": "carbon_emissions",
+   "fieldtype": "Currency",
+   "label": "Carbon Emissions (tCO2e)",
+   "description": "Total carbon emissions in metric tons CO2 equivalent"
+  },
+  {
+   "fieldname": "energy_consumption",
+   "fieldtype": "Currency",
+   "label": "Energy Consumption (kWh)",
+   "precision": "0"
+  },
+  {
+   "fieldname": "water_usage",
+   "fieldtype": "Currency",
+   "label": "Water Usage (cubic meters)",
+   "precision": "0"
+  },
+  {
+   "fieldname": "waste_generation",
+   "fieldtype": "Currency",
+   "label": "Waste Generation (kg)",
+   "precision": "0"
+  },
+  {
+   "fieldname": "biodiversity_impact",
+   "fieldtype": "Text Editor",
+   "label": "Biodiversity Impact Assessment"
+  },
+  {
+   "fieldname": "section_break_28",
+   "fieldtype": "Section Break",
+   "label": "Assessment Results"
+  },
+  {
+   "fieldname": "esg_score",
+   "fieldtype": "Int",
+   "label": "ESG Score",
+   "description": "Overall ESG performance score (0-100)"
+  },
+  {
+   "fieldname": "sustainability_rating",
+   "fieldtype": "Select",
+   "label": "Sustainability Rating",
+   "options": "Excellent\nGood\nSatisfactory\nNeeds Improvement\nPoor"
+  },
+  {
+   "fieldname": "compliance_status",
+   "fieldtype": "Select",
+   "label": "Compliance Status",
+   "options": "Fully Compliant\nMostly Compliant\nPartially Compliant\nNon-Compliant\nNot Assessed"
+  },
+  {
+   "fieldname": "risk_level",
+   "fieldtype": "Select",
+   "label": "Environmental Risk Level",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_reduction",
+   "fieldtype": "Percent",
+   "label": "Target Reduction (%)",
+   "description": "Target reduction in environmental impact"
+  },
+  {
+   "fieldname": "actual_reduction",
+   "fieldtype": "Percent",
+   "label": "Actual Reduction (%)",
+   "description": "Actual reduction achieved"
+  },
+  {
+   "fieldname": "improvement_percentage",
+   "fieldtype": "Percent",
+   "label": "Improvement vs Baseline (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_37",
+   "fieldtype": "Section Break",
+   "label": "Findings and Recommendations"
+  },
+  {
+   "fieldname": "compliance_findings",
+   "fieldtype": "Table",
+   "label": "Compliance Findings",
+   "options": "Compliance Checklist"
+  },
+  {
+   "fieldname": "esg_recommendations",
+   "fieldtype": "Text Editor",
+   "label": "ESG Recommendations"
+  },
+  {
+   "fieldname": "corrective_actions",
+   "fieldtype": "Text Editor",
+   "label": "Corrective Actions"
+  },
+  {
+   "fieldname": "section_break_41",
+   "fieldtype": "Section Break",
+   "label": "Timeline and Follow-up"
+  },
+  {
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion Date"
+  },
+  {
+   "fieldname": "actual_completion_date",
+   "fieldtype": "Date",
+   "label": "Actual Completion Date"
+  },
+  {
+   "fieldname": "follow_up_required",
+   "fieldtype": "Check",
+   "default": 1,
+   "label": "Follow-up Required"
+  },
+  {
+   "fieldname": "next_audit_date",
+   "fieldtype": "Date",
+   "label": "Next Audit Date"
+  },
+  {
+   "fieldname": "section_break_46",
+   "fieldtype": "Section Break",
+   "label": "Documentation"
+  },
+  {
+   "fieldname": "audit_report",
+   "fieldtype": "Attach",
+   "label": "Audit Report"
+  },
+  {
+   "fieldname": "supporting_documents",
+   "fieldtype": "Attach",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-01-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Environmental Audit",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Management",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "audit_title",
+ "track_changes": 1
+}

@@ -1,0 +1,285 @@
+{
+ "actions": [],
+ "autoname": "field:charter_name",
+ "creation": "2025-01-29 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "charter_name",
+  "version",
+  "effective_date",
+  "column_break_4",
+  "status",
+  "approval_status",
+  "approved_by",
+  "approval_date",
+  "section_break_7",
+  "purpose_statement",
+  "authority_definition",
+  "responsibility_definition",
+  "reporting_structure",
+  "scope_section",
+  "audit_scope",
+  "audit_objectives",
+  "independence_clause",
+  "section_break_13",
+  "cae_name",
+  "cae_title",
+  "audit_committee_chair",
+  "review_schedule",
+  "section_break_16",
+  "standard_compliance",
+  "iiacompliant",
+  "governance_framework",
+  "additional_notes",
+  "attachments",
+  "amended_from",
+  "amendment_date",
+  "amendment_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "charter_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Charter Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Version",
+   "default": "1.0"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "label": "Effective Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nExpired\nSuperseded",
+   "default": "Draft"
+  },
+  {
+   "fieldname": "approval_status",
+   "fieldtype": "Select",
+   "label": "Approval Status",
+   "options": "Pending\nApproved\nRejected"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Charter Content"
+  },
+  {
+   "fieldname": "purpose_statement",
+   "fieldtype": "Text Editor",
+   "label": "Purpose Statement",
+   "description": "Define the purpose of the internal audit function",
+   "reqd": 1
+  },
+  {
+   "fieldname": "authority_definition",
+   "fieldtype": "Text Editor",
+   "label": "Authority Definition",
+   "description": "Define the authority granted to the internal audit function",
+   "reqd": 1
+  },
+  {
+   "fieldname": "responsibility_definition",
+   "fieldtype": "Text Editor",
+   "label": "Responsibility Definition",
+   "description": "Define the responsibilities of the internal audit function",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reporting_structure",
+   "fieldtype": "Text Editor",
+   "label": "Reporting Structure",
+   "description": "Define reporting lines (e.g., to Audit Committee)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scope_section",
+   "fieldtype": "Section Break",
+   "label": "Scope and Standards"
+  },
+  {
+   "fieldname": "audit_scope",
+   "fieldtype": "Text Editor",
+   "label": "Audit Scope",
+   "description": "Define the scope of audit activities"
+  },
+  {
+   "fieldname": "audit_objectives",
+   "fieldtype": "Text",
+   "label": "Audit Objectives",
+   "description": "Key objectives of the internal audit function"
+  },
+  {
+   "fieldname": "independence_clause",
+   "fieldtype": "Text Editor",
+   "label": "Independence Clause",
+   "description": "Statement of auditor independence and objectivity"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Key Personnel"
+  },
+  {
+   "fieldname": "cae_name",
+   "fieldtype": "Link",
+   "label": "Chief Audit Executive",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cae_title",
+   "fieldtype": "Data",
+   "label": "CAE Title",
+   "default": "Chief Audit Executive"
+  },
+  {
+   "fieldname": "audit_committee_chair",
+   "fieldtype": "Link",
+   "label": "Audit Committee Chair",
+   "options": "User"
+  },
+  {
+   "fieldname": "review_schedule",
+   "fieldtype": "Data",
+   "label": "Review Schedule",
+   "description": "e.g., Annually, Biennially"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break",
+   "label": "Compliance and Standards"
+  },
+  {
+   "fieldname": "standard_compliance",
+   "fieldtype": "Text Editor",
+   "label": "Standard Compliance",
+   "description": "Reference to IIA standards and other frameworks"
+  },
+  {
+   "fieldname": "iiacompliant",
+   "fieldtype": "Check",
+   "label": "IIA Compliant",
+   "default": 1
+  },
+  {
+   "fieldname": "governance_framework",
+   "fieldtype": "Select",
+   "label": "Governance Framework",
+   "options": "IIA Standards\nCOSO\nISO 27001\nSOC 2\nCustom\nOther"
+  },
+  {
+   "fieldname": "additional_notes",
+   "fieldtype": "Text Editor",
+   "label": "Additional Notes"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Audit Charter",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amendment_date",
+   "fieldtype": "Date",
+   "label": "Amendment Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amendment_reason",
+   "fieldtype": "Text",
+   "label": "Amendment Reason",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [
+  {
+   "link_doctype": "Audit Engagement",
+   "link_fieldname": "audit_charter_reference"
+  }
+ ],
+ "modified": "2025-01-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Audit Charter",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 0,
+   "write": 0
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Committee",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "charter_name",
+ "track_changes": 1
+}

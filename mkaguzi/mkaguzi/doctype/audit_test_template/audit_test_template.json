@@ -1,0 +1,219 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "template_type",
+  "audit_category",
+  "column_break_4",
+  "description",
+  "is_active",
+  "created_by",
+  "section_break_8",
+  "test_objectives",
+  "section_break_10",
+  "test_procedures",
+  "section_break_12",
+  "expected_results",
+  "section_break_14",
+  "risk_assessment",
+  "control_objectives",
+  "column_break_17",
+  "test_frequency",
+  "automated_testing",
+  "approval_required",
+  "section_break_21",
+  "sample_size_calculation",
+  "section_break_23",
+  "attachments",
+  "change_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "template_type",
+   "fieldtype": "Select",
+   "label": "Template Type",
+   "options": "Compliance Test\nSubstantive Test\nControls Test\nRisk Assessment\nFull Audit Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "audit_category",
+   "fieldtype": "Select",
+   "label": "Audit Category",
+   "options": "Financial\nHR\nInventory\nProcurement\nAccess\nGeneral",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break",
+   "label": "Test Objectives"
+  },
+  {
+   "fieldname": "test_objectives",
+   "fieldtype": "Text Editor",
+   "label": "Test Objectives"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break",
+   "label": "Test Procedures"
+  },
+  {
+   "fieldname": "test_procedures",
+   "fieldtype": "Table",
+   "label": "Test Procedures",
+   "options": "Test Procedure"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break",
+   "label": "Expected Results"
+  },
+  {
+   "fieldname": "expected_results",
+   "fieldtype": "Text Editor",
+   "label": "Expected Results"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break",
+   "label": "Risk & Controls"
+  },
+  {
+   "fieldname": "risk_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Risk Assessment"
+  },
+  {
+   "fieldname": "control_objectives",
+   "fieldtype": "Text Editor",
+   "label": "Control Objectives"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "test_frequency",
+   "fieldtype": "Select",
+   "label": "Test Frequency",
+   "options": "One-time\nQuarterly\nSemi-annual\nAnnual\nAs needed",
+   "default": "Annual"
+  },
+  {
+   "fieldname": "automated_testing",
+   "fieldtype": "Check",
+   "label": "Automated Testing"
+  },
+  {
+   "fieldname": "approval_required",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Approval Required"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break",
+   "label": "Sampling"
+  },
+  {
+   "fieldname": "sample_size_calculation",
+   "fieldtype": "Text Editor",
+   "label": "Sample Size Calculation"
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break",
+   "label": "Attachments & References"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "change_log",
+   "fieldtype": "Text",
+   "label": "Change Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Audit Test Template",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "template_name",
+ "track_changes": 1
+}

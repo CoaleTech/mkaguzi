@@ -1,0 +1,287 @@
+{
+	"actions": [],
+	"allow_copy": 0,
+	"allow_guest_to_view": 0,
+	"allow_import": 0,
+	"allow_rename": 1,
+	"autoname": "field:dashboard_id",
+	"beta": 0,
+	"creation": "2024-01-29 10:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"dashboard_id",
+		"dashboard_name",
+		"dashboard_type",
+		"description",
+		"column_break_4",
+		"owner",
+		"status",
+		"is_default",
+		"section_break_8",
+		"compliance_frameworks",
+		"risk_categories",
+		"audit_types",
+		"column_break_12",
+		"time_range",
+		"refresh_interval",
+		"auto_refresh",
+		"section_break_16",
+		"widgets_config",
+		"filters_config",
+		"alerts_config",
+		"column_break_20",
+		"permissions_config",
+		"export_config",
+		"section_break_24",
+		"created_by",
+		"created_on",
+		"modified_by",
+		"modified_on",
+		"column_break_28",
+		"last_refreshed",
+		"view_count",
+		"performance_metrics"
+	],
+	"fields": [
+		{
+			"fieldname": "dashboard_id",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Dashboard ID",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "dashboard_name",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Dashboard Name",
+			"reqd": 1
+		},
+		{
+			"fieldname": "dashboard_type",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Dashboard Type",
+			"options": "Executive\nCompliance Officer\nAuditor\nRisk Manager\nOperations\nCustom",
+			"reqd": 1
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Text",
+			"label": "Description"
+		},
+		{
+			"fieldname": "column_break_4",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"label": "Owner",
+			"options": "User"
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"label": "Status",
+			"options": "Draft\nActive\nInactive\nArchived",
+			"default": "Draft"
+		},
+		{
+			"fieldname": "is_default",
+			"fieldtype": "Check",
+			"label": "Is Default"
+		},
+		{
+			"fieldname": "section_break_8",
+			"fieldtype": "Section Break",
+			"label": "Scope Configuration"
+		},
+		{
+			"fieldname": "compliance_frameworks",
+			"fieldtype": "JSON",
+			"label": "Compliance Frameworks"
+		},
+		{
+			"fieldname": "risk_categories",
+			"fieldtype": "JSON",
+			"label": "Risk Categories"
+		},
+		{
+			"fieldname": "audit_types",
+			"fieldtype": "JSON",
+			"label": "Audit Types"
+		},
+		{
+			"fieldname": "column_break_12",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "time_range",
+			"fieldtype": "Select",
+			"label": "Default Time Range",
+			"options": "Last 7 Days\nLast 30 Days\nLast 90 Days\nLast 6 Months\nLast Year\nCustom Range\nAll Time",
+			"default": "Last 30 Days"
+		},
+		{
+			"fieldname": "refresh_interval",
+			"fieldtype": "Select",
+			"label": "Refresh Interval",
+			"options": "Manual\n5 Minutes\n15 Minutes\n30 Minutes\n1 Hour\n4 Hours\nDaily",
+			"default": "15 Minutes"
+		},
+		{
+			"fieldname": "auto_refresh",
+			"fieldtype": "Check",
+			"label": "Auto Refresh",
+			"default": 1
+		},
+		{
+			"fieldname": "section_break_16",
+			"fieldtype": "Section Break",
+			"label": "Configuration"
+		},
+		{
+			"fieldname": "widgets_config",
+			"fieldtype": "JSON",
+			"label": "Widgets Configuration"
+		},
+		{
+			"fieldname": "filters_config",
+			"fieldtype": "JSON",
+			"label": "Filters Configuration"
+		},
+		{
+			"fieldname": "alerts_config",
+			"fieldtype": "JSON",
+			"label": "Alerts Configuration"
+		},
+		{
+			"fieldname": "column_break_20",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "permissions_config",
+			"fieldtype": "JSON",
+			"label": "Permissions Configuration"
+		},
+		{
+			"fieldname": "export_config",
+			"fieldtype": "JSON",
+			"label": "Export Configuration"
+		},
+		{
+			"fieldname": "section_break_24",
+			"fieldtype": "Section Break",
+			"label": "Audit Information"
+		},
+		{
+			"fieldname": "created_by",
+			"fieldtype": "Link",
+			"label": "Created By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "created_on",
+			"fieldtype": "Datetime",
+			"label": "Created On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_by",
+			"fieldtype": "Link",
+			"label": "Modified By",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "modified_on",
+			"fieldtype": "Datetime",
+			"label": "Modified On",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_28",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "last_refreshed",
+			"fieldtype": "Datetime",
+			"label": "Last Refreshed",
+			"read_only": 1
+		},
+		{
+			"fieldname": "view_count",
+			"fieldtype": "Int",
+			"label": "View Count",
+			"read_only": 1
+		},
+		{
+			"fieldname": "performance_metrics",
+			"fieldtype": "JSON",
+			"label": "Performance Metrics"
+		}
+	],
+	"has_web_view": 0,
+	"idx": 0,
+	"image_field": "",
+	"is_submittable": 0,
+	"links": [],
+	"modified": "2024-01-29 10:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Compliance",
+	"name": "Compliance Intelligence Dashboard",
+	"naming_rule": "",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "System Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Compliance Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 0,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Auditor",
+			"share": 0,
+			"write": 0
+		}
+	],
+	"quick_entry": 0,
+	"search_fields": "dashboard_name,dashboard_type,status",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "dashboard_name",
+	"track_changes": 1,
+	"track_seen": 1,
+	"track_views": 1
+}

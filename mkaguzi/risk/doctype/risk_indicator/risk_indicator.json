@@ -1,0 +1,190 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-29 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "indicator_id",
+  "indicator_name",
+  "module",
+  "indicator_type",
+  "column_break_5",
+  "current_value",
+  "threshold_value",
+  "status",
+  "section_break_9",
+  "description",
+  "calculation_method",
+  "data_source",
+  "section_break_13",
+  "last_updated",
+  "next_check_date",
+  "frequency",
+  "section_break_17",
+  "alert_triggers",
+  "historical_data",
+  "trend_direction"
+ ],
+ "fields": [
+  {
+   "fieldname": "indicator_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Indicator ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "indicator_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Indicator Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "module",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Module",
+   "options": "Financial\nHR\nPayroll\nInventory\nAccess Control\nGeneral",
+   "reqd": 1
+  },
+  {
+   "fieldname": "indicator_type",
+   "fieldtype": "Select",
+   "label": "Indicator Type",
+   "options": "KPI\nRisk Metric\nCompliance Score\nAnomaly Detection\nPredictive",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_value",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Current Value"
+  },
+  {
+   "fieldname": "threshold_value",
+   "fieldtype": "Float",
+   "label": "Threshold Value"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nInactive\nAlert\nCritical",
+   "default": "Active"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Configuration"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "calculation_method",
+   "fieldtype": "Select",
+   "label": "Calculation Method",
+   "options": "Count\nSum\nAverage\nPercentage\nRatio\nCustom Formula"
+  },
+  {
+   "fieldname": "data_source",
+   "fieldtype": "Data",
+   "label": "Data Source"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Scheduling"
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated"
+  },
+  {
+   "fieldname": "next_check_date",
+   "fieldtype": "Datetime",
+   "label": "Next Check Date"
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "label": "Frequency",
+   "options": "Real-time\nHourly\nDaily\nWeekly\nMonthly",
+   "default": "Daily"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Analytics"
+  },
+  {
+   "fieldname": "alert_triggers",
+   "fieldtype": "Long Text",
+   "label": "Alert Triggers (JSON)"
+  },
+  {
+   "fieldname": "historical_data",
+   "fieldtype": "Long Text",
+   "label": "Historical Data (JSON)"
+  },
+  {
+   "fieldname": "trend_direction",
+   "fieldtype": "Select",
+   "label": "Trend Direction",
+   "options": "Improving\nStable\nDeclining\nVolatile"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Risk",
+ "name": "Risk Indicator",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Risk Analyst"
+  }
+ ],
+ "sort_field": "last_updated",
+ "sort_order": "DESC",
+ "title_field": "indicator_name",
+ "track_changes": 1
+}

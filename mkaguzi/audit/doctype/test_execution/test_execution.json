@@ -1,0 +1,411 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "execution_id",
+  "test_library_reference",
+  "execution_name",
+  "column_break_3",
+  "execution_type",
+  "priority",
+  "status",
+  "section_break_7",
+  "scheduled_start_date",
+  "actual_start_date",
+  "scheduled_end_date",
+  "actual_end_date",
+  "column_break_12",
+  "duration_seconds",
+  "progress_percentage",
+  "section_break_15",
+  "execution_parameters",
+  "section_break_17",
+  "test_results",
+  "section_break_19",
+  "result_summary",
+  "total_tests",
+  "passed_tests",
+  "failed_tests",
+  "warning_tests",
+  "column_break_25",
+  "total_records_processed",
+  "exceptions_found",
+  "critical_findings",
+  "section_break_29",
+  "execution_logs",
+  "section_break_31",
+  "error_details",
+  "section_break_33",
+  "performance_metrics",
+  "execution_time_ms",
+  "memory_usage_mb",
+  "cpu_usage_percent",
+  "column_break_38",
+  "records_per_second",
+  "queries_executed",
+  "section_break_41",
+  "created_by",
+  "creation_date",
+  "approved_by",
+  "approval_date",
+  "column_break_46",
+  "last_modified_by",
+  "last_modified_date",
+  "section_break_49",
+  "notes",
+  "attachments"
+ ],
+ "fields": [
+  {
+   "fieldname": "execution_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Execution ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "test_library_reference",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Test Library Reference",
+   "options": "Audit Test Library",
+   "reqd": 1
+  },
+  {
+   "fieldname": "execution_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Execution Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "execution_type",
+   "fieldtype": "Select",
+   "default": "Manual",
+   "label": "Execution Type",
+   "options": "Manual\nScheduled\nBatch\nAPI",
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "default": "Medium",
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "default": "Pending",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nQueued\nRunning\nCompleted\nFailed\nCancelled\nPaused",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Execution Schedule"
+  },
+  {
+   "fieldname": "scheduled_start_date",
+   "fieldtype": "Datetime",
+   "label": "Scheduled Start Date"
+  },
+  {
+   "fieldname": "actual_start_date",
+   "fieldtype": "Datetime",
+   "label": "Actual Start Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scheduled_end_date",
+   "fieldtype": "Datetime",
+   "label": "Scheduled End Date"
+  },
+  {
+   "fieldname": "actual_end_date",
+   "fieldtype": "Datetime",
+   "label": "Actual End Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration_seconds",
+   "fieldtype": "Int",
+   "label": "Duration (Seconds)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "progress_percentage",
+   "fieldtype": "Percent",
+   "label": "Progress Percentage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break",
+   "label": "Execution Parameters"
+  },
+  {
+   "fieldname": "execution_parameters",
+   "fieldtype": "Table",
+   "label": "Execution Parameters",
+   "options": "Execution Parameter"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "label": "Test Results"
+  },
+  {
+   "fieldname": "test_results",
+   "fieldtype": "Table",
+   "label": "Test Results",
+   "options": "Test Result"
+  },
+  {
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break",
+   "label": "Result Summary"
+  },
+  {
+   "fieldname": "result_summary",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Result Summary"
+  },
+  {
+   "fieldname": "total_tests",
+   "fieldtype": "Int",
+   "label": "Total Tests",
+   "read_only": 1
+  },
+  {
+   "fieldname": "passed_tests",
+   "fieldtype": "Int",
+   "label": "Passed Tests",
+   "read_only": 1
+  },
+  {
+   "fieldname": "failed_tests",
+   "fieldtype": "Int",
+   "label": "Failed Tests",
+   "read_only": 1
+  },
+  {
+   "fieldname": "warning_tests",
+   "fieldtype": "Int",
+   "label": "Warning Tests",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_records_processed",
+   "fieldtype": "Int",
+   "label": "Total Records Processed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exceptions_found",
+   "fieldtype": "Int",
+   "label": "Exceptions Found",
+   "read_only": 1
+  },
+  {
+   "fieldname": "critical_findings",
+   "fieldtype": "Int",
+   "label": "Critical Findings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break",
+   "label": "Execution Logs"
+  },
+  {
+   "fieldname": "execution_logs",
+   "fieldtype": "Table",
+   "label": "Execution Logs",
+   "options": "Execution Log"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break",
+   "label": "Error Details"
+  },
+  {
+   "fieldname": "error_details",
+   "fieldtype": "Text Editor",
+   "label": "Error Details"
+  },
+  {
+   "fieldname": "section_break_33",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "performance_metrics",
+   "fieldtype": "Check",
+   "default": "1",
+   "label": "Performance Metrics"
+  },
+  {
+   "fieldname": "execution_time_ms",
+   "fieldtype": "Int",
+   "label": "Execution Time (ms)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "memory_usage_mb",
+   "fieldtype": "Float",
+   "label": "Memory Usage (MB)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cpu_usage_percent",
+   "fieldtype": "Percent",
+   "label": "CPU Usage (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "records_per_second",
+   "fieldtype": "Float",
+   "label": "Records/Second",
+   "read_only": 1
+  },
+  {
+   "fieldname": "queries_executed",
+   "fieldtype": "Int",
+   "label": "Queries Executed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_41",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Datetime",
+   "label": "Creation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "column_break_46",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_modified_by",
+   "fieldtype": "Link",
+   "label": "Last Modified By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_modified_date",
+   "fieldtype": "Datetime",
+   "label": "Last Modified Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_49",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Attach Multiple",
+   "label": "Attachments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Test Execution",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "execution_name"
+}

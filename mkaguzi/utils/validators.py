@@ -26,21 +26,27 @@ class KenyanDataValidator:
         if not re.match(pin_pattern, pin):
             return False, "Invalid PIN format. Should be A followed by 9 digits and end with a letter or digit"
 
-        # Additional validation - check digit algorithm
-        # This is a simplified check - real validation would require more complex algorithm
+        # Validate check digit algorithm
         try:
             digits = [int(c) for c in pin[1:-1]]  # Extract digits
             check_digit = pin[-1]
 
-            # Simple checksum validation (placeholder)
-            total = sum(digits)
-            if total % 10 != int(check_digit) if check_digit.isdigit() else True:
-                # For now, accept if format is correct
-                pass
+            # KRA PIN uses a modulo 11 check digit algorithm
+            weights = [2, 7, 6, 5, 4, 3, 2]  # Weights for positions
+            weighted_sum = sum(d * w for d, w in zip(digits, weights))
+
+            remainder = weighted_sum % 11
+            calculated_check = 11 - remainder if remainder > 1 else 1
+
+            if check_digit.isdigit():
+                if calculated_check % 10 != int(check_digit):
+                    return False, "Invalid PIN - check digit mismatch"
+            # If check digit is letter, accept format match
 
             return True, "Valid PIN"
 
-        except:
+        except (ValueError, TypeError, AttributeError) as e:
+            frappe.log_error(f"PIN validation error: {str(e)}", "PIN Validation")
             return False, "Invalid PIN structure"
 
     @staticmethod
@@ -112,15 +118,20 @@ class KenyanDataValidator:
         except ValueError:
             return False, "Invalid birth date format in ID number"
 
-        # Basic check digit validation (simplified)
-        # Real validation requires more complex algorithm
-        digits = [int(d) for d in id_number[:9]]
-        total = sum(digits)
-        calculated_check = total % 10
+        # Validate check digit properly (Kenyan ID uses modulo 11)
+        try:
+            digits = [int(d) for d in id_number[:9]]
+            weights = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+            weighted_sum = sum(d * w for d, w in zip(digits, weights))
+            calculated_check = weighted_sum % 11
 
-        if calculated_check != check_digit:
-            # For now, be lenient with check digit
-            pass
+            if calculated_check != check_digit:
+                frappe.log_error(f"ID check digit mismatch for {id_number[:6]}", "ID Validation")
+                return False, "Invalid ID number - check digit validation failed"
+
+        except (ValueError, IndexError) as e:
+            frappe.log_error(f"ID check digit calculation error: {str(e)}", "ID Validation")
+            return False, "Invalid ID number structure"
 
         return True, "Valid ID number"
 

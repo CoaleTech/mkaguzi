@@ -1,1 +1,7 @@
-Mkaguzi
+Audit
+Compliance
+Risk
+Findings
+Reporting
+Integration
+Security

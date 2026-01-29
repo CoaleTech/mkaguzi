@@ -1,0 +1,60 @@
+{
+ "creation": "2025-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_id",
+  "item_description",
+  "sample_amount",
+  "test_result",
+  "exception_found",
+  "exception_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Item Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sample_amount",
+   "fieldtype": "Currency",
+   "label": "Sample Amount"
+  },
+  {
+   "fieldname": "test_result",
+   "fieldtype": "Select",
+   "label": "Test Result",
+   "options": "Pass\nFail\nNot Tested"
+  },
+  {
+   "fieldname": "exception_found",
+   "fieldtype": "Check",
+   "label": "Exception Found"
+  },
+  {
+   "fieldname": "exception_details",
+   "fieldtype": "Text",
+   "label": "Exception Details"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "mkaguzi",
+ "name": "Sample Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

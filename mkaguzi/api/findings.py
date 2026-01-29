@@ -1,6 +1,11 @@
+# API module for Internal Audit Management System
+
+# =============================================================================
+# FINDINGS MODULE APIs
+# =============================================================================
+
 import frappe
 from frappe import _
-import json
 from datetime import datetime, timedelta
 
 @frappe.whitelist()
@@ -283,7 +288,7 @@ def get_findings_summary(filters=None):
             group_by='severity')
 
         # Type breakdown
-        type_counts = frappe.db.get_all('Audit Finding',
+        type_counts = frappe.get_all('Audit Finding',
             filters=filter_conditions,
             fields=['finding_type', 'count(*) as count'],
             group_by='finding_type')
