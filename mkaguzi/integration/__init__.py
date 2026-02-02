@@ -1,2 +1,1 @@
-# Integration Module
-# Handles real-time synchronization with ERPNext/HRMS systems
+# Copyright (c) 2025, Coale Tech

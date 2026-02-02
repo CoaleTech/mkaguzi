@@ -303,7 +303,7 @@
  "links": [],
  "modified": "2025-11-24 10:00:00.000000",
  "modified_by": "Administrator",
- "module": "mkaguzi",
+ "module": "Audit",
  "name": "Audit Report",
  "naming_rule": "By fieldname",
  "owner": "Administrator",

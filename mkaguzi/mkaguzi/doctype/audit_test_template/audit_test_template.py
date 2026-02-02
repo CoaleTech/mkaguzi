@@ -250,13 +250,12 @@ def get_template_library():
     if not frappe.has_permission("Audit Test Template", "read"):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
-    templates = frappe.db.sql("""
-        SELECT template_name, template_type, audit_category, description,
-               is_active, created_by, modified
-        FROM `tabAudit Test Template`
-        WHERE is_active = 1
-        ORDER BY audit_category, template_type, template_name
-    """, as_dict=True)
+    templates = frappe.get_all("Audit Test Template",
+        filters={"is_active": 1},
+        fields=["template_name", "template_type", "audit_category", "description",
+                "is_active", "created_by", "modified"],
+        order_by="audit_category, template_type, template_name"
+    )
 
     # Organize by category
     library = {}

@@ -35,7 +35,6 @@ class AuditAPI:
             'access': 'mkaguzi.access_control_audit'
         }
 
-    @frappe.whitelist()
     def get_system_status(self) -> Dict[str, Any]:
         """
         Get comprehensive system status including all audit modules
@@ -152,7 +151,6 @@ class AuditAPI:
         except:
             return {}
 
-    @frappe.whitelist()
     def run_integrity_check(self, check_type='full', target_module=None):
         """
         Run integrity checks across audit modules
@@ -218,8 +216,8 @@ class AuditAPI:
             # Create audit trail entry
             trail = frappe.get_doc({
                 'doctype': 'Audit Trail Entry',
-                'document_type': doc.doctype,
-                'document_name': doc.name,
+                'source_doctype': doc.doctype,
+                'source_document': doc.name,
                 'operation': operation,
                 'user': frappe.session.user,
                 'timestamp': now(),
@@ -229,11 +227,17 @@ class AuditAPI:
                 'requires_review': self._requires_review(doc, operation)
             })
 
-            trail.insert(ignore_permissions=True)
-            frappe.db.commit()
+            # Check permission before inserting
+            if frappe.has_permission('Audit Trail Entry', 'create'):
+                trail.insert()
+                frappe.db.commit()
+            else:
+                frappe.throw(_("You do not have permission to create Audit Trail Entry"))
 
         except Exception as e:
-            frappe.log_error(f"Audit Entry Creation Error: {str(e)}")
+            # Truncate error message to avoid CharacterLengthExceededError
+            error_msg = str(e)[:100] if len(str(e)) > 100 else str(e)
+            frappe.log_error(f"Audit Entry Error: {error_msg}", "Audit Entry")
 
     def _assess_operation_risk(self, doc, operation):
         """Assess risk level of operation"""
@@ -278,7 +282,6 @@ class AuditAPI:
         except Exception:
             return 0
 
-    @frappe.whitelist()
     @frappe.whitelist()
     def get_audit_trail(
         self,
@@ -332,7 +335,6 @@ class AuditAPI:
                 details={'error': str(e)}
             )
 
-    @frappe.whitelist()
     def update_dashboard_data(self, module=None):
         """
         Update dashboard data for specified module or all modules
@@ -417,7 +419,6 @@ class AuditAPI:
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
 
-    @frappe.whitelist()
     def send_notification(self, notification_type, recipients, data):
         """
         Send notifications for audit events
@@ -663,7 +664,6 @@ class AuditAPI:
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), _("Integrity Report Creation Error"))
 
-    @frappe.whitelist()
     def get_audit_dashboard(self, period='30', module=None):
         """
         Get comprehensive audit dashboard data
@@ -768,18 +768,18 @@ class AuditAPI:
         try:
             alerts = []
 
-            # Check for overdue findings
-            overdue_findings = frappe.db.sql("""
-                SELECT COUNT(*) as count
-                FROM `tabAudit Finding`
-                WHERE status IN ('Open', 'In Progress')
-                AND target_completion_date < CURDATE()
-            """, as_dict=True)
+            # Check for overdue findings (using ORM instead of SQL)
+            from frappe.utils import today
+            overdue_findings_count = frappe.db.count('Audit Finding',
+                filters={
+                    'status': ['in', ['Open', 'In Progress']],
+                    'target_completion_date': ['<', today()]
+                })
 
-            if overdue_findings and overdue_findings[0]['count'] > 0:
+            if overdue_findings_count > 0:
                 alerts.append({
                     'type': 'warning',
-                    'message': f"{overdue_findings[0]['count']} findings are overdue",
+                    'message': f"{overdue_findings_count} findings are overdue",
                     'priority': 'high'
                 })
 
@@ -834,7 +834,6 @@ class AuditAPI:
         except:
             return []
 
-    @frappe.whitelist()
     def create_audit_program(self, program_data):
         """
         Create a comprehensive audit program
@@ -915,7 +914,6 @@ class AuditAPI:
         except:
             return []
 
-    @frappe.whitelist()
     def sync_all_modules(self, force_sync=False):
         """
         Synchronize all audit modules
@@ -1116,7 +1114,6 @@ class AuditAPI:
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), _("Sync Status Update Error"))
 
-    @frappe.whitelist()
     def clear_cache(self, pattern: Optional[str] = None):
         """Clear cache"""
         if pattern:
@@ -1153,3 +1150,36 @@ def create_audit_program(program_data):
 @frappe.whitelist()
 def sync_all_modules(force_sync=False):
     """Sync all modules"""
+    return audit_api.sync_all_modules(force_sync)
+
+@frappe.whitelist()
+def get_audit_trail(doctype: Optional[str] = None, docname: Optional[str] = None,
+                   limit: int = 100, start: int = 0) -> Dict[str, Any]:
+    """
+    Get audit trail entries with filtering and pagination
+
+    Args:
+        doctype: Filter by document type
+        docname: Filter by document name
+        limit: Maximum number of entries to return
+        start: Offset for pagination
+
+    Returns:
+        Dictionary with entries, total count, and pagination info
+    """
+    return audit_api.get_audit_trail(doctype, docname, limit, start)
+
+@frappe.whitelist()
+def update_dashboard_data(module=None):
+    """Update dashboard data for specified module or all modules"""
+    return audit_api.update_dashboard_data(module)
+
+@frappe.whitelist()
+def send_notification(notification_type, recipients, data):
+    """Send notifications for audit events"""
+    return audit_api.send_notification(notification_type, recipients, data)
+
+@frappe.whitelist()
+def clear_cache(pattern: Optional[str] = None):
+    """Clear cache"""
+    return audit_api.clear_cache(pattern)

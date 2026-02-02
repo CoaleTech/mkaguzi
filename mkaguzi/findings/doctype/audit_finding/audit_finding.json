@@ -335,6 +335,7 @@
    "fieldname": "finding_status",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Finding Status",
    "options": "Open\nAction in Progress\nPending Verification\nClosed\nAccepted as Risk\nManagement Override",
    "reqd": 1
@@ -577,7 +578,7 @@
  "links": [],
  "modified": "2025-11-24 10:00:00.000000",
  "modified_by": "Administrator",
- "module": "mkaguzi",
+ "module": "Findings",
  "name": "Audit Finding",
  "naming_rule": "By fieldname",
  "owner": "Administrator",

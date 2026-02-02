@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:import_type_name",
+ "creation": "2026-02-02 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "import_type_name",
+  "description",
+  "column_break_1",
+  "enabled",
+  "source_system",
+  "section_break_1",
+  "file_format",
+  "delimiter",
+  "has_header_row",
+  "column_break_2",
+  "date_format",
+  "encoding",
+  "section_break_2",
+  "field_mapping",
+  "section_break_3",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "import_type_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Import Type Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "source_system",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Source System",
+   "options": "Business Central\nSAP\nOracle\nQuickBooks\nXero\nCustom ERP\nExcel Export\nOther"
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break",
+   "label": "File Settings"
+  },
+  {
+   "default": "CSV",
+   "fieldname": "file_format",
+   "fieldtype": "Select",
+   "label": "File Format",
+   "options": "CSV\nTSV\nExcel\nJSON"
+  },
+  {
+   "default": ",",
+   "fieldname": "delimiter",
+   "fieldtype": "Select",
+   "label": "Delimiter",
+   "options": ",\n;\n|\n\\t"
+  },
+  {
+   "default": "1",
+   "fieldname": "has_header_row",
+   "fieldtype": "Check",
+   "label": "Has Header Row"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "%Y-%m-%d",
+   "fieldname": "date_format",
+   "fieldtype": "Data",
+   "label": "Date Format"
+  },
+  {
+   "default": "utf-8",
+   "fieldname": "encoding",
+   "fieldtype": "Select",
+   "label": "Encoding",
+   "options": "utf-8\nutf-16\nlatin-1\nascii"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Field Mapping"
+  },
+  {
+   "fieldname": "field_mapping",
+   "fieldtype": "Code",
+   "label": "Field Mapping (JSON)",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2026-02-02 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Integration",
+ "name": "CSV Import Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "import_type_name",
+ "track_changes": 1
+}

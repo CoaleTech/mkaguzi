@@ -1,0 +1,269 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "creation": "2025-02-02 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "source_section",
+    "source_doctype",
+    "source_document",
+    "operation",
+    "column_break_1",
+    "module",
+    "timestamp",
+    "user",
+    "risk_section",
+    "risk_level",
+    "risk_score",
+    "requires_review",
+    "column_break_3",
+    "ip_address",
+    "user_agent",
+    "data_section",
+    "old_values",
+    "new_values",
+    "changes",
+    "section_break_5",
+    "status",
+    "synced",
+    "amended_from"
+  ],
+  "fields": [
+    {
+      "fieldname": "source_section",
+      "fieldtype": "Section Break",
+      "label": "Source Document"
+    },
+    {
+      "fieldname": "source_doctype",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Source DocType",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_document",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Source Document",
+      "reqd": 1
+    },
+    {
+      "fieldname": "operation",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Operation",
+      "options": "CREATE\nUPDATE\nDELETE\nSUBMIT\nCANCEL\nRENAME",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "module",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Module",
+      "options": "Financial\nHR\nPayroll\nInventory\nAccess\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "timestamp",
+      "fieldtype": "Datetime",
+      "in_list_view": 1,
+      "label": "Timestamp",
+      "reqd": 1
+    },
+    {
+      "fieldname": "user",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "User",
+      "options": "User",
+      "reqd": 1
+    },
+    {
+      "fieldname": "risk_section",
+      "fieldtype": "Section Break",
+      "label": "Risk Assessment"
+    },
+    {
+      "default": "Low",
+      "fieldname": "risk_level",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Risk Level",
+      "options": "Low\nMedium\nHigh\nCritical",
+      "reqd": 1
+    },
+    {
+      "fieldname": "risk_score",
+      "fieldtype": "Int",
+      "label": "Risk Score",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "fieldname": "requires_review",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "label": "Requires Review"
+    },
+    {
+      "fieldname": "column_break_3",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "ip_address",
+      "fieldtype": "Data",
+      "label": "IP Address",
+      "read_only": 1
+    },
+    {
+      "fieldname": "user_agent",
+      "fieldtype": "Text",
+      "label": "User Agent",
+      "read_only": 1
+    },
+    {
+      "fieldname": "data_section",
+      "fieldtype": "Section Break",
+      "label": "Data Changes"
+    },
+    {
+      "fieldname": "old_values",
+      "fieldtype": "Code",
+      "label": "Old Values",
+      "read_only": 1
+    },
+    {
+      "fieldname": "new_values",
+      "fieldtype": "Code",
+      "label": "New Values",
+      "read_only": 1
+    },
+    {
+      "fieldname": "changes",
+      "fieldtype": "Code",
+      "label": "Changes",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_break_5",
+      "fieldtype": "Section Break"
+    },
+    {
+      "default": "Open",
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Open\nReviewed\nClosed\nArchived"
+    },
+    {
+      "default": "0",
+      "fieldname": "synced",
+      "fieldtype": "Check",
+      "label": "Synced"
+    },
+    {
+      "fieldname": "amended_from",
+      "fieldtype": "Link",
+      "label": "Amended From",
+      "no_copy": 1,
+      "options": "Audit Trail Entry",
+      "print_hide": 1,
+      "read_only": 1
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "is_submittable": 0,
+  "links": [
+    {
+      "link_doctype": "Audit Finding",
+      "link_fieldname": "audit_trail_reference"
+    }
+  ],
+  "modified": "2025-02-02 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Integration",
+  "name": "Audit Trail Entry",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "if_owner": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 0
+    },
+    {
+      "amend": 1,
+      "cancel": 1,
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "submit": 0,
+      "write": 1
+    },
+    {
+      "amend": 0,
+      "cancel": 0,
+      "create": 0,
+      "delete": 0,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Auditor",
+      "share": 0,
+      "submit": 0,
+      "write": 0
+    },
+    {
+      "amend": 0,
+      "cancel": 0,
+      "create": 0,
+      "delete": 0,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Audit Manager",
+      "share": 0,
+      "submit": 0,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Quality Reviewer",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "source_document",
+  "track_changes": 0
+}

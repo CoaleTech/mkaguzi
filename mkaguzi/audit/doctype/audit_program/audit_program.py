@@ -150,12 +150,12 @@ def create_program_from_template(template_name, engagement_name):
 
 	# Update engagement reference
 	engagement.audit_program_reference = program.name
-		engagement.program_status = "Created"
-		engagement.save()
+	engagement.program_status = "Created"
+	engagement.save()
 
-		return program
+	return program
 
-	def get_program_progress_details(self):
+def get_program_progress_details(self):
 		"""Get detailed progress information"""
 		if not self.program_procedures:
 			return {

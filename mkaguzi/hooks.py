@@ -1,6 +1,6 @@
-# Add import at the top of the file
-import frappe
-from frappe.utils import now
+# -*- coding: utf-8 -*-
+# Copyright (c) 2025, Coale Tech and contributors
+# For license information, please see license.txt
 
 app_name = "mkaguzi"
 app_title = "Mkaguzi"
@@ -83,6 +83,13 @@ app_license = "mit"
 # 	"filters": "mkaguzi.utils.jinja_filters"
 # }
 
+# Fixtures
+# --------
+fixtures = [
+    {"dt": "Number Card", "filters": [["module", "=", "Mkaguzi"]]},
+    {"dt": "Workspace", "filters": [["module", "=", "Mkaguzi"]]}
+]
+
 # Installation
 # ------------
 
@@ -129,74 +136,16 @@ app_license = "mit"
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
-def get_audit_permissions(user):
-    """Get audit permissions for a user based on their role"""
-    if not user:
-        return get_default_permissions()
-
-    if "System Manager" in frappe.get_roles(user):
-        return get_full_audit_permissions()
-
-    audit_role = frappe.db.get_value("User", user, "audit_role")
-    return get_audit_role_permissions(audit_role or "Auditor")
-
-def get_full_audit_permissions():
-    """Full access for audit administrators"""
-    return {
-        "can_create": audit_doctypes,
-        "can_edit": audit_doctypes,
-        "can_submit": audit_doctypes,
-        "can_cancel": audit_doctypes,
-        "can_delete": audit_doctypes,
-        "can_approve": audit_doctypes,
-        "can_export": audit_doctypes
-    }
-
-def get_audit_role_permissions(role):
-    """Get permissions for a specific audit role"""
-    role_perms = {
-        "Audit Administrator": get_full_audit_permissions(),
-        "Audit Manager": {
-            "can_create": audit_doctypes,
-            "can_edit": audit_doctypes,
-            "can_submit": audit_doctypes,
-            "can_approve": ["Audit Engagement", "Audit Finding", "Annual Audit Plan"]
-        },
-        "Lead Auditor": {
-            "can_create": ["Audit Engagement", "Audit Finding", "Working Paper"],
-            "can_edit": ["Audit Engagement", "Audit Finding", "Working Paper"],
-            "can_submit": ["Audit Engagement", "Audit Finding"]
-        },
-        "Auditor": {
-            "can_create": ["Audit Finding"],
-            "can_edit": ["Audit Finding"],
-            "can_submit": ["Audit Finding"]
-        },
-        "Audit Viewer": {"can_read": audit_doctypes},
-        "Quality Reviewer": {
-            "can_edit": ["Audit Finding", "Audit Report"],
-            "can_submit": ["Audit Finding", "Audit Report"],
-            "can_approve": ["Audit Finding", "Audit Report"]
-        },
-        "Compliance Officer": {
-            "can_create": ["Compliance Requirement", "Tax Compliance Tracker"],
-            "can_edit": ["Compliance Requirement", "Tax Compliance Tracker"],
-            "can_submit": ["Compliance Requirement", "Tax Compliance Tracker"],
-            "can_approve": ["Compliance Requirement", "Tax Compliance Tracker"]
-        }
-    }
-    return role_perms.get(role, {"can_read": audit_doctypes})
-
-audit_doctypes = [
-    "Audit Engagement", "Audit Finding", "Audit Report",
-    "Risk Assessment", "Compliance Requirement",
-    "Audit Universe", "Annual Audit Plan", "Audit Test Library",
-    "Integration Hub", "Data Period", "Board Report"
-]
-
-def get_default_permissions():
-    """Default permissions for users without audit roles"""
-    return {"can_read": ["Audit Finding", "Audit Report"]}
+# Audit permissions are now defined in mkaguzi.utils.audit_permissions
+# Import them for use in permission hooks if needed:
+# from mkaguzi.utils.audit_permissions import (
+#     get_audit_permissions,
+#     get_full_audit_permissions,
+#     get_audit_role_permissions,
+#     get_default_permissions,
+#     has_audit_permission,
+#     AUDIT_DOCTYPES
+# )
 
 # DocType Class
 # ---------------
@@ -344,40 +293,9 @@ doc_events = {
         "on_update": "mkaguzi.integration.sync.on_audit_trail_entry_update",
     },
 
-    # Mkaguzi Audit Doctypes - Phase 9 Business Logic Integration
-    "Audit GL Entry": {
-        "validate": "mkaguzi.controllers.audit_controllers.audit_gl_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_controllers.audit_gl_controller.on_submit",
-    },
-    "Audit Doctype Catalog": {
-        "validate": "mkaguzi.controllers.audit_controllers.audit_catalog_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_controllers.audit_catalog_controller.on_submit",
-    },
-    "Audit Integrity Report": {
-        "validate": "mkaguzi.controllers.audit_controllers.audit_integrity_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_controllers.audit_integrity_controller.on_submit",
-    },
-    "Audit Test Template": {
-        "validate": "mkaguzi.controllers.audit_controllers.audit_template_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_controllers.audit_template_controller.on_submit",
-    },
-    "Module Sync Status": {
-        "validate": "mkaguzi.controllers.audit_controllers.sync_status_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_controllers.sync_status_controller.on_submit",
-    },
-    "Audit Finding": {
-        "validate": "mkaguzi.controllers.audit_operations_controllers.audit_finding_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_operations_controllers.audit_finding_controller.on_submit",
-        "on_update": "mkaguzi.controllers.audit_operations_controllers.audit_finding_controller.on_update",
-    },
-    "Audit Execution": {
-        "validate": "mkaguzi.controllers.audit_operations_controllers.audit_execution_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_operations_controllers.audit_execution_controller.on_submit",
-    },
-    "Audit Plan": {
-        "validate": "mkaguzi.controllers.audit_operations_controllers.audit_plan_controller.validate",
-        "on_submit": "mkaguzi.controllers.audit_operations_controllers.audit_plan_controller.on_submit",
-    }
+    # NOTE: DocType controller methods (validate, on_submit, on_update, etc.)
+    # are called automatically by Frappe framework. No need to define them in hooks.
+    # Only use doc_events for cross-app integrations or external method calls.
 }
 
 # Scheduled Tasks
@@ -389,14 +307,16 @@ doc_events = {
 scheduler_events = {
     "hourly": [
         "mkaguzi.integration.sync.hourly_data_sync",
-        "mkaguzi.integration.sync.check_system_health"
+        "mkaguzi.integration.sync.check_system_health",
+        "mkaguzi.agents.agent_manager.hourly_agent_health_check"
     ],
     "daily": [
         "mkaguzi.integration.sync.daily_reconciliation",
         "mkaguzi.integration.sync.daily_compliance_check",
         "mkaguzi.integration.sync.daily_risk_assessment",
         "mkaguzi.utils.notifications.schedule_notifications",
-        "mkaguzi.integration.sync.cleanup_old_audit_trails"
+        "mkaguzi.integration.sync.cleanup_old_audit_trails",
+        "mkaguzi.agents.agent_manager.daily_agent_cleanup"
     ],
     "weekly": [
         "mkaguzi.integration.sync.weekly_comprehensive_audit",
