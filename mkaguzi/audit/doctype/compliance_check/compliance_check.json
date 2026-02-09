@@ -1,0 +1,245 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-02-08 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "compliance_requirement",
+  "check_date",
+  "status",
+  "severity",
+  "column_break_pqrs",
+  "verified_by",
+  "due_date",
+  "completed_date",
+  "findings_section",
+  "findings",
+  "evidence",
+  "gap_description",
+  "section_break_remediation",
+  "remediation_plan",
+  "remediation_owner",
+  "remediation_due_date",
+  "actual_completion_date",
+  "section_break_details",
+  "requirement_description",
+  "control_reference",
+  "compliance_framework",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "COMP-CHK-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "compliance_requirement",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Compliance Requirement",
+   "options": "Compliance Requirement",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "check_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Check Date",
+   "reqd": 1
+  },
+  {
+   "default": "Not Applicable",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Compliant\nNon-Compliant\nPartially Compliant\nNot Applicable",
+   "reqd": 1
+  },
+  {
+   "default": "Medium",
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "High\nMedium\nLow"
+  },
+  {
+   "fieldname": "column_break_pqrs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By (Agent)",
+   "options": "Agent Configuration",
+   "reqd": 1
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "completed_date",
+   "fieldtype": "Date",
+   "label": "Completed Date"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "findings_section",
+   "fieldtype": "Section Break",
+   "label": "Findings and Evidence"
+  },
+  {
+   "fieldname": "findings",
+   "fieldtype": "Text",
+   "label": "Findings"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Text",
+   "label": "Evidence"
+  },
+  {
+   "fieldname": "gap_description",
+   "fieldtype": "Text",
+   "label": "Gap Description"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_remediation",
+   "fieldtype": "Section Break",
+   "label": "Remediation Plan"
+  },
+  {
+   "fieldname": "remediation_plan",
+   "fieldtype": "Text",
+   "label": "Remediation Plan"
+  },
+  {
+   "fieldname": "remediation_owner",
+   "fieldtype": "Link",
+   "label": "Remediation Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "remediation_due_date",
+   "fieldtype": "Date",
+   "label": "Remediation Due Date"
+  },
+  {
+   "fieldname": "actual_completion_date",
+   "fieldtype": "Date",
+   "label": "Actual Completion Date"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_details",
+   "fieldtype": "Section Break",
+   "label": "Requirement Details"
+  },
+  {
+   "fetch_from": "compliance_requirement.description",
+   "fieldname": "requirement_description",
+   "fieldtype": "Text",
+   "label": "Requirement Description",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "compliance_requirement.control_reference",
+   "fieldname": "control_reference",
+   "fieldtype": "Data",
+   "label": "Control Reference",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "compliance_requirement.compliance_framework",
+   "fieldname": "compliance_framework",
+   "fieldtype": "Link",
+   "label": "Compliance Framework",
+   "options": "Compliance Framework",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Compliance Check",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Compliance Requirement",
+   "link_fieldname": "compliance_requirement"
+  }
+ ],
+ "modified": "2025-02-08 00:00:00",
+ "module": "Audit",
+ "name": "Compliance Check",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Compliance Officer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "compliance_requirement"
+}

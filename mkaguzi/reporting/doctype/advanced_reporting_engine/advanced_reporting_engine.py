@@ -160,8 +160,6 @@ class AdvancedReportingEngine(Document):
 					results[source_name] = self.query_doctype(source_config, filters)
 				elif source_type == 'sql':
 					results[source_name] = self.execute_sql_query(source_config, filters)
-				elif source_type == 'api':
-					results[source_name] = self.call_external_api(source_config, filters)
 				else:
 					results[source_name] = []
 
@@ -207,28 +205,6 @@ class AdvancedReportingEngine(Document):
 
 		except Exception as e:
 			frappe.logger().error(f"SQL query error: {str(e)}")
-			return []
-
-	def call_external_api(self, source_config, filters):
-		"""Call external API"""
-		try:
-			import requests
-
-			url = source_config.get('url', '')
-			method = source_config.get('method', 'GET')
-			headers = source_config.get('headers', {})
-			params = source_config.get('params', {})
-
-			# Add filter params
-			params.update(filters)
-
-			response = requests.request(method, url, headers=headers, params=params)
-			response.raise_for_status()
-
-			return response.json()
-
-		except Exception as e:
-			frappe.logger().error(f"API call error: {str(e)}")
 			return []
 
 	def convert_filters_to_conditions(self, filters, doctype):

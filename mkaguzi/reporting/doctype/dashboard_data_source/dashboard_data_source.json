@@ -6,7 +6,6 @@
  "field_order": [
   "data_source_name",
   "data_source_type",
-  "connection_string",
   "query",
   "column_break_4",
   "refresh_interval",
@@ -26,13 +25,8 @@
    "fieldname": "data_source_type",
    "fieldtype": "Select",
    "label": "Data Source Type",
-   "options": "Database\nAPI\nFile\nTest Execution\nAudit Test Library",
+   "options": "Test Execution\nAudit Test Library\nERPNext Query",
    "reqd": 1
-  },
-  {
-   "fieldname": "connection_string",
-   "fieldtype": "Data",
-   "label": "Connection String"
   },
   {
    "fieldname": "query",

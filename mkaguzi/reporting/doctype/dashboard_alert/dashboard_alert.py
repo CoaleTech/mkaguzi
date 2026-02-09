@@ -44,7 +44,7 @@ class DashboardAlert(Document):
 	def validate_notification_settings(self):
 		"""Validate notification settings"""
 		if self.notification_methods:
-			valid_methods = ["Email", "SMS", "In-App", "Webhook"]
+			valid_methods = ["Email", "SMS", "In-App"]
 			methods = self.notification_methods.split(",")
 
 			for method in methods:
@@ -165,8 +165,6 @@ def send_alert_notifications(alert):
 				send_sms_notification(alert, message)
 			elif method == "In-App":
 				send_in_app_notification(alert, message)
-			elif method == "Webhook":
-				send_webhook_notification(alert, message)
 
 	except Exception as e:
 		frappe.log_error(f"Failed to send alert notifications: {str(e)}")
@@ -210,32 +208,6 @@ def send_in_app_notification(alert, message):
 
 	except Exception as e:
 		frappe.log_error(f"Failed to send in-app notification: {str(e)}")
-
-def send_webhook_notification(alert, message):
-	"""Send webhook notification"""
-	try:
-		if alert.webhook_url:
-			import requests
-
-			payload = {
-				"alert_id": alert.alert_id,
-				"alert_name": alert.alert_name,
-				"message": message,
-				"timestamp": str(now_datetime()),
-				"dashboard_id": alert.parent
-			}
-
-			headers = {"Content-Type": "application/json"}
-			if alert.webhook_secret:
-				headers["X-Webhook-Secret"] = alert.webhook_secret
-
-			response = requests.post(alert.webhook_url, json=payload, headers=headers, timeout=10)
-
-			if response.status_code not in [200, 201, 202]:
-				frappe.log_error(f"Webhook notification failed: {response.status_code} - {response.text}")
-
-	except Exception as e:
-		frappe.log_error(f"Failed to send webhook notification: {str(e)}")
 
 def get_dashboard_users(dashboard_id):
 	"""Get users with access to dashboard"""

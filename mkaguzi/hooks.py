@@ -280,7 +280,10 @@ doc_events = {
     # Mkaguzi Internal Doctypes
     "Audit Finding": {
         "after_insert": "mkaguzi.utils.notifications.on_audit_finding_insert",
-        "on_update": "mkaguzi.utils.notifications.on_audit_finding_update",
+        "on_update": [
+            "mkaguzi.utils.notifications.on_audit_finding_update",
+            "mkaguzi.utils.settings.invalidate_ai_cache_for_finding",
+        ],
     },
     "Compliance Check": {
         "on_update": "mkaguzi.utils.notifications.on_compliance_check_update",
@@ -291,6 +294,13 @@ doc_events = {
     "Audit Trail Entry": {
         "after_insert": "mkaguzi.integration.sync.on_audit_trail_entry_insert",
         "on_update": "mkaguzi.integration.sync.on_audit_trail_entry_update",
+    },
+    "Agent Configuration": {
+        "on_update": "mkaguzi.agents.agent_registry.reload_agent_registry",
+        "on_trash": "mkaguzi.agents.agent_registry.reload_agent_registry",
+    },
+    "Mkaguzi Settings": {
+        "on_update": "mkaguzi.agents.agent_registry.reload_agent_registry",
     },
 
     # NOTE: DocType controller methods (validate, on_submit, on_update, etc.)
@@ -305,6 +315,11 @@ doc_events = {
 # ---------------
 
 scheduler_events = {
+    "cron": {
+        "0 0 1 */3 *": [
+            "mkaguzi.agents.scheduler.run_quarterly_agents"
+        ]
+    },
     "hourly": [
         "mkaguzi.integration.sync.hourly_data_sync",
         "mkaguzi.integration.sync.check_system_health",
@@ -316,7 +331,8 @@ scheduler_events = {
         "mkaguzi.integration.sync.daily_risk_assessment",
         "mkaguzi.utils.notifications.schedule_notifications",
         "mkaguzi.integration.sync.cleanup_old_audit_trails",
-        "mkaguzi.agents.agent_manager.daily_agent_cleanup"
+        "mkaguzi.agents.agent_manager.daily_agent_cleanup",
+        "mkaguzi.utils.settings.reset_daily_ai_quota"
     ],
     "weekly": [
         "mkaguzi.integration.sync.weekly_comprehensive_audit",

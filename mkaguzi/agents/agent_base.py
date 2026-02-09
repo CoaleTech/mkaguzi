@@ -299,18 +299,20 @@ class AuditAgent(ABC):
         """
         return self.state_manager.get_state(self.id, key, default)
 
-    def set_state(self, key: str, value: Any, ttl: int = 3600) -> bool:
+    def set_state(self, key: str, value: Any, ttl: int = None) -> bool:
         """
         Set state value
 
         Args:
             key: State key
             value: State value
-            ttl: Time to live in seconds
+            ttl: Time to live in seconds (reads from settings if None)
 
         Returns:
             True if successful
         """
+        if ttl is None:
+            ttl = self.state_manager._default_ttl()
         return self.state_manager.set_state(self.id, key, value, ttl)
 
     def get_status(self) -> Dict[str, Any]:
@@ -345,6 +347,129 @@ class AuditAgent(ABC):
     def should_stop(self) -> bool:
         """Check if stop event is set"""
         return self._stop_event.is_set()
+
+    # Valid finding_category options from DocType definition
+    VALID_FINDING_CATEGORIES = [
+        "Control Deficiency", "Non-Compliance", "Inefficiency",
+        "Error", "Fraud Indicator", "Best Practice Opportunity"
+    ]
+
+    # Map agent-provided finding types to valid DocType categories
+    FINDING_CATEGORY_MAP = {
+        # Financial Agent mappings
+        "Accounts Receivable Issue": "Inefficiency",
+        "Sales Transaction Review": "Control Deficiency",
+        "Accounts Payable Issue": "Inefficiency",
+        "Vendor Invoice Review": "Error",
+        "Payment Review": "Control Deficiency",
+        "Payment Anomaly": "Fraud Indicator",
+        "Journal Entry Review": "Control Deficiency",
+        "Timing Anomaly": "Fraud Indicator",
+        # Asset Agent mappings
+        "Asset Management": "Control Deficiency",
+        "Asset Control": "Control Deficiency",
+        "Depreciation Review": "Inefficiency",
+        "Asset Disposal Review": "Control Deficiency",
+        "Asset Verification": "Control Deficiency",
+        "Asset Utilization": "Inefficiency",
+    }
+
+    def _normalize_finding_category(self, finding_type: str) -> str:
+        """Map agent finding type to valid Audit Finding category."""
+        if finding_type in self.VALID_FINDING_CATEGORIES:
+            return finding_type
+        mapped = self.FINDING_CATEGORY_MAP.get(finding_type)
+        if mapped:
+            return mapped
+        # Fallback: try keyword matching
+        lower = finding_type.lower()
+        if "fraud" in lower or "anomaly" in lower or "suspicious" in lower:
+            return "Fraud Indicator"
+        if "compliance" in lower or "regulatory" in lower:
+            return "Non-Compliance"
+        if "error" in lower or "duplicate" in lower:
+            return "Error"
+        if "inefficien" in lower or "delay" in lower or "overdue" in lower:
+            return "Inefficiency"
+        return "Control Deficiency"  # Safe default
+
+    def create_audit_finding(self, finding_title: str, finding_type: str, severity: str, 
+                           condition: str, criteria: str, cause: str = None, 
+                           consequence: str = None, recommendation: str = None,
+                           risk_category: str = None, engagement_reference: str = None,
+                           financial_impact: float = None, **kwargs) -> Dict[str, str]:
+        """
+        Create an Audit Finding document from agent analysis
+        
+        Args:
+            finding_title: Title/summary of the finding
+            finding_type: Finding category (Control Deficiency, Non-Compliance, etc.)
+            severity: Risk rating (Critical, High, Medium, Low)
+            condition: What was found/observed
+            criteria: What should have been in place
+            cause: Why the condition occurred
+            consequence: Impact/consequence of the condition
+            recommendation: Recommended corrective action
+            risk_category: Risk category (Financial, Operational, Compliance, IT, etc.)
+            engagement_reference: Link to Audit Engagement if available
+            financial_impact: Financial impact amount
+            **kwargs: Additional field values
+            
+        Returns:
+            dict: {"name": finding_doc_name, "severity": severity} for executor tracking
+        """
+        try:
+            # Normalize finding_type to valid category
+            finding_category = self._normalize_finding_category(finding_type)
+
+            # Create the finding document
+            finding_doc = frappe.get_doc({
+                'doctype': 'Audit Finding',
+                'finding_title': finding_title,
+                'finding_category': finding_category,
+                'severity': severity,
+                'risk_rating': severity,  # Also set risk_rating for backward compatibility
+                'risk_category': risk_category,
+                'condition': condition,
+                'criteria': criteria,
+                'cause': cause,
+                'consequence': consequence,
+                'recommendation': recommendation,
+                'financial_impact': financial_impact,
+                'engagement_reference': engagement_reference,
+                'finding_status': 'Open',
+                
+                # Agent tracking fields
+                'source_agent': self.agent_type,
+                'auto_generated': 1,
+                'ai_review_status': 'Pending',
+                
+                # Add any additional kwargs
+                **kwargs
+            })
+            
+            # Insert the document (this triggers the autoname for finding_id)
+            finding_doc.insert(ignore_permissions=True)
+            
+            # Commit the transaction
+            frappe.db.commit()
+            
+            return {
+                "name": finding_doc.name,
+                "severity": severity
+            }
+            
+        except Exception as e:
+            # Truncate title to 140 chars to avoid CharacterLengthExceededError
+            error_title = f"Finding Error [{self.agent_type}]"
+            try:
+                frappe.log_error(
+                    message=f"Failed to create audit finding: {str(e)}\nTitle: {finding_title}\nType: {finding_type}",
+                    title=error_title
+                )
+            except Exception:
+                pass  # Don't let error logging crash the agent
+            raise e
 
     def __repr__(self) -> str:
         return f"<{self.agent_type} id={self.id} state={self.state}>"

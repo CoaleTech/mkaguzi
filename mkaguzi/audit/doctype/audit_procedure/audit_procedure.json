@@ -13,7 +13,6 @@
   "column_break_5",
   "control_objective",
   "assertion",
-  "bc_data_source",
   "sample_size",
   "sampling_method",
   "column_break_11",
@@ -70,12 +69,6 @@
    "fieldtype": "Select",
    "label": "Assertion",
    "options": "Existence\nCompleteness\nAccuracy\nValuation\nRights\nPresentation\nOccurrence\nCutoff"
-  },
-  {
-   "fieldname": "bc_data_source",
-   "fieldtype": "Link",
-   "label": "BC Data Source",
-   "options": "CSV Import Type"
   },
   {
    "fieldname": "sample_size",

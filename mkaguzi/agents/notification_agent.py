@@ -25,7 +25,6 @@ class NotificationChannel(Enum):
     EMAIL = "email"
     SYSTEM = "system"
     SMS = "sms"
-    WEBHOOK = "webhook"
 
 
 @dataclass
@@ -50,7 +49,7 @@ class NotificationAgent(AuditAgent):
     def __init__(self, agent_id: Optional[str] = None, config: Optional[Dict[str, Any]] = None):
         """Initialize the Notification Agent"""
         super().__init__(agent_id, config)
-        self.agent_type = 'NotificationAgent'
+        self.agent_type = 'Notification'
 
         # Configuration
         self.aggregation_window_minutes = config.get('aggregation_window_minutes', 15) if config else 15
@@ -423,8 +422,6 @@ class NotificationAgent(AuditAgent):
                     sent = self._send_system_notification(message)
                 elif channel == NotificationChannel.SMS:
                     sent = self._send_sms(message)
-                elif channel == NotificationChannel.WEBHOOK:
-                    sent = self._send_webhook(message)
                 else:
                     sent = False
 
@@ -477,14 +474,37 @@ class NotificationAgent(AuditAgent):
             return False
 
     def _send_sms(self, message: NotificationMessage) -> bool:
-        """Send SMS notification (placeholder)"""
-        # Would integrate with SMS gateway
-        return False
-
-    def _send_webhook(self, message: NotificationMessage) -> bool:
-        """Send webhook notification (placeholder)"""
-        # Would make HTTP request to webhook URL
-        return False
+        """Send SMS notification using Frappe SMS Settings"""
+        try:
+            from frappe.core.doctype.sms_settings.sms_settings import send_sms
+            
+            # Extract mobile numbers from recipients
+            mobile_numbers = []
+            for recipient in message.recipients:
+                # Try to get mobile number from User doctype
+                try:
+                    user = frappe.get_doc("User", recipient)
+                    if user.mobile_no:
+                        mobile_numbers.append(user.mobile_no)
+                except:
+                    # If recipient is already a mobile number
+                    if recipient.isdigit() or '+' in recipient:
+                        mobile_numbers.append(recipient)
+            
+            if not mobile_numbers:
+                return False
+            
+            # Build SMS message (keep it short for SMS)
+            sms_text = f"{message.title}: {message.message[:100]}{'...' if len(message.message) > 100 else ''}"
+            
+            # Send SMS using Frappe's built-in SMS functionality
+            send_sms(receiver_list=mobile_numbers, msg=sms_text, success_msg=False)
+            
+            return True
+            
+        except Exception as e:
+            frappe.log_error(f"SMS send failed: {str(e)}", "Notification Agent SMS")
+            return False
 
     def _group_notifications(self, notifications: List) -> Dict[str, List]:
         """Group notifications by type and priority"""
@@ -496,19 +516,31 @@ class NotificationAgent(AuditAgent):
 
         return groups
 
-    def _create_digest(self, messages: List, recipient: Optional[str] = None) -> NotificationMessage:
+    def _create_digest(self, messages: List, recipient: Optional[str] = None) -> Optional[NotificationMessage]:
         """Create digest from multiple messages"""
         if not messages:
             return None
 
-        # Extract recipients
+        # Extract recipients and unpack tuples if present
         recipients = set()
-        for msg in messages:
-            recipients.update(msg.recipients)
+        message_objs = []
+        for item in messages:
+            # Handle both (recipient, message) tuples and NotificationMessage objects
+            if isinstance(item, tuple):
+                recipient_tuple, msg = item
+                message_objs.append(msg)
+                recipients.add(recipient_tuple)
+            else:
+                message_objs.append(item)
+                if hasattr(item, 'recipients'):
+                    recipients.update(item.recipients)
+
+        if not message_objs:
+            return None
 
         # Count by type
         message_types = defaultdict(int)
-        for msg in messages:
+        for msg in message_objs:
             message_types[msg.title] += 1
 
         # Build digest message
@@ -516,19 +548,32 @@ class NotificationAgent(AuditAgent):
         digest_message = f"Summary:\n" + "\n".join(summary_lines)
 
         return NotificationMessage(
-            title=f"Notification Digest ({len(messages)} items)",
+            title=f"Notification Digest ({len(message_objs)} items)",
             message=digest_message,
             priority=NotificationPriority.NORMAL,
             channels=[NotificationChannel.EMAIL],
             recipients=list(recipients),
-            data={'digest_count': len(messages), 'items': message_types},
+            data={'digest_count': len(message_objs), 'items': dict(message_types)},
             source_agent=self.agent_type
         )
 
     def _get_alert(self, alert_id: str) -> Optional[Dict[str, Any]]:
-        """Get alert details"""
-        # Would fetch from appropriate DocType
-        return None
+        """Get alert details from Mkaguzi Alert"""
+        try:
+            alert = frappe.get_doc('Mkaguzi Alert', alert_id)
+            return {
+                'name': alert.name,
+                'severity': alert.severity,
+                'status': alert.status,
+                'alert_title': alert.alert_title,
+                'alert_message': alert.alert_message,
+                'escalation_level': alert.escalation_level,
+                'created_at': alert.creation,
+                'source_agent': alert.source_agent
+            }
+        except frappe.DoesNotExistError:
+            frappe.log_error(f"Alert not found: {alert_id}", "Notification Agent")
+            return None
 
     def _calculate_escalation_level(self, alert: Dict[str, Any]) -> int:
         """Calculate escalation level for an alert"""
@@ -578,8 +623,15 @@ class NotificationAgent(AuditAgent):
 
     def _update_alert_escalation(self, alert_id: str, level: int) -> None:
         """Update alert with escalation level"""
-        # Would update the alert document
-        pass
+        try:
+            alert = frappe.get_doc('Mkaguzi Alert', alert_id)
+            level_map = {0: 'None', 1: 'Manager', 2: 'CAE', 3: 'Audit Committee'}
+            alert.escalation_level = level_map.get(level, 'None')
+            alert.status = 'Escalated' if level > 0 else 'Acknowledged'
+            alert.save()
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error(f"Update alert escalation error: {str(e)}", "Notification Agent")
 
     def _get_digest_recipients(self, recipient_type: Optional[str]) -> List[str]:
         """Get recipients for digest based on type"""

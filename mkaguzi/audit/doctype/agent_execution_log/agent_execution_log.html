@@ -1,0 +1,272 @@
+<div class="agent-execution-log-container">
+    <!-- Header Section -->
+    <div class="agent-header">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>{{ doc.agent_name || doc.agent_type }} - {{ doc.task_type }}</h3>
+                <p class="text-muted">{{ doc.agent_id }}</p>
+            </div>
+            <div class="col-sm-6 text-right">
+                <span class="indicator {{ status_color(doc.status) }}">
+                    {{ doc.status }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar for Running Agents -->
+    {% if doc.status === 'Running' %}
+    <div class="progress-section">
+        <label>Progress: {{ doc.progress_percentage || 0 }}%</label>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active"
+                 style="width: {{ doc.progress_percentage || 0 }}%">
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Key Metrics -->
+    <div class="metrics-section">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="metric-box">
+                    <label>Duration</label>
+                    <h4>{{ format_duration(doc.duration_seconds) }}</h4>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="metric-box">
+                    <label>Records Processed</label>
+                    <h4>{{ doc.records_processed || 0 }}</h4>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="metric-box">
+                    <label>Findings Generated</label>
+                    <h4>{{ doc.total_findings || 0 }}</h4>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="metric-box">
+                    <label>Status</label>
+                    <h4 class="status-{{ doc.status.toLowerCase() }}">
+                        {{ doc.status }}
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Section -->
+    {% if doc.error_occurred %}
+    <div class="error-section alert alert-danger">
+        <h4>Error Occurred</h4>
+        <p><strong>Type:</strong> {{ doc.error_type }}</p>
+        <p><strong>Message:</strong> {{ doc.error_message }}</p>
+        {% if doc.error_traceback %}
+        <details>
+            <summary>View Traceback</summary>
+            <pre>{{ doc.error_traceback }}</pre>
+        </details>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Findings Section -->
+    {% if doc.findings_generated %}
+    <div class="findings-section">
+        <h4>Generated Findings</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="finding-stat critical">
+                    <label>Critical</label>
+                    <h3>{{ doc.critical_findings || 0 }}</h3>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="finding-stat high">
+                    <label>High Severity</label>
+                    <h3>{{ doc.high_severity_findings || 0 }}</h3>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="finding-stat total">
+                    <label>Total Findings</label>
+                    <h3>{{ doc.total_findings || 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        {% if doc.finding_ids %}
+        <div class="finding-links">
+            <label>Related Finding IDs:</label>
+            {% for finding_id in doc.finding_ids.split(',') %}
+            <a href="#Form/Audit Finding/{{ finding_id.trim() }}">
+                {{ finding_id.trim() }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Performance Metrics -->
+    {% if doc.status === 'Completed' %}
+    <div class="performance-section">
+        <h4>Performance Metrics</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <label>Records/Second:</label>
+                <span>{{ doc.records_per_second || 0 }}</span>
+            </div>
+            <div class="col-sm-4">
+                <label>Memory Usage:</label>
+                <span>{{ doc.memory_usage_mb || 0 }} MB</span>
+            </div>
+            <div class="col-sm-4">
+                <label>CPU Usage:</label>
+                <span>{{ doc.cpu_usage_percent || 0 }}%</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.agent-execution-log-container {
+    padding: 15px;
+}
+
+.agent-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.metrics-section {
+    margin: 20px 0;
+}
+
+.metric-box {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.metric-box label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.metric-box h4 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.findings-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff3cd;
+    border-radius: 5px;
+}
+
+.finding-stat {
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.finding-stat.critical {
+    background: #dc3545;
+    color: white;
+}
+
+.finding-stat.high {
+    background: #fd7e14;
+    color: white;
+}
+
+.finding-stat.total {
+    background: #0d6efd;
+    color: white;
+}
+
+.finding-stat label {
+    display: block;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.finding-stat h3 {
+    margin: 5px 0 0 0;
+    font-size: 28px;
+}
+
+.finding-links a {
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.performance-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #d1e7dd;
+    border-radius: 5px;
+}
+
+.progress-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #e9ecef;
+    border-radius: 5px;
+}
+
+.error-section {
+    margin: 20px 0;
+}
+
+.error-section details {
+    margin-top: 10px;
+}
+
+.error-section pre {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 3px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.status-completed { color: #28a745; }
+.status-running { color: #007bff; }
+.status-failed { color: #dc3545; }
+.status-pending { color: #6c757d; }
+.status-cancelled { color: #6c757d; }
+.status-timeout { color: #fd7e14; }
+</style>
+
+<script>
+function format_duration(seconds) {
+    if (!seconds) return '0s';
+    if (seconds < 60) return Math.round(seconds) + 's';
+    if (seconds < 3600) return Math.round(seconds / 60) + 'm ' + Math.round(seconds % 60) + 's';
+    return Math.round(seconds / 3600) + 'h ' + Math.round((seconds % 3600) / 60) + 'm';
+}
+
+function status_color(status) {
+    const colors = {
+        'Completed': 'green',
+        'Running': 'blue',
+        'Failed': 'red',
+        'Pending': 'gray',
+        'Cancelled': 'gray',
+        'Timeout': 'orange'
+    };
+    return colors[status] || 'gray';
+}
+</script>

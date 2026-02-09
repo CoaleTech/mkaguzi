@@ -19,7 +19,7 @@ class ComplianceAgent(AuditAgent):
     def __init__(self, agent_id: Optional[str] = None, config: Optional[Dict[str, Any]] = None):
         """Initialize the Compliance Agent"""
         super().__init__(agent_id, config)
-        self.agent_type = 'ComplianceAgent'
+        self.agent_type = 'Compliance'
 
         # Configuration
         self.auto_update_checks = config.get('auto_update_checks', True) if config else True
@@ -112,13 +112,25 @@ class ComplianceAgent(AuditAgent):
                 verifications
             )
 
+            # Create audit finding for significant non-compliance
+            findings = []
+            if compliance_percentage < 80 or not all_compliant:
+                finding_result = self._create_compliance_finding(
+                    requirement_id or requirement_name,
+                    compliance_percentage,
+                    verifications
+                )
+                if finding_result:
+                    findings.append(finding_result)
+
             return {
                 'status': 'success',
                 'requirement': requirement_name,
                 'compliance_percentage': round(compliance_percentage, 2),
                 'overall_compliant': all_compliant,
                 'verifications': verifications,
-                'evidence_count': len(evidence)
+                'evidence_count': len(evidence),
+                'findings': findings
             }
 
         except Exception as e:
@@ -389,7 +401,7 @@ class ComplianceAgent(AuditAgent):
         if req_type == 'financial':
             evidence = frappe.get_all('Audit GL Entry',
                 filters={'creation': ['>=', datetime.now() - timedelta(days=90)]},
-                fields=['name', 'account_no', 'debit', 'credit', 'posting_date'],
+                fields=['name', 'account', 'debit_amount', 'credit_amount', 'posting_date'],
                 limit=100
             )
         elif req_type == 'access_control':
@@ -519,6 +531,52 @@ class ComplianceAgent(AuditAgent):
 
         except Exception as e:
             frappe.log_error(f"Failed to notify regulatory changes: {str(e)}", "Compliance Agent")
+
+    def _create_compliance_finding(self, requirement_name: str, compliance_percentage: float,
+                                 verifications: List[Dict]) -> Optional[Dict[str, str]]:
+        """Create an audit finding for compliance gaps using shared method"""
+        try:
+            # Build detailed condition with failed verifications
+            non_compliant = [v for v in verifications if not v.get('compliant')]
+            
+            condition_details = f"Compliance verification for {requirement_name} shows {compliance_percentage:.1f}% compliance rate.\\n\\n"
+            condition_details += f"Non-compliant areas ({len(non_compliant)} of {len(verifications)}): \\n"
+            
+            for verification in non_compliant[:5]:  # Show first 5 non-compliant items
+                clause_name = verification.get('clause_name', 'Unknown')
+                gap_description = verification.get('gap_description', 'Compliance gap identified')
+                condition_details += f"- {clause_name}: {gap_description}\\n"
+            
+            if len(non_compliant) > 5:
+                condition_details += f"... and {len(non_compliant) - 5} more compliance gaps\\n"
+            
+            # Determine finding severity based on compliance percentage
+            if compliance_percentage < 50:
+                severity = 'Critical'
+            elif compliance_percentage < 70:
+                severity = 'High'
+            elif compliance_percentage < 80:
+                severity = 'Medium'
+            else:
+                severity = 'Low'
+            
+            finding_result = self.create_audit_finding(
+                finding_title=f'Non-Compliance Identified: {requirement_name}',
+                finding_type='Non-Compliance',
+                severity=severity,
+                condition=condition_details,
+                criteria=f'Organization must maintain 100% compliance with {requirement_name} requirements',
+                cause='Inadequate compliance monitoring, unclear procedures, or insufficient training on regulatory requirements',
+                consequence=f'Non-compliance may result in regulatory penalties, reputational damage, and operational disruption',
+                recommendation=f'Implement immediate corrective actions for non-compliant areas, enhance compliance monitoring, and provide staff training on {requirement_name} requirements',
+                risk_category='Compliance'
+            )
+            
+            return finding_result
+            
+        except Exception as e:
+            frappe.log_error(f"Failed to create compliance finding for {requirement_name}: {str(e)}", "Compliance Agent")
+            return None
 
     def _get_compliance_findings(self, framework: Optional[str], start_date: Optional[str],
                                 end_date: Optional[str]) -> List[Dict]:

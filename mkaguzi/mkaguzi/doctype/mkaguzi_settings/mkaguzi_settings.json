@@ -1,0 +1,764 @@
+{
+ "actions": [],
+ "creation": "2026-02-08 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "system_enabled",
+  "company",
+  "column_break_gen1",
+  "default_log_level",
+  "enable_debug_logging",
+
+  "ai_openrouter_section",
+  "ai_enabled",
+  "ai_provider",
+  "column_break_ai1",
+  "api_key",
+  "free_model",
+  "paid_model",
+  "use_paid_model",
+  "z_ai_section",
+  "z_ai_api_key",
+  "z_ai_model",
+  "column_break_zai1",
+  "z_ai_paid_model",
+  "ai_model_settings_section",
+  "max_tokens",
+  "temperature",
+  "column_break_ai2",
+  "max_findings_per_run",
+  "min_severity_for_review",
+  "ai_quota_section",
+  "ai_quota_used",
+  "ai_quota_reset_date",
+  "ai_prompt_section",
+  "review_prompt_template",
+  "ai_notification_section",
+  "severity_mismatch_notify",
+  "mismatch_notification_roles",
+  "ai_model_cache_section",
+  "available_free_models",
+  "available_paid_models",
+  "models_last_fetched",
+
+  "agent_defaults_section",
+  "default_max_batch_size",
+  "default_agent_timeout",
+  "default_retry_count",
+  "column_break_ad1",
+  "default_scan_interval_hours",
+  "default_aggregation_window",
+  "default_max_digest_size",
+
+  "financial_agent_section",
+  "financial_max_batch_size",
+  "financial_timeout",
+  "financial_retry_count",
+  "column_break_fa1",
+  "benford_deviation_threshold",
+  "duplicate_similarity_threshold",
+  "large_transaction_multiplier",
+
+  "risk_agent_section",
+  "risk_prediction_horizon_days",
+  "risk_threshold_sensitivity",
+  "risk_min_data_points",
+  "column_break_ra1",
+  "risk_high_threshold",
+  "risk_medium_threshold",
+  "risk_low_threshold",
+
+  "compliance_agent_section",
+  "compliance_auto_update_checks",
+  "compliance_severity_threshold",
+  "column_break_ca1",
+  "compliance_gap_weight",
+  "compliance_overdue_escalation_days",
+
+  "discovery_agent_section",
+  "discovery_scan_interval_hours",
+  "discovery_auto_update_catalog",
+  "column_break_da1",
+  "discovery_detect_schema_changes",
+
+  "notification_agent_section",
+  "notification_aggregation_window",
+  "notification_max_digest_size",
+  "column_break_na1",
+  "notification_escalation_enabled",
+
+  "cache_settings_section",
+  "cache_default_ttl",
+  "cache_prefix",
+  "column_break_cs1",
+  "agent_state_ttl",
+  "message_bus_ttl",
+
+  "rate_limiting_section",
+  "rate_limit_default_limit",
+  "rate_limit_default_window",
+  "column_break_rl1",
+  "rate_limit_burst_capacity",
+  "rate_limit_refill_rate",
+  "rate_limit_bypass_roles",
+
+  "scheduling_section",
+  "financial_task_limit",
+  "fraud_detection_limit",
+  "column_break_sc1",
+  "risk_assessment_limit",
+  "risk_prediction_days"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General",
+   "collapsible": 0
+  },
+  {
+   "default": "1",
+   "fieldname": "system_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Mkaguzi System"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Default Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "column_break_gen1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "INFO",
+   "fieldname": "default_log_level",
+   "fieldtype": "Select",
+   "label": "Default Log Level",
+   "options": "DEBUG\nINFO\nWARNING\nERROR"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_debug_logging",
+   "fieldtype": "Check",
+   "label": "Enable Debug Logging"
+  },
+
+  {
+   "fieldname": "ai_openrouter_section",
+   "fieldtype": "Section Break",
+   "label": "AI Review Provider",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ai_enabled",
+   "fieldtype": "Check",
+   "label": "Enable AI Review"
+  },
+  {
+   "default": "OpenRouter",
+   "depends_on": "ai_enabled",
+   "fieldname": "ai_provider",
+   "fieldtype": "Select",
+   "label": "AI Provider",
+   "options": "OpenRouter\nZ.AI",
+   "description": "Select which AI provider to use for finding reviews"
+  },
+  {
+   "fieldname": "column_break_ai1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='OpenRouter'",
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "OpenRouter API Key",
+   "mandatory_depends_on": "eval:doc.ai_enabled && doc.ai_provider=='OpenRouter'"
+  },
+  {
+   "default": "google/gemma-3-27b-it:free",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='OpenRouter'",
+   "fieldname": "free_model",
+   "fieldtype": "Data",
+   "label": "OpenRouter Free Model"
+  },
+  {
+   "default": "anthropic/claude-sonnet-4",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='OpenRouter' && doc.use_paid_model",
+   "fieldname": "paid_model",
+   "fieldtype": "Data",
+   "label": "OpenRouter Paid Model"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='OpenRouter'",
+   "fieldname": "use_paid_model",
+   "fieldtype": "Check",
+   "label": "Use Paid Model (with Fallback)"
+  },
+  {
+   "fieldname": "z_ai_section",
+   "fieldtype": "Section Break",
+   "label": "Z.AI Settings",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='Z.AI'",
+   "collapsible": 0
+  },
+  {
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='Z.AI'",
+   "fieldname": "z_ai_api_key",
+   "fieldtype": "Password",
+   "label": "Z.AI API Key",
+   "mandatory_depends_on": "eval:doc.ai_enabled && doc.ai_provider=='Z.AI'",
+   "description": "Get your API key from https://z.ai/manage-apikey/apikey-list"
+  },
+  {
+   "default": "glm-4.7-flash",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='Z.AI'",
+   "fieldname": "z_ai_model",
+   "fieldtype": "Data",
+   "label": "Z.AI Model",
+   "description": "Free: glm-4.7-flash, glm-4.5-flash. Paid: glm-4.7, glm-4.5, glm-4.6"
+  },
+  {
+   "fieldname": "column_break_zai1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "glm-4.7",
+   "depends_on": "eval:doc.ai_enabled && doc.ai_provider=='Z.AI' && doc.use_paid_model",
+   "fieldname": "z_ai_paid_model",
+   "fieldtype": "Data",
+   "label": "Z.AI Paid Model",
+   "description": "Paid model for high-severity findings: glm-4.7, glm-4.5, glm-4.6"
+  },
+  {
+   "depends_on": "ai_enabled",
+   "fieldname": "ai_model_settings_section",
+   "fieldtype": "Section Break",
+   "label": "AI Model Settings",
+   "collapsible": 1
+  },
+  {
+   "default": "1024",
+   "depends_on": "ai_enabled",
+   "fieldname": "max_tokens",
+   "fieldtype": "Int",
+   "label": "Max Tokens"
+  },
+  {
+   "default": "0.3",
+   "depends_on": "ai_enabled",
+   "fieldname": "temperature",
+   "fieldtype": "Float",
+   "label": "Temperature"
+  },
+  {
+   "fieldname": "column_break_ai2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "20",
+   "depends_on": "ai_enabled",
+   "fieldname": "max_findings_per_run",
+   "fieldtype": "Int",
+   "label": "Max Findings per Agent Run"
+  },
+  {
+   "default": "All",
+   "depends_on": "ai_enabled",
+   "fieldname": "min_severity_for_review",
+   "fieldtype": "Select",
+   "label": "Minimum Severity for Review",
+   "options": "All\nCritical\nHigh\nMedium"
+  },
+  {
+   "fieldname": "ai_quota_section",
+   "fieldtype": "Section Break",
+   "label": "AI Quota Tracking",
+   "collapsible": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ai_quota_used",
+   "fieldtype": "Int",
+   "label": "AI Quota Used (Today)",
+   "read_only": 1,
+   "description": "Number of AI reviews completed today"
+  },
+  {
+   "fieldname": "ai_quota_reset_date",
+   "fieldtype": "Date",
+   "label": "Quota Reset Date",
+   "read_only": 1,
+   "description": "Date when quota was last reset"
+  },
+  {
+   "depends_on": "ai_enabled",
+   "fieldname": "ai_prompt_section",
+   "fieldtype": "Section Break",
+   "label": "AI Prompt Template",
+   "collapsible": 1
+  },
+  {
+   "default": "You are an expert internal auditor. Analyze this audit finding and return ONLY valid JSON with these keys: `severity_assessment` (object: `rating` one of Critical/High/Medium/Low, `justification` string), `root_cause_analysis` (string — deeper analysis beyond what's stated), `recommendation_refinement` (string — improved recommendations), `risk_narrative` (string — 2-3 sentence executive summary). Finding: Title: {finding_title}, Type: {finding_type}, Severity: {severity}, Condition: {condition}, Criteria: {criteria}, Cause: {cause}, Consequence: {consequence}, Recommendation: {recommendation}, Financial Impact: {financial_impact}.",
+   "depends_on": "ai_enabled",
+   "fieldname": "review_prompt_template",
+   "fieldtype": "Code",
+   "label": "Review Prompt Template",
+   "options": "Jinja"
+  },
+  {
+   "depends_on": "ai_enabled",
+   "fieldname": "ai_notification_section",
+   "fieldtype": "Section Break",
+   "label": "AI Notification Settings",
+   "collapsible": 1
+  },
+  {
+   "default": "1",
+   "depends_on": "ai_enabled",
+   "fieldname": "severity_mismatch_notify",
+   "fieldtype": "Check",
+   "label": "Notify on Severity Mismatch"
+  },
+  {
+   "default": "Audit Manager,System Manager",
+   "depends_on": "eval:doc.ai_enabled && doc.severity_mismatch_notify",
+   "fieldname": "mismatch_notification_roles",
+   "fieldtype": "Small Text",
+   "label": "Notification Roles (comma-separated)"
+  },
+  {
+   "fieldname": "ai_model_cache_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Model Cache"
+  },
+  {
+   "fieldname": "available_free_models",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Available Free Models (JSON)"
+  },
+  {
+   "fieldname": "available_paid_models",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Available Paid Models (JSON)"
+  },
+  {
+   "fieldname": "models_last_fetched",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "Models Last Fetched",
+   "read_only": 1
+  },
+
+  {
+   "fieldname": "agent_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Defaults",
+   "collapsible": 1
+  },
+  {
+   "default": "1000",
+   "fieldname": "default_max_batch_size",
+   "fieldtype": "Int",
+   "label": "Default Max Batch Size",
+   "description": "Maximum records per agent batch"
+  },
+  {
+   "default": "300",
+   "fieldname": "default_agent_timeout",
+   "fieldtype": "Int",
+   "label": "Default Agent Timeout (seconds)"
+  },
+  {
+   "default": "3",
+   "fieldname": "default_retry_count",
+   "fieldtype": "Int",
+   "label": "Default Retry Count"
+  },
+  {
+   "fieldname": "column_break_ad1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "24",
+   "fieldname": "default_scan_interval_hours",
+   "fieldtype": "Int",
+   "label": "Default Scan Interval (hours)"
+  },
+  {
+   "default": "15",
+   "fieldname": "default_aggregation_window",
+   "fieldtype": "Int",
+   "label": "Default Aggregation Window (minutes)"
+  },
+  {
+   "default": "50",
+   "fieldname": "default_max_digest_size",
+   "fieldtype": "Int",
+   "label": "Default Max Digest Size"
+  },
+
+  {
+   "fieldname": "financial_agent_section",
+   "fieldtype": "Section Break",
+   "label": "Financial Agent",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "financial_max_batch_size",
+   "fieldtype": "Int",
+   "label": "Max Batch Size",
+   "description": "Leave blank to use default"
+  },
+  {
+   "fieldname": "financial_timeout",
+   "fieldtype": "Int",
+   "label": "Timeout (seconds)",
+   "description": "Leave blank to use default"
+  },
+  {
+   "fieldname": "financial_retry_count",
+   "fieldtype": "Int",
+   "label": "Retry Count",
+   "description": "Leave blank to use default"
+  },
+  {
+   "fieldname": "column_break_fa1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0.05",
+   "fieldname": "benford_deviation_threshold",
+   "fieldtype": "Float",
+   "label": "Benford Deviation Threshold",
+   "description": "Threshold for flagging digit distribution anomalies (0.0 - 1.0)"
+  },
+  {
+   "default": "0.9",
+   "fieldname": "duplicate_similarity_threshold",
+   "fieldtype": "Float",
+   "label": "Duplicate Similarity Threshold",
+   "description": "Similarity score above which entries are flagged (0.0 - 1.0)"
+  },
+  {
+   "default": "3.0",
+   "fieldname": "large_transaction_multiplier",
+   "fieldtype": "Float",
+   "label": "Large Transaction Multiplier",
+   "description": "Multiplier of avg amount to flag as large transaction"
+  },
+
+  {
+   "fieldname": "risk_agent_section",
+   "fieldtype": "Section Break",
+   "label": "Risk Agent",
+   "collapsible": 1
+  },
+  {
+   "default": "30",
+   "fieldname": "risk_prediction_horizon_days",
+   "fieldtype": "Int",
+   "label": "Prediction Horizon (days)"
+  },
+  {
+   "default": "0.5",
+   "fieldname": "risk_threshold_sensitivity",
+   "fieldtype": "Float",
+   "label": "Threshold Sensitivity",
+   "description": "Sensitivity for risk threshold adjustment (0.0 - 1.0)"
+  },
+  {
+   "default": "100",
+   "fieldname": "risk_min_data_points",
+   "fieldtype": "Int",
+   "label": "Minimum Data Points"
+  },
+  {
+   "fieldname": "column_break_ra1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0.8",
+   "fieldname": "risk_high_threshold",
+   "fieldtype": "Float",
+   "label": "High Risk Threshold",
+   "description": "Score above which risk is classified as High (0.0 - 1.0)"
+  },
+  {
+   "default": "0.5",
+   "fieldname": "risk_medium_threshold",
+   "fieldtype": "Float",
+   "label": "Medium Risk Threshold",
+   "description": "Score above which risk is classified as Medium (0.0 - 1.0)"
+  },
+  {
+   "default": "0.2",
+   "fieldname": "risk_low_threshold",
+   "fieldtype": "Float",
+   "label": "Low Risk Threshold",
+   "description": "Score above which risk is classified as Low (0.0 - 1.0)"
+  },
+
+  {
+   "fieldname": "compliance_agent_section",
+   "fieldtype": "Section Break",
+   "label": "Compliance Agent",
+   "collapsible": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "compliance_auto_update_checks",
+   "fieldtype": "Check",
+   "label": "Auto-Update Compliance Checks"
+  },
+  {
+   "default": "Medium",
+   "fieldname": "compliance_severity_threshold",
+   "fieldtype": "Select",
+   "label": "Severity Threshold",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "column_break_ca1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1.0",
+   "fieldname": "compliance_gap_weight",
+   "fieldtype": "Float",
+   "label": "Compliance Gap Weight",
+   "description": "Weight factor for gap severity scoring"
+  },
+  {
+   "default": "14",
+   "fieldname": "compliance_overdue_escalation_days",
+   "fieldtype": "Int",
+   "label": "Overdue Escalation (days)",
+   "description": "Days after which overdue items are escalated"
+  },
+
+  {
+   "fieldname": "discovery_agent_section",
+   "fieldtype": "Section Break",
+   "label": "Discovery Agent",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "discovery_scan_interval_hours",
+   "fieldtype": "Int",
+   "label": "Scan Interval (hours)",
+   "description": "Leave blank to use default"
+  },
+  {
+   "default": "1",
+   "fieldname": "discovery_auto_update_catalog",
+   "fieldtype": "Check",
+   "label": "Auto-Update Catalog"
+  },
+  {
+   "fieldname": "column_break_da1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "discovery_detect_schema_changes",
+   "fieldtype": "Check",
+   "label": "Detect Schema Changes"
+  },
+
+  {
+   "fieldname": "notification_agent_section",
+   "fieldtype": "Section Break",
+   "label": "Notification Agent",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "notification_aggregation_window",
+   "fieldtype": "Int",
+   "label": "Aggregation Window (minutes)",
+   "description": "Leave blank to use default"
+  },
+  {
+   "fieldname": "notification_max_digest_size",
+   "fieldtype": "Int",
+   "label": "Max Digest Size",
+   "description": "Leave blank to use default"
+  },
+  {
+   "fieldname": "column_break_na1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "notification_escalation_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Escalation"
+  },
+
+  {
+   "fieldname": "cache_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Cache Settings",
+   "collapsible": 1
+  },
+  {
+   "default": "300",
+   "fieldname": "cache_default_ttl",
+   "fieldtype": "Int",
+   "label": "Default Cache TTL (seconds)",
+   "description": "Time-to-live for cached data"
+  },
+  {
+   "default": "mkaguzi:",
+   "fieldname": "cache_prefix",
+   "fieldtype": "Data",
+   "label": "Cache Key Prefix",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cs1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "3600",
+   "fieldname": "agent_state_ttl",
+   "fieldtype": "Int",
+   "label": "Agent State TTL (seconds)",
+   "description": "How long agent state is kept in cache"
+  },
+  {
+   "default": "86400",
+   "fieldname": "message_bus_ttl",
+   "fieldtype": "Int",
+   "label": "Message Bus TTL (seconds)",
+   "description": "How long messages persist in the bus"
+  },
+
+  {
+   "fieldname": "rate_limiting_section",
+   "fieldtype": "Section Break",
+   "label": "Rate Limiting",
+   "collapsible": 1
+  },
+  {
+   "default": "100",
+   "fieldname": "rate_limit_default_limit",
+   "fieldtype": "Int",
+   "label": "Default Rate Limit (requests)"
+  },
+  {
+   "default": "3600",
+   "fieldname": "rate_limit_default_window",
+   "fieldtype": "Int",
+   "label": "Default Rate Window (seconds)"
+  },
+  {
+   "fieldname": "column_break_rl1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "100",
+   "fieldname": "rate_limit_burst_capacity",
+   "fieldtype": "Int",
+   "label": "Token Bucket Capacity"
+  },
+  {
+   "default": "10",
+   "fieldname": "rate_limit_refill_rate",
+   "fieldtype": "Int",
+   "label": "Token Refill Rate (per second)"
+  },
+  {
+   "default": "System Manager",
+   "fieldname": "rate_limit_bypass_roles",
+   "fieldtype": "Small Text",
+   "label": "Bypass Roles (comma-separated)",
+   "description": "Roles that bypass rate limiting"
+  },
+
+  {
+   "fieldname": "scheduling_section",
+   "fieldtype": "Section Break",
+   "label": "Scheduling",
+   "collapsible": 1
+  },
+  {
+   "default": "1000",
+   "fieldname": "financial_task_limit",
+   "fieldtype": "Int",
+   "label": "Financial Analysis Limit",
+   "description": "Max records for scheduled financial analysis"
+  },
+  {
+   "default": "500",
+   "fieldname": "fraud_detection_limit",
+   "fieldtype": "Int",
+   "label": "Fraud Detection Limit",
+   "description": "Max records for scheduled fraud detection"
+  },
+  {
+   "fieldname": "column_break_sc1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "100",
+   "fieldname": "risk_assessment_limit",
+   "fieldtype": "Int",
+   "label": "Risk Assessment Limit",
+   "description": "Max records for scheduled risk assessment"
+  },
+  {
+   "default": "30",
+   "fieldname": "risk_prediction_days",
+   "fieldtype": "Int",
+   "label": "Risk Prediction Days Ahead"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-09 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Mkaguzi Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Administrator",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

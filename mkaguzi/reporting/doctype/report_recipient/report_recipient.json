@@ -1,0 +1,60 @@
+{
+  "actions": [],
+  "creation": "2026-02-08 10:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "recipient",
+    "recipient_name",
+    "email",
+    "send_report"
+  ],
+  "fields": [
+    {
+      "fieldname": "recipient",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Recipient",
+      "options": "User",
+      "reqd": 1
+    },
+    {
+      "fetch_from": "recipient.full_name",
+      "fieldname": "recipient_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Recipient Name",
+      "read_only": 1
+    },
+    {
+      "fetch_from": "recipient.email",
+      "fieldname": "email",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Email",
+      "options": "Email",
+      "read_only": 1
+    },
+    {
+      "default": "1",
+      "fieldname": "send_report",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "label": "Send Report"
+    }
+  ],
+  "index_web_pages_for_search": 0,
+  "istable": 1,
+  "links": [],
+  "modified": "2026-02-08 10:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Reporting",
+  "name": "Report Recipient",
+  "owner": "Administrator",
+  "permissions": [],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 0
+}

@@ -7,6 +7,27 @@ from typing import Any, Dict, List, Optional, Type
 import importlib
 
 
+def _get_defaults(agent_type: str) -> Dict[str, Any]:
+    """Load default_config for *agent_type* from Mkaguzi Settings.
+
+    Falls back to hardcoded values if settings are unavailable
+    (e.g. during initial install before migration).
+    """
+    try:
+        from mkaguzi.utils.settings import get_agent_config_for_type
+        return get_agent_config_for_type(agent_type)
+    except Exception:
+        _fallbacks = {
+            'financial': {'max_batch_size': 1000, 'timeout_seconds': 300, 'retry_count': 3, 'log_level': 'INFO'},
+            'risk': {'prediction_horizon_days': 30, 'threshold_sensitivity': 0.5, 'min_data_points': 100, 'log_level': 'INFO'},
+            'compliance': {'auto_update_checks': True, 'regulatory_sources': [], 'severity_threshold': 'medium', 'log_level': 'INFO'},
+            'discovery': {'scan_interval_hours': 24, 'auto_update_catalog': True, 'detect_schema_changes': True, 'log_level': 'INFO'},
+            'notification': {'aggregation_window_minutes': 15, 'max_digest_size': 50, 'escalation_enabled': True, 'log_level': 'INFO'},
+            'asset': {'max_batch_size': 1000, 'depreciation_threshold': 0.05, 'log_level': 'INFO'},
+        }
+        return _fallbacks.get(agent_type, {'log_level': 'INFO'})
+
+
 class AgentRegistry:
     """
     Registry for discovering available agent types and their configurations.
@@ -19,56 +40,37 @@ class AgentRegistry:
             'class_path': 'mkaguzi.agents.financial_agent.FinancialAgent',
             'description': 'Financial transaction analysis and fraud detection',
             'category': 'audit',
-            'default_config': {
-                'max_batch_size': 1000,
-                'timeout_seconds': 300,
-                'retry_count': 3,
-                'log_level': 'INFO'
-            }
+            'default_config': _get_defaults('financial')
         },
         'risk': {
             'class_path': 'mkaguzi.agents.risk_agent.RiskAgent',
             'description': 'Predictive risk assessment and threshold adjustment',
             'category': 'analytics',
-            'default_config': {
-                'prediction_horizon_days': 30,
-                'threshold_sensitivity': 0.5,
-                'min_data_points': 100,
-                'log_level': 'INFO'
-            }
+            'default_config': _get_defaults('risk')
         },
         'compliance': {
             'class_path': 'mkaguzi.agents.compliance_agent.ComplianceAgent',
             'description': 'Regulatory compliance verification and gap analysis',
             'category': 'compliance',
-            'default_config': {
-                'auto_update_checks': True,
-                'regulatory_sources': [],
-                'severity_threshold': 'medium',
-                'log_level': 'INFO'
-            }
+            'default_config': _get_defaults('compliance')
         },
         'discovery': {
             'class_path': 'mkaguzi.agents.discovery_agent.DiscoveryAgent',
             'description': 'Automatic doctype discovery and catalog updates',
             'category': 'discovery',
-            'default_config': {
-                'scan_interval_hours': 24,
-                'auto_update_catalog': True,
-                'detect_schema_changes': True,
-                'log_level': 'INFO'
-            }
+            'default_config': _get_defaults('discovery')
         },
         'notification': {
             'class_path': 'mkaguzi.agents.notification_agent.NotificationAgent',
             'description': 'Intelligent alerting and notification management',
             'category': 'notification',
-            'default_config': {
-                'aggregation_window_minutes': 15,
-                'max_digest_size': 50,
-                'escalation_enabled': True,
-                'log_level': 'INFO'
-            }
+            'default_config': _get_defaults('notification')
+        },
+        'asset': {
+            'class_path': 'mkaguzi.agents.asset_agent.AssetAgent',
+            'description': 'Asset management analysis and fixed asset auditing',
+            'category': 'audit',
+            'default_config': _get_defaults('asset')
         }
     }
 
@@ -248,7 +250,7 @@ class AgentRegistry:
                 return
 
             configs = frappe.get_all('Agent Configuration',
-                filters={'enabled': 1},
+                filters={'is_active': 1},
                 fields=['agent_type', 'config_json']
             )
 
@@ -263,3 +265,16 @@ class AgentRegistry:
 
         except Exception as e:
             frappe.log_error(f"Load from DB Error: {str(e)}", "Agent Registry")
+
+
+# Wrapper function for hooks integration
+def reload_agent_registry(doc=None, method=None):
+    """
+    Wrapper function to reload agent registry from database.
+    This can be called from hooks.py when Agent Configuration is updated.
+
+    Args:
+        doc: The Agent Configuration document (unused, for hooks compatibility)
+        method: The method that triggered this call (unused, for hooks compatibility)
+    """
+    AgentRegistry.load_from_db()

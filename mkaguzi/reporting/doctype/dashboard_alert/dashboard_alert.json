@@ -70,7 +70,7 @@
    "fieldname": "notification_method",
    "fieldtype": "Select",
    "label": "Notification Method",
-   "options": "Email\nIn-App\nSMS\nWebhook"
+   "options": "Email\nIn-App\nSMS"
   },
   {
    "fieldname": "recipients",

@@ -1,0 +1,20 @@
+/* Audit GL Entry Styles */
+
+.audit-gl-entry-form .form-layout .section-break {
+	margin-bottom: 15px;
+}
+
+.audit-gl-entry-form .risk-score-high {
+	color: red;
+	font-weight: bold;
+}
+
+.audit-gl-entry-form .risk-score-medium {
+	color: orange;
+	font-weight: bold;
+}
+
+.audit-gl-entry-form .risk-score-low {
+	color: green;
+	font-weight: bold;
+}

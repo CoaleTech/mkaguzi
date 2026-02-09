@@ -20,7 +20,7 @@ class RiskAgent(AuditAgent):
     def __init__(self, agent_id: Optional[str] = None, config: Optional[Dict[str, Any]] = None):
         """Initialize the Risk Agent"""
         super().__init__(agent_id, config)
-        self.agent_type = 'RiskAgent'
+        self.agent_type = 'Risk'
 
         # Configuration
         self.prediction_horizon_days = config.get('prediction_horizon_days', 30) if config else 30
@@ -156,12 +156,20 @@ class RiskAgent(AuditAgent):
             # Create or update risk assessment document
             self._create_risk_assessment(module_name, overall_risk, risk_scores)
 
+            # Create audit finding for high risk modules
+            findings = []
+            if overall_risk in ['High', 'Critical'] and avg_score > 0.7:
+                finding_result = self._create_risk_finding(module_name, overall_risk, risk_scores, avg_score)
+                if finding_result:
+                    findings.append(finding_result)
+
             return {
                 'status': 'success',
                 'module': module_name,
                 'overall_risk_level': overall_risk,
                 'average_risk_score': round(avg_score, 4),
-                'indicators': risk_scores
+                'indicators': risk_scores,
+                'findings': findings
             }
 
         except Exception as e:
@@ -267,12 +275,12 @@ class RiskAgent(AuditAgent):
             }
 
             if module:
-                filters['module'] = module
+                filters['risk_category'] = module
 
             findings = frappe.get_all('Audit Finding',
                 filters=filters,
-                fields=['name', 'severity', 'risk_rating', 'module',
-                       'reported_date', 'status', 'target_completion_date']
+                fields=['name', 'severity', 'risk_score', 'risk_category',
+                       'creation', 'finding_status', 'target_completion_date']
             )
 
             return findings
@@ -340,8 +348,8 @@ class RiskAgent(AuditAgent):
 
             indicators = frappe.get_all('Risk Indicator',
                 filters={
-                    'module': module_name,
-                    'active': 1
+                    'risk_area': module_name,
+                    'status': 'Active'
                 },
                 fields=['name', 'indicator_type', 'threshold', 'current_value']
             )
@@ -376,30 +384,36 @@ class RiskAgent(AuditAgent):
             if not frappe.db.table_exists('Risk Assessment'):
                 return
 
-            assessment_date = datetime.now().date()
+            from frappe.utils import today
 
-            # Check if assessment exists for today
-            existing = frappe.db.exists('Risk Assessment', {
-                'module': module,
-                'assessment_date': assessment_date
-            })
-
+            # Create assessment with required fields
             assessment_data = {
                 'doctype': 'Risk Assessment',
-                'module': module,
-                'assessment_date': assessment_date,
-                'overall_risk_level': risk_level,
-                'risk_indicators': frappe.as_json(risk_scores),
-                'source_agent': self.agent_type
+                'assessment_name': f"{module} Risk Assessment {today()}",
+                'assessment_date': today(),
+                'fiscal_year': frappe.get_value('Fiscal Year', {'year': today()[:4]}, 'name') or today()[:4],
+                'assessment_period': 'Continuous',
+                'assessment_type': 'Real-time',
+                'source_agent': self.agent_type,
+                'risk_register': []  # Will be populated with risk_scores below
             }
 
-            if existing:
-                doc = frappe.get_doc('Risk Assessment', existing)
-                doc.update(assessment_data)
-            else:
-                doc = frappe.get_doc(assessment_data)
+            # Map risk_scores into risk_register child table rows
+            for score_item in risk_scores:
+                register_row = {
+                    'risk_id': score_item.get('indicator', f'risk_{len(assessment_data["risk_register"]) + 1}'),
+                    'risk_title': score_item.get('indicator', 'Risk Indicator'),
+                    'likelihood_score': min(score_item.get('score', 0.5) * 5, 5),  # Scale 0-5
+                    'impact_score': 3,  # Default to medium if not specified
+                    'inherent_risk_score': score_item.get('score', 0.5) * 100,  # Scale 0-100
+                    'inherent_risk_rating': risk_level,
+                    'risk_owner': frappe.session.user or 'System',
+                    'risk_response': f"Threshold: {score_item.get('threshold', 'N/A')}"
+                }
+                assessment_data['risk_register'].append(register_row)
 
-            doc.save()
+            doc = frappe.get_doc(assessment_data)
+            doc.insert(ignore_permissions=True)
             frappe.db.commit()
 
         except Exception as e:
@@ -440,6 +454,47 @@ class RiskAgent(AuditAgent):
             groups[key].append(finding)
 
         return groups
+
+    def _create_risk_finding(self, module_name: str, risk_level: str, 
+                           risk_scores: List[Dict], avg_score: float) -> Optional[Dict[str, str]]:
+        """Create an audit finding for high-risk modules using shared method"""
+        try:
+            # Build detailed condition with risk indicators
+            condition_details = f"Risk assessment for {module_name} module shows {risk_level.lower()} risk level with average score {avg_score:.2f}.\\n\\n"
+            condition_details += "Key risk indicators:\\n"
+            
+            high_risk_indicators = [r for r in risk_scores if r['score'] > 0.6]
+            for indicator in high_risk_indicators[:5]:  # Show top 5 high-risk indicators
+                condition_details += f"- {indicator['indicator']}: Score {indicator['score']:.2f} (Value: {indicator['value']}, Threshold: {indicator['threshold']})\\n"
+            
+            if len(high_risk_indicators) > 5:
+                condition_details += f"... and {len(high_risk_indicators) - 5} more high-risk indicators\\n"
+            
+            # Determine finding severity based on average risk score
+            if avg_score > 0.8:
+                severity = 'Critical'
+            elif avg_score > 0.7:
+                severity = 'High'
+            else:
+                severity = 'Medium'
+            
+            finding_result = self.create_audit_finding(
+                finding_title=f'High Risk Detected in {module_name} Module',
+                finding_type='Control Deficiency',
+                severity=severity,
+                condition=condition_details,
+                criteria=f'Risk levels in the {module_name} module should be maintained below acceptable thresholds to ensure operational effectiveness',
+                cause='Multiple risk indicators have exceeded established thresholds, potentially due to inadequate controls or process deficiencies',
+                consequence=f'Elevated risk in {module_name} may lead to operational disruptions, compliance violations, or financial impact',
+                recommendation=f'Implement enhanced controls and monitoring for {module_name} module, address high-risk indicators immediately, and establish regular risk assessment procedures',
+                risk_category='Operational'
+            )
+            
+            return finding_result
+            
+        except Exception as e:
+            frappe.log_error(f"Failed to create risk finding for {module_name}: {str(e)}", "Risk Agent")
+            return None
 
     def _calculate_compound_risk(self, findings: List[Dict[str, Any]]) -> float:
         """Calculate compound risk score for a group of findings"""

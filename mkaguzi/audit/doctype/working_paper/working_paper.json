@@ -26,9 +26,8 @@
   "methodology",
   "section_break_18",
   "data_source",
-  "bc_import_reference",
-  "bc_data_query",
-  "external_data_source",
+  "erpnext_doctype",
+  "data_query",
   "section_break_23",
   "work_performed",
   "section_break_25",
@@ -181,21 +180,16 @@
    "label": "Data Source"
   },
   {
-   "fieldname": "bc_import_reference",
+   "fieldname": "erpnext_doctype",
    "fieldtype": "Link",
-   "label": "BC Import Reference",
-   "options": "BC Data Import"
+   "label": "ERPNext DocType",
+   "options": "DocType"
   },
   {
-   "fieldname": "bc_data_query",
+   "fieldname": "data_query",
    "fieldtype": "Code",
-   "label": "BC Data Query",
+   "label": "Data Query",
    "options": "SQL"
-  },
-  {
-   "fieldname": "external_data_source",
-   "fieldtype": "Text",
-   "label": "External Data Source"
   },
   {
    "fieldname": "section_break_23",

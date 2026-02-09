@@ -295,9 +295,12 @@ class AgentManager:
                 log_entry = {
                     'doctype': 'Agent Execution Log',
                     'agent_id': agent_id,
-                    'event_type': event,
-                    'timestamp': datetime.now(),
-                    'event_details': frappe.as_json(details) if details else None
+                    'agent_type': 'Unknown',
+                    'task_type': event,
+                    'task_name': event.replace('_', ' ').title(),
+                    'start_time': datetime.now(),
+                    'status': 'Pending',
+                    'output_data': frappe.as_json(details) if details else None
                 }
 
                 try:

@@ -1,11 +1,12 @@
 import { computed } from "vue"
-import { useUser } from "./useUser"
+import { session } from "../data/session"
+import { userResource } from "../data/user"
 
 export function usePermissions() {
-    const { user } = useUser()
+    const user = userResource
 
     const userRole = computed(() => {
-        if (!user) return "Audit Viewer"
+        if (!session.user) return "Audit Viewer"
         return user.data?.audit_role || "Audit Viewer"
     })
 

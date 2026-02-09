@@ -13,16 +13,36 @@ class AuditFinding(Document):
 	def autoname(self):
 		if not self.finding_id:
 			# Generate finding ID based on engagement and sequence
-			engagement = frappe.get_doc("Audit Engagement", self.engagement_reference)
-			year = getdate(engagement.start_date).year
+			if self.engagement_reference:
+				try:
+					engagement = frappe.get_doc("Audit Engagement", self.engagement_reference)
+					year = getdate(engagement.start_date).year
+					engagement_code = engagement.name
+				except frappe.DoesNotExistError:
+					engagement_code = "GEN"
+					year = getdate().year
+			else:
+				engagement_code = "GEN"
+				year = getdate().year
 
-			# Get next sequence number for this engagement
-			existing_findings = frappe.db.count("Audit Finding", {
-				"engagement_reference": self.engagement_reference
-			})
-			sequence = existing_findings + 1
+			# Get next sequence by finding the max existing sequence for this prefix
+			prefix = f"FND-{engagement_code}-{year}-"
+			last_finding = frappe.db.sql("""
+				SELECT finding_id FROM `tabAudit Finding`
+				WHERE finding_id LIKE %s
+				ORDER BY finding_id DESC LIMIT 1
+			""", (f"{prefix}%",), as_dict=True)
 
-			self.finding_id = f"FND-{engagement.name}-{year}-{sequence:03d}"
+			if last_finding and last_finding[0].get("finding_id"):
+				try:
+					last_seq = int(last_finding[0]["finding_id"].split("-")[-1])
+					sequence = last_seq + 1
+				except (ValueError, IndexError):
+					sequence = 1
+			else:
+				sequence = 1
+
+			self.finding_id = f"{prefix}{sequence:03d}"
 
 	def validate(self):
 		self.validate_dates()

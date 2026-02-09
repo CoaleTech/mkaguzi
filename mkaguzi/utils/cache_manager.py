@@ -11,7 +11,15 @@ class CacheManager:
     """Manages caching for audit system data"""
 
     CACHE_PREFIX = "mkaguzi:"
-    DEFAULT_TTL = 300  # 5 minutes
+
+    @staticmethod
+    def _default_ttl() -> int:
+        """Read cache_default_ttl from Mkaguzi Settings (fallback 300)."""
+        try:
+            from mkaguzi.utils.settings import get_cache_config
+            return get_cache_config().get("default_ttl", 300)
+        except Exception:
+            return 300
 
     @staticmethod
     def get_cache_key(prefix: str, *args, **kwargs) -> str:
@@ -54,7 +62,7 @@ class CacheManager:
     def set(cache_key: str, value: Any, ttl: Optional[int] = None) -> bool:
         """Set value in cache"""
         try:
-            frappe.cache().set(cache_key, value, ttl or CacheManager.DEFAULT_TTL)
+            frappe.cache().set(cache_key, value, ttl or CacheManager._default_ttl())
             return True
         except Exception:
             return False
@@ -78,12 +86,12 @@ class CacheManager:
             return False
 
 
-def cached(ttl: int = 300, key_prefix: Optional[str] = None):
+def cached(ttl: int = None, key_prefix: Optional[str] = None):
     """
     Decorator for caching function results
 
     Args:
-        ttl: Time to live in seconds
+        ttl: Time to live in seconds (reads from settings if None)
         key_prefix: Optional custom key prefix
     """
     def decorator(func: Callable) -> Callable:
@@ -102,13 +110,13 @@ def cached(ttl: int = 300, key_prefix: Optional[str] = None):
             result = func(*args, **kwargs)
 
             # Cache result
-            CacheManager.set(cache_key, result, ttl)
+            CacheManager.set(cache_key, result, ttl or CacheManager._default_ttl())
 
             return result
 
         # Add cache invalidation method
         wrapper.invalidate = lambda *args, **kwargs: CacheManager.delete(
-            CacheManager.get_cache_key(prefix or func.__name__, *args, **kwargs)
+            CacheManager.get_cache_key(key_prefix or func.__name__, *args, **kwargs)
         )
 
         return wrapper

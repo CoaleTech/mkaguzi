@@ -1,0 +1,166 @@
+{
+ "allow_copy": 0,
+ "allow_import": 1,
+ "allow_on_submit": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-02-08 10:00:00.000000",
+ "description": "Standalone alert document for audit findings and compliance issues",
+ "docstatus": 0,
+ "doctype": "DocType",
+ "document_type": "",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "alert_title",
+  "alert_type",
+  "alert_message",
+  "severity",
+  "status",
+  "source_agent",
+  "source_module",
+  "requirement",
+  "escalation_level",
+  "acknowledged_by",
+  "acknowledged_on",
+  "related_finding",
+  "resolved_on",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "MKAG-ALERT-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "alert_title",
+   "fieldtype": "Data",
+   "label": "Alert Title",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "alert_type",
+   "fieldtype": "Select",
+   "label": "Alert Type",
+   "options": "Due Soon\nOverdue\nMissing Data\nRisk Alert\nSchema Change\nAnomaly",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "alert_message",
+   "fieldtype": "Text",
+   "label": "Alert Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nAcknowledged\nResolved\nEscalated",
+   "default": "Open",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "source_agent",
+   "fieldtype": "Select",
+   "label": "Source Agent",
+   "options": "\nFinancial\nRisk\nCompliance\nDiscovery\nNotification"
+  },
+  {
+   "fieldname": "source_module",
+   "fieldtype": "Data",
+   "label": "Source Module"
+  },
+  {
+   "fieldname": "requirement",
+   "fieldtype": "Link",
+   "label": "Compliance Requirement",
+   "options": "Compliance Requirement"
+  },
+  {
+   "fieldname": "escalation_level",
+   "fieldtype": "Select",
+   "label": "Escalation Level",
+   "options": "None\nManager\nCAE\nAudit Committee"
+  },
+  {
+   "fieldname": "acknowledged_by",
+   "fieldtype": "Link",
+   "label": "Acknowledged By",
+   "options": "User"
+  },
+  {
+   "fieldname": "acknowledged_on",
+   "fieldtype": "Datetime",
+   "label": "Acknowledged On"
+  },
+  {
+   "fieldname": "related_finding",
+   "fieldtype": "Link",
+   "label": "Related Audit Finding",
+   "options": "Audit Finding"
+  },
+  {
+   "fieldname": "resolved_on",
+   "fieldtype": "Datetime",
+   "label": "Resolved On"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2026-02-08 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Mkaguzi Alert",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "alert_title,alert_type,severity"
+}

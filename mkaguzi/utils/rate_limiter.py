@@ -5,6 +5,7 @@ abuse and ensure fair resource allocation.
 """
 
 import frappe
+from frappe import _
 import time
 from functools import wraps
 from typing import Callable, Optional
@@ -14,13 +15,21 @@ class RateLimiter:
     """Simple rate limiter using Frappe cache"""
 
     CACHE_PREFIX = "mkaguzi:rate_limit:"
-    DEFAULT_LIMIT = 100  # requests per window
-    DEFAULT_WINDOW = 3600  # 1 hour in seconds
+
+    @staticmethod
+    def _defaults():
+        """Read rate-limit defaults from Mkaguzi Settings."""
+        try:
+            from mkaguzi.utils.settings import get_rate_limit_config
+            cfg = get_rate_limit_config()
+            return cfg["default_limit"], cfg["default_window"]
+        except Exception:
+            return 100, 3600
 
     @classmethod
     def check_rate_limit(cls, user: str, endpoint: str,
-                        limit: int = DEFAULT_LIMIT,
-                        window: int = DEFAULT_WINDOW) -> bool:
+                        limit: int = None,
+                        window: int = None) -> bool:
         """Check if user has exceeded rate limit
 
         Args:
@@ -45,7 +54,7 @@ class RateLimiter:
 
     @classmethod
     def get_remaining_requests(cls, user: str, endpoint: str,
-                               limit: int = DEFAULT_LIMIT) -> int:
+                               limit: int = None) -> int:
         """Get remaining requests for user
 
         Args:
@@ -56,6 +65,8 @@ class RateLimiter:
         Returns:
             Number of remaining requests
         """
+        if limit is None:
+            limit, _ = cls._defaults()
         cache = frappe.cache()
         key = f"{cls.CACHE_PREFIX}{user}:{endpoint}"
         current = cache.get(key) or 0
@@ -87,30 +98,40 @@ class RateLimiter:
         cache = frappe.cache()
         key = f"{cls.CACHE_PREFIX}{user}:{endpoint}"
         current = cache.get(key) or 0
+        _lim, _ = cls._defaults()
 
         return {
             'user': user,
             'endpoint': endpoint,
             'requests_used': current,
-            'limit': RateLimiter.DEFAULT_LIMIT,
-            'remaining': max(0, RateLimiter.DEFAULT_LIMIT - current)
+            'limit': _lim,
+            'remaining': max(0, _lim - current)
         }
 
 
-def rate_limit(limit: int = DEFAULT_LIMIT, window: int = DEFAULT_WINDOW,
+def rate_limit(limit: int = None, window: int = None,
                bypass_roles: Optional[list] = None):
     """Decorator for rate limiting API endpoints
 
     Args:
-        limit: Maximum requests per time window
-        window: Time window in seconds
+        limit: Maximum requests per time window (reads from settings if None)
+        window: Time window in seconds (reads from settings if None)
         bypass_roles: List of roles that bypass rate limiting
 
     Returns:
         Decorator function
     """
     if bypass_roles is None:
-        bypass_roles = ['System Manager']
+        try:
+            from mkaguzi.utils.settings import get_rate_limit_config
+            bypass_roles = get_rate_limit_config().get("bypass_roles", ["System Manager"])
+        except Exception:
+            bypass_roles = ['System Manager']
+
+    if limit is None or window is None:
+        _lim, _win = RateLimiter._defaults()
+        limit = limit or _lim
+        window = window or _win
 
     def decorator(func: Callable) -> Callable:
         @wraps(func)
@@ -145,13 +166,11 @@ class SlidingWindowRateLimiter:
     """Sliding window rate limiter for more accurate rate limiting"""
 
     CACHE_PREFIX = "mkaguzi:sliding_rate_limit:"
-    DEFAULT_LIMIT = 100
-    DEFAULT_WINDOW = 3600
 
     @classmethod
     def check_rate_limit(cls, user: str, endpoint: str,
-                        limit: int = DEFAULT_LIMIT,
-                        window: int = DEFAULT_WINDOW) -> bool:
+                        limit: int = None,
+                        window: int = None) -> bool:
         """Check if user has exceeded rate limit using sliding window
 
         Args:
@@ -163,6 +182,10 @@ class SlidingWindowRateLimiter:
         Returns:
             True if under rate limit, False if exceeded
         """
+        if limit is None or window is None:
+            _lim, _win = RateLimiter._defaults()
+            limit = limit or _lim
+            window = window or _win
         cache = frappe.cache()
         current_time = int(time.time())
         key = f"{cls.CACHE_PREFIX}{user}:{endpoint}"
@@ -192,13 +215,21 @@ class TokenBucketRateLimiter:
     """Token bucket rate limiter for burst traffic handling"""
 
     CACHE_PREFIX = "mkaguzi:token_bucket:"
-    DEFAULT_CAPACITY = 100  # Maximum tokens
-    DEFAULT_REFILL_RATE = 10  # Tokens per second
+
+    @staticmethod
+    def _token_defaults():
+        """Read burst capacity and refill rate from Mkaguzi Settings."""
+        try:
+            from mkaguzi.utils.settings import get_rate_limit_config
+            cfg = get_rate_limit_config()
+            return cfg["burst_capacity"], cfg["refill_rate"]
+        except Exception:
+            return 100, 10
 
     @classmethod
     def check_rate_limit(cls, user: str, endpoint: str,
-                        capacity: int = DEFAULT_CAPACITY,
-                        refill_rate: int = DEFAULT_REFILL_RATE) -> bool:
+                        capacity: int = None,
+                        refill_rate: int = None) -> bool:
         """Check if user has tokens available using token bucket algorithm
 
         Args:
@@ -210,6 +241,10 @@ class TokenBucketRateLimiter:
         Returns:
             True if tokens available, False if bucket empty
         """
+        if capacity is None or refill_rate is None:
+            _cap, _rate = cls._token_defaults()
+            capacity = capacity or _cap
+            refill_rate = refill_rate or _rate
         cache = frappe.cache()
         key = f"{cls.CACHE_PREFIX}{user}:{endpoint}"
         current_time = time.time()
@@ -284,8 +319,8 @@ class RateLimitExceeded(frappe.TooManyRequestsError):
 
 
 def get_rate_limit_headers(user: str, endpoint: str,
-                           limit: int = RateLimiter.DEFAULT_LIMIT,
-                           window: int = RateLimiter.DEFAULT_WINDOW) -> dict:
+                           limit: int = None,
+                           window: int = None) -> dict:
     """Get rate limit headers for API responses
 
     Args:
@@ -297,6 +332,10 @@ def get_rate_limit_headers(user: str, endpoint: str,
     Returns:
         Dictionary with rate limit headers
     """
+    if limit is None or window is None:
+        _lim, _win = RateLimiter._defaults()
+        limit = limit or _lim
+        window = window or _win
     remaining = RateLimiter.get_remaining_requests(user, endpoint, limit)
 
     return {

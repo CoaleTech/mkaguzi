@@ -9,6 +9,10 @@ from frappe import _
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from ..utils.erpnext_queries import (
+    get_gl_entries, get_sales_invoices, get_purchase_invoices,
+    get_payment_entries, get_journal_entries, get_stock_ledger_entries, get_items
+)
 
 @frappe.whitelist()
 def execute_test(test_id, parameters):
@@ -104,94 +108,92 @@ def stock_variance_analysis(params):
     period = params.get('period')
     location = params.get('location', '')
     threshold_percent = float(params.get('threshold_percent', 5))
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     # Get period details
     period_doc = frappe.get_doc('Data Period', period)
     start_date = period_doc.start_date
     end_date = period_doc.end_date
 
-    # Get previous period for opening stock
-    prev_period = frappe.db.get_value('Data Period',
-        filters={'end_date': ['<', start_date]},
-        fieldname='name',
-        order_by='end_date desc'
+    # Get all items
+    items = get_items(company=company)
+
+    # Get stock ledger entries for the period
+    filters = {}
+    if location:
+        filters['warehouse'] = location
+
+    stock_entries = get_stock_ledger_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company,
+        filters=filters
     )
 
-    # Query to calculate variance
-    query = f"""
-        SELECT
-            item.item_no,
-            item.description,
-            item.item_category_name,
-            COALESCE(opening.quantity, 0) as opening_stock,
-            COALESCE(purchases.quantity, 0) as purchases,
-            COALESCE(sales.quantity, 0) as sales,
-            COALESCE(adjustments.quantity, 0) as adjustments,
-            (COALESCE(opening.quantity, 0) + COALESCE(purchases.quantity, 0) -
-             COALESCE(sales.quantity, 0) + COALESCE(adjustments.quantity, 0)) as expected_closing,
-            COALESCE(closing.quantity, 0) as actual_closing,
-            (COALESCE(closing.quantity, 0) -
-             (COALESCE(opening.quantity, 0) + COALESCE(purchases.quantity, 0) -
-              COALESCE(sales.quantity, 0) + COALESCE(adjustments.quantity, 0))) as variance,
-            item.unit_cost,
-            (COALESCE(closing.quantity, 0) -
-             (COALESCE(opening.quantity, 0) + COALESCE(purchases.quantity, 0) -
-              COALESCE(sales.quantity, 0) + COALESCE(adjustments.quantity, 0))) * item.unit_cost as variance_value
-        FROM `tabItem Master` item
-        LEFT JOIN (
-            SELECT item_no, SUM(remaining_quantity) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE data_period = '{prev_period}'
-            {'AND location_code = "' + location + '"' if location else ''}
-            GROUP BY item_no
-        ) opening ON item.item_no = opening.item_no
-        LEFT JOIN (
-            SELECT item_no, SUM(quantity) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE entry_type = 'Purchase'
-            AND posting_date BETWEEN '{start_date}' AND '{end_date}'
-            {'AND location_code = "' + location + '"' if location else ''}
-            GROUP BY item_no
-        ) purchases ON item.item_no = purchases.item_no
-        LEFT JOIN (
-            SELECT item_no, SUM(ABS(quantity)) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE entry_type = 'Sale'
-            AND posting_date BETWEEN '{start_date}' AND '{end_date}'
-            {'AND location_code = "' + location + '"' if location else ''}
-            GROUP BY item_no
-        ) sales ON item.item_no = sales.item_no
-        LEFT JOIN (
-            SELECT item_no, SUM(quantity) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE entry_type IN ('Positive Adjmt', 'Negative Adjmt')
-            AND posting_date BETWEEN '{start_date}' AND '{end_date}'
-            {'AND location_code = "' + location + '"' if location else ''}
-            GROUP BY item_no
-        ) adjustments ON item.item_no = adjustments.item_no
-        LEFT JOIN (
-            SELECT item_no, SUM(remaining_quantity) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE data_period = '{period}'
-            {'AND location_code = "' + location + '"' if location else ''}
-            GROUP BY item_no
-        ) closing ON item.item_no = closing.item_no
-        WHERE item.import_batch IN (
-            SELECT name FROM `tabBC Data Import`
-            WHERE data_period = '{period}' AND import_type = 'Item Master Data'
-        )
-    """
+    # Group entries by item
+    item_movements = {}
+    for entry in stock_entries:
+        item_code = entry['item_code']
+        if item_code not in item_movements:
+            item_movements[item_code] = {
+                'purchases': 0,
+                'sales': 0,
+                'adjustments': 0,
+                'current_stock': 0
+            }
 
-    data = frappe.db.sql(query, as_dict=True)
+        qty = entry['actual_qty']
+        if qty > 0:
+            # Assume positive movements are purchases/adjustments
+            item_movements[item_code]['purchases'] += qty
+        elif qty < 0:
+            # Negative movements are sales
+            item_movements[item_code]['sales'] += abs(qty)
 
-    # Calculate variance percentage and flag exceptions
+        # Update current stock (last entry's qty_after_transaction)
+        item_movements[item_code]['current_stock'] = entry['qty_after_transaction']
+
+    # Calculate variances
+    data = []
+    for item in items:
+        item_code = item['item_code']
+        movements = item_movements.get(item_code, {
+            'purchases': 0, 'sales': 0, 'adjustments': 0, 'current_stock': 0
+        })
+
+        # For simplicity, assume opening stock is 0 (can be enhanced)
+        opening_stock = 0
+        expected_closing = opening_stock + movements['purchases'] - movements['sales'] + movements['adjustments']
+        actual_closing = movements['current_stock']
+        variance = actual_closing - expected_closing
+        variance_value = variance * item['valuation_rate']
+
+        row = {
+            'item_no': item_code,
+            'description': item['item_name'],
+            'item_category_name': item['item_group'],
+            'opening_stock': opening_stock,
+            'purchases': movements['purchases'],
+            'sales': movements['sales'],
+            'adjustments': movements['adjustments'],
+            'expected_closing': expected_closing,
+            'actual_closing': actual_closing,
+            'variance': variance,
+            'unit_cost': item['valuation_rate'],
+            'variance_value': variance_value
+        }
+
+        # Calculate variance percentage
+        if expected_closing != 0:
+            row['variance_percent'] = (variance / expected_closing) * 100
+        else:
+            row['variance_percent'] = 0 if variance == 0 else 100
+
+        data.append(row)
+
+    # Flag exceptions
     exceptions = []
     for row in data:
-        if row['expected_closing'] != 0:
-            row['variance_percent'] = (row['variance'] / row['expected_closing']) * 100
-        else:
-            row['variance_percent'] = 0 if row['variance'] == 0 else 100
-
         # Flag exceptions
         if abs(row['variance_percent']) > threshold_percent:
             exceptions.append({
@@ -232,44 +234,56 @@ def abc_analysis(params):
     """
     period = params.get('period')
     classification_basis = params.get('classification_basis', 'Sales Value')  # Sales Value, Quantity, Profit
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     period_doc = frappe.get_doc('Data Period', period)
     start_date = period_doc.start_date
     end_date = period_doc.end_date
 
-    # Query based on classification basis
-    if classification_basis == 'Sales Value':
-        query = f"""
-            SELECT
-                i.item_no,
-                i.description,
-                i.item_category_name,
-                SUM(l.sales_amount_actual) as value,
-                SUM(ABS(l.quantity)) as quantity
-            FROM `tabItem Ledger Entry` l
-            JOIN `tabItem Master` i ON l.item_no = i.item_no
-            WHERE l.entry_type = 'Sale'
-            AND l.posting_date BETWEEN '{start_date}' AND '{end_date}'
-            GROUP BY i.item_no, i.description, i.item_category_name
-            ORDER BY value DESC
-        """
-    elif classification_basis == 'Quantity':
-        query = f"""
-            SELECT
-                i.item_no,
-                i.description,
-                i.item_category_name,
-                SUM(ABS(l.quantity)) as value,
-                SUM(ABS(l.quantity)) as quantity
-            FROM `tabItem Ledger Entry` l
-            JOIN `tabItem Master` i ON l.item_no = i.item_no
-            WHERE l.entry_type = 'Sale'
-            AND l.posting_date BETWEEN '{start_date}' AND '{end_date}'
-            GROUP BY i.item_no, i.description, i.item_category_name
-            ORDER BY value DESC
-        """
+    # Get stock ledger entries for sales
+    stock_entries = get_stock_ledger_entries(
+        from_date=start_date,
+        to_date=to_date,
+        company=company
+    )
 
-    data = frappe.db.sql(query, as_dict=True)
+    # Get items
+    items = get_items(company=company)
+
+    # Create item lookup
+    item_lookup = {item['item_code']: item for item in items}
+
+    # Aggregate by item
+    item_totals = {}
+    for entry in stock_entries:
+        item_code = entry['item_code']
+        qty = abs(entry['actual_qty'])  # Use absolute quantity for sales
+
+        if item_code not in item_totals:
+            item_totals[item_code] = {'value': 0, 'quantity': 0}
+
+        if classification_basis == 'Sales Value':
+            item_totals[item_code]['value'] += qty * entry['valuation_rate']
+        else:  # Quantity
+            item_totals[item_code]['value'] += qty
+
+        item_totals[item_code]['quantity'] += qty
+
+    # Convert to data format
+    data = []
+    for item_code, totals in item_totals.items():
+        item = item_lookup.get(item_code)
+        if item:
+            data.append({
+                'item_no': item_code,
+                'description': item['item_name'],
+                'item_category_name': item['item_group'],
+                'value': totals['value'],
+                'quantity': totals['quantity']
+            })
+
+    # Sort by value descending
+    data.sort(key=lambda x: x['value'], reverse=True)
 
     # Calculate cumulative percentages
     total_value = sum([row['value'] for row in data])
@@ -315,40 +329,68 @@ def slow_moving_stock(params):
     """
     period = params.get('period')
     days_threshold = int(params.get('days_threshold', 90))
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     period_doc = frappe.get_doc('Data Period', period)
     end_date = period_doc.end_date
     start_date = (datetime.strptime(str(end_date), '%Y-%m-%d') - timedelta(days=days_threshold)).date()
 
-    query = f"""
-        SELECT
-            i.item_no,
-            i.description,
-            i.item_category_name,
-            i.unit_cost,
-            COALESCE(stock.quantity, 0) as current_stock,
-            COALESCE(stock.quantity, 0) * i.unit_cost as stock_value,
-            COALESCE(last_sale.last_sale_date, '1900-01-01') as last_sale_date,
-            DATEDIFF('{end_date}', COALESCE(last_sale.last_sale_date, '1900-01-01')) as days_since_last_sale
-        FROM `tabItem Master` i
-        LEFT JOIN (
-            SELECT item_no, SUM(remaining_quantity) as quantity
-            FROM `tabItem Ledger Entry`
-            WHERE data_period = '{period}'
-            GROUP BY item_no
-        ) stock ON i.item_no = stock.item_no
-        LEFT JOIN (
-            SELECT item_no, MAX(posting_date) as last_sale_date
-            FROM `tabItem Ledger Entry`
-            WHERE entry_type = 'Sale'
-            GROUP BY item_no
-        ) last_sale ON i.item_no = last_sale.item_no
-        WHERE COALESCE(stock.quantity, 0) > 0
-        AND DATEDIFF('{end_date}', COALESCE(last_sale.last_sale_date, '1900-01-01')) > {days_threshold}
-        ORDER BY days_since_last_sale DESC, stock_value DESC
-    """
+    # Get items
+    items = get_items(company=company)
 
-    data = frappe.db.sql(query, as_dict=True)
+    # Get stock ledger entries for the period
+    stock_entries = get_stock_ledger_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company
+    )
+
+    # Create item lookup
+    item_lookup = {item['item_code']: item for item in items}
+
+    # Calculate current stock and last sale date for each item
+    item_stock = {}
+    item_last_sale = {}
+
+    for entry in stock_entries:
+        item_code = entry['item_code']
+
+        # Track current stock (last qty_after_transaction)
+        item_stock[item_code] = entry['qty_after_transaction']
+
+        # Track last sale date
+        if entry['actual_qty'] < 0:  # Negative qty indicates sale
+            if item_code not in item_last_sale or entry['posting_date'] > item_last_sale[item_code]:
+                item_last_sale[item_code] = entry['posting_date']
+
+    # Build data
+    data = []
+    for item_code, current_stock in item_stock.items():
+        if current_stock <= 0:
+            continue  # Skip items with no stock
+
+        item = item_lookup.get(item_code)
+        if not item:
+            continue
+
+        last_sale_date = item_last_sale.get(item_code, datetime(1900, 1, 1).date())
+        days_since_last_sale = (end_date - last_sale_date).days if last_sale_date else 99999
+        stock_value = current_stock * item['valuation_rate']
+
+        if days_since_last_sale > days_threshold:
+            data.append({
+                'item_no': item_code,
+                'description': item['item_name'],
+                'item_category_name': item['item_group'],
+                'unit_cost': item['valuation_rate'],
+                'current_stock': current_stock,
+                'stock_value': stock_value,
+                'last_sale_date': last_sale_date,
+                'days_since_last_sale': days_since_last_sale
+            })
+
+    # Sort by days since last sale descending
+    data.sort(key=lambda x: x['days_since_last_sale'], reverse=True)
 
     # Flag all as exceptions
     exceptions = []
@@ -384,25 +426,50 @@ def negative_stock_detection(params):
     Identify items with negative stock quantities
     """
     period = params.get('period')
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
-    query = f"""
-        SELECT
-            i.item_no,
-            i.description,
-            i.item_category_name,
-            l.location_code,
-            SUM(l.remaining_quantity) as quantity,
-            i.unit_cost,
-            SUM(l.remaining_quantity) * i.unit_cost as value
-        FROM `tabItem Ledger Entry` l
-        JOIN `tabItem Master` i ON l.item_no = i.item_no
-        WHERE l.data_period = '{period}'
-        GROUP BY i.item_no, i.description, i.item_category_name, l.location_code, i.unit_cost
-        HAVING SUM(l.remaining_quantity) < 0
-        ORDER BY quantity ASC
-    """
+    period_doc = frappe.get_doc('Data Period', period)
+    start_date = period_doc.start_date
+    end_date = period_doc.end_date
 
-    data = frappe.db.sql(query, as_dict=True)
+    # Get stock ledger entries
+    stock_entries = get_stock_ledger_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company
+    )
+
+    # Get items
+    items = get_items(company=company)
+    item_lookup = {item['item_code']: item for item in items}
+
+    # Group by item and warehouse to find negative stock
+    stock_by_item_warehouse = {}
+    for entry in stock_entries:
+        key = (entry['item_code'], entry['warehouse'])
+        if key not in stock_by_item_warehouse:
+            stock_by_item_warehouse[key] = 0
+        stock_by_item_warehouse[key] = entry['qty_after_transaction']  # Use final qty
+
+    # Filter for negative stock
+    data = []
+    for (item_code, warehouse), quantity in stock_by_item_warehouse.items():
+        if quantity < 0:
+            item = item_lookup.get(item_code)
+            if item:
+                value = quantity * item['valuation_rate']
+                data.append({
+                    'item_no': item_code,
+                    'description': item['item_name'],
+                    'item_category_name': item['item_group'],
+                    'location_code': warehouse,
+                    'quantity': quantity,
+                    'unit_cost': item['valuation_rate'],
+                    'value': value
+                })
+
+    # Sort by quantity ascending (most negative first)
+    data.sort(key=lambda x: x['quantity'])
 
     # All negative stock items are exceptions
     exceptions = []
@@ -452,36 +519,55 @@ def duplicate_payment_detection(params):
     period = params.get('period')
     tolerance_amount = float(params.get('tolerance_amount', 0.01))
     date_range_days = int(params.get('date_range_days', 7))
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     period_doc = frappe.get_doc('Data Period', period)
     start_date = period_doc.start_date
     end_date = period_doc.end_date
 
-    query = f"""
-        SELECT
-            v1.vendor_no,
-            v1.vendor_name,
-            v1.document_no as doc_no_1,
-            v2.document_no as doc_no_2,
-            v1.posting_date as date_1,
-            v2.posting_date as date_2,
-            v1.amount,
-            v1.vendor_invoice_no as invoice_1,
-            v2.vendor_invoice_no as invoice_2,
-            DATEDIFF(v2.posting_date, v1.posting_date) as days_apart
-        FROM `tabVendor Ledger Entry` v1
-        JOIN `tabVendor Ledger Entry` v2
-            ON v1.vendor_no = v2.vendor_no
-            AND ABS(v1.amount - v2.amount) <= {tolerance_amount}
-            AND v1.document_no < v2.document_no
-            AND DATEDIFF(v2.posting_date, v1.posting_date) <= {date_range_days}
-        WHERE v1.document_type = 'Payment'
-        AND v2.document_type = 'Payment'
-        AND v1.posting_date BETWEEN '{start_date}' AND '{end_date}'
-        ORDER BY v1.amount DESC
-    """
+    # Get payment entries
+    payments = get_payment_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company
+    )
 
-    data = frappe.db.sql(query, as_dict=True)
+    # Group payments by party and amount to find potential duplicates
+    payment_groups = {}
+    for payment in payments:
+        if payment['payment_type'] == 'Pay':  # Only outgoing payments
+            key = (payment['party'], round(payment['paid_amount'], 2))
+            if key not in payment_groups:
+                payment_groups[key] = []
+            payment_groups[key].append(payment)
+
+    # Find duplicates within date range
+    data = []
+    for (party, amount), party_payments in payment_groups.items():
+        if len(party_payments) > 1:
+            # Sort by date
+            party_payments.sort(key=lambda x: x['posting_date'])
+
+            # Check for payments within date range
+            for i, payment1 in enumerate(party_payments[:-1]):
+                for payment2 in party_payments[i+1:]:
+                    days_apart = (payment2['posting_date'] - payment1['posting_date']).days
+                    if days_apart <= date_range_days:
+                        data.append({
+                            'vendor_no': party,
+                            'vendor_name': party,  # Assuming party is the name
+                            'doc_no_1': payment1['name'],
+                            'doc_no_2': payment2['name'],
+                            'date_1': payment1['posting_date'],
+                            'date_2': payment2['posting_date'],
+                            'amount': amount,
+                            'invoice_1': '',  # Payment Entry doesn't have invoice field directly
+                            'invoice_2': '',
+                            'days_apart': days_apart
+                        })
+
+    # Sort by amount descending
+    data.sort(key=lambda x: x['amount'], reverse=True)
 
     # Create exceptions
     exceptions = []
@@ -500,7 +586,7 @@ def duplicate_payment_detection(params):
     Duplicate Payment Detection:
     - Potential duplicates found: {len(data)}
     - Total amount at risk: KES {total_at_risk:,.2f}
-    - Review: Compare invoice numbers, payment details, and vendor confirmations
+    - Review: Compare payment details and party confirmations
     """
 
     return {
@@ -518,35 +604,37 @@ def benfords_law_analysis(params):
     """
     period = params.get('period')
     data_source = params.get('data_source', 'GL Entries')  # GL Entries, Sales, Purchases
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     period_doc = frappe.get_doc('Data Period', period)
     start_date = period_doc.start_date
     end_date = period_doc.end_date
 
     # Get data based on source
+    amounts = []
     if data_source == 'GL Entries':
-        query = f"""
-            SELECT ABS(amount) as amount
-            FROM `tabGL Entry`
-            WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-            AND ABS(amount) >= 10
-        """
-    elif data_source == 'Sales':
-        query = f"""
-            SELECT amount
-            FROM `tabSales Invoice Header`
-            WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-            AND amount >= 10
-        """
-    elif data_source == 'Purchases':
-        query = f"""
-            SELECT amount
-            FROM `tabPurchase Invoice Header`
-            WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-            AND amount >= 10
-        """
+        gl_entries = get_gl_entries(
+            from_date=start_date,
+            to_date=end_date,
+            company=company
+        )
+        amounts = [{'amount': abs(entry['debit'] or entry['credit'] or 0)} for entry in gl_entries if abs(entry['debit'] or entry['credit'] or 0) >= 10]
 
-    amounts = frappe.db.sql(query, as_dict=True)
+    elif data_source == 'Sales':
+        sales_invoices = get_sales_invoices(
+            from_date=start_date,
+            to_date=end_date,
+            company=company
+        )
+        amounts = [{'amount': invoice['grand_total']} for invoice in sales_invoices if invoice['grand_total'] >= 10]
+
+    elif data_source == 'Purchases':
+        purchase_invoices = get_purchase_invoices(
+            from_date=start_date,
+            to_date=end_date,
+            company=company
+        )
+        amounts = [{'amount': invoice['grand_total']} for invoice in purchase_invoices if invoice['grand_total'] >= 10]
 
     # Expected Benford distribution for first digit
     benford_expected = {
@@ -584,7 +672,7 @@ def benfords_law_analysis(params):
         ((first_digits.get(d, 0) - (benford_expected[d]/100 * total)) ** 2) /
         (benford_expected[d]/100 * total)
         for d in '123456789'
-    ])
+    ]) if total > 0 else 0
 
     # Flag significant variances as exceptions
     exceptions = []
@@ -631,10 +719,25 @@ def journal_entry_analysis(params):
     Analyze journal entries for unusual patterns
     """
     period = params.get('period')
+    company = params.get('company', frappe.defaults.get_user_default("Company"))
 
     period_doc = frappe.get_doc('Data Period', period)
     start_date = period_doc.start_date
     end_date = period_doc.end_date
+
+    # Get journal entries and GL entries
+    journal_entries = get_journal_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company
+    )
+
+    gl_entries = get_gl_entries(
+        from_date=start_date,
+        to_date=end_date,
+        company=company,
+        filters={"voucher_type": "Journal Entry"}
+    )
 
     findings = {
         'round_numbers': [],
@@ -644,83 +747,84 @@ def journal_entry_analysis(params):
     }
 
     # 1. Round number entries (potentially suspicious)
-    query = f"""
-        SELECT
-            document_no,
-            posting_date,
-            account_no,
-            account_name,
-            amount,
-            description,
-            user_id
-        FROM `tabGL Entry`
-        WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND source_code = 'GENJNL'
-        AND amount % 1000 = 0
-        AND ABS(amount) >= 10000
-        ORDER BY ABS(amount) DESC
-        LIMIT 100
-    """
+    for entry in gl_entries:
+        amount = abs(entry['debit'] or entry['credit'] or 0)
+        if amount % 1000 == 0 and amount >= 10000:
+            findings['round_numbers'].append({
+                'document_no': entry['voucher_no'],
+                'posting_date': entry['posting_date'],
+                'account_no': entry['account'],
+                'account_name': entry['account'],  # Account name not directly available
+                'amount': amount,
+                'description': '',  # Description not in GL Entry fields
+                'user_id': ''  # User not in GL Entry fields
+            })
 
-    findings['round_numbers'] = frappe.db.sql(query, as_dict=True)
+    # Sort by amount descending and limit to top 100
+    findings['round_numbers'].sort(key=lambda x: x['amount'], reverse=True)
+    findings['round_numbers'] = findings['round_numbers'][:100]
 
     # 2. Weekend or holiday postings
-    query = f"""
-        SELECT
-            document_no,
-            posting_date,
-            DAYOFWEEK(posting_date) as day_of_week,
-            account_no,
-            account_name,
-            amount,
-            description,
-            user_id
-        FROM `tabGL Entry`
-        WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND source_code = 'GENJNL'
-        AND DAYOFWEEK(posting_date) IN (1, 7)  -- Sunday=1, Saturday=7
-        ORDER BY posting_date DESC
-    """
+    for entry in gl_entries:
+        day_of_week = entry['posting_date'].weekday()  # Monday=0, Sunday=6
+        if day_of_week >= 5:  # Saturday=5, Sunday=6
+            findings['weekend_postings'].append({
+                'document_no': entry['voucher_no'],
+                'posting_date': entry['posting_date'],
+                'day_of_week': day_of_week + 1,  # Convert to 1-7 (Sunday=1)
+                'account_no': entry['account'],
+                'account_name': entry['account'],
+                'amount': entry['debit'] or entry['credit'] or 0,
+                'description': '',
+                'user_id': ''
+            })
 
-    findings['weekend_postings'] = frappe.db.sql(query, as_dict=True)
+    # Sort by posting date descending
+    findings['weekend_postings'].sort(key=lambda x: x['posting_date'], reverse=True)
 
     # 3. Large manual entries (above threshold)
     threshold_amount = params.get('threshold_amount', 1000000)
 
-    query = f"""
-        SELECT
-            document_no,
-            posting_date,
-            account_no,
-            account_name,
-            amount,
-            description,
-            user_id
-        FROM `tabGL Entry`
-        WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND source_code = 'GENJNL'
-        AND ABS(amount) > {threshold_amount}
-        ORDER BY ABS(amount) DESC
-    """
+    for entry in gl_entries:
+        amount = abs(entry['debit'] or entry['credit'] or 0)
+        if amount > threshold_amount:
+            findings['large_entries'].append({
+                'document_no': entry['voucher_no'],
+                'posting_date': entry['posting_date'],
+                'account_no': entry['account'],
+                'account_name': entry['account'],
+                'amount': amount,
+                'description': '',
+                'user_id': ''
+            })
 
-    findings['large_entries'] = frappe.db.sql(query, as_dict=True)
+    # Sort by amount descending
+    findings['large_entries'].sort(key=lambda x: x['amount'], reverse=True)
 
     # 4. Unbalanced journal entries
-    query = f"""
-        SELECT
-            document_no,
-            posting_date,
-            SUM(debit_amount) as total_debit,
-            SUM(credit_amount) as total_credit,
-            ABS(SUM(debit_amount) - SUM(credit_amount)) as imbalance
-        FROM `tabGL Entry`
-        WHERE posting_date BETWEEN '{start_date}' AND '{end_date}'
-        GROUP BY document_no, posting_date
-        HAVING ABS(SUM(debit_amount) - SUM(credit_amount)) > 0.01
-        ORDER BY imbalance DESC
-    """
+    # Group GL entries by voucher_no to check balance
+    voucher_totals = {}
+    for entry in gl_entries:
+        voucher_no = entry['voucher_no']
+        if voucher_no not in voucher_totals:
+            voucher_totals[voucher_no] = {'debit': 0, 'credit': 0, 'posting_date': entry['posting_date']}
 
-    findings['unbalanced_entries'] = frappe.db.sql(query, as_dict=True)
+        voucher_totals[voucher_no]['debit'] += entry['debit'] or 0
+        voucher_totals[voucher_no]['credit'] += entry['credit'] or 0
+
+    for voucher_no, totals in voucher_totals.items():
+        imbalance = abs(totals['debit'] - totals['credit'])
+        if imbalance > 0.01:
+            findings['unbalanced_entries'].append({
+                'document_no': voucher_no,
+                'posting_date': totals['posting_date'],
+                'total_debit': totals['debit'],
+                'total_credit': totals['credit'],
+                'imbalance': imbalance
+            })
+
+    # Sort by imbalance descending
+    findings['unbalanced_entries'].sort(key=lambda x: x['imbalance'], reverse=True)
 
     # Compile exceptions
     exceptions = []
@@ -728,17 +832,18 @@ def journal_entry_analysis(params):
     for entry in findings['round_numbers'][:20]:  # Top 20
         exceptions.append({
             'document_no': entry['document_no'],
-            'description': f"Round number entry: KES {entry['amount']:,.2f} - {entry['description']}",
+            'description': f"Round number entry: KES {entry['amount']:,.2f}",
             'amount': entry['amount'],
             'risk_rating': 'Medium',
             'requires_investigation': True
         })
 
     for entry in findings['weekend_postings']:
-        day_name = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][entry['day_of_week'] - 1]
+        day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        day_name = day_names[entry['day_of_week'] - 1]
         exceptions.append({
             'document_no': entry['document_no'],
-            'description': f"Weekend posting on {day_name} - {entry['description']}",
+            'description': f"Weekend posting on {day_name}",
             'amount': entry['amount'],
             'risk_rating': 'Medium',
             'requires_investigation': True
@@ -747,7 +852,7 @@ def journal_entry_analysis(params):
     for entry in findings['large_entries']:
         exceptions.append({
             'document_no': entry['document_no'],
-            'description': f"Large manual entry: KES {entry['amount']:,.2f} - {entry['description']}",
+            'description': f"Large manual entry: KES {entry['amount']:,.2f}",
             'amount': entry['amount'],
             'risk_rating': 'High',
             'requires_investigation': True

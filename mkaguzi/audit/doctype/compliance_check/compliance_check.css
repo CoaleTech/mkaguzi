@@ -1,0 +1,35 @@
+/* Compliance Check Styles */
+
+.compliance-check-form .form-layout .section-break {
+	margin-bottom: 15px;
+}
+
+.compliance-check-form .severity-high {
+	color: red;
+	font-weight: bold;
+}
+
+.compliance-check-form .severity-medium {
+	color: orange;
+	font-weight: bold;
+}
+
+.compliance-check-form .severity-low {
+	color: green;
+	font-weight: bold;
+}
+
+.compliance-check-form .status-compliant {
+	color: green;
+	font-weight: bold;
+}
+
+.compliance-check-form .status-non-compliant {
+	color: red;
+	font-weight: bold;
+}
+
+.compliance-check-form .status-partially-compliant {
+	color: orange;
+	font-weight: bold;
+}

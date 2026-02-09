@@ -1,0 +1,493 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "creation": "2025-02-10 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "agent_section",
+  "agent_id",
+  "agent_type",
+  "agent_name",
+  "column_break_avkg",
+  "agent_version",
+  "execution_mode",
+  "priority",
+  "task_section",
+  "task_type",
+  "task_name",
+  "column_break_sxzc",
+  "task_category",
+  "triggered_by",
+  "schedule_info",
+  "timing_section",
+  "start_time",
+  "end_time",
+  "column_break_djfh",
+  "duration_seconds",
+  "queue_wait_seconds",
+  "status_section",
+  "status",
+  "progress_percentage",
+  "column_break_qwer",
+  "retry_count",
+  "max_retries",
+  "result_section",
+  "execution_summary",
+  "input_data",
+  "column_break_mnbv",
+  "output_data",
+  "result_json",
+  "findings_section",
+  "findings_generated",
+  "finding_ids",
+  "column_break_zxcv",
+  "total_findings",
+  "critical_findings",
+  "high_severity_findings",
+  "metrics_section",
+  "records_processed",
+  "records_per_second",
+  "column_break_ghjk",
+  "memory_usage_mb",
+  "cpu_usage_percent",
+  "error_section",
+  "error_occurred",
+  "error_message",
+  "column_break_tyuio",
+  "error_type",
+  "error_traceback",
+  "audit_section",
+  "created_by",
+  "creation_date",
+  "column_break_rtyu",
+  "modified_by",
+  "modified_date",
+  "additional_section",
+  "notes",
+  "tags_field",
+  "custom_variables"
+ ],
+ "fields": [
+  {
+   "fieldname": "agent_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Information"
+  },
+  {
+   "fieldname": "agent_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "agent_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent Type",
+   "options": "Financial\nRisk\nCompliance\nDiscovery\nNotification",
+   "reqd": 1
+  },
+  {
+   "fieldname": "agent_name",
+   "fieldtype": "Data",
+   "label": "Agent Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_avkg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1.0.0",
+   "fieldname": "agent_version",
+   "fieldtype": "Data",
+   "label": "Agent Version"
+  },
+  {
+   "fieldname": "execution_mode",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Execution Mode",
+   "options": "Synchronous\nBackground\nScheduled"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "default": "Medium",
+   "in_standard_filter": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "task_section",
+   "fieldtype": "Section Break",
+   "label": "Task Information"
+  },
+  {
+   "fieldname": "task_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Task Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "label": "Task Name"
+  },
+  {
+   "fieldname": "column_break_sxzc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "task_category",
+   "fieldtype": "Data",
+   "label": "Task Category"
+  },
+  {
+   "fieldname": "triggered_by",
+   "fieldtype": "Link",
+   "label": "Triggered By",
+   "options": "User"
+  },
+  {
+   "fieldname": "schedule_info",
+   "fieldtype": "Data",
+   "label": "Schedule Info"
+  },
+  {
+   "fieldname": "timing_section",
+   "fieldtype": "Section Break",
+   "label": "Timing Information"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Start Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time"
+  },
+  {
+   "fieldname": "column_break_djfh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration_seconds",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Duration (Seconds)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "queue_wait_seconds",
+   "fieldtype": "Float",
+   "label": "Queue Wait (Seconds)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status Information"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending\nRunning\nCompleted\nFailed\nCancelled\nTimeout",
+   "reqd": 1
+  },
+  {
+   "fieldname": "progress_percentage",
+   "fieldtype": "Percent",
+   "label": "Progress"
+  },
+  {
+   "fieldname": "column_break_qwer",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "retry_count",
+   "fieldtype": "Int",
+   "label": "Retry Count"
+  },
+  {
+   "default": "3",
+   "fieldname": "max_retries",
+   "fieldtype": "Int",
+   "label": "Max Retries"
+  },
+  {
+   "fieldname": "result_section",
+   "fieldtype": "Section Break",
+   "label": "Execution Results"
+  },
+  {
+   "fieldname": "execution_summary",
+   "fieldtype": "Text",
+   "label": "Execution Summary"
+  },
+  {
+   "fieldname": "input_data",
+   "fieldtype": "Code",
+   "label": "Input Data",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "column_break_mnbv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "output_data",
+   "fieldtype": "Code",
+   "label": "Output Data",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "result_json",
+   "fieldtype": "Code",
+   "label": "Result JSON",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "findings_section",
+   "fieldtype": "Section Break",
+   "label": "Generated Findings"
+  },
+  {
+   "default": "0",
+   "fieldname": "findings_generated",
+   "fieldtype": "Check",
+   "label": "Findings Generated"
+  },
+  {
+   "fieldname": "finding_ids",
+   "fieldtype": "Text",
+   "label": "Finding IDs",
+   "description": "Comma-separated list of Audit Finding IDs"
+  },
+  {
+   "fieldname": "column_break_zxcv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_findings",
+   "fieldtype": "Int",
+   "label": "Total Findings"
+  },
+  {
+   "default": "0",
+   "fieldname": "critical_findings",
+   "fieldtype": "Int",
+   "label": "Critical Findings"
+  },
+  {
+   "default": "0",
+   "fieldname": "high_severity_findings",
+   "fieldtype": "Int",
+   "label": "High Severity Findings"
+  },
+  {
+   "fieldname": "metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics"
+  },
+  {
+   "default": "0",
+   "fieldname": "records_processed",
+   "fieldtype": "Int",
+   "label": "Records Processed"
+  },
+  {
+   "fieldname": "records_per_second",
+   "fieldtype": "Float",
+   "label": "Records/Second",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_ghjk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "memory_usage_mb",
+   "fieldtype": "Float",
+   "label": "Memory Usage (MB)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "cpu_usage_percent",
+   "fieldtype": "Percent",
+   "label": "CPU Usage (%)"
+  },
+  {
+   "fieldname": "error_section",
+   "fieldtype": "Section Break",
+   "label": "Error Information",
+   "depends_on": "eval:doc.error_occurred"
+  },
+  {
+   "default": "0",
+   "fieldname": "error_occurred",
+   "fieldtype": "Check",
+   "label": "Error Occurred"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Text",
+   "label": "Error Message"
+  },
+  {
+   "fieldname": "column_break_tyuio",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "error_type",
+   "fieldtype": "Data",
+   "label": "Error Type"
+  },
+  {
+   "fieldname": "error_traceback",
+   "fieldtype": "Code",
+   "label": "Error Traceback",
+   "options": "Python"
+  },
+  {
+   "fieldname": "audit_section",
+   "fieldtype": "Section Break",
+   "label": "Audit Trail"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "creation_date",
+   "fieldtype": "Datetime",
+   "label": "Creation Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rtyu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "modified_by",
+   "fieldtype": "Link",
+   "label": "Modified By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "modified_date",
+   "fieldtype": "Datetime",
+   "label": "Modified Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "additional_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "tags_field",
+   "fieldtype": "Data",
+   "label": "Tags"
+  },
+  {
+   "fieldname": "custom_variables",
+   "fieldtype": "Code",
+   "label": "Custom Variables",
+   "options": "JSON"
+  }
+ ],
+ "has_dashboard": true,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Audit Finding",
+   "link_fieldname": "agent_execution_log"
+  }
+ ],
+ "modified": "2025-02-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit",
+ "name": "Agent Execution Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Internal Auditor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "title_field": "agent_id",
+ "track_changes": 1,
+ "track_seen": 1
+}

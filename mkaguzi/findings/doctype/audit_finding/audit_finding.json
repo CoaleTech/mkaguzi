@@ -16,6 +16,7 @@
   "risk_area",
   "risk_category",
   "risk_rating",
+  "severity",
   "risk_score",
   "likelihood",
   "impact",
@@ -87,6 +88,21 @@
   "repeat_count",
   "attachments",
   "notes",
+  "agent_information_section",
+  "source_agent",
+  "auto_generated",
+  "agent_execution_log",
+  "ai_review_section",
+  "ai_review_status",
+  "column_break_ai_1",
+  "ai_severity_suggestion",
+  "ai_model_used",
+  "ai_reviewed_on",
+  "ai_review_notes",
+  "ai_root_cause_analysis",
+  "ai_recommendation_refinement",
+  "ai_risk_narrative",
+  "severity_mismatch",
   "created_by",
   "created_on",
   "last_modified"
@@ -105,8 +121,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Audit Engagement",
-   "options": "Audit Engagement",
-   "reqd": 1
+   "options": "Audit Engagement"
   },
   {
    "fieldname": "working_paper_reference",
@@ -156,6 +171,13 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Risk Rating",
+   "options": "Critical\nHigh\nMedium\nLow"
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Severity",
    "options": "Critical\nHigh\nMedium\nLow"
   },
   {
@@ -570,6 +592,96 @@
    "fieldname": "last_modified",
    "fieldtype": "Datetime",
    "label": "Last Modified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_information_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Information"
+  },
+  {
+   "fieldname": "source_agent",
+   "fieldtype": "Select",
+   "label": "Source Agent",
+   "options": "\nFinancial\nRisk\nCompliance\nDiscovery\nNotification",
+   "read_only": 1
+  },
+  {
+   "fieldname": "auto_generated",
+   "fieldtype": "Check",
+   "label": "Auto Generated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_execution_log",
+   "fieldtype": "Link",
+   "label": "Agent Execution Log",
+   "options": "Agent Execution Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_review_section",
+   "fieldtype": "Section Break",
+   "label": "AI Review"
+  },
+  {
+   "fieldname": "ai_review_status",
+   "fieldtype": "Select",
+   "label": "AI Review Status",
+   "options": "\nPending\nReviewed\nSkipped\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ai_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ai_severity_suggestion",
+   "fieldtype": "Select",
+   "label": "AI Severity Suggestion",
+   "options": "\nCritical\nHigh\nMedium\nLow",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_model_used",
+   "fieldtype": "Data",
+   "label": "AI Model Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_reviewed_on",
+   "fieldtype": "Datetime",
+   "label": "AI Reviewed On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_review_notes",
+   "fieldtype": "Text Editor",
+   "label": "AI Review Notes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_root_cause_analysis",
+   "fieldtype": "Text Editor",
+   "label": "AI Root Cause Analysis",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_recommendation_refinement",
+   "fieldtype": "Text Editor",
+   "label": "AI Recommendation Refinement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_risk_narrative",
+   "fieldtype": "Small Text",
+   "label": "AI Risk Narrative",
+   "read_only": 1
+  },
+  {
+   "fieldname": "severity_mismatch",
+   "fieldtype": "Check",
+   "label": "Severity Mismatch",
    "read_only": 1
   }
  ],

@@ -19,12 +19,12 @@ class DiscoveryAgent(AuditAgent):
     def __init__(self, agent_id: Optional[str] = None, config: Optional[Dict[str, Any]] = None):
         """Initialize the Discovery Agent"""
         super().__init__(agent_id, config)
-        self.agent_type = 'DiscoveryAgent'
+        self.agent_type = 'Discovery'
 
         # Configuration
         self.scan_interval_hours = config.get('scan_interval_hours', 24) if config else 24
         self.auto_update_catalog = config.get('auto_update_catalog', True) if config else True
-        self.detect_schema_changes = config.get('detect_schema_changes', True) if config else True
+        self._detect_schema_changes_enabled = config.get('detect_schema_changes', True) if config else True
 
         # Known doctypes cache
         self.known_doctypes: Set[str] = set()
@@ -48,7 +48,7 @@ class DiscoveryAgent(AuditAgent):
         if task_type == 'discover_doctypes':
             return self.discover_doctypes()
         elif task_type == 'detect_schema_changes':
-            return self.detect_schema_changes()
+            return self.detect_schema_changes() if self._detect_schema_changes_enabled else {'status': 'skipped', 'message': 'Feature disabled'}
         elif task_type == 'update_catalog':
             return self.update_catalog()
         elif task_type == 'scan_module':
@@ -175,11 +175,19 @@ class DiscoveryAgent(AuditAgent):
             if changes['breaking_changes']:
                 self._create_schema_change_alert(changes['breaking_changes'])
 
+            # Create audit finding for breaking changes
+            findings = []
+            if changes['breaking_changes']:
+                finding_result = self._create_schema_change_finding(changes['breaking_changes'])
+                if finding_result:
+                    findings.append(finding_result)
+
             return {
                 'status': 'success',
                 'doctypes_checked': len(catalog_doctypes),
                 'changes_detected': sum(len(v) if isinstance(v, list) else 0 for v in changes.values()),
-                'changes': changes
+                'changes': changes,
+                'findings': findings
             }
 
         except Exception as e:
@@ -261,7 +269,7 @@ class DiscoveryAgent(AuditAgent):
                 'recommendations': []
             }
 
-            for doctype in module_doctypes):
+            for doctype in module_doctypes:
                 analysis = self._analyze_doctype(doctype['name'])
                 scan_results['doctypes'].append(analysis)
 
@@ -546,6 +554,39 @@ class DiscoveryAgent(AuditAgent):
                 frappe.db.commit()
         except Exception as e:
             frappe.log_error(f"Failed to create schema change alert: {str(e)}", "Discovery Agent")
+
+    def _create_schema_change_finding(self, breaking_changes: List[Dict]) -> Optional[Dict[str, str]]:
+        """Create an audit finding for breaking schema changes using shared method"""
+        try:
+            # Build detailed condition with affected DocTypes
+            condition_details = f"Detected {len(breaking_changes)} DocTypes with breaking schema changes that may impact audit trails and data integrity.\n\n"
+            condition_details += "Affected DocTypes:\n"
+            
+            for change in breaking_changes[:5]:  # Show first 5 affected DocTypes
+                doctype_name = change.get('doctype', 'Unknown')
+                fields = change.get('fields', [])
+                condition_details += f"- {doctype_name}: {len(fields)} critical field(s) removed ({', '.join(fields[:3])}{'...' if len(fields) > 3 else ''})\n"
+            
+            if len(breaking_changes) > 5:
+                condition_details += f"... and {len(breaking_changes) - 5} more DocTypes\n"
+            
+            finding_result = self.create_audit_finding(
+                finding_title=f'Breaking Schema Changes Detected - {len(breaking_changes)} DocTypes Affected',
+                finding_type='Control Deficiency',
+                severity='High',  # Breaking changes are always high severity
+                condition=condition_details,
+                criteria='System schema changes should not remove critical audit fields or compromise data integrity without proper impact assessment',
+                cause='Unauthorized schema modifications, inadequate change management processes, or system updates without audit consideration',
+                consequence='Loss of audit trail completeness, data integrity issues, and potential compliance violations due to missing critical fields',
+                recommendation='Immediately assess impact of schema changes, restore critical audit fields where possible, implement proper change management controls for future schema modifications',
+                risk_category='IT'
+            )
+            
+            return finding_result
+            
+        except Exception as e:
+            frappe.log_error(f"Failed to create schema change finding: {str(e)}", "Discovery Agent")
+            return None
 
     def _get_doctypes_to_catalog(self) -> List[str]:
         """Get list of doctypes that should be in the audit catalog"""

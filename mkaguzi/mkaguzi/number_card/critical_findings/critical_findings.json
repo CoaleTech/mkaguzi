@@ -1,0 +1,23 @@
+{
+ "aggregate_function_based_on": "",
+ "creation": "2026-02-09 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Audit Finding",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"Audit Finding\", \"severity\", \"=\", \"Critical\", false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Critical Findings",
+ "modified": "2026-02-09 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Mkaguzi",
+ "name": "Critical Findings",
+ "owner": "Administrator",
+ "report_function": "Count",
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}

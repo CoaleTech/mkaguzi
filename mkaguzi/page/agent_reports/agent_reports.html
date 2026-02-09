@@ -1,0 +1,459 @@
+<!-- Agent Reports Page -->
+<div class="agent-reports-container" id="agent-reports-app">
+	<div class="container">
+		<!-- Header -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="page-header">
+					<h1>{{ _("Agent Reports") }}</h1>
+					<p class="text-muted">{{ _("View formatted reports from Mkaguzi AI agents") }}</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Agent Type Selector -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="agent-type-selector">
+					<h4>{{ _("Select Agent Type") }}</h4>
+					<div class="agent-buttons">
+						{% for agent in agent_types %}
+						<button class="agent-type-btn" data-agent-type="{{ agent.value }}">
+							<i class="fa {{ agent.icon }}"></i>
+							<span>{{ agent.label }}</span>
+						</button>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Recent Executions -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="recent-executions-panel">
+					<h4>{{ _("Recent Executions") }}</h4>
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th>{{ _("Agent Type") }}</th>
+									<th>{{ _("Task") }}</th>
+									<th>{{ _("Status") }}</th>
+									<th>{{ _("Created") }}</th>
+									<th>{{ _("Actions") }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for execution in recent_executions %}
+								<tr>
+									<td>{{ execution.agent_type }}</td>
+									<td>{{ execution.task_name }}</td>
+									<td>
+										<span class="badge badge-{{ 'success' if execution.status == 'Completed' else 'danger' }}">
+											{{ execution.status }}
+										</span>
+									</td>
+									<td>{{ execution.creation }}</td>
+									<td>
+										<button class="btn btn-sm btn-primary view-report-btn"
+											data-execution-id="{{ execution.name }}">
+											{{ _("View Report") }}
+										</button>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Report Display Area -->
+		<div class="row" id="report-display-area" style="display: none;">
+			<div class="col-md-12">
+				<div class="report-panel">
+					<div class="report-header">
+						<h3 id="report-title">Agent Report</h3>
+						<button class="btn btn-default btn-sm" id="close-report">
+							<i class="fa fa-times"></i> {{ _("Close") }}
+						</button>
+					</div>
+					<div id="report-content"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+// Agent Reports JavaScript
+frappe.pages['agent-reports'].on_page_load = function(wrapper) {
+	var page = frappe.ui.make_app_page({
+		parent: wrapper,
+		title: __('Agent Reports'),
+		single_column: true
+	});
+
+	// Add menu
+	page.set_primary_action(__('Refresh'), function() {
+		location.reload();
+	});
+
+	// View Report button handlers
+	$(document).on('click', '.view-report-btn', function() {
+		var execution_id = $(this).data('execution-id');
+		load_agent_report(execution_id);
+	});
+
+	// Close Report button handler
+	$(document).on('click', '#close-report', function() {
+		$('#report-display-area').hide();
+	});
+
+	// Function to load and display agent report
+	function load_agent_report(execution_id) {
+		frappe.call({
+			method: 'mkaguzi.page.agent_reports.agent_reports.get_execution_report',
+			args: {execution_id: execution_id},
+			callback: function(r) {
+				if (r.message) {
+					display_report(r.message);
+				}
+			}
+		});
+	}
+
+	// Function to display formatted report
+	function display_report(data) {
+		$('#report-display-area').show();
+		$('#report-title').text(data.agent_type + ' - ' + data.task_name);
+
+		var html = '<div class="report-summary">';
+
+		// Summary section
+		if (data.execution_summary) {
+			html += '<h4>Summary</h4>';
+			html += format_summary(data.execution_summary);
+		}
+
+		// Output data section
+		if (data.output_data) {
+			html += '<h4>Results</h4>';
+			html += format_output(data.agent_type, data.output_data);
+		}
+
+		html += '</div>';
+
+		$('#report-content').html(html);
+	}
+
+	// Format execution summary
+	function format_summary(summary) {
+		var html = '<dl class="dl-horizontal">';
+		for (var key in summary) {
+			html += '<dt>' + key + ':</dt>';
+			html += '<dd>' + summary[key] + '</dd>';
+		}
+		html += '</dl>';
+		return html;
+	}
+
+	// Format output data based on agent type
+	function format_output(agent_type, output) {
+		var html = '';
+
+		if (agent_type === 'Financial') {
+			html += format_financial_report(output);
+		} else if (agent_type === 'Risk') {
+			html += format_risk_report(output);
+		} else if (agent_type === 'Compliance') {
+			html += format_compliance_report(output);
+		} else if (agent_type === 'Discovery') {
+			html += format_discovery_report(output);
+		} else {
+			html += '<pre>' + JSON.stringify(output, null, 2) + '</pre>';
+		}
+
+		return html;
+	}
+
+	// Format Financial Agent report
+	function format_financial_report(data) {
+		var html = '';
+
+		if (data.status === 'success' && data.summary) {
+			html += '<div class="financial-summary">';
+
+			// Summary table
+			html += '<table class="table table-bordered">';
+			html += '<thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>';
+
+			for (var key in data.summary) {
+				html += '<tr><td>' + key + '</td><td>' + data.summary[key] + '</td></tr>';
+			}
+
+			html += '</tbody></table></div>';
+
+			// Anomalies table
+			if (data.anomalies && data.anomalies.length > 0) {
+				html += '<h4>Riskiest Transactions</h4>';
+				html += '<table class="table table-striped">';
+				html += '<thead><tr><th>Entry</th><th>Account</th><th>Amount</th><th>Risk Score</th><th>Reasons</th></tr></thead><tbody>';
+
+				data.anomalies.forEach(function(anomaly) {
+					html += '<tr>';
+					html += '<td>' + anomaly.entry + '</td>';
+					html += '<td>' + anomaly.account + '</td>';
+					html += '<td>' + anomaly.amount + '</td>';
+					html += '<td>' + (anomaly.risk_score * 100).toFixed(2) + '%</td>';
+					html += '<td>' + anomaly.reasons.join(', ') + '</td>';
+					html += '</tr>';
+				});
+
+				html += '</tbody></table>';
+			}
+
+			// Risk score visualization
+			html += '<div class="risk-visualization">';
+			html += '<h4>Average Risk Score</h4>';
+			var avg_risk = (data.average_risk_score * 100).toFixed(2);
+			var risk_class = avg_risk < 10 ? 'success' : avg_risk < 30 ? 'warning' : 'danger';
+			html += '<div class="progress">';
+			html += '<div class="progress-bar progress-bar-' + risk_class + '" style="width: ' + avg_risk + '%">';
+			html += avg_risk + '%';
+			html += '</div></div></div>';
+		} else {
+			html += '<div class="alert alert-info">';
+			html += 'Status: ' + data.status;
+			if (data.error) {
+				html += '<br>Error: ' + data.error;
+			}
+			html += '</div>';
+		}
+
+		return html;
+	}
+
+	// Format Risk Agent report
+	function format_risk_report(data) {
+		var html = '';
+
+		if (data.status === 'success') {
+			html += '<div class="risk-summary">';
+
+			// Risk level badge
+			var risk_class = 'success';
+			if (data.risk_level === 'Medium') risk_class = 'warning';
+			if (data.risk_level === 'High') risk_class = 'danger';
+
+			html += '<div class="alert alert-' + risk_class + '">';
+			html += '<strong>Risk Level:</strong> ' + data.risk_level;
+			html += '</div>';
+
+			// Module
+			html += '<p><strong>Module:</strong> ' + data.module + '</p>';
+
+			// Message
+			if (data.message) {
+				html += '<p>' + data.message + '</p>';
+			}
+
+			// Indicators
+			if (data.indicators && data.indicators.length > 0) {
+				html += '<h4>Risk Indicators</h4>';
+				html += '<ul>';
+				data.indicators.forEach(function(indicator) {
+					html += '<li>' + indicator + '</li>';
+				});
+				html += '</ul>';
+			}
+
+			html += '</div>';
+		} else {
+			html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+		}
+
+		return html;
+	}
+
+	// Format Compliance Agent report
+	function format_compliance_report(data) {
+		var html = '';
+
+		if (data.status === 'success') {
+			html += '<div class="compliance-summary">';
+			html += '<p><strong>Checks Run:</strong> ' + data.checks_run + '</p>';
+
+			if (data.results && data.results.length > 0) {
+				html += '<h4>Compliance Results</h4>';
+				html += '<table class="table table-striped">';
+				html += '<thead><tr><th>Requirement</th><th>Status</th><th>Severity</th></tr></thead><tbody>';
+
+				data.results.forEach(function(result) {
+					var status_class = result.status === 'Compliant' ? 'success' : 'danger';
+					html += '<tr>';
+					html += '<td>' + result.requirement + '</td>';
+					html += '<td><span class="badge badge-' + status_class + '">' + result.status + '</span></td>';
+					html += '<td>' + result.severity + '</td>';
+					html += '</tr>';
+				});
+
+				html += '</tbody></table>';
+			}
+
+			html += '</div>';
+		} else {
+			html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+		}
+
+		return html;
+	}
+
+	// Format Discovery Agent report
+	function format_discovery_report(data) {
+		var html = '';
+
+		if (data.status === 'success') {
+			html += '<div class="discovery-summary">';
+			html += '<p><strong>Total Doctypes:</strong> ' + data.total_doctypes + '</p>';
+			html += '<p><strong>New Doctypes Found:</strong> ' + data.new_doctypes_found + '</p>';
+
+			if (data.new_doctypes && data.new_doctypes.length > 0) {
+				html += '<h4>New Doctypes</h4>';
+				html += '<table class="table table-striped">';
+				html += '<thead><tr><th>Name</th><th>Module</th><th>Field Count</th><th>Audit Relevance</th></tr></thead><tbody>';
+
+				data.new_doctypes.forEach(function(doctype) {
+					html += '<tr>';
+					html += '<td>' + doctype.name + '</td>';
+					html += '<td>' + doctype.module + '</td>';
+					html += '<td>' + doctype.field_count + '</td>';
+					html += '<td>' + doctype.audit_relevance + '</td>';
+					html += '</tr>';
+				});
+
+				html += '</tbody></table>';
+			}
+
+			html += '</div>';
+		} else {
+			html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+		}
+
+		return html;
+	}
+
+	// Load recent executions on page load
+	$(document).ready(function() {
+		// Initial data is already rendered by Jinja2
+	});
+}
+</script>
+
+<style>
+.agent-reports-container {
+	padding: 20px;
+}
+
+.agent-type-selector {
+	background: #f8f9fa;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+}
+
+.agent-buttons {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-top: 10px;
+}
+
+.agent-type-btn {
+	padding: 12px 20px;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	background: white;
+	cursor: pointer;
+	transition: all 0.3s;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.agent-type-btn:hover {
+	border-color: #007bff;
+	background: #f0f8ff;
+}
+
+.agent-type-btn i {
+	font-size: 18px;
+}
+
+.recent-executions-panel {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	margin-bottom: 20px;
+}
+
+.report-panel {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.report-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #eee;
+}
+
+.report-summary {
+	padding: 20px 0;
+}
+
+.report-summary h4 {
+	margin-top: 20px;
+	margin-bottom: 15px;
+	color: #333;
+}
+
+.report-summary table {
+	margin-bottom: 20px;
+}
+
+.report-summary dl dt {
+	width: 200px;
+	font-weight: bold;
+}
+
+.report-summary dl dd {
+	margin-left: 220px;
+}
+
+.risk-visualization {
+	margin: 30px 0;
+	padding: 20px;
+	background: #f8f9fa;
+	border-radius: 8px;
+}
+
+.progress {
+	height: 30px;
+	border-radius: 15px;
+	background: #e9ecef;
+}
+
+.progress-bar {
+	font-weight: bold;
+	line-height: 30px;
+}
+</style>

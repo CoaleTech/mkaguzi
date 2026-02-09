@@ -58,7 +58,15 @@ class MessageBus:
     """
 
     CACHE_PREFIX = "mkaguzi:message_bus:"
-    MESSAGE_TTL = 86400  # 24 hours
+
+    @staticmethod
+    def _message_ttl() -> int:
+        """Read message_bus_ttl from Mkaguzi Settings (fallback 86400)."""
+        try:
+            from mkaguzi.utils.settings import get_cache_config
+            return get_cache_config().get("message_bus_ttl", 86400)
+        except Exception:
+            return 86400
 
     def __init__(self):
         """Initialize the Message Bus"""
@@ -66,6 +74,7 @@ class MessageBus:
         self.message_queues = defaultdict(queue.Queue)  # Per-agent message queues
         self.lock = threading.Lock()
         self.cache = frappe.cache()
+        self._load_subscriptions()
 
     def subscribe(self, agent_id: str, message_types: List[str]) -> bool:
         """
@@ -285,7 +294,7 @@ class MessageBus:
         """Persist subscriptions to cache"""
         try:
             cache_key = f"{self.CACHE_PREFIX}subscriptions"
-            self.cache.set(cache_key, json.dumps(self.subscribers), expiry=self.MESSAGE_TTL)
+            self.cache.set(cache_key, json.dumps(self.subscribers), expiry=self._message_ttl())
         except Exception as e:
             frappe.log_error(f"Persist Subscriptions Error: {str(e)}", "Agent Message Bus")
 
@@ -295,7 +304,7 @@ class MessageBus:
             cache_key = f"{self.CACHE_PREFIX}subscriptions"
             data = self.cache.get(cache_key)
             if data:
-                self.subscriptions = defaultdict(list, json.loads(data))
+                self.subscribers = defaultdict(list, json.loads(data))
         except Exception as e:
             frappe.log_error(f"Load Subscriptions Error: {str(e)}", "Agent Message Bus")
 
@@ -303,6 +312,6 @@ class MessageBus:
         """Persist message to cache"""
         try:
             cache_key = f"{self.CACHE_PREFIX}message:{message.message_id}"
-            self.cache.set(cache_key, json.dumps(message.to_dict()), expiry=self.MESSAGE_TTL)
+            self.cache.set(cache_key, json.dumps(message.to_dict()), expiry=self._message_ttl())
         except Exception as e:
             frappe.log_error(f"Persist Message Error: {str(e)}", "Agent Message Bus")

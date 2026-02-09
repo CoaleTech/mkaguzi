@@ -8,7 +8,7 @@
  "field_order": [
   "data_type",
   "description",
-  "source_system",
+  "erpnext_module",
   "required_fields",
   "date_range_required",
   "period_start",
@@ -35,9 +35,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "source_system",
-   "fieldtype": "Data",
-   "label": "Source System"
+   "fieldname": "erpnext_module",
+   "fieldtype": "Select",
+   "label": "ERPNext Module",
+   "options": "Accounts\nHR\nPayroll\nInventory\nManufacturing\nProjects\nStock\nBuying\nSelling\nLoan\nDonation\nEmployee\nQuality\nHealthcare\nEducation\nAgriculture\nNon Profit\nCRM\nHelp Desk\nWebsite\nEmail\nCustom\nOther"
   },
   {
    "fieldname": "required_fields",

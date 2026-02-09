@@ -6,3 +6,5 @@
 # Patches added in this section will be executed after doctypes are migrated
 mkaguzi.patches.setup_role_permissions
 mkaguzi.migrations.add_indexes
+mkaguzi.patches.create_sample_agent_configurations
+mkaguzi.patches.v1_0.migrate_to_mkaguzi_settings

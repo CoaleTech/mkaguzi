@@ -14,13 +14,21 @@ class StateManager:
     """
 
     CACHE_PREFIX = "mkaguzi:agent_state:"
-    DEFAULT_TTL = 3600  # 1 hour default TTL
+
+    @staticmethod
+    def _default_ttl() -> int:
+        """Read agent_state_ttl from Mkaguzi Settings (fallback 3600)."""
+        try:
+            from mkaguzi.utils.settings import get_cache_config
+            return get_cache_config().get("agent_state_ttl", 3600)
+        except Exception:
+            return 3600
 
     def __init__(self):
         """Initialize the State Manager"""
         self.cache = frappe.cache()
 
-    def set_state(self, agent_id: str, key: str, value: Any, ttl: int = DEFAULT_TTL) -> bool:
+    def set_state(self, agent_id: str, key: str, value: Any, ttl: int = None) -> bool:
         """
         Set state value for an agent
 
@@ -34,6 +42,8 @@ class StateManager:
             True if successful
         """
         try:
+            if ttl is None:
+                ttl = self._default_ttl()
             cache_key = f"{self.CACHE_PREFIX}{agent_id}:{key}"
 
             # Serialize value if it's not a string

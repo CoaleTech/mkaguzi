@@ -24,8 +24,6 @@
   "responsible_department",
   "penalties_section",
   "penalties_for_non_compliance",
-  "data_sources_section",
-  "bc_data_sources",
   "is_active",
   "notes"
  ],
@@ -148,17 +146,6 @@
    "fieldtype": "Table",
    "label": "Penalties for Non-Compliance",
    "options": "Penalty"
-  },
-  {
-   "fieldname": "data_sources_section",
-   "fieldtype": "Section Break",
-   "label": "BC Data Sources"
-  },
-  {
-   "fieldname": "bc_data_sources",
-   "fieldtype": "Table",
-   "label": "BC Data Sources",
-   "options": "Required BC Data"
   },
   {
    "fieldname": "is_active",

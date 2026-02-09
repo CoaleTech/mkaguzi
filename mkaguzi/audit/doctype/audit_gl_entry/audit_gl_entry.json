@@ -1,0 +1,281 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-02-08 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "gl_entry_link",
+  "posting_date",
+  "account",
+  "debit_amount",
+  "credit_amount",
+  "risk_score",
+  "anomaly_type",
+  "findings",
+  "analyzed_by",
+  "analysis_date",
+  "status",
+  "column_break_kjsv",
+  "voucher_type",
+  "voucher_no",
+  "party",
+  "cost_center",
+  "reference_section",
+  "reference_type",
+  "reference_name",
+  "section_break_audit",
+  "audit_remarks",
+  "reviewed_by",
+  "reviewed_date",
+  "acknowledged_by",
+  "acknowledged_date",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "AUD-GL-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gl_entry_link",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "GL Entry",
+   "options": "GL Entry",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.posting_date",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.account",
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.debit",
+   "fieldname": "debit_amount",
+   "fieldtype": "Currency",
+   "label": "Debit Amount",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.credit",
+   "fieldname": "credit_amount",
+   "fieldtype": "Currency",
+   "label": "Credit Amount",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "risk_score",
+   "fieldtype": "Percent",
+   "label": "Risk Score"
+  },
+  {
+   "fieldname": "anomaly_type",
+   "fieldtype": "Select",
+   "label": "Anomaly Type",
+   "options": "\nUnusual Amount\nRound Figure Anomaly\nDuplicate Entry\nTiming Anomaly\nUnusual Account Combination\nMissing Documentation\nViolation of Policy\nOther"
+  },
+  {
+   "fieldname": "findings",
+   "fieldtype": "Text",
+   "label": "Findings",
+   "options": "Email"
+  },
+  {
+   "fieldname": "analyzed_by",
+   "fieldtype": "Link",
+   "label": "Analyzed By (Agent)",
+   "options": "Agent Configuration",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "analysis_date",
+   "fieldtype": "Datetime",
+   "label": "Analysis Date",
+   "reqd": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nReviewed\nAcknowledged",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_kjsv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "gl_entry_link.voucher_type",
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "label": "Voucher Type",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.voucher_no",
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "label": "Voucher No",
+   "options": "voucher_type",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.party",
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "label": "Party",
+   "options": "Party",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.cost_center",
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_section",
+   "fieldtype": "Section Break",
+   "label": "Reference Details"
+  },
+  {
+   "fetch_from": "gl_entry_link.reference_type",
+   "fieldname": "reference_type",
+   "fieldtype": "Link",
+   "label": "Reference Type",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "gl_entry_link.reference_name",
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_type",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_audit",
+   "fieldtype": "Section Break",
+   "label": "Review and Acknowledgment"
+  },
+  {
+   "fieldname": "audit_remarks",
+   "fieldtype": "Small Text",
+   "label": "Audit Remarks"
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "reviewed_date",
+   "fieldtype": "Datetime",
+   "label": "Reviewed Date"
+  },
+  {
+   "fieldname": "acknowledged_by",
+   "fieldtype": "Link",
+   "label": "Acknowledged By",
+   "options": "User"
+  },
+  {
+   "fieldname": "acknowledged_date",
+   "fieldtype": "Datetime",
+   "label": "Acknowledged Date"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Audit GL Entry",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "GL Entry",
+   "link_fieldname": "gl_entry_link"
+  }
+ ],
+ "modified": "2025-02-08 00:00:00",
+ "module": "Audit",
+ "name": "Audit GL Entry",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Audit Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "gl_entry_link"
+}
