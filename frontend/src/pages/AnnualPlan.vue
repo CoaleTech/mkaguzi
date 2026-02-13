@@ -33,7 +33,7 @@
           <template #prefix><RefreshCwIcon class="h-4 w-4" /></template>
           Refresh
         </Button>
-        <Button variant="solid" theme="blue" size="sm" @click="openCreateForm">
+        <Button variant="solid" theme="gray" size="sm" @click="openCreateForm">
           <template #prefix><PlusIcon class="h-4 w-4" /></template>
           New Plan
         </Button>
@@ -328,7 +328,7 @@
             Create comprehensive annual audit plans. Set up your audit universe, allocate resources, and track planned activities.
           </p>
           <div class="flex flex-col sm:flex-row justify-center gap-3">
-            <Button variant="solid" theme="blue" size="lg" @click="openCreateForm">
+            <Button variant="solid" theme="gray" size="lg" @click="openCreateForm">
               <template #prefix><PlusIcon class="h-5 w-5" /></template>
               Create Your First Plan
             </Button>

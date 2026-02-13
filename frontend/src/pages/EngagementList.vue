@@ -65,7 +65,7 @@
         <div class="p-1">
           <Button
             variant="solid"
-            theme="green"
+            theme="gray"
             size="sm"
             @click="createNewEngagement"
           >

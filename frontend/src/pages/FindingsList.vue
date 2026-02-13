@@ -13,7 +13,7 @@
           <DownloadIcon class="h-4 w-4 mr-2" />
           Export
         </Button>
-        <Button variant="solid" theme="blue" @click="showFormDialog = true">
+        <Button variant="solid" theme="gray" @click="showFormDialog = true">
           <PlusIcon class="h-4 w-4 mr-2" />
           New Finding
         </Button>

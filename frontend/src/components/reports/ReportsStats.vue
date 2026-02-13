@@ -29,7 +29,7 @@
           <p class="text-sm text-gray-600">Active Dashboards</p>
           <p class="text-2xl font-bold">{{ activeDashboards.length }}</p>
         </div>
-        <BarChart3 class="w-8 h-8 text-purple-500" />
+        <BarChart3 class="w-8 h-8 text-gray-500" />
       </div>
     </div>
 

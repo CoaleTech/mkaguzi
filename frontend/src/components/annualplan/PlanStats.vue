@@ -48,14 +48,14 @@
     </div>
 
     <!-- Upcoming Audits Card -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200 p-5 hover:shadow-lg transition-all duration-200">
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-5 hover:shadow-lg transition-all duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Upcoming</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ stats.upcoming || 0 }}</p>
-          <p class="text-xs text-purple-600 mt-1">Next 30 days</p>
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Upcoming</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats.upcoming || 0 }}</p>
+          <p class="text-xs text-gray-600 mt-1">Next 30 days</p>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm">
           <CalendarIcon class="h-7 w-7 text-white" />
         </div>
       </div>
@@ -175,7 +175,7 @@ const statusDistribution = computed(() => {
       label: 'Completed', 
       count: props.stats.completed || 0, 
       percentage: ((props.stats.completed || 0) / total) * 100,
-      color: 'bg-purple-500'
+      color: 'bg-gray-400'
     },
   ]
 })
@@ -186,7 +186,7 @@ const quarterlyData = computed(() => {
     { label: 'Q1', count: q.q1, color: 'text-blue-600' },
     { label: 'Q2', count: q.q2, color: 'text-green-600' },
     { label: 'Q3', count: q.q3, color: 'text-amber-600' },
-    { label: 'Q4', count: q.q4, color: 'text-purple-600' },
+    { label: 'Q4', count: q.q4, color: 'text-gray-900' },
   ]
 })
 </script>

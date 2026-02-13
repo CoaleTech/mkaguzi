@@ -17,7 +17,7 @@
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
               <div
-                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                class="bg-gray-900 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${formProgress}%` }"
               ></div>
             </div>
@@ -31,14 +31,14 @@
               class="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
               :class="[
                 activeSection === key
-                  ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-600'
+                  ? 'bg-gray-100 text-gray-700 border-l-4 border-gray-900'
                   : 'text-gray-600 hover:bg-gray-100'
               ]"
             >
               <component
                 :is="section.icon"
                 class="h-5 w-5 mr-3 flex-shrink-0"
-                :class="activeSection === key ? 'text-blue-600' : 'text-gray-400'"
+                :class="activeSection === key ? 'text-gray-900' : 'text-gray-400'"
               />
               <span class="flex-1 text-left">{{ section.label }}</span>
               <span
@@ -196,12 +196,12 @@
               icon="users"
             />
 
-            <div class="bg-blue-50 rounded-lg p-4 mb-6">
-              <h4 class="text-sm font-medium text-blue-900 mb-3">Resource Overview</h4>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <h4 class="text-sm font-medium text-gray-900 mb-3">Resource Overview</h4>
               <div class="grid grid-cols-3 gap-4">
                 <div class="text-center">
-                  <p class="text-2xl font-bold text-blue-700">{{ formData.total_available_days || 0 }}</p>
-                  <p class="text-xs text-blue-600">Available Days</p>
+                  <p class="text-2xl font-bold text-gray-700">{{ formData.total_available_days || 0 }}</p>
+                  <p class="text-xs text-gray-700">Available Days</p>
                 </div>
                 <div class="text-center">
                   <p class="text-2xl font-bold text-green-700">{{ formData.total_planned_days || 0 }}</p>
@@ -426,7 +426,7 @@
           <Button variant="outline" @click="closeDialog">
             Cancel
           </Button>
-          <Button variant="solid" theme="blue" @click="submitForm" :loading="saving">
+          <Button variant="solid" theme="gray" @click="submitForm" :loading="saving">
             {{ isEditing ? 'Update Plan' : 'Create Plan' }}
           </Button>
         </div>

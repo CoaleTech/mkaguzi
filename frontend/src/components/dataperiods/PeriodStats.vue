@@ -166,7 +166,7 @@ const statsCards = computed(() => {
     { label: 'Open', value: open, icon: Unlock, bgColor: 'bg-green-100', iconColor: 'text-green-600', filterKey: 'status', filterValue: 'Open', active: props.activeFilter === 'Open' },
     { label: 'Locked', value: locked, icon: Lock, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', filterKey: 'status', filterValue: 'Locked', active: props.activeFilter === 'Locked' },
     { label: 'Closed', value: closed, icon: CalendarCheck, bgColor: 'bg-gray-100', iconColor: 'text-gray-600', filterKey: 'status', filterValue: 'Closed', active: props.activeFilter === 'Closed' },
-    { label: 'Archived', value: archived, icon: Archive, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', filterKey: 'status', filterValue: 'Archived', active: props.activeFilter === 'Archived' },
+    { label: 'Archived', value: archived, icon: Archive, bgColor: 'bg-gray-100', iconColor: 'text-gray-900', filterKey: 'status', filterValue: 'Archived', active: props.activeFilter === 'Archived' },
   ]
 })
 
@@ -177,7 +177,7 @@ const periodTypeDistribution = computed(() => {
   const colors = {
     Month: 'bg-blue-500',
     Quarter: 'bg-green-500',
-    'Half-Year': 'bg-purple-500',
+    'Half-Year': 'bg-gray-400',
     Year: 'bg-orange-500',
     Custom: 'bg-gray-500',
   }
@@ -273,7 +273,7 @@ function getStatusBgClass(status) {
     Open: 'bg-green-50 border-green-200',
     Locked: 'bg-yellow-50 border-yellow-200',
     Closed: 'bg-gray-50 border-gray-200',
-    Archived: 'bg-purple-50 border-purple-200',
+    Archived: 'bg-gray-50 border-gray-200',
   }
   return classes[status] || 'bg-gray-50 border-gray-200'
 }

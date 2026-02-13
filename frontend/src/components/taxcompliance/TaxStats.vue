@@ -46,20 +46,20 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-500">PAYE Filed</p>
-          <p class="text-2xl font-bold text-purple-600">{{ stats.payeFiled }}</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats.payeFiled }}</p>
         </div>
-        <div class="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center">
-          <Briefcase class="h-5 w-5 text-purple-600" />
+        <div class="h-10 w-10 rounded-lg bg-gray-50 flex items-center justify-center">
+          <Briefcase class="h-5 w-5 text-gray-900" />
         </div>
       </div>
       <div class="mt-2">
         <div class="flex items-center justify-between text-xs">
           <span class="text-gray-500">Compliance Rate</span>
-          <span class="font-medium text-purple-600">{{ stats.payeRate }}%</span>
+          <span class="font-medium text-gray-900">{{ stats.payeRate }}%</span>
         </div>
         <div class="w-full bg-gray-100 rounded-full h-1.5 mt-1">
           <div
-            class="bg-purple-500 h-1.5 rounded-full"
+            class="bg-gray-900 h-1.5 rounded-full"
             :style="{ width: `${stats.payeRate}%` }"
           />
         </div>
@@ -126,13 +126,13 @@
     </div>
 
     <!-- Total PAYE -->
-    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+    <div class="bg-gradient-to-r from-gray-900 to-gray-700 rounded-xl p-4 text-white">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-purple-100">Total PAYE</p>
+          <p class="text-sm text-gray-100">Total PAYE</p>
           <p class="text-xl font-bold">KES {{ formatNumber(stats.totalPaye) }}</p>
         </div>
-        <Users class="h-8 w-8 text-purple-200" />
+        <Users class="h-8 w-8 text-gray-200" />
       </div>
     </div>
 

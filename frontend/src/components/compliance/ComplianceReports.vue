@@ -834,7 +834,7 @@ watch(
 }
 
 .stat-icon.shared {
-  background: #8b5cf6;
+  background: #404040;
 }
 
 .stat-content {

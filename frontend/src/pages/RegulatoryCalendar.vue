@@ -1295,7 +1295,7 @@ const getEventTypeVariant = (type) => {
 	const variants = {
 		PAYE: "blue",
 		VAT: "green",
-		Corporate: "purple",
+		Corporate: "gray",
 		Social: "orange",
 		Levy: "gray",
 		HELB: "red",
@@ -1536,7 +1536,7 @@ onMounted(() => {
 }
 
 .event-item.corporate {
-  background: #8b5cf6;
+  background: #404040;
 }
 
 .event-item.social {
@@ -1623,7 +1623,7 @@ onMounted(() => {
 }
 
 .event-detail-card.corporate {
-  border-left: 4px solid #8b5cf6;
+  border-left: 4px solid #404040;
 }
 
 .event-detail-card.social {
@@ -1724,7 +1724,7 @@ onMounted(() => {
 }
 
 .legend-color.corporate {
-  background: #8b5cf6;
+  background: #404040;
 }
 
 .legend-color.social {

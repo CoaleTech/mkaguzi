@@ -102,7 +102,7 @@ const iconComponent = computed(() => {
 const colorMap = {
   green: { bg: 'bg-green-100', icon: 'text-green-600' },
   blue: { bg: 'bg-blue-100', icon: 'text-blue-600' },
-  purple: { bg: 'bg-purple-100', icon: 'text-purple-600' },
+  purple: { bg: 'bg-gray-100', icon: 'text-gray-600' },
   amber: { bg: 'bg-amber-100', icon: 'text-amber-600' },
   red: { bg: 'bg-red-100', icon: 'text-red-600' },
   yellow: { bg: 'bg-yellow-100', icon: 'text-yellow-600' },

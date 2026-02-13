@@ -140,10 +140,10 @@
     </span>
     <span 
       v-if="periodFilter"
-      class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium"
     >
       Period: {{ periodFilter }}
-      <button @click="$emit('update:periodFilter', '')" class="hover:text-purple-600">
+      <button @click="$emit('update:periodFilter', '')" class="hover:text-gray-600">
         <XIcon class="h-3 w-3" />
       </button>
     </span>

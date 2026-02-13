@@ -4,8 +4,8 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
       <div>
         <div class="flex items-center space-x-3">
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <FileTextIcon class="h-6 w-6 text-purple-600" />
+          <div class="p-2 bg-gray-100 rounded-lg">
+            <FileTextIcon class="h-6 w-6 text-gray-900" />
           </div>
           <div>
             <h1 class="text-2xl font-bold text-gray-900">Audit Programs</h1>
@@ -25,11 +25,11 @@
           <template #prefix><RefreshCwIcon class="h-4 w-4" /></template>
           Refresh
         </Button>
-        <Button variant="outline" theme="purple" size="sm" @click="createFromTemplate" :disabled="templatePrograms.length === 0">
+        <Button variant="outline" theme="gray" size="sm" @click="createFromTemplate" :disabled="templatePrograms.length === 0">
           <template #prefix><CopyIcon class="h-4 w-4" /></template>
           Use Template
         </Button>
-        <Button variant="solid" theme="purple" size="sm" @click="openCreateForm">
+        <Button variant="solid" theme="gray" size="sm" @click="openCreateForm">
           <template #prefix><PlusIcon class="h-4 w-4" /></template>
           New Program
         </Button>
@@ -74,10 +74,10 @@
     />
 
     <!-- Bulk Actions -->
-    <div v-if="selectedPrograms.length > 0" class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+    <div v-if="selectedPrograms.length > 0" class="bg-gray-50 border border-gray-200 rounded-lg p-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <span class="text-sm font-medium text-purple-900">
+          <span class="text-sm font-medium text-gray-900">
             {{ selectedPrograms.length }} program{{ selectedPrograms.length > 1 ? 's' : '' }} selected
           </span>
         </div>
@@ -124,7 +124,7 @@
               <th class="px-6 py-3 text-left w-10">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                  class="rounded border-gray-300 text-gray-900 focus:ring-gray-900"
                   :checked="selectedPrograms.length === filteredPrograms.length && filteredPrograms.length > 0"
                   @change="toggleSelectAll"
                 />
@@ -142,12 +142,12 @@
               v-for="program in filteredPrograms"
               :key="program.name"
               class="hover:bg-gray-50 transition-colors"
-              :class="{ 'bg-purple-50': selectedPrograms.includes(program.name) }"
+              :class="{ 'bg-gray-50': selectedPrograms.includes(program.name) }"
             >
               <td class="px-6 py-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                  class="rounded border-gray-300 text-gray-900 focus:ring-gray-900"
                   :checked="selectedPrograms.includes(program.name)"
                   @change="toggleProgramSelection(program.name)"
                 />
@@ -155,7 +155,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-lg bg-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                    <div class="h-10 w-10 rounded-lg bg-gray-500 flex items-center justify-center text-white font-bold text-sm">
                       {{ (program.audit_type || 'AU').substring(0, 2).toUpperCase() }}
                     </div>
                   </div>
@@ -171,7 +171,7 @@
                 </Badge>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <Badge v-if="program.is_template" variant="subtle" theme="purple" size="sm">
+                <Badge v-if="program.is_template" variant="subtle" theme="gray" size="sm">
                   <FileTextIcon class="h-3 w-3 mr-1" />
                   Template
                 </Badge>
@@ -223,16 +223,16 @@
             v-for="program in filteredPrograms"
             :key="program.name"
             class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
-            :class="{ 'ring-2 ring-purple-500 bg-purple-50': selectedPrograms.includes(program.name) }"
+            :class="{ 'ring-2 ring-gray-900 bg-gray-50': selectedPrograms.includes(program.name) }"
             @click="toggleProgramSelection(program.name)"
           >
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-center space-x-3">
-                <div class="h-12 w-12 rounded-xl bg-purple-500 flex items-center justify-center text-white font-bold">
+                <div class="h-12 w-12 rounded-xl bg-gray-500 flex items-center justify-center text-white font-bold">
                   {{ (program.audit_type || 'AU').substring(0, 2).toUpperCase() }}
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-gray-900 group-hover:text-purple-900">{{ program.program_id }}</h3>
+                  <h3 class="text-lg font-semibold text-gray-900 group-hover:text-gray-900">{{ program.program_id }}</h3>
                   <p class="text-sm text-gray-600 truncate max-w-[150px]">{{ program.program_name }}</p>
                 </div>
               </div>
@@ -240,7 +240,7 @@
                 <Badge :variant="getTypeVariant(program.audit_type)" size="sm">
                   {{ program.audit_type }}
                 </Badge>
-                <Badge v-if="program.is_template" variant="subtle" theme="purple" size="sm">
+                <Badge v-if="program.is_template" variant="subtle" theme="gray" size="sm">
                   Template
                 </Badge>
               </div>
@@ -288,8 +288,8 @@
 
       <!-- Empty State -->
       <div v-if="filteredPrograms.length === 0 && auditPrograms.length === 0" class="px-6 py-20 text-center">
-        <div class="mx-auto h-20 w-20 rounded-2xl bg-purple-50 border-2 border-purple-100 flex items-center justify-center mb-8 shadow-sm">
-          <FileTextIcon class="h-10 w-10 text-purple-500" />
+        <div class="mx-auto h-20 w-20 rounded-2xl bg-gray-50 border-2 border-gray-200 flex items-center justify-center mb-8 shadow-sm">
+          <FileTextIcon class="h-10 w-10 text-gray-900" />
         </div>
         <div class="max-w-md mx-auto">
           <h3 class="text-2xl font-bold text-gray-900 mb-3">Welcome to Audit Programs</h3>
@@ -297,7 +297,7 @@
             Create detailed audit programs with procedures, risk areas, and control objectives.
           </p>
           <div class="flex flex-col sm:flex-row justify-center gap-3">
-            <Button variant="solid" theme="purple" size="lg" @click="openCreateForm">
+            <Button variant="solid" theme="gray" size="lg" @click="openCreateForm">
               <template #prefix><PlusIcon class="h-5 w-5" /></template>
               Create Your First Program
             </Button>
@@ -335,7 +335,7 @@
               <h3 class="text-lg font-semibold text-gray-900">{{ viewingProgram.program_id }}</h3>
               <p class="text-sm text-gray-500">{{ viewingProgram.audit_type }}</p>
             </div>
-            <Badge v-if="viewingProgram.is_template" variant="subtle" theme="purple">Template</Badge>
+            <Badge v-if="viewingProgram.is_template" variant="subtle" theme="gray">Template</Badge>
           </div>
 
           <!-- Objectives -->
@@ -362,7 +362,7 @@
                   <p class="text-xs text-gray-500">N/A</p>
                 </div>
                 <div>
-                  <p class="text-2xl font-bold text-purple-600">{{ viewingProgram.completion_percent || 0 }}%</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ viewingProgram.completion_percent || 0 }}%</p>
                   <p class="text-xs text-gray-500">Complete</p>
                 </div>
               </div>
@@ -383,7 +383,7 @@
       </template>
       <template #actions>
         <Button variant="outline" @click="showViewModal = false">Close</Button>
-        <Button variant="solid" theme="purple" @click="openEditForm(viewingProgram); showViewModal = false">
+        <Button variant="solid" theme="gray" @click="openEditForm(viewingProgram); showViewModal = false">
           Edit Program
         </Button>
       </template>
@@ -398,12 +398,12 @@
             <div
               v-for="template in templatePrograms"
               :key="template.name"
-              class="border border-gray-200 rounded-lg p-4 hover:border-purple-500 hover:bg-purple-50 cursor-pointer transition-all"
+              class="border border-gray-200 rounded-lg p-4 hover:border-gray-900 hover:bg-gray-50 cursor-pointer transition-all"
               @click="useTemplate(template)"
             >
               <div class="flex items-start space-x-3">
-                <div class="p-2 bg-purple-100 rounded-lg">
-                  <FileTextIcon class="h-5 w-5 text-purple-600" />
+                <div class="p-2 bg-gray-100 rounded-lg">
+                  <FileTextIcon class="h-5 w-5 text-gray-900" />
                 </div>
                 <div>
                   <h4 class="font-semibold text-gray-900">{{ template.program_name }}</h4>

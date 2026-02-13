@@ -517,6 +517,7 @@
 
 <script setup>
 import { Badge, Button, Checkbox, Input, Select, Textarea } from "frappe-ui"
+import { createResource } from "frappe-ui"
 import {
 	ArrowLeftIcon,
 	CalendarIcon,
@@ -730,54 +731,16 @@ const loadEntity = async () => {
 
 	loading.value = true
 	try {
-		// In a real app, this would be an API call
-		// For now, we'll simulate loading mock data
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-
-		// Mock data - replace with actual API call
-		entity.value = {
-			universe_id: "AU-001",
-			auditable_entity: "Accounts Payable",
-			entity_type: "Process",
-			department: "Finance",
-			location: "Head Office",
-			description: "Processing of vendor payments and expense reimbursements",
-			process_owner: "John Doe",
-			inherent_risk_rating: "High",
-			inherent_risk_score: 15,
-			control_environment_rating: "Adequate",
-			control_effectiveness_score: 3,
-			residual_risk_rating: "Medium",
-			residual_risk_score: 5,
-			risk_factors: [
-				{
-					risk_category: "Financial",
-					risk_description: "Payment errors leading to overpayments",
-					likelihood: "Possible",
-					impact: "Moderate",
-					risk_score: 12,
-				},
-			],
-			key_controls: [
-				{
-					control_description: "Three-way matching of PO, receipt, and invoice",
-					control_type: "Preventive",
-					control_frequency: "Continuous",
-					control_effectiveness: "Effective",
-				},
-			],
-			audit_frequency: "Quarterly",
-			last_audit_date: "2023-10-15",
-			last_audit_opinion: "Satisfactory",
-			next_scheduled_audit: "2024-01-15",
-			mandatory_audit: false,
-			regulatory_reference: "",
-			notes: "Regular monitoring required due to high transaction volume",
-			is_active: true,
-		}
+		const res = await createResource({
+			url: "frappe.client.get",
+			params: { doctype: "Audit Universe", name: route.params.id },
+		}).fetch()
+		entity.value = res
 
 		// Populate form with entity data
-		Object.assign(form.value, entity.value)
+		if (res) {
+			Object.assign(form.value, res)
+		}
 	} catch (error) {
 		console.error("Error loading entity:", error)
 	} finally {
@@ -900,18 +863,44 @@ const formatDate = (date) => {
 const save = async () => {
 	saving.value = true
 	try {
-		// In a real app, this would be an API call
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-
 		if (props.mode === "new") {
 			// Create new entity
-			console.log("Creating new entity:", form.value)
+			const res = await createResource({
+				url: "frappe.client.insert",
+				params: {
+					doc: {
+						doctype: "Audit Universe",
+						...form.value,
+					},
+				},
+			}).fetch()
+
 			// Redirect to the new entity's detail page
-			router.push("/audit-planning/universe")
+			if (res && res.name) {
+				router.push(`/audit-planning/universe/${res.name}`)
+			} else {
+				router.push("/audit-planning/universe")
+			}
 		} else {
-			// Update existing entity
-			console.log("Updating entity:", form.value)
-			// Stay on the same page or redirect
+			// Update existing entity - set each changed field
+			for (const [fieldname, value] of Object.entries(form.value)) {
+				if (entity.value && entity.value[fieldname] !== value) {
+					await createResource({
+						url: "frappe.client.set_value",
+						params: {
+							doctype: "Audit Universe",
+							name: entity.value.name,
+							fieldname,
+							value,
+						},
+					}).fetch()
+				}
+			}
+
+			// Reload the entity data
+			await loadEntity()
+
+			// Redirect to view mode
 			router.push(`/audit-planning/universe/${props.entityId}`)
 		}
 	} catch (error) {

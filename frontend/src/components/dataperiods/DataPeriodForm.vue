@@ -282,7 +282,7 @@
                   </Button>
                   <Button
                     variant="outline"
-                    theme="orange"
+                    theme="gray"
                     @click="archivePeriod"
                     :disabled="formData.status === 'Archived'"
                   >
@@ -329,7 +329,7 @@
               <Button
                 v-else
                 variant="solid"
-                theme="green"
+                theme="gray"
                 @click="savePeriod"
                 :loading="saving"
               >

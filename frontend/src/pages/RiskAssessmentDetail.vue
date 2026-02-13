@@ -558,6 +558,7 @@
 <script setup>
 import RiskHeatMap from "@/components/RiskHeatMap.vue"
 import { Badge, Button, Card, Dialog, FormControl, Select } from "frappe-ui"
+import { createResource } from "frappe-ui"
 import {
 	ArrowLeftIcon,
 	CheckCircleIcon,
@@ -664,9 +665,8 @@ const canApprove = computed(() => {
 
 // Methods
 const loadAssessment = async () => {
+	loading.value = true
 	try {
-		loading.value = true
-
 		if (props.mode === "new") {
 			// Create new assessment
 			assessment.value = {
@@ -697,87 +697,14 @@ const loadAssessment = async () => {
 				throw new Error("Assessment ID is required")
 			}
 
-			// TODO: Replace with actual Frappe API call
-			const response = await fetch(
-				`/api/resource/Risk Assessment/${assessmentId}`,
-			)
-			if (response.ok) {
-				assessment.value = await response.json()
-			} else {
-				throw new Error("Failed to load assessment")
-			}
+			const res = await createResource({
+				url: "frappe.client.get",
+				params: { doctype: "Risk Assessment", name: assessmentId },
+			}).fetch()
+			assessment.value = res
 		}
 	} catch (error) {
 		console.error("Error loading assessment:", error)
-
-		// For now, create mock data for existing assessments
-		if (props.mode !== "new") {
-			const assessmentId = props.assessmentId || route.params.id
-			assessment.value = {
-				name: assessmentId,
-				assessment_id: `RA-2024-${String(assessmentId).padStart(4, "0")}`,
-				assessment_name: "Annual Risk Assessment 2024",
-				assessment_date: "2024-01-15",
-				fiscal_year: "2024",
-				assessment_period: "Annual",
-				assessment_team: [
-					{ team_member: "John Doe", role: "Lead" },
-					{ team_member: "Jane Smith", role: "Member" },
-				],
-				assessment_scope:
-					"Comprehensive risk assessment covering all business units and processes.",
-				methodology: ["interview", "workshop", "document_review"],
-				status: "In Progress",
-				risk_register: [
-					{
-						risk_id: "R001",
-						risk_title: "Financial reporting errors",
-						risk_description:
-							"Financial reporting errors due to manual processes",
-						risk_category: "Operational",
-						risk_subcategory: "Financial Reporting",
-						auditable_entity: "Finance Department",
-						threat_source: "Human error",
-						vulnerability: "Manual data entry",
-						likelihood_score: 4,
-						impact_score: 5,
-						inherent_risk_score: 20,
-						control_effectiveness: "Adequate",
-						existing_controls: "Basic review process",
-						risk_owner: "Finance Manager",
-						risk_response: "Mitigate",
-						target_risk_score: 10,
-						likelihood_rationale: "High volume of manual entries",
-						impact_rationale: "Material impact on financial statements",
-					},
-				],
-				action_plan: [
-					{
-						action_id: "A001",
-						action_description:
-							"Implement automated financial reporting system",
-						action_type: "System Enhancement",
-						priority: "High",
-						responsible_party: "IT Department",
-						target_completion_date: "2024-06-30",
-						estimated_cost: 50000,
-						resource_required: "IT team and software licenses",
-						status: "In Progress",
-						actual_completion_date: "",
-						effectiveness_review_date: "",
-						review_notes: "",
-					},
-				],
-				risk_heat_map_data: {},
-				top_risks: [],
-				assessment_summary: "The assessment identified several key risks...",
-				recommendations: "Implement automated systems and enhance training...",
-				prepared_by: "John Doe",
-				reviewed_by: "",
-				approved_by: "",
-				approval_date: "",
-			}
-		}
 	} finally {
 		loading.value = false
 	}
@@ -796,9 +723,8 @@ const toggleEditMode = () => {
 }
 
 const saveChanges = async () => {
+	saving.value = true
 	try {
-		saving.value = true
-
 		// Calculate inherent risk scores
 		assessment.value.risk_register.forEach((risk) => {
 			risk.inherent_risk_score = risk.likelihood_score * risk.impact_score
@@ -812,41 +738,39 @@ const saveChanges = async () => {
 			assessment.value.assessment_id = `RA-${assessment.value.fiscal_year}-${String(nextNumber).padStart(4, "0")}`
 		}
 
-		let response
 		if (props.mode === "new") {
-			// TODO: Replace with actual Frappe API call for creating
-			response = await fetch("/api/resource/Risk Assessment", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			// Create new document
+			const res = await createResource({
+				url: "frappe.client.insert",
+				params: {
+					doc: {
+						doctype: "Risk Assessment",
+						...assessment.value,
+					},
 				},
-				body: JSON.stringify(assessment.value),
-			})
+			}).fetch()
+
+			// Redirect to detail view after creating
+			router.push(`/audit-planning/risk-assessment/${res.name}`)
 		} else {
-			// TODO: Replace with actual Frappe API call for updating
+			// Update existing document
 			const assessmentId = props.assessmentId || route.params.id
-			response = await fetch(`/api/resource/Risk Assessment/${assessmentId}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(assessment.value),
-			})
-		}
-
-		if (response.ok) {
-			const savedAssessment = await response.json()
-
-			if (props.mode === "new") {
-				// Redirect to detail view after creating
-				router.push(`/audit-planning/risk-assessment/${savedAssessment.name}`)
-			} else {
-				isEditMode.value = false
-				// Reload to get updated data
-				await loadAssessment()
+			const docToUpdate = {
+				doctype: "Risk Assessment",
+				name: assessmentId,
+				...assessment.value,
 			}
-		} else {
-			throw new Error("Failed to save changes")
+
+			await createResource({
+				url: "frappe.client.save",
+				params: {
+					doc: docToUpdate,
+				},
+			}).fetch()
+
+			isEditMode.value = false
+			// Reload to get updated data
+			await loadAssessment()
 		}
 	} catch (error) {
 		console.error("Error saving changes:", error)

@@ -280,7 +280,7 @@ const periodTypeBreakdown = computed(() => {
 
   const colors = {
     Monthly: { bgClass: 'bg-blue-50', iconClass: 'text-blue-600', barClass: 'bg-blue-500' },
-    Quarterly: { bgClass: 'bg-purple-50', iconClass: 'text-purple-600', barClass: 'bg-purple-500' },
+    Quarterly: { bgClass: 'bg-gray-50', iconClass: 'text-gray-600', barClass: 'bg-gray-500' },
     Annual: { bgClass: 'bg-green-50', iconClass: 'text-green-600', barClass: 'bg-green-500' },
   }
 
@@ -301,7 +301,7 @@ const statusDistribution = computed(() => {
     { label: 'Not Started', color: 'bg-gray-400' },
     { label: 'In Progress', color: 'bg-blue-500' },
     { label: 'Completed', color: 'bg-green-500' },
-    { label: 'Filed', color: 'bg-purple-500' },
+    { label: 'Filed', color: 'bg-gray-500' },
     { label: 'Overdue', color: 'bg-red-500' },
     { label: 'Not Applicable', color: 'bg-gray-300' },
   ]

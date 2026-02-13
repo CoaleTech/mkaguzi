@@ -9,7 +9,7 @@
           :value="searchQuery"
           @input="$emit('update:searchQuery', $event.target.value)"
           placeholder="Search programs..."
-          class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+          class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all"
         />
         <button
           v-if="searchQuery"
@@ -64,7 +64,7 @@
         :class="[
           'p-2 rounded-md transition-all duration-200',
           viewMode === 'table' 
-            ? 'bg-white text-purple-600 shadow-sm' 
+            ? 'bg-white text-gray-900 shadow-sm' 
             : 'text-gray-500 hover:text-gray-700'
         ]"
         title="Table View"
@@ -76,7 +76,7 @@
         :class="[
           'p-2 rounded-md transition-all duration-200',
           viewMode === 'cards' 
-            ? 'bg-white text-purple-600 shadow-sm' 
+            ? 'bg-white text-gray-900 shadow-sm' 
             : 'text-gray-500 hover:text-gray-700'
         ]"
         title="Card View"
@@ -100,11 +100,11 @@
   <div v-if="hasActiveFilters" class="flex flex-wrap gap-2 mb-4">
     <span 
       v-if="searchQuery"
-      class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium"
     >
       <SearchIcon class="h-3 w-3" />
       "{{ searchQuery }}"
-      <button @click="$emit('update:searchQuery', '')" class="hover:text-purple-600">
+      <button @click="$emit('update:searchQuery', '')" class="hover:text-gray-900">
         <XIcon class="h-3 w-3" />
       </button>
     </span>

@@ -57,19 +57,19 @@
     </div>
 
     <!-- Avg Completion Card -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200 p-5 hover:shadow-lg transition-all duration-200">
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-5 hover:shadow-lg transition-all duration-200">
       <div class="flex items-center justify-between">
         <div class="w-full">
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Avg Progress</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ stats.avgProgress || 0 }}%</p>
-          <div class="w-full bg-purple-200 rounded-full h-2 mt-2">
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Avg Progress</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats.avgProgress || 0 }}%</p>
+          <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
             <div
-              class="bg-purple-600 h-2 rounded-full transition-all duration-300"
+              class="bg-gray-900 h-2 rounded-full transition-all duration-300"
               :style="{ width: `${Math.min(stats.avgProgress || 0, 100)}%` }"
             ></div>
           </div>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm ml-3">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm ml-3">
           <PercentIcon class="h-7 w-7 text-white" />
         </div>
       </div>
@@ -176,7 +176,7 @@ const statusDistribution = computed(() => {
     'Draft': 'bg-gray-400',
     'Approved': 'bg-blue-500',
     'In Progress': 'bg-amber-500',
-    'On Hold': 'bg-purple-500',
+    'On Hold': 'bg-gray-400',
     'Completed': 'bg-green-500',
     'Cancelled': 'bg-red-500',
   }

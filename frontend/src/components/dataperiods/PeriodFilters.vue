@@ -82,7 +82,7 @@
       <span class="text-xs text-gray-500">Active filters:</span>
       <Badge
         v-if="localFilters.search"
-        theme="blue"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('search')"
       >
@@ -91,7 +91,7 @@
       </Badge>
       <Badge
         v-if="localFilters.periodType"
-        theme="purple"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('periodType')"
       >
@@ -109,7 +109,7 @@
       </Badge>
       <Badge
         v-if="localFilters.status"
-        theme="green"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('status')"
       >
@@ -118,7 +118,7 @@
       </Badge>
       <Badge
         v-if="localFilters.reconciliation"
-        theme="orange"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('reconciliation')"
       >

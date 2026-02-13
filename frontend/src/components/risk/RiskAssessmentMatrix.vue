@@ -523,7 +523,7 @@ onMounted(() => {
 
 .summary-card.overdue .card-icon {
   background: #f3e8ff;
-  color: #8b5cf6;
+  color: #525252;
 }
 
 .card-content h4 {

@@ -41,7 +41,7 @@
                 @click="navigateToSection(section.id)"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200"
                 :class="{
-                  'bg-red-50 text-red-700 border-2 border-red-200 shadow-sm': activeSection === section.id,
+                  'bg-gray-50 text-gray-700 border-2 border-gray-200 shadow-sm': activeSection === section.id,
                   'hover:bg-gray-50 text-gray-700': activeSection !== section.id
                 }"
               >
@@ -72,7 +72,7 @@
                 <!-- Status Indicator -->
                 <ChevronRightIcon
                   v-if="activeSection === section.id"
-                  class="h-4 w-4 text-red-500 flex-shrink-0"
+                  class="h-4 w-4 text-gray-900 flex-shrink-0"
                 />
               </button>
             </div>
@@ -134,7 +134,7 @@
               </Button>
               <Button
                 variant="solid"
-                theme="red"
+                theme="gray"
                 size="sm"
                 @click="submitForm"
                 :loading="isSaving"
@@ -240,13 +240,13 @@
                       v-for="method in methodologyOptions"
                       :key="method.value"
                       class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-                      :class="{ 'bg-red-50 border-red-200': isMethodSelected(method.value) }"
+                      :class="{ 'bg-gray-50 border-gray-200': isMethodSelected(method.value) }"
                     >
                       <input
                         type="checkbox"
                         :value="method.value"
                         v-model="selectedMethodologies"
-                        class="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                        class="rounded border-gray-300 text-gray-900 focus:ring-gray-900"
                       />
                       <span class="text-sm font-medium text-gray-700">{{ method.label }}</span>
                     </label>
@@ -580,7 +580,7 @@
                 <Button
                   v-else
                   variant="solid"
-                  theme="red"
+                  theme="gray"
                   @click="submitForm"
                   :loading="isSaving"
                   :disabled="!isFormValid"

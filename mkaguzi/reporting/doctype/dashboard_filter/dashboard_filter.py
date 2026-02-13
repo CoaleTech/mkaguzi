@@ -95,28 +95,28 @@ def get_dynamic_filter_options(filter_doc):
 	"""Generate dynamic filter options based on field configuration"""
 	try:
 		if filter_doc.field_name == "status":
-			# Get unique statuses from Test Execution
-			statuses = frappe.db.get_all("Test Execution",
+			# Get unique statuses from Agent Execution Log
+			statuses = frappe.db.get_all("Agent Execution Log",
 				fields=["DISTINCT status"],
 				filters={"status": ["!=", ""]}
 			)
 			return [{"value": s.status, "label": s.status} for s in statuses]
 
-		elif filter_doc.field_name == "test_category":
-			# Get test categories from Audit Test Library
-			categories = frappe.db.get_all("Audit Test Library",
-				fields=["DISTINCT test_category"],
-				filters={"test_category": ["!=", ""]}
+		elif filter_doc.field_name == "agent_type":
+			# Get agent types from Agent Execution Log
+			agent_types = frappe.db.get_all("Agent Execution Log",
+				fields=["DISTINCT agent_type"],
+				filters={"agent_type": ["!=", ""]}
 			)
-			return [{"value": c.test_category, "label": c.test_category} for c in categories]
+			return [{"value": a.agent_type, "label": a.agent_type} for a in agent_types]
 
-		elif filter_doc.field_name == "assigned_to":
-			# Get assigned users
-			users = frappe.db.get_all("Test Execution",
-				fields=["DISTINCT assigned_to"],
-				filters={"assigned_to": ["!=", ""]}
+		elif filter_doc.field_name == "triggered_by":
+			# Get users who triggered executions
+			users = frappe.db.get_all("Agent Execution Log",
+				fields=["DISTINCT triggered_by"],
+				filters={"triggered_by": ["!=", ""]}
 			)
-			return [{"value": u.assigned_to, "label": u.assigned_to} for u in users]
+			return [{"value": u.triggered_by, "label": u.triggered_by} for u in users]
 
 		return []
 

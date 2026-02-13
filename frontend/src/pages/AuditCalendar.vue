@@ -66,7 +66,7 @@
           <div class="p-1">
             <Button
               variant="solid"
-              theme="blue"
+              theme="gray"
               size="sm"
               @click="showCreateModal = true"
             >
@@ -515,7 +515,7 @@
               />
               <Button
                 variant="solid"
-                theme="blue"
+                theme="gray"
                 size="sm"
                 class="mt-2"
                 @click="applyBulkStatusUpdate"
@@ -1141,7 +1141,7 @@ const getAuditTypeTheme = (type) => {
 	const themes = {
 		Financial: "blue",
 		Operational: "green",
-		Compliance: "purple",
+		Compliance: "gray",
 		IT: "orange",
 		Integrated: "red",
 		"Special Investigation": "gray",

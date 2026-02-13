@@ -44,7 +44,7 @@ def execute():
         "Audit Engagement", "Audit Finding", "Audit Report",
         "Risk Assessment", "Compliance Requirement",
         "Tax Compliance Tracker", "Audit Universe",
-        "Annual Audit Plan", "Audit Test Library",
+        "Annual Audit Plan",
         "Integration Hub", "Data Period", "Board Report"
     ]
 

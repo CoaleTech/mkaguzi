@@ -86,7 +86,7 @@
         </Button>
         <Button
           variant="solid"
-          theme="orange"
+          theme="gray"
           size="sm"
           @click="$emit('create')"
         >

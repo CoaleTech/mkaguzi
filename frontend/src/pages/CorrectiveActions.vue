@@ -85,7 +85,7 @@
               <Button
                 variant="ghost"
                 size="sm"
-                color="red"
+                theme="red"
                 @click="deleteAction(row)"
               >
                 <TrashIcon class="h-4 w-4" />

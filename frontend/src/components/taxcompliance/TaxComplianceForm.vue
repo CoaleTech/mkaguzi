@@ -373,7 +373,7 @@
             />
 
             <!-- Compliance Score -->
-            <div class="border rounded-lg p-6 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div class="border rounded-lg p-6 bg-gradient-to-r from-blue-50 to-gray-50">
               <div class="flex items-center justify-between mb-4">
                 <h4 class="font-medium text-gray-700">Overall Compliance Score</h4>
                 <Badge
@@ -494,7 +494,7 @@
           <Button
             v-else
             variant="solid"
-            theme="green"
+            theme="gray"
             :loading="saving"
             @click="saveTracker"
           >

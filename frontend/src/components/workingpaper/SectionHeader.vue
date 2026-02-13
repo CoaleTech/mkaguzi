@@ -1,14 +1,14 @@
 <template>
   <div class="flex items-center space-x-4 mb-6">
     <div class="flex-shrink-0">
-      <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-        <component :is="iconComponent" class="h-6 w-6 text-purple-600" />
+      <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+        <component :is="iconComponent" class="h-6 w-6 text-gray-900" />
       </div>
     </div>
     <div class="flex-1">
       <div class="flex items-center space-x-3">
         <h3 class="text-xl font-bold text-gray-900">{{ title }}</h3>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
           Step {{ step }}
         </span>
       </div>

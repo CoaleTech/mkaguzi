@@ -4,8 +4,8 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
       <div>
         <div class="flex items-center space-x-3">
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <FileTextIcon class="h-6 w-6 text-purple-600" />
+          <div class="p-2 bg-gray-100 rounded-lg">
+            <FileTextIcon class="h-6 w-6 text-gray-900" />
           </div>
           <div>
             <h1 class="text-2xl font-bold text-gray-900">Working Papers</h1>
@@ -65,7 +65,7 @@
         <div class="p-1">
           <Button
             variant="solid"
-            theme="purple"
+            theme="gray"
             size="sm"
             @click="createNewWorkingPaper"
           >
@@ -93,7 +93,7 @@
               v-model="filters.search"
               type="text"
               placeholder="Search working papers..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             />
           </div>
 
@@ -101,7 +101,7 @@
           <div class="flex gap-2">
             <select
               v-model="filters.engagement"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Engagements</option>
               <option v-for="engagement in auditStore.engagements" :key="engagement.name" :value="engagement.name">
@@ -111,7 +111,7 @@
 
             <select
               v-model="filters.type"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Types</option>
               <option value="Planning Memo">Planning Memo</option>
@@ -127,7 +127,7 @@
 
             <select
               v-model="filters.status"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Status</option>
               <option value="Not Reviewed">Not Reviewed</option>
@@ -138,7 +138,7 @@
 
             <select
               v-model="filters.preparedBy"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Preparers</option>
               <option v-for="preparer in Array.from(new Set(workingPapers.map(p => p.prepared_by).filter(Boolean)))" :key="preparer" :value="preparer">
@@ -148,7 +148,7 @@
 
             <select
               v-model="filters.reviewer"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             >
               <option value="">All Reviewers</option>
               <option v-for="reviewer in Array.from(new Set(workingPapers.map(p => p.reviewed_by).filter(Boolean)))" :key="reviewer" :value="reviewer">
@@ -167,7 +167,7 @@
               :class="[
                 'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                 viewMode === 'table'
-                  ? 'bg-white text-purple-700 shadow-sm'
+                  ? 'bg-white text-gray-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               ]"
             >
@@ -179,7 +179,7 @@
               :class="[
                 'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                 viewMode === 'cards'
-                  ? 'bg-white text-purple-700 shadow-sm'
+                  ? 'bg-white text-gray-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               ]"
             >
@@ -211,7 +211,7 @@
           <Button
             @click="showCapacityModal = true"
             variant="solid"
-            class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
+            class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800"
           >
             <BarChart3Icon class="h-4 w-4" />
             Capacity
@@ -220,7 +220,7 @@
           <Button
             @click="createNewWorkingPaper"
             variant="solid"
-            class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
+            class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800"
           >
             <PlusIcon class="h-4 w-4" />
             New Paper
@@ -300,7 +300,7 @@
                 v-for="paper in paginatedPapers"
                 :key="paper.name"
                 class="hover:bg-gray-50 transition-colors"
-                :class="{ 'bg-purple-50': selectedPapers.includes(paper.name) }"
+                :class="{ 'bg-gray-50': selectedPapers.includes(paper.name) }"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <Checkbox
@@ -369,7 +369,7 @@
                       variant="ghost"
                       size="sm"
                       @click="duplicateWorkingPaper(paper)"
-                      theme="blue"
+                      theme="gray"
                     >
                       <CopyIcon class="h-4 w-4" />
                     </Button>
@@ -428,15 +428,15 @@
             v-for="paper in paginatedPapers"
             :key="paper.name"
             class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
-            :class="{ 'ring-2 ring-purple-500 bg-purple-50': selectedPapers.includes(paper.name) }"
+            :class="{ 'ring-2 ring-gray-900 bg-gray-50': selectedPapers.includes(paper.name) }"
             @click="togglePaperSelection(paper.name)"
           >
             <!-- Card Header -->
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-center space-x-3">
                 <div class="flex-shrink-0">
-                  <div class="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center">
-                    <FileTextIcon class="h-6 w-6 text-purple-600" />
+                  <div class="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <FileTextIcon class="h-6 w-6 text-gray-900" />
                   </div>
                 </div>
                 <div>
@@ -502,7 +502,7 @@
                   variant="ghost"
                   size="sm"
                   @click.stop="duplicateWorkingPaper(paper)"
-                  theme="blue"
+                  theme="gray"
                 >
                   <CopyIcon class="h-4 w-4" />
                 </Button>
@@ -567,7 +567,7 @@
           <Button
             @click="createNewWorkingPaper"
             variant="solid"
-            class="bg-purple-600 hover:bg-purple-700"
+            class="bg-gray-900 hover:bg-gray-800"
           >
             <PlusIcon class="h-4 w-4 mr-2" />
             Create Working Paper
@@ -678,10 +678,10 @@
 		<template #body-content>
 			<div class="space-y-4">
 				<div class="grid grid-cols-2 gap-4">
-					<div class="bg-purple-50 p-4 rounded-lg">
-						<h4 class="font-medium text-purple-900">Papers Under Review</h4>
-						<p class="text-2xl font-bold text-purple-600">{{ underReviewCount }}</p>
-						<p class="text-sm text-purple-700">Pending approval</p>
+					<div class="bg-gray-50 p-4 rounded-lg">
+						<h4 class="font-medium text-gray-900">Papers Under Review</h4>
+						<p class="text-2xl font-bold text-gray-900">{{ underReviewCount }}</p>
+						<p class="text-sm text-gray-700">Pending approval</p>
 					</div>
 					<div class="bg-green-50 p-4 rounded-lg">
 						<h4 class="font-medium text-green-900">Review Capacity</h4>
@@ -696,7 +696,7 @@
 							<span class="text-sm">{{ reviewer.name }}</span>
 							<div class="flex items-center space-x-2">
 								<div class="w-20 bg-gray-200 rounded-full h-2">
-									<div class="bg-purple-600 h-2 rounded-full" :style="{ width: `${reviewer.load}%` }"></div>
+									<div class="bg-gray-900 h-2 rounded-full" :style="{ width: `${reviewer.load}%` }"></div>
 								</div>
 								<span class="text-xs text-gray-600">{{ reviewer.load }}%</span>
 							</div>
@@ -1023,7 +1023,7 @@ const getTypeTheme = (type) => {
 		"Planning Memo": "blue",
 		"Risk Assessment": "red",
 		Walkthrough: "green",
-		"Test of Controls": "purple",
+		"Test of Controls": "gray",
 		"Substantive Test": "orange",
 		"Analytical Review": "yellow",
 		"Data Analytics": "indigo",

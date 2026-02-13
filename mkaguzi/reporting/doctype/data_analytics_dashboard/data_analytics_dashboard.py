@@ -160,14 +160,11 @@ def get_dashboard_data(dashboard_id, filters=None):
 def get_chart_data(chart, filters):
 	"""Get data for a specific chart"""
 	try:
-		if chart.data_source not in ["Test Execution", "Audit Test Library", "Database"]:
-			return {"error": "Unsupported data source type"}
-
 		# Build query based on chart configuration
-		if chart.data_source == "Test Execution":
-			data = get_test_execution_data(chart, filters)
-		elif chart.data_source == "Audit Test Library":
-			data = get_test_library_data(chart, filters)
+		if chart.data_source == "Agent Execution Log":
+			data = get_agent_execution_chart_data(chart, filters)
+		elif chart.data_source == "Audit Finding":
+			data = get_finding_chart_data(chart, filters)
 		else:
 			data = get_database_chart_data(chart, filters)
 
@@ -187,23 +184,20 @@ def get_chart_data(chart, filters):
 	except Exception as e:
 		return {"error": str(e)}
 
-def get_test_execution_data(chart, filters):
-	"""Get test execution data for charts"""
+def get_agent_execution_chart_data(chart, filters):
+	"""Get agent execution data for charts"""
 	query_filters = {}
 
-	# Apply dashboard filters
 	if filters:
 		if "date_from" in filters:
-			query_filters["actual_start_date"] = [">=", filters["date_from"]]
+			query_filters["start_time"] = [">=", filters["date_from"]]
 		if "date_to" in filters:
-			query_filters["actual_end_date"] = ["<=", filters["date_to"]]
+			query_filters["end_time"] = ["<=", filters["date_to"]]
 		if "status" in filters:
 			query_filters["status"] = filters["status"]
 
-	# Build query based on chart type
 	if chart.chart_type == "Bar Chart":
-		# Status distribution
-		data = frappe.db.get_all("Test Execution",
+		data = frappe.db.get_all("Agent Execution Log",
 			filters=query_filters,
 			fields=["status", "COUNT(*) as count"],
 			group_by="status"
@@ -211,39 +205,48 @@ def get_test_execution_data(chart, filters):
 		return [{"label": d.status, "value": d.count} for d in data]
 
 	elif chart.chart_type == "Line Chart":
-		# Execution trends over time
 		data = frappe.db.sql("""
-			SELECT DATE(actual_start_date) as date, COUNT(*) as count
-			FROM `tabTest Execution`
-			WHERE actual_start_date IS NOT NULL
-			GROUP BY DATE(actual_start_date)
+			SELECT DATE(start_time) as date, COUNT(*) as count
+			FROM `tabAgent Execution Log`
+			WHERE start_time IS NOT NULL
+			GROUP BY DATE(start_time)
 			ORDER BY date
 		""", as_dict=True)
 		return [{"date": str(d.date), "executions": d.count} for d in data]
 
+	elif chart.chart_type == "Pie Chart":
+		data = frappe.db.get_all("Agent Execution Log",
+			filters=query_filters,
+			fields=["agent_type", "COUNT(*) as count"],
+			group_by="agent_type"
+		)
+		return [{"label": d.agent_type, "value": d.count} for d in data]
+
 	return []
 
-def get_test_library_data(chart, filters):
-	"""Get test library data for charts"""
+def get_finding_chart_data(chart, filters):
+	"""Get audit finding data for charts"""
+	query_filters = {}
+
+	if filters:
+		if "status" in filters:
+			query_filters["finding_status"] = filters["status"]
+
 	if chart.chart_type == "Pie Chart":
-		# Test categories distribution
-		data = frappe.db.get_all("Audit Test Library",
-			filters={"status": "Active"},
-			fields=["test_category", "COUNT(*) as count"],
-			group_by="test_category"
+		data = frappe.db.get_all("Audit Finding",
+			filters=query_filters,
+			fields=["severity", "COUNT(*) as count"],
+			group_by="severity"
 		)
-		return [{"label": d.test_category, "value": d.count} for d in data]
+		return [{"label": d.severity, "value": d.count} for d in data]
 
 	elif chart.chart_type == "Bar Chart":
-		# Usage statistics
-		data = frappe.db.sql("""
-			SELECT test_name, usage_count
-			FROM `tabAudit Test Library`
-			WHERE status = 'Active' AND usage_count > 0
-			ORDER BY usage_count DESC
-			LIMIT 10
-		""", as_dict=True)
-		return [{"test": d.test_name, "usage": d.usage_count} for d in data]
+		data = frappe.db.get_all("Audit Finding",
+			filters=query_filters,
+			fields=["finding_category", "COUNT(*) as count"],
+			group_by="finding_category"
+		)
+		return [{"label": d.finding_category, "value": d.count} for d in data]
 
 	return []
 
@@ -322,7 +325,7 @@ def create_default_dashboard():
 		dashboard = frappe.new_doc("Data Analytics Dashboard")
 		dashboard.dashboard_name = "Audit Analytics Overview"
 		dashboard.dashboard_type = "Public"
-		dashboard.description = "Default dashboard showing key audit analytics and test execution metrics"
+		dashboard.description = "Default dashboard showing key audit analytics and agent execution metrics"
 		dashboard.is_active = 1
 		dashboard.is_default = 1
 		dashboard.auto_refresh_interval = 300  # 5 minutes
@@ -331,23 +334,23 @@ def create_default_dashboard():
 
 		# Add data sources
 		dashboard.append("data_sources", {
-			"data_source_name": "Test Executions",
-			"data_source_type": "Test Execution",
+			"data_source_name": "Agent Executions",
+			"data_source_type": "Agent Execution Log",
 			"refresh_interval": 60
 		})
 
 		dashboard.append("data_sources", {
-			"data_source_name": "Test Library",
-			"data_source_type": "Audit Test Library",
+			"data_source_name": "Audit Findings",
+			"data_source_type": "Audit Finding",
 			"refresh_interval": 300
 		})
 
 		# Add charts
 		dashboard.append("dashboard_charts", {
-			"chart_name": "Test Status Distribution",
+			"chart_name": "Agent Execution Status",
 			"chart_type": "Pie Chart",
-			"data_source": "Test Executions",
-			"chart_title": "Test Execution Status Distribution",
+			"data_source": "Agent Executions",
+			"chart_title": "Agent Execution Status Distribution",
 			"width": 6,
 			"height": 4,
 			"position_x": 0,
@@ -357,8 +360,8 @@ def create_default_dashboard():
 		dashboard.append("dashboard_charts", {
 			"chart_name": "Execution Trends",
 			"chart_type": "Line Chart",
-			"data_source": "Test Executions",
-			"chart_title": "Test Execution Trends",
+			"data_source": "Agent Executions",
+			"chart_title": "Agent Execution Trends",
 			"width": 6,
 			"height": 4,
 			"position_x": 6,
@@ -366,10 +369,10 @@ def create_default_dashboard():
 		})
 
 		dashboard.append("dashboard_charts", {
-			"chart_name": "Test Categories",
+			"chart_name": "Finding Severity",
 			"chart_type": "Bar Chart",
-			"data_source": "Test Library",
-			"chart_title": "Test Library Categories",
+			"data_source": "Audit Findings",
+			"chart_title": "Findings by Severity",
 			"width": 6,
 			"height": 4,
 			"position_x": 0,

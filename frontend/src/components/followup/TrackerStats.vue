@@ -78,7 +78,7 @@
           </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">Not Escalated</span>
-            <Badge theme="green">{{ notEscalatedCount }}</Badge>
+            <Badge theme="gray">{{ notEscalatedCount }}</Badge>
           </div>
           <div class="mt-4 pt-4 border-t">
             <div class="text-xs text-gray-500 mb-2">Escalation by Level</div>
@@ -191,7 +191,7 @@ const statsCards = computed(() => {
   return [
     { label: 'Total Trackers', value: total, icon: ListChecks, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', filterKey: null, filterValue: null },
     { label: 'Active', value: active, icon: Clock, bgColor: 'bg-green-100', iconColor: 'text-green-600', filterKey: 'status', filterValue: 'Active', active: props.activeFilter === 'Active' },
-    { label: 'Completed', value: completed, icon: CheckCircle, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', filterKey: 'status', filterValue: 'Completed', active: props.activeFilter === 'Completed' },
+    { label: 'Completed', value: completed, icon: CheckCircle, bgColor: 'bg-gray-100', iconColor: 'text-gray-600', filterKey: 'status', filterValue: 'Completed', active: props.activeFilter === 'Completed' },
     { label: 'On Hold', value: onHold, icon: Pause, bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', filterKey: 'status', filterValue: 'On Hold', active: props.activeFilter === 'On Hold' },
     { label: 'Cancelled', value: cancelled, icon: XCircle, bgColor: 'bg-gray-100', iconColor: 'text-gray-600', filterKey: 'status', filterValue: 'Cancelled', active: props.activeFilter === 'Cancelled' },
   ]
@@ -286,7 +286,7 @@ const followUpTypeDistribution = computed(() => {
   const colors = [
     'bg-blue-500',
     'bg-green-500',
-    'bg-purple-500',
+    'bg-gray-500',
     'bg-orange-500',
     'bg-indigo-500',
   ]

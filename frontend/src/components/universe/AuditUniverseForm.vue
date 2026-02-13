@@ -17,7 +17,7 @@
                 v-for="(section, index) in sections"
                 :key="section.id"
                 class="flex items-center space-x-2 p-2 rounded-lg cursor-pointer transition-all"
-                :class="currentSection === index ? 'bg-blue-100 border border-blue-300' : 'hover:bg-gray-100'"
+                :class="currentSection === index ? 'bg-gray-100 border border-gray-300' : 'hover:bg-gray-100'"
                 @click="goToSection(index)"
               >
                 <div
@@ -38,11 +38,11 @@
             <div class="mt-4 p-3 bg-white rounded-lg border border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-700">Overall Progress</span>
-                <span class="text-xs font-semibold text-blue-600">{{ overallProgress }}%</span>
+                <span class="text-xs font-semibold text-gray-900">{{ overallProgress }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-1.5">
                 <div
-                  class="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+                  class="bg-gray-900 h-1.5 rounded-full transition-all duration-500"
                   :style="{ width: `${overallProgress}%` }"
                 ></div>
               </div>
@@ -64,7 +64,7 @@
                 title="Basic Information"
                 description="Entity identification and classification"
                 :sectionNumber="1"
-                color="blue"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -146,7 +146,7 @@
                   <input
                     type="checkbox"
                     v-model="form.is_active"
-                    class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                   />
                   <label class="text-sm text-gray-700">Entity is Active</label>
                 </div>
@@ -159,7 +159,7 @@
                 title="Risk Assessment"
                 description="Inherent and residual risk evaluation"
                 :sectionNumber="2"
-                color="red"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -259,7 +259,7 @@
                 title="Risk Factors"
                 description="Identified risk factors for this entity"
                 :sectionNumber="3"
-                color="orange"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -278,7 +278,7 @@
                   <div
                     v-for="(factor, index) in form.risk_factors"
                     :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
                   >
                     <div class="flex items-start justify-between mb-4">
                       <Badge :variant="getRiskBadgeVariant(factor.risk_impact)" size="sm">
@@ -370,7 +370,7 @@
                 title="Key Controls"
                 description="Controls mitigating identified risks"
                 :sectionNumber="4"
-                color="green"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -389,7 +389,7 @@
                   <div
                     v-for="(control, index) in form.key_controls"
                     :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
                   >
                     <div class="flex items-start justify-between mb-4">
                       <div class="flex items-center gap-2">
@@ -495,7 +495,7 @@
                 title="Audit Planning"
                 description="Audit frequency and scheduling information"
                 :sectionNumber="5"
-                color="purple"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -546,7 +546,7 @@
                     <input
                       type="checkbox"
                       v-model="form.mandatory_audit"
-                      class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                     />
                     <label class="text-sm text-gray-700">Mandatory Audit (Regulatory)</label>
                   </div>
@@ -638,7 +638,7 @@
           <Button
             v-if="currentSection < sections.length - 1"
             variant="solid"
-            theme="blue"
+            theme="gray"
             @click="nextSection"
           >
             Next
@@ -648,7 +648,7 @@
           <Button
             v-else
             variant="solid"
-            theme="blue"
+            theme="gray"
             @click="submitForm"
             :loading="submitting"
             :disabled="!isFormValid"

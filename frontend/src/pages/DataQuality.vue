@@ -63,13 +63,13 @@
 
       <div class="bg-white rounded-lg border border-gray-200 p-6">
         <div class="flex items-center">
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <ShieldIcon class="h-6 w-6 text-purple-600" />
+          <div class="p-2 bg-gray-100 rounded-lg">
+            <ShieldIcon class="h-6 w-6 text-gray-900" />
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Validation Rules</p>
             <p class="text-2xl font-bold text-gray-900">{{ validationRules.length }}</p>
-            <p class="text-xs text-purple-600 mt-1">{{ activeRules }} active</p>
+            <p class="text-xs text-gray-900 mt-1">{{ activeRules }} active</p>
           </div>
         </div>
       </div>

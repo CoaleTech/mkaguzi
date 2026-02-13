@@ -43,14 +43,14 @@
     </div>
 
     <!-- Due This Quarter Card -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200 p-5 hover:shadow-lg transition-all duration-200">
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-5 hover:shadow-lg transition-all duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Due This Quarter</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ stats.dueThisQuarter || 0 }}</p>
-          <p class="text-xs text-purple-600 mt-1">Upcoming audits</p>
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Due This Quarter</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats.dueThisQuarter || 0 }}</p>
+          <p class="text-xs text-gray-600 mt-1">Upcoming audits</p>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm">
           <CalendarIcon class="h-7 w-7 text-white" />
         </div>
       </div>
@@ -137,9 +137,9 @@
         <p class="text-2xl font-bold text-amber-600">{{ stats.dueThisMonth || 0 }}</p>
         <p class="text-xs text-amber-700">Due This Month</p>
       </div>
-      <div class="text-center p-4 bg-purple-50 rounded-lg">
-        <p class="text-2xl font-bold text-purple-600">{{ stats.dueThisQuarter || 0 }}</p>
-        <p class="text-xs text-purple-700">Due This Quarter</p>
+      <div class="text-center p-4 bg-gray-50 rounded-lg">
+        <p class="text-2xl font-bold text-gray-900">{{ stats.dueThisQuarter || 0 }}</p>
+        <p class="text-xs text-gray-700">Due This Quarter</p>
       </div>
       <div class="text-center p-4 bg-blue-50 rounded-lg">
         <p class="text-2xl font-bold text-blue-600">{{ stats.mandatory || 0 }}</p>

@@ -92,7 +92,7 @@
       <span class="text-xs text-gray-500">Active filters:</span>
       <Badge
         v-if="localFilters.search"
-        theme="blue"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('search')"
       >
@@ -101,7 +101,7 @@
       </Badge>
       <Badge
         v-if="localFilters.taxPeriod"
-        theme="purple"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('taxPeriod')"
       >
@@ -110,7 +110,7 @@
       </Badge>
       <Badge
         v-if="localFilters.taxType"
-        theme="green"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('taxType')"
       >
@@ -128,7 +128,7 @@
       </Badge>
       <Badge
         v-if="localFilters.scoreRange"
-        theme="orange"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('scoreRange')"
       >
@@ -137,7 +137,7 @@
       </Badge>
       <Badge
         v-if="localFilters.hasIssues"
-        theme="red"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('hasIssues')"
       >

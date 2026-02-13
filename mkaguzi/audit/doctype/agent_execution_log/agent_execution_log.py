@@ -17,6 +17,7 @@ class AgentExecutionLog(Document):
         self.validate_status()
         self.calculate_duration()
         self.set_agent_name()
+        self.calculate_test_summary()
 
     def before_save(self):
         """Actions before saving"""
@@ -117,6 +118,8 @@ class AgentExecutionLog(Document):
             self.finding_ids = ','.join(finding_ids)
 
         self.calculate_performance_metrics()
+        self.calculate_test_summary()
+        self.link_to_working_paper()
         self.save()
 
     def mark_as_failed(self, error_message=None, error_type=None, error_traceback=None):
@@ -147,6 +150,83 @@ class AgentExecutionLog(Document):
                 self.records_per_second = round(records_processed / self.duration_seconds, 2)
 
         self.save()
+
+    def calculate_test_summary(self):
+        """Auto-calculate pass/fail counts from test_evidence child table"""
+        if not self.test_evidence:
+            return
+
+        self.total_tests = len(self.test_evidence)
+        self.passed_tests = sum(1 for t in self.test_evidence if t.test_status == 'Pass')
+        self.failed_tests = sum(1 for t in self.test_evidence if t.test_status == 'Fail')
+
+        if self.total_tests > 0:
+            self.exception_rate = round((self.failed_tests / self.total_tests) * 100, 2)
+        else:
+            self.exception_rate = 0
+
+    def link_to_working_paper(self):
+        """Create or update associated Working Paper on completion"""
+        if self.status != 'Completed' or not self.engagement_reference:
+            return
+
+        if self.working_paper_reference:
+            return  # Already linked
+
+        try:
+            # Determine working paper type based on agent type
+            wp_type_map = {
+                'Financial': 'Data Analytics',
+                'Compliance': 'Test of Controls',
+                'Risk': 'Risk Assessment',
+                'Discovery': 'Inquiry',
+                'Notification': 'Other',
+                'Asset': 'Inspection'
+            }
+            wp_type = wp_type_map.get(self.agent_type, 'Other')
+
+            # Build evidence summary from test_evidence
+            evidence_summary = []
+            if self.test_evidence:
+                for t in self.test_evidence:
+                    evidence_summary.append(f"- {t.test_name}: {t.test_status}")
+
+            description = (
+                f"Auto-generated from {self.agent_name or self.agent_type} agent execution.\n"
+                f"Task: {self.task_name or self.task_type}\n"
+                f"Records Processed: {self.records_processed or 0}\n"
+                f"Findings Generated: {self.total_findings or 0}\n"
+            )
+            if evidence_summary:
+                description += "\nTest Evidence:\n" + "\n".join(evidence_summary)
+
+            wp = frappe.get_doc({
+                'doctype': 'Working Paper',
+                'engagement_reference': self.engagement_reference,
+                'wp_type': wp_type,
+                'title': f"{self.agent_name or self.agent_type} - {self.task_name or self.task_type}",
+                'description': description,
+                'prepared_by': self.created_by or frappe.session.user,
+                'preparation_date': self.end_time or datetime.now(),
+                'status': 'Draft',
+            })
+            wp.insert(ignore_permissions=True)
+            frappe.db.commit()
+
+            self.working_paper_reference = wp.name
+
+            # Link generated findings to the Working Paper
+            if self.finding_ids:
+                for fid in self.finding_ids.split(','):
+                    fid = fid.strip()
+                    if fid and frappe.db.exists('Audit Finding', fid):
+                        frappe.db.set_value('Audit Finding', fid, 'working_paper_reference', wp.name)
+
+        except Exception as e:
+            frappe.log_error(
+                message=f"Failed to create Working Paper for execution {self.name}: {str(e)}",
+                title="Agent Working Paper Creation Error"
+            )
 
 
 # whitelisted functions for API access

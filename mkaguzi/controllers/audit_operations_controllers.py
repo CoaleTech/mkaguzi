@@ -335,7 +335,7 @@ class AuditExecutionController:
 			self.create_audit_trail(doc)
 
 			# Initialize test executions
-			self.initialize_test_executions(doc)
+			self.initialize_planned_tests(doc)
 
 		except Exception as e:
 			frappe.log_error(f"Audit Execution Submit Error: {str(e)}")
@@ -373,8 +373,8 @@ class AuditExecutionController:
 		except Exception as e:
 			frappe.log_error(f"Audit Trail Creation Error: {str(e)}")
 
-	def initialize_test_executions(self, doc):
-		"""Initialize test executions from plan"""
+	def initialize_planned_tests(self, doc):
+		"""Initialize planned tests from audit plan"""
 		try:
 			plan = frappe.get_doc('Audit Plan', doc.audit_plan)
 
@@ -399,7 +399,7 @@ class AuditExecutionController:
 			doc.save(ignore_permissions=True)
 
 		except Exception as e:
-			frappe.log_error(f"Test Execution Initialization Error: {str(e)}")
+			frappe.log_error(f"Planned Tests Initialization Error: {str(e)}")
 
 	def update_test_status(self, test_id, status, notes=None, actual_hours=None):
 		"""Update test status in execution"""

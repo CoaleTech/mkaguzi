@@ -1,14 +1,14 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
     <!-- Total Working Papers Card -->
-    <div class="bg-purple-50 rounded-xl border border-purple-200 p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-gray-50 rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Total Papers</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ totalWorkingPapers }}</p>
-          <p class="text-xs text-purple-600 mt-1">Active documentation</p>
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Total Papers</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ totalWorkingPapers }}</p>
+          <p class="text-xs text-gray-600 mt-1">Active documentation</p>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm">
           <FileTextIcon class="h-7 w-7 text-white" />
         </div>
       </div>

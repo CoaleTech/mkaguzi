@@ -17,7 +17,7 @@
                 v-for="(section, index) in sections"
                 :key="section.id"
                 class="flex items-center space-x-2 p-2 rounded-lg cursor-pointer transition-all"
-                :class="currentSection === index ? 'bg-orange-100 border border-orange-300' : 'hover:bg-gray-100'"
+                :class="currentSection === index ? 'bg-gray-100 border border-gray-300' : 'hover:bg-gray-100'"
                 @click="goToSection(index)"
               >
                 <div
@@ -38,11 +38,11 @@
             <div class="mt-4 p-3 bg-white rounded-lg border border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-700">Overall Progress</span>
-                <span class="text-xs font-semibold text-orange-600">{{ overallProgress }}%</span>
+                <span class="text-xs font-semibold text-gray-900">{{ overallProgress }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-1.5">
                 <div
-                  class="bg-orange-600 h-1.5 rounded-full transition-all duration-500"
+                  class="bg-gray-900 h-1.5 rounded-full transition-all duration-500"
                   :style="{ width: `${overallProgress}%` }"
                 ></div>
               </div>
@@ -64,7 +64,7 @@
                 title="Basic Information"
                 description="Action plan identification and status"
                 :sectionNumber="1"
-                color="orange"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -153,7 +153,7 @@
                 title="Plan Details"
                 description="Action description, root cause, and expected outcomes"
                 :sectionNumber="2"
-                color="blue"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
@@ -211,7 +211,7 @@
                 title="Responsibility"
                 description="Assign accountability and supporting team"
                 :sectionNumber="3"
-                color="green"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -264,7 +264,7 @@
                 title="Resources"
                 description="Budget and resource allocation"
                 :sectionNumber="4"
-                color="amber"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -305,7 +305,7 @@
                 title="Milestones"
                 description="Track progress with key milestones"
                 :sectionNumber="5"
-                color="purple"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -324,7 +324,7 @@
                   <div
                     v-for="(milestone, index) in form.milestones"
                     :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
                   >
                     <div class="flex items-start justify-between mb-4">
                       <Badge :variant="getMilestoneStatusVariant(milestone.status)" size="sm">
@@ -396,7 +396,7 @@
                 title="Progress Tracking"
                 description="Track overall progress and updates"
                 :sectionNumber="6"
-                color="cyan"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -443,7 +443,7 @@
                 title="Issues & Risks"
                 description="Document issues and mitigation actions"
                 :sectionNumber="7"
-                color="red"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
@@ -474,7 +474,7 @@
                     <input
                       type="checkbox"
                       v-model="form.escalation_required"
-                      class="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                      class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                     />
                     <label class="text-sm text-gray-700">Escalation Required</label>
                   </div>
@@ -496,7 +496,7 @@
                 title="Verification & Closure"
                 description="Verification, approval, and closure details"
                 :sectionNumber="8"
-                color="orange"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
@@ -511,7 +511,7 @@
                       <input
                         type="checkbox"
                         v-model="form.verification_required"
-                        class="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                        class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                       />
                       <label class="text-sm text-gray-700">Verification Required</label>
                     </div>
@@ -563,7 +563,7 @@
                       <input
                         type="checkbox"
                         v-model="form.approval_required"
-                        class="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                        class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                       />
                       <label class="text-sm text-gray-700">Approval Required</label>
                     </div>
@@ -659,7 +659,7 @@
           <Button
             v-if="currentSection < sections.length - 1"
             variant="solid"
-            theme="orange"
+            theme="gray"
             @click="nextSection"
           >
             Next
@@ -669,7 +669,7 @@
           <Button
             v-else
             variant="solid"
-            theme="orange"
+            theme="gray"
             @click="submitForm"
             :loading="submitting"
             :disabled="!isFormValid"

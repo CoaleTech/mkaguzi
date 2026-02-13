@@ -20,7 +20,7 @@
                 class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all"
                 :class="[
                   activeSection === section.id
-                    ? 'bg-green-100 border border-green-300 text-green-800'
+                    ? 'bg-gray-100 border border-gray-300 text-gray-800'
                     : 'hover:bg-gray-100 text-gray-700'
                 ]"
               >
@@ -42,11 +42,11 @@
             <div class="mt-6 p-4 bg-white rounded-lg border border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium text-gray-700">Progress</span>
-                <span class="text-sm font-bold text-green-600">{{ formProgress }}%</span>
+                <span class="text-sm font-bold text-gray-900">{{ formProgress }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  class="bg-green-500 h-2 rounded-full transition-all duration-300"
+                  class="bg-gray-900 h-2 rounded-full transition-all duration-300"
                   :style="{ width: `${formProgress}%` }"
                 ></div>
               </div>
@@ -80,7 +80,7 @@
                       v-model="form.engagement_id"
                       type="text"
                       placeholder="Auto-generated if left blank"
-                      class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                      class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                       :class="errors.engagement_id ? 'border-red-300' : 'border-gray-300'"
                     />
                     <p v-if="errors.engagement_id" class="mt-1 text-xs text-red-500">{{ errors.engagement_id }}</p>
@@ -94,7 +94,7 @@
                     </label>
                     <select
                       v-model="form.status"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     >
                       <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
@@ -109,7 +109,7 @@
                     </label>
                     <select
                       v-model="form.audit_type"
-                      class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                      class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                       :class="errors.audit_type ? 'border-red-300' : 'border-gray-300'"
                     >
                       <option value="">Select audit type</option>
@@ -130,7 +130,7 @@
                     v-model="form.engagement_title"
                     type="text"
                     placeholder="Enter a descriptive engagement title"
-                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                     :class="errors.engagement_title ? 'border-red-300' : 'border-gray-300'"
                   />
                   <p v-if="errors.engagement_title" class="mt-1 text-xs text-red-500">{{ errors.engagement_title }}</p>
@@ -198,7 +198,7 @@
                     v-model="form.audit_objectives"
                     rows="4"
                     placeholder="Describe the primary objectives of this audit engagement..."
-                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                     :class="errors.audit_objectives ? 'border-red-300' : 'border-gray-300'"
                   ></textarea>
                   <p v-if="errors.audit_objectives" class="mt-1 text-xs text-red-500">{{ errors.audit_objectives }}</p>
@@ -213,7 +213,7 @@
                     v-model="form.audit_scope"
                     rows="4"
                     placeholder="Define the boundaries and areas covered by this audit..."
-                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                     :class="errors.audit_scope ? 'border-red-300' : 'border-gray-300'"
                   ></textarea>
                   <p v-if="errors.audit_scope" class="mt-1 text-xs text-red-500">{{ errors.audit_scope }}</p>
@@ -252,7 +252,7 @@
                     </label>
                     <select
                       v-model="form.audit_approach"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     >
                       <option v-for="opt in auditApproachOptions" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
@@ -285,7 +285,7 @@
                     </label>
                     <select
                       v-model="form.sampling_methodology"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     >
                       <option v-for="opt in samplingMethodOptions" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
@@ -342,23 +342,23 @@
                   <h4 class="text-sm font-semibold text-gray-900 mb-4">Engagement Timeline</h4>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Planning Phase -->
-                    <div class="bg-blue-50 rounded-lg p-4">
-                      <h5 class="text-sm font-medium text-blue-800 mb-3">Planning Phase</h5>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                      <h5 class="text-sm font-medium text-gray-800 mb-3">Planning Phase</h5>
                       <div class="space-y-3">
                         <div>
-                          <label class="block text-xs font-medium text-blue-700 mb-1">Start Date</label>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
                           <input
                             v-model="form.planning_start"
                             type="date"
-                            class="w-full px-2 py-1.5 text-sm border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                         </div>
                         <div>
-                          <label class="block text-xs font-medium text-blue-700 mb-1">End Date</label>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">End Date</label>
                           <input
                             v-model="form.planning_end"
                             type="date"
-                            class="w-full px-2 py-1.5 text-sm border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                         </div>
                       </div>
@@ -388,23 +388,23 @@
                     </div>
 
                     <!-- Reporting Phase -->
-                    <div class="bg-green-50 rounded-lg p-4">
-                      <h5 class="text-sm font-medium text-green-800 mb-3">Reporting Phase</h5>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                      <h5 class="text-sm font-medium text-gray-800 mb-3">Reporting Phase</h5>
                       <div class="space-y-3">
                         <div>
-                          <label class="block text-xs font-medium text-green-700 mb-1">Start Date</label>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
                           <input
                             v-model="form.reporting_start"
                             type="date"
-                            class="w-full px-2 py-1.5 text-sm border border-green-200 rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            class="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                         </div>
                         <div>
-                          <label class="block text-xs font-medium text-green-700 mb-1">End Date</label>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">End Date</label>
                           <input
                             v-model="form.reporting_end"
                             type="date"
-                            class="w-full px-2 py-1.5 text-sm border border-green-200 rounded focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            class="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                         </div>
                       </div>
@@ -449,7 +449,7 @@
                       min="0"
                       step="0.5"
                       placeholder="0"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -572,7 +572,7 @@
                       v-model="form.working_papers_folder"
                       type="text"
                       placeholder="Enter folder path or reference"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -662,7 +662,7 @@
           </Button>
           <Button
             variant="solid"
-            theme="green"
+            theme="gray"
             @click="handleSubmit"
             :loading="isSaving"
           >

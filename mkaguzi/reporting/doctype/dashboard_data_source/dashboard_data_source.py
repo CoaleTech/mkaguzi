@@ -22,8 +22,8 @@ class DashboardDataSource(Document):
 		elif self.data_source_type == "API":
 			if not self.api_endpoint:
 				frappe.throw(_("API endpoint is required"))
-		elif self.data_source_type in ["Test Execution", "Audit Test Library"]:
-			# These are internal DocTypes, no additional validation needed
+		elif self.data_source_type in ["ERPNext Query", "Agent Execution Log", "Audit Finding"]:
+			# These are internal data sources, no additional validation needed
 			pass
 		else:
 			frappe.throw(_("Unsupported data source type"))

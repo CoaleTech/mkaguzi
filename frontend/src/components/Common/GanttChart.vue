@@ -285,7 +285,7 @@
           <span class="text-sm text-gray-600">Overdue</span>
         </div>
         <div class="flex items-center space-x-2">
-          <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+          <div class="w-3 h-3 rounded-full bg-gray-900"></div>
           <span class="text-sm text-gray-600">Milestone</span>
         </div>
       </div>
@@ -451,7 +451,7 @@ const getTaskStatusVariant = (status) => {
 }
 
 const getTaskBarColor = (task) => {
-	if (task.type === "milestone") return "bg-purple-500"
+	if (task.type === "milestone") return "bg-gray-900"
 	if (task.status === "overdue") return "bg-red-500"
 	return getTaskColor(task).replace("bg-", "bg-opacity-80 bg-")
 }

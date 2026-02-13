@@ -156,7 +156,7 @@
     <!-- Action buttons -->
     <div class="mt-4 flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <Button variant="solid" size="sm" theme="blue" @click="addRow">
+        <Button variant="solid" size="sm" theme="gray" @click="addRow">
           <PlusIcon class="h-4 w-4 mr-2" />
           Add {{ modalTitle || 'Row' }}
         </Button>

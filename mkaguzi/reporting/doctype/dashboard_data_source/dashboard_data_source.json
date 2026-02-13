@@ -25,7 +25,7 @@
    "fieldname": "data_source_type",
    "fieldtype": "Select",
    "label": "Data Source Type",
-   "options": "Test Execution\nAudit Test Library\nERPNext Query",
+   "options": "ERPNext Query\nAgent Execution Log\nAudit Finding",
    "reqd": 1
   },
   {

@@ -14,77 +14,6 @@ from ..utils.erpnext_queries import (
     get_payment_entries, get_journal_entries, get_stock_ledger_entries, get_items
 )
 
-@frappe.whitelist()
-def execute_test(test_id, parameters):
-    """
-    Execute an audit test
-    """
-    try:
-        # Get test configuration
-        test = frappe.get_doc('Audit Test Library', test_id)
-
-        # Parse parameters
-        params = frappe.parse_json(parameters) if isinstance(parameters, str) else parameters
-
-        # Create execution record
-        execution = frappe.get_doc({
-            'doctype': 'Test Execution',
-            'test_reference': test_id,
-            'execution_date': datetime.now(),
-            'executed_by': frappe.session.user,
-            'status': 'Running'
-        })
-
-        # Add parameters
-        for param_name, param_value in params.items():
-            execution.append('test_parameters_used', {
-                'parameter_name': param_name,
-                'parameter_value': str(param_value)
-            })
-
-        execution.insert()
-        frappe.db.commit()
-
-        # Execute test based on test type
-        if test.test_category == 'Inventory':
-            results = execute_inventory_test(test, params)
-        elif test.test_category == 'Financial':
-            results = execute_financial_test(test, params)
-        elif test.test_category == 'Sales':
-            results = execute_sales_test(test, params)
-        elif test.test_category == 'Procurement':
-            results = execute_procurement_test(test, params)
-        else:
-            results = execute_generic_test(test, params)
-
-        # Update execution with results
-        execution.status = 'Completed'
-        execution.total_records_analyzed = results.get('total_records', 0)
-        execution.exceptions_found = results.get('exceptions_count', 0)
-        execution.result_summary = results.get('summary', '')
-        execution.result_data = frappe.as_json(results.get('data', []))
-
-        # Add exceptions
-        for exc in results.get('exceptions', []):
-            execution.append('exception_details', exc)
-
-        execution.save()
-        frappe.db.commit()
-
-        return {
-            'success': True,
-            'execution_id': execution.name,
-            'results': results
-        }
-
-    except Exception as e:
-        frappe.log_error(frappe.get_traceback(), _("Test Execution Error"))
-        if 'execution' in locals():
-            execution.status = 'Failed'
-            execution.save()
-        frappe.throw(str(e))
-
-
 def execute_inventory_test(test, params):
     """
     Execute inventory-specific tests
@@ -902,20 +831,3 @@ def execute_generic_test(test, params):
     }
 
 
-@frappe.whitelist()
-def get_test_results(execution_id):
-    """
-    Retrieve test execution results
-    """
-    execution = frappe.get_doc('Test Execution', execution_id)
-
-    return {
-        'execution_id': execution.name,
-        'test_name': execution.test_reference,
-        'status': execution.status,
-        'total_records': execution.total_records_analyzed,
-        'exceptions_count': execution.exceptions_found,
-        'summary': execution.result_summary,
-        'data': frappe.parse_json(execution.result_data) if execution.result_data else [],
-        'exceptions': [exc.as_dict() for exc in execution.exception_details]
-    }

@@ -966,7 +966,7 @@ watch(
 }
 
 .condition-node {
-  border-color: #8b5cf6;
+  border-color: #404040;
   background: #faf5ff;
 }
 

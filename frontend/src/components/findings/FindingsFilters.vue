@@ -164,7 +164,7 @@
         v-for="pill in activeFilterPills"
         :key="pill.key"
         variant="subtle"
-        theme="blue"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter(pill.key)"
       >

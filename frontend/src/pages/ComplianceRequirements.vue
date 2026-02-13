@@ -372,7 +372,7 @@ const getRegulatoryBodyVariant = (body) => {
 	const variants = {
 		KRA: "blue",
 		NSSF: "green",
-		NHIF: "purple",
+		NHIF: "gray",
 		NEMA: "green",
 		"County Government": "orange",
 	}
@@ -384,7 +384,7 @@ const getCategoryVariant = (category) => {
 		Tax: "red",
 		"Social Security": "blue",
 		Environmental: "green",
-		Licensing: "purple",
+		Licensing: "gray",
 		"Health & Safety": "orange",
 	}
 	return variants[category] || "gray"

@@ -18,8 +18,6 @@ def generate_audit_report(report_type, filters=None):
             return generate_executive_summary_report(filters)
         elif report_type == 'detailed_findings':
             return generate_detailed_findings_report(filters)
-        elif report_type == 'test_execution_summary':
-            return generate_test_execution_summary_report(filters)
         elif report_type == 'compliance_status':
             return generate_compliance_status_report(filters)
         elif report_type == 'risk_assessment':
@@ -68,17 +66,6 @@ def generate_executive_summary_report(filters=None):
             WHERE audit_execution = %s
         """, (execution.name,), as_dict=True)[0]
 
-        # Get test execution summary
-        test_summary = frappe.db.sql("""
-            SELECT
-                COUNT(*) as total_tests,
-                SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed_tests,
-                SUM(planned_hours) as planned_hours,
-                SUM(actual_hours) as actual_hours
-            FROM `tabExecuted Test`
-            WHERE parent = %s
-        """, (execution.name,), as_dict=True)[0]
-
         # Get compliance summary
         compliance_summary = frappe.db.sql("""
             SELECT
@@ -89,7 +76,6 @@ def generate_executive_summary_report(filters=None):
         """, (execution.execution_start_date, execution.execution_end_date or datetime.now()), as_dict=True)[0]
 
         # Calculate key metrics
-        completion_rate = (test_summary.completed_tests / test_summary.total_tests * 100) if test_summary.total_tests > 0 else 0
         resolution_rate = (findings_summary.resolved_findings / findings_summary.total_findings * 100) if findings_summary.total_findings > 0 else 0
 
         report_data = {
@@ -106,14 +92,8 @@ def generate_executive_summary_report(filters=None):
                 'low_severity_findings': findings_summary.low_severity,
                 'open_findings': findings_summary.open_findings,
                 'resolved_findings': findings_summary.resolved_findings,
-                'test_completion_rate': round(completion_rate, 1),
                 'finding_resolution_rate': round(resolution_rate, 1),
                 'average_compliance_score': round(compliance_summary.overall_compliance or 0, 1),
-                'planned_vs_actual_hours': {
-                    'planned': test_summary.planned_hours or 0,
-                    'actual': test_summary.actual_hours or 0,
-                    'variance': (test_summary.actual_hours or 0) - (test_summary.planned_hours or 0)
-                }
             },
             'findings_breakdown': {
                 'high': findings_summary.high_severity,
@@ -198,71 +178,6 @@ def generate_detailed_findings_report(filters=None):
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), _("Detailed Findings Report Error"))
-        raise
-
-
-def generate_test_execution_summary_report(filters=None):
-    """
-    Generate test execution summary report
-    """
-    try:
-        filter_conditions = {}
-        if filters:
-            data = frappe.parse_json(filters) if isinstance(filters, str) else filters
-            if data.get('audit_execution'):
-                filter_conditions['parent'] = data['audit_execution']
-
-        # Get test execution data
-        tests = frappe.get_all('Executed Test',
-            filters=filter_conditions,
-            fields=['test_name', 'test_category', 'status', 'planned_hours',
-                   'actual_hours', 'completion_date', 'notes'])
-
-        # Calculate summary statistics
-        total_tests = len(tests)
-        completed_tests = len([t for t in tests if t['status'] == 'Completed'])
-        completion_rate = (completed_tests / total_tests * 100) if total_tests > 0 else 0
-
-        planned_hours = sum([t['planned_hours'] or 0 for t in tests])
-        actual_hours = sum([t['actual_hours'] or 0 for t in tests])
-        hours_variance = actual_hours - planned_hours
-
-        # Group by category
-        category_summary = {}
-        for test in tests:
-            category = test['test_category']
-            if category not in category_summary:
-                category_summary[category] = {
-                    'total': 0,
-                    'completed': 0,
-                    'planned_hours': 0,
-                    'actual_hours': 0
-                }
-            category_summary[category]['total'] += 1
-            if test['status'] == 'Completed':
-                category_summary[category]['completed'] += 1
-            category_summary[category]['planned_hours'] += test['planned_hours'] or 0
-            category_summary[category]['actual_hours'] += test['actual_hours'] or 0
-
-        report_data = {
-            'report_type': 'Test Execution Summary',
-            'generated_date': datetime.now(),
-            'summary': {
-                'total_tests': total_tests,
-                'completed_tests': completed_tests,
-                'completion_rate': round(completion_rate, 1),
-                'planned_hours': planned_hours,
-                'actual_hours': actual_hours,
-                'hours_variance': hours_variance
-            },
-            'category_breakdown': category_summary,
-            'tests': tests
-        }
-
-        return report_data
-
-    except Exception as e:
-        frappe.log_error(frappe.get_traceback(), _("Test Execution Summary Report Error"))
         raise
 
 
@@ -444,18 +359,6 @@ def generate_trend_analysis_report(filters=None):
             ORDER BY month
         """, as_dict=True)
 
-        # Test execution trends
-        test_trends = frappe.db.sql("""
-            SELECT
-                DATE_FORMAT(modified, '%Y-%m') as month,
-                COUNT(CASE WHEN status = 'Completed' THEN 1 END) as completed_tests,
-                COUNT(*) as total_tests
-            FROM `tabExecuted Test`
-            WHERE modified >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-            GROUP BY DATE_FORMAT(modified, '%Y-%m')
-            ORDER BY month
-        """, as_dict=True)
-
         # Compliance trends
         compliance_trends = frappe.db.sql("""
             SELECT
@@ -472,7 +375,6 @@ def generate_trend_analysis_report(filters=None):
             'report_type': 'Trend Analysis Report',
             'generated_date': datetime.now(),
             'findings_trends': findings_trends,
-            'test_execution_trends': test_trends,
             'compliance_trends': compliance_trends
         }
 

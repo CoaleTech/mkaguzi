@@ -612,8 +612,8 @@
               <!-- Cloud Storage -->
               <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-purple-100 rounded-lg">
-                    <CloudIcon class="h-5 w-5 text-purple-600" />
+                  <div class="p-2 bg-gray-100 rounded-lg">
+                    <CloudIcon class="h-5 w-5 text-gray-900" />
                   </div>
                   <div>
                     <h4 class="text-sm font-medium text-gray-900">Cloud Storage</h4>

@@ -225,7 +225,7 @@ const getPeriodTypeVariant = (type) => {
 	const variants = {
 		Monthly: "blue",
 		Quarterly: "green",
-		Annual: "purple",
+		Annual: "gray",
 	}
 	return variants[type] || "gray"
 }

@@ -15,7 +15,7 @@ import frappe
 AUDIT_DOCTYPES = [
     "Audit Engagement", "Audit Finding", "Audit Report",
     "Risk Assessment", "Compliance Requirement",
-    "Audit Universe", "Annual Audit Plan", "Audit Test Library",
+    "Audit Universe", "Annual Audit Plan",
     "Integration Hub", "Data Period", "Board Report"
 ]
 

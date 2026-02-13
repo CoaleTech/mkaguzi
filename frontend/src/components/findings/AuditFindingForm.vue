@@ -17,7 +17,7 @@
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
               <div
-                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                class="bg-gray-900 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${formProgress}%` }"
               ></div>
             </div>
@@ -31,14 +31,14 @@
               class="w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
               :class="[
                 activeSection === key
-                  ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-600'
+                  ? 'bg-gray-100 text-gray-700 border-l-4 border-gray-900'
                   : 'text-gray-600 hover:bg-gray-100'
               ]"
             >
               <component
                 :is="section.icon"
                 class="h-5 w-5 mr-3 flex-shrink-0"
-                :class="activeSection === key ? 'text-blue-600' : 'text-gray-400'"
+                :class="activeSection === key ? 'text-gray-900' : 'text-gray-400'"
               />
               <span class="flex-1 text-left">{{ section.label }}</span>
               <span
@@ -117,24 +117,10 @@
                 :options="riskRatingOptions"
               />
               <FormControl
-                label="Business Impact Rating"
-                v-model="formData.business_impact_rating"
+                label="Impact"
+                v-model="formData.impact"
                 type="select"
                 :options="impactOptions"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Date Identified"
-                v-model="formData.date_identified"
-                type="date"
-              />
-              <FormControl
-                label="Source Document"
-                v-model="formData.source_document"
-                type="text"
-                placeholder="Reference to source workpaper"
               />
             </div>
 
@@ -153,7 +139,7 @@
           <div v-show="activeSection === 'details'" class="space-y-6">
             <SectionHeader
               title="Finding Details"
-              description="Document the condition, criteria, cause, and effect of the finding"
+              description="Document the condition, criteria, cause, and consequence of the finding"
               :icon="ClipboardDocumentListIcon"
             />
 
@@ -199,11 +185,11 @@
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Effect
+                  Consequence
                 </label>
                 <p class="text-xs text-gray-500 mb-2">What is the impact or consequence?</p>
                 <TextEditor
-                  v-model="formData.effect"
+                  v-model="formData.consequence"
                   placeholder="Describe the actual or potential impact of this finding..."
                   :editorClass="'min-h-[150px] prose-sm'"
                   :bubbleMenu="true"
@@ -268,29 +254,12 @@
             />
 
             <div class="grid grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Management Agrees</label>
-                <div class="flex items-center space-x-4 mt-2">
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      v-model="formData.management_agrees"
-                      :value="1"
-                      class="form-radio h-4 w-4 text-blue-600"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Yes</span>
-                  </label>
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      v-model="formData.management_agrees"
-                      :value="0"
-                      class="form-radio h-4 w-4 text-blue-600"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">No</span>
-                  </label>
-                </div>
-              </div>
+              <FormControl
+                label="Management Agrees"
+                v-model="formData.management_agrees"
+                type="select"
+                :options="managementAgreementOptions"
+              />
               <FormControl
                 label="Response Date"
                 v-model="formData.response_date"
@@ -313,15 +282,10 @@
             <div class="grid grid-cols-2 gap-6">
               <FormControl
                 label="Responding Manager"
-                v-model="formData.management_response_by"
+                v-model="formData.responded_by"
                 type="autocomplete"
                 :options="userOptions"
                 placeholder="Select responding manager"
-              />
-              <FormControl
-                label="Response Received On"
-                v-model="formData.management_response_date"
-                type="date"
               />
             </div>
           </div>
@@ -356,22 +320,8 @@
               />
               <FormControl
                 label="Target Completion Date"
-                v-model="formData.target_date"
+                v-model="formData.target_completion_date"
                 type="date"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <FormControl
-                label="Revised Target Date"
-                v-model="formData.revised_target_date"
-                type="date"
-              />
-              <FormControl
-                label="Priority"
-                v-model="formData.priority"
-                type="select"
-                :options="priorityOptions"
               />
             </div>
 
@@ -403,11 +353,6 @@
                 :options="statusOptions"
                 :required="true"
               />
-              <FormControl
-                label="Status Date"
-                v-model="formData.status_date"
-                type="date"
-              />
             </div>
 
             <!-- Status History - Read-only display -->
@@ -432,7 +377,7 @@
                         type="radio"
                         v-model="formData.follow_up_required"
                         :value="1"
-                        class="form-radio h-4 w-4 text-blue-600"
+                        class="form-radio h-4 w-4 text-gray-900"
                       />
                       <span class="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
@@ -441,7 +386,7 @@
                         type="radio"
                         v-model="formData.follow_up_required"
                         :value="0"
-                        class="form-radio h-4 w-4 text-blue-600"
+                        class="form-radio h-4 w-4 text-gray-900"
                       />
                       <span class="ml-2 text-sm text-gray-700">No</span>
                     </label>
@@ -558,12 +503,6 @@
                   type="select"
                   :options="closureReasonOptions"
                 />
-                <FormControl
-                  label="Final Disposition"
-                  v-model="formData.final_disposition"
-                  type="select"
-                  :options="dispositionOptions"
-                />
               </div>
 
               <div class="mt-4">
@@ -580,14 +519,14 @@
             </div>
 
             <!-- Reporting Options -->
-            <div class="bg-blue-50 rounded-lg p-4">
+            <div class="bg-gray-50 rounded-lg p-4">
               <h4 class="text-sm font-medium text-gray-900 mb-4">Reporting Options</h4>
               <div class="grid grid-cols-2 gap-4">
                 <label class="inline-flex items-center">
                   <input
                     type="checkbox"
                     v-model="formData.include_in_report"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    class="form-checkbox h-4 w-4 text-gray-900 rounded"
                   />
                   <span class="ml-2 text-sm text-gray-700">Include in Final Report</span>
                 </label>
@@ -595,7 +534,7 @@
                   <input
                     type="checkbox"
                     v-model="formData.reported_to_management"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    class="form-checkbox h-4 w-4 text-gray-900 rounded"
                   />
                   <span class="ml-2 text-sm text-gray-700">Reported to Management</span>
                 </label>
@@ -603,7 +542,7 @@
                   <input
                     type="checkbox"
                     v-model="formData.reported_to_audit_committee"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    class="form-checkbox h-4 w-4 text-gray-900 rounded"
                   />
                   <span class="ml-2 text-sm text-gray-700">Reported to Audit Committee</span>
                 </label>
@@ -611,7 +550,7 @@
                   <input
                     type="checkbox"
                     v-model="formData.reported_to_board"
-                    class="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    class="form-checkbox h-4 w-4 text-gray-900 rounded"
                   />
                   <span class="ml-2 text-sm text-gray-700">Reported to Board</span>
                 </label>
@@ -710,7 +649,7 @@
           <Button variant="outline" @click="closeDialog">
             Cancel
           </Button>
-          <Button variant="solid" theme="blue" @click="submitForm" :loading="saving">
+          <Button variant="solid" theme="gray" @click="submitForm" :loading="saving">
             {{ isEditing ? 'Update Finding' : 'Create Finding' }}
           </Button>
         </div>
@@ -812,16 +751,14 @@ const formData = reactive({
   finding_title: '',
   finding_category: '',
   risk_rating: '',
-  business_impact_rating: '',
-  date_identified: '',
-  source_document: '',
+  impact: '',
   affected_locations: [],
 
   // Finding Details
   condition: '',
   criteria: '',
   cause: '',
-  effect: '',
+  consequence: '',
 
   // Evidence & Recommendation
   evidence: [],
@@ -830,23 +767,19 @@ const formData = reactive({
   recommendation: '',
 
   // Management Response
-  management_agrees: null,
+  management_agrees: '',
   management_comments: '',
   response_date: '',
-  management_response_by: '',
-  management_response_date: '',
+  responded_by: '',
 
   // Corrective Action Plan
   action_plan_description: '',
   responsible_person: '',
-  target_date: '',
-  revised_target_date: '',
-  priority: '',
+  target_completion_date: '',
   milestones: [],
 
   // Follow-up & Status
   finding_status: 'Open',
-  status_date: '',
   status_history: [],
   follow_up_required: 0,
   follow_up_frequency: '',
@@ -864,7 +797,6 @@ const formData = reactive({
   closure_date: '',
   closed_by: '',
   closure_reason: '',
-  final_disposition: '',
   closure_notes: '',
   include_in_report: false,
   reported_to_management: false,
@@ -898,11 +830,11 @@ const riskRatingOptions = [
 ]
 
 const impactOptions = [
-  { label: 'Severe', value: 'Severe' },
-  { label: 'Major', value: 'Major' },
-  { label: 'Moderate', value: 'Moderate' },
-  { label: 'Minor', value: 'Minor' },
   { label: 'Insignificant', value: 'Insignificant' },
+  { label: 'Minor', value: 'Minor' },
+  { label: 'Moderate', value: 'Moderate' },
+  { label: 'Major', value: 'Major' },
+  { label: 'Catastrophic', value: 'Catastrophic' },
 ]
 
 const statusOptions = [
@@ -912,13 +844,6 @@ const statusOptions = [
   { label: 'Closed', value: 'Closed' },
   { label: 'Accepted as Risk', value: 'Accepted as Risk' },
   { label: 'Management Override', value: 'Management Override' },
-]
-
-const priorityOptions = [
-  { label: 'Urgent', value: 'Urgent' },
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
 ]
 
 const frequencyOptions = [
@@ -955,11 +880,10 @@ const closureReasonOptions = [
   { label: 'Management Override', value: 'Management Override' },
 ]
 
-const dispositionOptions = [
-  { label: 'Resolved', value: 'Resolved' },
-  { label: 'Partially Resolved', value: 'Partially Resolved' },
-  { label: 'Transferred', value: 'Transferred' },
-  { label: 'Deferred', value: 'Deferred' },
+const managementAgreementOptions = [
+  { label: 'Agree', value: 'Agree' },
+  { label: 'Partially Agree', value: 'Partially Agree' },
+  { label: 'Disagree', value: 'Disagree' },
 ]
 
 // Placeholder options - would be fetched from API
@@ -1205,7 +1129,7 @@ onMounted(() => {
 
 :deep(.ProseMirror:focus) {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #171717;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 </style>

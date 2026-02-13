@@ -233,9 +233,9 @@
                 <p class="text-3xl font-bold text-red-600">{{ form.overdue_requirements }}</p>
                 <p class="text-sm text-red-700">Overdue</p>
               </div>
-              <div class="bg-purple-50 rounded-lg p-4 text-center">
-                <p class="text-3xl font-bold text-purple-600">{{ form.completion_percent }}%</p>
-                <p class="text-sm text-purple-700">Completion</p>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-3xl font-bold text-gray-900">{{ form.completion_percent }}%</p>
+                <p class="text-sm text-gray-700">Completion</p>
               </div>
             </div>
 
@@ -389,8 +389,8 @@
 
               <div class="border rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-4">
-                  <div class="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <Eye class="h-5 w-5 text-purple-600" />
+                  <div class="h-10 w-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                    <Eye class="h-5 w-5 text-gray-900" />
                   </div>
                   <div>
                     <h4 class="font-medium text-gray-700">Reviewed By</h4>
@@ -580,7 +580,7 @@
           <Button
             v-else
             variant="solid"
-            theme="green"
+            theme="gray"
             :loading="saving"
             @click="saveChecklist"
           >
@@ -758,7 +758,7 @@ const statusBreakdown = computed(() => {
     { label: 'Not Started', color: 'bg-gray-400' },
     { label: 'In Progress', color: 'bg-blue-500' },
     { label: 'Completed', color: 'bg-green-500' },
-    { label: 'Filed', color: 'bg-purple-500' },
+    { label: 'Filed', color: 'bg-gray-400' },
     { label: 'Overdue', color: 'bg-red-500' },
     { label: 'Not Applicable', color: 'bg-gray-300' },
   ]

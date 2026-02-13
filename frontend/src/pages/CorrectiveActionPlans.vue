@@ -55,7 +55,7 @@
           <Button
             v-if="!hasFilters"
             variant="solid"
-            theme="orange"
+            theme="gray"
             class="mt-4"
             @click="openCreateModal"
           >

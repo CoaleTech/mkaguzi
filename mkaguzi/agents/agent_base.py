@@ -393,14 +393,54 @@ class AuditAgent(ABC):
             return "Inefficiency"
         return "Control Deficiency"  # Safe default
 
-    def create_audit_finding(self, finding_title: str, finding_type: str, severity: str, 
-                           condition: str, criteria: str, cause: str = None, 
+    def record_test_evidence(self, execution_log_name: str, test_name: str,
+                            test_status: str, severity: str = None,
+                            execution_time_ms: int = 0, records_processed: int = 0,
+                            result_data: str = None, error_message: str = None,
+                            threshold_breached: bool = False) -> None:
+        """
+        Record per-test evidence on an Agent Execution Log.
+
+        Args:
+            execution_log_name: Name of the Agent Execution Log document
+            test_name: Name/description of the test
+            test_status: Pass, Fail, Warning, Error, or Skipped
+            severity: Low, Medium, High, or Critical
+            execution_time_ms: Execution time in milliseconds
+            records_processed: Number of records processed
+            result_data: Textual result data
+            error_message: Error message if test failed
+            threshold_breached: Whether a threshold was breached
+        """
+        try:
+            log = frappe.get_doc('Agent Execution Log', execution_log_name)
+            log.append('test_evidence', {
+                'test_name': test_name,
+                'test_status': test_status,
+                'severity': severity,
+                'execution_time_ms': execution_time_ms,
+                'records_processed': records_processed,
+                'result_data': result_data,
+                'error_message': error_message,
+                'threshold_breached': 1 if threshold_breached else 0,
+            })
+            log.save(ignore_permissions=True)
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error(
+                message=f"Failed to record test evidence: {str(e)}",
+                title=f"Test Evidence Error [{self.agent_type}]"
+            )
+
+    def create_audit_finding(self, finding_title: str, finding_type: str, severity: str,
+                           condition: str, criteria: str, cause: str = None,
                            consequence: str = None, recommendation: str = None,
                            risk_category: str = None, engagement_reference: str = None,
-                           financial_impact: float = None, **kwargs) -> Dict[str, str]:
+                           financial_impact: float = None, working_paper_reference: str = None,
+                           **kwargs) -> Dict[str, str]:
         """
         Create an Audit Finding document from agent analysis
-        
+
         Args:
             finding_title: Title/summary of the finding
             finding_type: Finding category (Control Deficiency, Non-Compliance, etc.)
@@ -413,8 +453,9 @@ class AuditAgent(ABC):
             risk_category: Risk category (Financial, Operational, Compliance, IT, etc.)
             engagement_reference: Link to Audit Engagement if available
             financial_impact: Financial impact amount
+            working_paper_reference: Link to Working Paper if available
             **kwargs: Additional field values
-            
+
         Returns:
             dict: {"name": finding_doc_name, "severity": severity} for executor tracking
         """
@@ -422,8 +463,8 @@ class AuditAgent(ABC):
             # Normalize finding_type to valid category
             finding_category = self._normalize_finding_category(finding_type)
 
-            # Create the finding document
-            finding_doc = frappe.get_doc({
+            # Build the finding document data
+            finding_data = {
                 'doctype': 'Audit Finding',
                 'finding_title': finding_title,
                 'finding_category': finding_category,
@@ -438,15 +479,22 @@ class AuditAgent(ABC):
                 'financial_impact': financial_impact,
                 'engagement_reference': engagement_reference,
                 'finding_status': 'Open',
-                
+
                 # Agent tracking fields
                 'source_agent': self.agent_type,
                 'auto_generated': 1,
                 'ai_review_status': 'Pending',
-                
+
                 # Add any additional kwargs
                 **kwargs
-            })
+            }
+
+            # Set working_paper_reference if provided
+            if working_paper_reference:
+                finding_data['working_paper_reference'] = working_paper_reference
+
+            # Create the finding document
+            finding_doc = frappe.get_doc(finding_data)
             
             # Insert the document (this triggers the autoname for finding_id)
             finding_doc.insert(ignore_permissions=True)

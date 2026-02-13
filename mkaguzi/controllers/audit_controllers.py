@@ -569,9 +569,6 @@ class AuditTestTemplateController:
 			# Create audit trail entry
 			self.create_audit_trail(doc)
 
-			# Register with test library
-			self.register_with_test_library(doc)
-
 			# Update template cache
 			self.update_template_cache(doc)
 
@@ -599,36 +596,6 @@ class AuditTestTemplateController:
 
 		except Exception as e:
 			frappe.log_error(f"Audit Trail Creation Error: {str(e)}")
-
-	def register_with_test_library(self, doc):
-		"""Register template with test library"""
-		try:
-			# Create test library entry
-			test_lib = frappe.get_doc({
-				'doctype': 'Audit Test Library',
-				'test_id': f"TPL-{doc.name}",
-				'test_name': doc.template_name,
-				'test_category': doc.category,
-				'description': doc.description,
-				'objective': doc.objective,
-				'status': 'Active',
-				'is_template': 1
-			})
-
-			# Add test parameters
-			for procedure in doc.test_procedures:
-				test_lib.append('test_parameters', {
-					'parameter_name': 'procedure',
-					'parameter_type': 'Data',
-					'default_value': procedure.procedure_name,
-					'description': procedure.procedure_description
-				})
-
-			test_lib.insert(ignore_permissions=True)
-			frappe.db.commit()
-
-		except Exception as e:
-			frappe.log_error(f"Test Library Registration Error: {str(e)}")
 
 	def update_template_cache(self, doc):
 		"""Update template cache"""

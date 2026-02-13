@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "creation": "2025-02-10 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "test_name",
+  "test_status",
+  "severity",
+  "column_break_1",
+  "execution_time_ms",
+  "records_processed",
+  "threshold_breached",
+  "details_section",
+  "result_data",
+  "error_message"
+ ],
+ "fields": [
+  {
+   "fieldname": "test_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Test Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "test_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Test Status",
+   "options": "Pass\nFail\nWarning\nError\nSkipped",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Severity",
+   "options": "\nLow\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "execution_time_ms",
+   "fieldtype": "Int",
+   "label": "Execution Time (ms)"
+  },
+  {
+   "default": "0",
+   "fieldname": "records_processed",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Records Processed"
+  },
+  {
+   "default": "0",
+   "fieldname": "threshold_breached",
+   "fieldtype": "Check",
+   "label": "Threshold Breached"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "result_data",
+   "fieldtype": "Text",
+   "label": "Result Data"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Text",
+   "label": "Error Message"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-02-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Audit",
+ "name": "Agent Test Evidence",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

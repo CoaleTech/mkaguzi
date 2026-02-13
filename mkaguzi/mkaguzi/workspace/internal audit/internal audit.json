@@ -65,16 +65,6 @@
     {
       "hidden": 0,
       "is_query_report": 0,
-      "label": "Audit Test Library",
-      "link_count": 0,
-      "link_to": "Audit Test Library",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "is_query_report": 0,
       "label": "Common Finding Template",
       "link_count": 0,
       "link_to": "Common Finding Template",
@@ -117,16 +107,6 @@
       "label": "Working Paper",
       "link_count": 0,
       "link_to": "Working Paper",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Test Execution",
-      "link_count": 0,
-      "link_to": "Test Execution",
       "link_type": "DocType",
       "onboard": 0,
       "type": "Link"

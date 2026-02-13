@@ -242,7 +242,7 @@ const categoryConfig = {
 	operational: { icon: SettingsIcon, color: "#3b82f6" },
 	financial: { icon: DollarSignIcon, color: "#10b981" },
 	compliance: { icon: ShieldIcon, color: "#f59e0b" },
-	strategic: { icon: TargetIcon, color: "#8b5cf6" },
+	strategic: { icon: TargetIcon, color: "#525252" },
 	reputational: { icon: AlertTriangleIcon, color: "#ef4444" },
 	technology: { icon: MonitorIcon, color: "#06b6d4" },
 }

@@ -365,7 +365,7 @@ const auditStatusData = computed(() => {
 				backgroundColor: [
 					"#3B82F6", // Blue
 					"#F59E0B", // Yellow
-					"#8B5CF6", // Purple
+					"#525252", // Gray
 					"#10B981", // Green
 				],
 				borderWidth: 1,

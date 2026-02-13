@@ -17,7 +17,7 @@
                 v-for="(section, index) in sections"
                 :key="section.id"
                 class="flex items-center space-x-2 p-2 rounded-lg cursor-pointer transition-all"
-                :class="currentSection === index ? 'bg-purple-100 border border-purple-300' : 'hover:bg-gray-100'"
+                :class="currentSection === index ? 'bg-gray-100 border border-gray-300' : 'hover:bg-gray-100'"
                 @click="goToSection(index)"
               >
                 <div
@@ -38,11 +38,11 @@
             <div class="mt-4 p-3 bg-white rounded-lg border border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-700">Overall Progress</span>
-                <span class="text-xs font-semibold text-purple-600">{{ overallProgress }}%</span>
+                <span class="text-xs font-semibold text-gray-900">{{ overallProgress }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-1.5">
                 <div
-                  class="bg-purple-600 h-1.5 rounded-full transition-all duration-500"
+                  class="bg-gray-900 h-1.5 rounded-full transition-all duration-500"
                   :style="{ width: `${overallProgress}%` }"
                 ></div>
               </div>
@@ -64,7 +64,7 @@
                 title="Basic Information"
                 description="Program identification and type"
                 :sectionNumber="1"
-                color="purple"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -110,7 +110,7 @@
                       <input
                         type="checkbox"
                         v-model="form.is_template"
-                        class="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        class="h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
                       />
                       <span class="ml-2 text-sm text-gray-600">Save as reusable template</span>
                     </div>
@@ -134,7 +134,7 @@
                 title="Program Objectives"
                 description="Define the objectives of this audit program"
                 :sectionNumber="2"
-                color="blue"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -157,7 +157,7 @@
                 title="Audit Procedures"
                 description="Define the detailed audit procedures to be performed"
                 :sectionNumber="3"
-                color="green"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -176,7 +176,7 @@
                   <div
                     v-for="(procedure, index) in form.program_procedures"
                     :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors"
+                    class="border border-gray-200 rounded-lg p-4 hover:border-gray-900 transition-colors"
                   >
                     <div class="flex items-start justify-between mb-4">
                       <div class="flex items-center gap-2">
@@ -264,7 +264,7 @@
                       <textarea
                         v-model="procedure.procedure_description"
                         rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                         placeholder="Describe the audit procedure..."
                       ></textarea>
                     </div>
@@ -274,7 +274,7 @@
                       <textarea
                         v-model="procedure.control_objective"
                         rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                         placeholder="What control does this procedure test?"
                       ></textarea>
                     </div>
@@ -338,7 +338,7 @@
                         <textarea
                           v-model="risk.risk_description"
                           rows="2"
-                          class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           placeholder="Describe the risk..."
                         ></textarea>
                       </div>
@@ -357,7 +357,7 @@
                       <textarea
                         v-model="risk.procedures_addressing_risk"
                         rows="2"
-                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full text-sm border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                         placeholder="Which procedures address this risk?"
                       ></textarea>
                     </div>
@@ -382,7 +382,7 @@
                 title="Review & Submit"
                 description="Review your program and submit"
                 :sectionNumber="5"
-                color="purple"
+                color="gray"
               />
 
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -452,7 +452,7 @@
           <Button
             v-if="currentSection < sections.length - 1"
             variant="solid"
-            theme="purple"
+            theme="gray"
             @click="nextSection"
           >
             Next
@@ -462,7 +462,7 @@
           <Button
             v-else
             variant="solid"
-            theme="purple"
+            theme="gray"
             @click="submitForm"
             :loading="submitting"
             :disabled="!isFormValid"

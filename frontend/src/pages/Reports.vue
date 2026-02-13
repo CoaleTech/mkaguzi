@@ -116,7 +116,7 @@
           <div v-for="dashboard in activeDashboards" :key="dashboard.name" class="border rounded-lg p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <BarChart3 class="w-5 h-5 text-purple-500" />
+                <BarChart3 class="w-5 h-5 text-gray-900" />
                 <h4 class="font-medium">{{ dashboard.dashboard_title }}</h4>
                 <Badge v-if="dashboard.is_default" variant="success" size="sm">Default</Badge>
               </div>

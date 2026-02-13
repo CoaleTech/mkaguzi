@@ -6,7 +6,7 @@
         {{ title }}
         <span v-if="required" class="text-red-500">*</span>
       </h3>
-      <Button variant="solid" theme="green" size="sm" @click="addRow">
+      <Button variant="solid" theme="gray" size="sm" @click="addRow">
         <PlusIcon class="h-3.5 w-3.5 mr-1" />
         Add {{ modalTitle }}
       </Button>

@@ -9,7 +9,6 @@
   "finding_id",
   "engagement_reference",
   "working_paper_reference",
-  "test_execution_reference",
   "column_break_5",
   "finding_title",
   "finding_category",
@@ -128,12 +127,6 @@
    "fieldtype": "Link",
    "label": "Working Paper",
    "options": "Working Paper"
-  },
-  {
-   "fieldname": "test_execution_reference",
-   "fieldtype": "Link",
-   "label": "Test Execution",
-   "options": "Test Execution"
   },
   {
    "fieldname": "column_break_5",

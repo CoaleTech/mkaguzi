@@ -92,7 +92,7 @@
       <span class="text-xs text-gray-500">Active filters:</span>
       <Badge
         v-if="localFilters.search"
-        theme="blue"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('search')"
       >
@@ -101,7 +101,7 @@
       </Badge>
       <Badge
         v-if="localFilters.auditFinding"
-        theme="purple"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('auditFinding')"
       >
@@ -110,7 +110,7 @@
       </Badge>
       <Badge
         v-if="localFilters.status"
-        theme="green"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('status')"
       >
@@ -128,7 +128,7 @@
       </Badge>
       <Badge
         v-if="localFilters.frequency"
-        theme="orange"
+        theme="gray"
         class="cursor-pointer"
         @click="removeFilter('frequency')"
       >

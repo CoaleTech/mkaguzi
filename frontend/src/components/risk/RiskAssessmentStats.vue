@@ -57,19 +57,19 @@
     </div>
 
     <!-- Average Risk Score Card -->
-    <div class="bg-purple-50 rounded-xl border border-purple-200 p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-gray-50 rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Avg Risk Score</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ stats.averageRiskScore }}</p>
-          <div class="w-full bg-purple-200 rounded-full h-2 mt-2">
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Avg Risk Score</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats.averageRiskScore }}</p>
+          <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
             <div
-              class="bg-purple-600 h-2 rounded-full transition-all duration-300"
+              class="bg-gray-900 h-2 rounded-full transition-all duration-300"
               :style="{ width: `${Math.min(stats.averageRiskScore, 25) * 4}%` }"
             ></div>
           </div>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm">
           <BarChart3Icon class="h-7 w-7 text-white" />
         </div>
       </div>

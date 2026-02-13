@@ -1,14 +1,14 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
     <!-- Total Programs Card -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200 p-5 hover:shadow-lg transition-all duration-200">
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-5 hover:shadow-lg transition-all duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Total Programs</p>
-          <p class="text-3xl font-bold text-purple-900 mt-1">{{ stats.total || 0 }}</p>
-          <p class="text-xs text-purple-600 mt-1">{{ stats.templates || 0 }} templates</p>
+          <p class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Total Programs</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats.total || 0 }}</p>
+          <p class="text-xs text-gray-600 mt-1">{{ stats.templates || 0 }} templates</p>
         </div>
-        <div class="p-3 bg-purple-500 rounded-xl shadow-sm">
+        <div class="p-3 bg-gray-900 rounded-xl shadow-sm">
           <FileTextIcon class="h-7 w-7 text-white" />
         </div>
       </div>
@@ -151,7 +151,7 @@ const typeDistribution = computed(() => {
   const colors = {
     'Financial': 'bg-blue-500',
     'Operational': 'bg-green-500',
-    'Compliance': 'bg-purple-500',
+    'Compliance': 'bg-gray-400',
     'IT': 'bg-amber-500',
     'Inventory': 'bg-cyan-500',
     'Cash': 'bg-emerald-500',

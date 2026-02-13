@@ -588,7 +588,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="green"
+                theme="gray"
                 class="h-20 w-full"
                 @click="bulkUpdateStatus"
               >
@@ -602,7 +602,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="blue"
+                theme="gray"
                 class="h-20 w-full"
                 @click="bulkExport"
               >
@@ -616,7 +616,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="purple"
+                theme="gray"
                 class="h-20 w-full"
                 @click="bulkGenerateReport"
               >
@@ -690,20 +690,20 @@
               </div>
             </div>
 
-            <div class="bg-purple-50 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-purple-900 mb-4">Risk Trends</h3>
+            <div class="bg-gray-50 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Risk Trends</h3>
               <div class="space-y-3">
                 <div class="flex justify-between">
-                  <span class="text-purple-700">Average Score</span>
-                  <span class="font-medium text-purple-900">{{ averageRiskScore }}</span>
+                  <span class="text-gray-700">Average Score</span>
+                  <span class="font-medium text-gray-900">{{ averageRiskScore }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-purple-700">Trend</span>
-                  <span class="font-medium text-purple-900">{{ riskTrend }}</span>
+                  <span class="text-gray-700">Trend</span>
+                  <span class="font-medium text-gray-900">{{ riskTrend }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-purple-700">Top Category</span>
-                  <span class="font-medium text-purple-900">{{ topRiskCategory }}</span>
+                  <span class="text-gray-700">Top Category</span>
+                  <span class="font-medium text-gray-900">{{ topRiskCategory }}</span>
                 </div>
               </div>
             </div>

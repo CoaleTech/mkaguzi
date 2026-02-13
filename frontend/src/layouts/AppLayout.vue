@@ -193,20 +193,28 @@
                 <span v-if="!isSidebarCollapsed">Data Analytics</span>
               </router-link>
               <router-link
-                to="/audit-execution/test-library"
+                to="/audit-execution/agent-dashboard"
                 class="nav-subitem"
-                :class="{ 'nav-subitem-active': $route.path === '/audit-execution/test-library' }"
+                :class="{ 'nav-subitem-active': $route.path.startsWith('/audit-execution/agent-dashboard') }"
               >
-                <TestTubeIcon class="h-4 w-4" />
-                <span v-if="!isSidebarCollapsed">Test Library</span>
+                <CpuIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">AI Agents</span>
               </router-link>
               <router-link
-                to="/audit-execution/test-execution"
+                to="/audit-execution/environmental-audits"
                 class="nav-subitem"
-                :class="{ 'nav-subitem-active': $route.path === '/audit-execution/test-execution' }"
+                :class="{ 'nav-subitem-active': $route.path === '/audit-execution/environmental-audits' }"
               >
-                <PlayCircleIcon class="h-4 w-4" />
-                <span v-if="!isSidebarCollapsed">Test Execution</span>
+                <LeafIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Environmental</span>
+              </router-link>
+              <router-link
+                to="/audit-execution/archive"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/audit-execution/archive' }"
+              >
+                <ArchiveIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Archive</span>
               </router-link>
             </div>
           </div>
@@ -315,6 +323,52 @@
               >
                 <SearchIcon class="h-4 w-4" />
                 <span v-if="!isSidebarCollapsed">BC Data Explorer</span>
+              </router-link>
+              <router-link
+                to="/data-management/gl-entries"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/data-management/gl-entries' }"
+              >
+                <BookOpenIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">GL Entries</span>
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Risk Monitoring -->
+          <div class="nav-group">
+            <div
+              class="nav-group-header"
+              @click="toggleNavGroup('riskMonitoring')"
+            >
+              <div class="flex items-center space-x-2">
+                <ActivityIcon class="h-5 w-5" />
+                <span v-if="!isSidebarCollapsed">Risk Monitoring</span>
+              </div>
+              <ChevronDownIcon
+                v-if="!isSidebarCollapsed"
+                :class="[
+                  'h-4 w-4 transition-transform',
+                  expandedGroups.riskMonitoring ? 'rotate-180' : ''
+                ]"
+              />
+            </div>
+            <div v-if="expandedGroups.riskMonitoring || isSidebarCollapsed" class="nav-group-items">
+              <router-link
+                to="/risk/anomaly-alerts"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/risk/anomaly-alerts' }"
+              >
+                <AlertTriangleIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Anomaly Alerts</span>
+              </router-link>
+              <router-link
+                to="/risk/risk-indicators"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/risk/risk-indicators' }"
+              >
+                <ActivityIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Risk Indicators</span>
               </router-link>
             </div>
           </div>
@@ -470,6 +524,22 @@
                 <CogIcon class="h-4 w-4" />
                 <span v-if="!isSidebarCollapsed">Configuration</span>
               </router-link>
+              <router-link
+                to="/settings/agent-configuration"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/settings/agent-configuration' }"
+              >
+                <SlidersIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Agent Config</span>
+              </router-link>
+              <router-link
+                to="/settings/audit-charter"
+                class="nav-subitem"
+                :class="{ 'nav-subitem-active': $route.path === '/settings/audit-charter' }"
+              >
+                <ScrollTextIcon class="h-4 w-4" />
+                <span v-if="!isSidebarCollapsed">Audit Charter</span>
+              </router-link>
             </div>
           </div>
         </nav>
@@ -503,10 +573,13 @@ import Breadcrumbs from "@/components/Common/Breadcrumbs.vue"
 import { session } from "@/data/session"
 import { Avatar, Badge, Button, Dropdown } from "frappe-ui"
 import {
+	ActivityIcon,
 	AlertCircleIcon,
 	AlertTriangleIcon,
+	ArchiveIcon,
 	BarChartIcon,
 	BellIcon,
+	BookOpenIcon,
 	BriefcaseIcon,
 	CalculatorIcon,
 	CalendarDaysIcon,
@@ -518,6 +591,7 @@ import {
 	ClipboardListIcon,
 	ClockIcon,
 	CogIcon,
+	CpuIcon,
 	DatabaseIcon,
 	FileBarChartIcon,
 	FileCheckIcon,
@@ -526,14 +600,15 @@ import {
 	GlobeIcon,
 	HistoryIcon,
 	HomeIcon,
+	LeafIcon,
 	MoonIcon,
-	PlayCircleIcon,
 	PresentationIcon,
+	ScrollTextIcon,
 	SearchIcon,
 	SettingsIcon,
 	ShieldCheckIcon,
+	SlidersIcon,
 	SunIcon,
-	TestTubeIcon,
 	UploadIcon,
 	UsersIcon,
 	WrenchIcon,
@@ -552,6 +627,7 @@ const expandedGroups = ref({
 	auditExecution: false,
 	findings: false,
 	dataManagement: false,
+	riskMonitoring: false,
 	compliance: false,
 	reports: false,
 	settings: false,

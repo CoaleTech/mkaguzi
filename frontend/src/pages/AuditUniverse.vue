@@ -66,7 +66,7 @@
           <div class="p-1">
             <Button
               variant="solid"
-              theme="blue"
+              theme="gray"
               size="sm"
               @click="createNewEntity"
             >
@@ -363,7 +363,7 @@
           <div class="flex flex-col sm:flex-row justify-center gap-3">
             <Button
               variant="solid"
-              theme="blue"
+              theme="gray"
               size="lg"
               @click="createNewEntity"
               class="shadow-sm hover:shadow-md transition-shadow"
@@ -415,8 +415,8 @@
                 </div>
               </div>
               <div class="flex items-start space-x-3">
-                <div class="flex-shrink-0 h-6 w-6 bg-purple-100 rounded-lg flex items-center justify-center mt-0.5">
-                  <span class="text-purple-600 font-semibold text-xs">3</span>
+                <div class="flex-shrink-0 h-6 w-6 bg-gray-100 rounded-lg flex items-center justify-center mt-0.5">
+                  <span class="text-gray-900 font-semibold text-xs">3</span>
                 </div>
                 <div>
                   <p class="font-medium text-gray-900">Plan Audits</p>
@@ -497,7 +497,7 @@
               
               <Button
                 variant="solid"
-                theme="blue"
+                theme="gray"
                 size="md"
                 class="w-full shadow-sm hover:shadow-md transition-shadow"
               >
@@ -543,7 +543,7 @@
               
               <Button
                 variant="solid"
-                theme="green"
+                theme="gray"
                 size="md"
                 class="w-full shadow-sm hover:shadow-md transition-shadow"
               >
@@ -554,13 +554,13 @@
               </Button>
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-purple-300 cursor-pointer transition-all duration-200 group">
+            <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-gray-300 cursor-pointer transition-all duration-200 group">
               <div class="flex items-start space-x-4 mb-5">
-                <div class="flex-shrink-0 p-3 bg-purple-50 rounded-xl group-hover:bg-purple-100 transition-colors">
-                  <UserIcon class="h-6 w-6 text-purple-600" />
+                <div class="flex-shrink-0 p-3 bg-gray-50 rounded-xl group-hover:bg-gray-100 transition-colors">
+                  <UserIcon class="h-6 w-6 text-gray-900" />
                 </div>
                 <div class="flex-1">
-                  <h3 class="font-bold text-gray-900 text-lg mb-2 group-hover:text-purple-900 transition-colors">HR Operations Template</h3>
+                  <h3 class="font-bold text-gray-900 text-lg mb-2 group-hover:text-gray-900 transition-colors">HR Operations Template</h3>
                   <p class="text-gray-600 text-sm leading-relaxed">Template for HR processes and compliance requirements</p>
                 </div>
               </div>
@@ -569,19 +569,19 @@
                 <h4 class="text-sm font-semibold text-gray-900 mb-3">Includes:</h4>
                 <ul class="text-sm text-gray-600 space-y-2">
                   <li class="flex items-center space-x-2">
-                    <div class="h-1.5 w-1.5 bg-purple-400 rounded-full"></div>
+                    <div class="h-1.5 w-1.5 bg-gray-400 rounded-full"></div>
                     <span>Payroll processing</span>
                   </li>
                   <li class="flex items-center space-x-2">
-                    <div class="h-1.5 w-1.5 bg-purple-400 rounded-full"></div>
+                    <div class="h-1.5 w-1.5 bg-gray-400 rounded-full"></div>
                     <span>Employee records</span>
                   </li>
                   <li class="flex items-center space-x-2">
-                    <div class="h-1.5 w-1.5 bg-purple-400 rounded-full"></div>
+                    <div class="h-1.5 w-1.5 bg-gray-400 rounded-full"></div>
                     <span>Benefits administration</span>
                   </li>
                   <li class="flex items-center space-x-2">
-                    <div class="h-1.5 w-1.5 bg-purple-400 rounded-full"></div>
+                    <div class="h-1.5 w-1.5 bg-gray-400 rounded-full"></div>
                     <span>Annual audit frequency</span>
                   </li>
                 </ul>
@@ -591,7 +591,7 @@
                 variant="solid"
                 theme="gray"
                 size="md"
-                class="w-full shadow-sm hover:shadow-md transition-shadow bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                class="w-full shadow-sm hover:shadow-md transition-shadow bg-gray-900 hover:bg-gray-800 text-white border-gray-900"
               >
                 <template #prefix>
                   <UserIcon class="h-4 w-4" />
@@ -668,7 +668,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="green"
+                theme="gray"
                 class="h-20 w-full"
                 @click="bulkUpdateStatus"
               >
@@ -682,7 +682,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="blue"
+                theme="gray"
                 class="h-20 w-full"
                 @click="bulkExport"
               >
@@ -696,7 +696,7 @@
             <div class="p-1">
               <Button
                 variant="solid"
-                theme="purple"
+                theme="gray"
                 class="h-20 w-full"
                 @click="showRiskModal = true; showBulkModal = false"
               >

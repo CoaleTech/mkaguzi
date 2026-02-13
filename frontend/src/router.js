@@ -26,10 +26,18 @@ import Reports from "@/pages/Reports.vue"
 import RiskAssessments from "@/pages/RiskAssessments.vue"
 import Settings from "@/pages/Settings.vue"
 import TaxCompliance from "@/pages/TaxCompliance.vue"
-import TestExecution from "@/pages/TestExecution.vue"
-import TestLibrary from "@/pages/TestLibrary.vue"
 import UserManagement from "@/pages/UserManagement.vue"
 import WorkingPapers from "@/pages/WorkingPapers.vue"
+
+// New pages
+import AgentExecutions from "@/pages/AgentExecutions.vue"
+import AgentConfiguration from "@/pages/AgentConfiguration.vue"
+import AnomalyAlerts from "@/pages/AnomalyAlerts.vue"
+import RiskIndicators from "@/pages/RiskIndicators.vue"
+import AuditGLEntries from "@/pages/AuditGLEntries.vue"
+import EnvironmentalAudits from "@/pages/EnvironmentalAudits.vue"
+import AuditArchive from "@/pages/AuditArchive.vue"
+import AuditCharter from "@/pages/AuditCharter.vue"
 
 // Error pages
 import NotFound from "@/pages/NotFound.vue"
@@ -187,26 +195,6 @@ const routes = [
 				},
 			},
 			{
-				path: "audit-execution/test-library",
-				name: "TestLibrary",
-				component: TestLibrary,
-				meta: {
-					title: "Test Library",
-					icon: "FileText",
-					breadcrumb: "Test Library",
-				},
-			},
-			{
-				path: "audit-execution/test-execution",
-				name: "TestExecution",
-				component: TestExecution,
-				meta: {
-					title: "Test Execution",
-					icon: "PlayCircle",
-					breadcrumb: "Test Execution",
-				},
-			},
-			{
 				path: "audit-execution/working-papers",
 				name: "WorkingPapers",
 				component: WorkingPapers,
@@ -224,6 +212,46 @@ const routes = [
 					title: "Data Analytics",
 					icon: "BarChart",
 					breadcrumb: "Data Analytics",
+				},
+			},
+			{
+				path: "audit-execution/agent-dashboard",
+				name: "AgentExecutions",
+				component: AgentExecutions,
+				meta: {
+					title: "AI Agent Dashboard",
+					icon: "Cpu",
+					breadcrumb: "AI Agents",
+				},
+			},
+			{
+				path: "audit-execution/agent-dashboard/:id",
+				name: "AgentExecutionDetail",
+				component: () => import("@/pages/AgentExecutionDetail.vue"),
+				meta: {
+					title: "Agent Execution Details",
+					breadcrumb: "Execution Details",
+				},
+				props: true,
+			},
+			{
+				path: "audit-execution/environmental-audits",
+				name: "EnvironmentalAudits",
+				component: EnvironmentalAudits,
+				meta: {
+					title: "Environmental Audits",
+					icon: "Leaf",
+					breadcrumb: "Environmental Audits",
+				},
+			},
+			{
+				path: "audit-execution/archive",
+				name: "AuditArchive",
+				component: AuditArchive,
+				meta: {
+					title: "Audit Archive",
+					icon: "Archive",
+					breadcrumb: "Audit Archive",
 				},
 			},
 
@@ -312,6 +340,16 @@ const routes = [
 					breadcrumb: "Data Quality",
 				},
 			},
+			{
+				path: "data-management/gl-entries",
+				name: "AuditGLEntries",
+				component: AuditGLEntries,
+				meta: {
+					title: "Audit GL Entries",
+					icon: "BookOpen",
+					breadcrumb: "GL Entries",
+				},
+			},
 
 			// Compliance
 			{
@@ -355,6 +393,28 @@ const routes = [
 				},
 			},
 
+			// Risk Monitoring
+			{
+				path: "risk/anomaly-alerts",
+				name: "AnomalyAlerts",
+				component: AnomalyAlerts,
+				meta: {
+					title: "Anomaly Alerts",
+					icon: "AlertTriangle",
+					breadcrumb: "Anomaly Alerts",
+				},
+			},
+			{
+				path: "risk/risk-indicators",
+				name: "RiskIndicators",
+				component: RiskIndicators,
+				meta: {
+					title: "Risk Indicators",
+					icon: "Activity",
+					breadcrumb: "Risk Indicators",
+				},
+			},
+
 			// Reports
 			{
 				path: "reports/audit-reports",
@@ -388,6 +448,26 @@ const routes = [
 			},
 
 			// Settings
+			{
+				path: "settings/agent-configuration",
+				name: "AgentConfiguration",
+				component: AgentConfiguration,
+				meta: {
+					title: "Agent Configuration",
+					icon: "Sliders",
+					breadcrumb: "Agent Configuration",
+				},
+			},
+			{
+				path: "settings/audit-charter",
+				name: "AuditCharter",
+				component: AuditCharter,
+				meta: {
+					title: "Audit Charter",
+					icon: "ScrollText",
+					breadcrumb: "Audit Charter",
+				},
+			},
 			{
 				path: "settings/configuration",
 				name: "Settings",
@@ -438,6 +518,16 @@ const routes = [
 				meta: {
 					title: "Finding Details",
 					breadcrumb: "Finding Details",
+				},
+				props: true,
+			},
+			{
+				path: "reports/audit-reports/:id",
+				name: "AuditReportDetail",
+				component: () => import("@/pages/AuditReportDetail.vue"),
+				meta: {
+					title: "Audit Report Details",
+					breadcrumb: "Report Details",
 				},
 				props: true,
 			},

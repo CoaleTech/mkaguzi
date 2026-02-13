@@ -178,7 +178,7 @@
     <!-- Report Settings -->
     <div class="bg-white rounded-lg border shadow-sm p-6 mb-6">
       <h3 class="font-semibold mb-6 flex items-center gap-2">
-        <Save class="w-5 h-5 text-purple-600" />
+        <Save class="w-5 h-5 text-gray-900" />
         Report Settings
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -313,7 +313,6 @@ const doctypeOptions = [
 	{ label: "Corrective Action", value: "Corrective Action" },
 	{ label: "Compliance Requirement", value: "Compliance Requirement" },
 	{ label: "Risk Assessment", value: "Risk Assessment" },
-	{ label: "Test Execution", value: "Test Execution" },
 ]
 
 const reportTypeOptions = [
@@ -344,6 +343,25 @@ const filterOperators = [
 ]
 
 // Methods
+const getFilterInputType = (field) => {
+	if (!field) return "text"
+	const typeMap = {
+		Data: "text",
+		Int: "number",
+		Float: "number",
+		Currency: "number",
+		Date: "date",
+		Datetime: "datetime-local",
+		Select: "select",
+		Check: "checkbox",
+		Link: "text",
+		"Small Text": "text",
+		"Text Editor": "text",
+		"Long Text": "text",
+	}
+	return typeMap[field.fieldtype] || "text"
+}
+
 const loadFields = async () => {
 	if (!reportConfig.value.doctype) return
 
